@@ -1,58 +1,54 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Field, reduxForm } from 'redux-form';
+import { Form, Field } from 'react-final-form';
 import EyeIcon from 'mdi-react/EyeIcon';
-import KeyVariantIcon from 'mdi-react/KeyVariantIcon';
-import AccountOutlineIcon from 'mdi-react/AccountOutlineIcon';
+// import KeyVariantIcon from 'mdi-react/KeyVariantIcon';
+import LockOutlineIcon from 'mdi-react/LockOutlineIcon';
+import EmailOutlineIcon from 'mdi-react/EmailOutlineIcon';
 import renderCheckBoxField from '../../../shared/components/form/CheckBox';
 
-const LogInForm = ({ handleSubmit }) => {
-  const [isPasswordShown, setIsPasswordShown] = useState(false);
-
-  const showPassword = () => {
-    setIsPasswordShown(!isPasswordShown);
-  };
-
-  return (
+const LogInForm = () => (
+  <Form
+    onSubmit={onSubmit}
+    validate={validate}
+    render={({ handleSubmit, form, submitting, pristine, values }) => (
     <form className="form" onSubmit={handleSubmit}>
-      <div className="form__form-group">
-        <span className="form__form-group-label">Username</span>
-        <div className="form__form-group-field">
-          <div className="form__form-group-icon">
-            <AccountOutlineIcon />
+      <Field name="email">
+        {({ input, meta }) => (
+          <div className="form__form-group">
+            <span className="form__form-group-label">Email</span>
+              <div className="form__form-group-field">
+                <div className="form__form-group-icon">
+                  <EmailOutlineIcon />
+                </div>
+                <div className="form__form-group-row">
+                  <input type="text" {...input} placeholder="Email" />
+                  {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                </div>
+            </div>
           </div>
-          <Field
-            name="name"
-            component="input"
-            type="text"
-            placeholder="Name"
-          />
-        </div>
-      </div>
-      <div className="form__form-group">
-        <span className="form__form-group-label">Password</span>
-        <div className="form__form-group-field">
-          <div className="form__form-group-icon">
-            <KeyVariantIcon />
+        )}
+      </Field>
+      <Field name="password">
+        {({ input, meta }) => (
+          <div className="form__form-group">
+            <span className="form__form-group-label">Password</span>
+              <div className="form__form-group-field">
+                <div className="form__form-group-icon">
+                  <LockOutlineIcon />
+                </div>
+                <div className="form__form-group-row">
+                  <input type="text" {...input} placeholder="Password" />
+                  {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                </div>
+            </div>
+            <div className="account__forgot-password">
+              <a href="/forgot">Forgot a password?</a>
+            </div>
           </div>
-          <Field
-            name="password"
-            component="input"
-            type={isPasswordShown ? 'text' : 'password'}
-            placeholder="Password"
-          />
-          <button
-            className={`form__form-group-button${isPasswordShown ? ' active' : ''}`}
-            onClick={() => showPassword()}
-            type="button"
-          ><EyeIcon />
-          </button>
-        </div>
-        <div className="account__forgot-password">
-          <a href="/">Forgot a password?</a>
-        </div>
-      </div>
+        )}
+      </Field>
       <div className="form__form-group">
         <div className="form__form-group-field">
           <Field
@@ -62,16 +58,32 @@ const LogInForm = ({ handleSubmit }) => {
           />
         </div>
       </div>
-      <Link className="btn btn-primary account__btn account__btn--small" to="/pages/one">Sign In</Link>
-      <Link className="btn btn-outline-primary account__btn account__btn--small" to="/log_in">Create Account</Link>
-    </form>
-  );
+      <button type="submit" className="btn btn-primary account__btn account__btn--small" disabled={submitting}>Log In</button>
+      {/* <Link className="btn btn-primary account__btn account__btn--small" to="/pages/one">Sign In</Link> */}
+      <Link className="btn btn-outline-primary account__btn account__btn--small" to="/signup">Create Account</Link>
+      </form>
+    )}
+  />
+)
+
+const validate = values => {
+  let errors = {};
+  if (!values.email) {
+    errors.email = "Email is required";
+  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,}$/i.test(values.email)) {
+    errors.email = "Invalid email address";
+  }
+  if (!values.password) {
+    errors.password = "Password is required";
+  }
+  return errors;
+}
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+const onSubmit = async values => {
+  await sleep(400);
+  window.alert(JSON.stringify(values, 0, 2));
 };
 
-LogInForm.propTypes = {
-  handleSubmit: PropTypes.func.isRequired,
-};
-
-export default reduxForm({
-  form: 'log_in_form',
-})(LogInForm);
+export default LogInForm;
