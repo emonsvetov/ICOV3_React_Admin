@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 const IncentcoLogo = `${process.env.PUBLIC_URL}/img/logo-sm.png`;
 
 const CheckYourEmail = () => (
@@ -13,6 +14,7 @@ const CheckYourEmail = () => (
         </div>
         <p className="py-2">We just sent you an email.<br />
         Please follow the instructions in the email to reset your password.</p>
+        <Link className="btn btn-outline-primary account__btn account__btn--small mt-4" to="/forgot?confirm=yourcodehere">Simulate Reset Password Click</Link>
       </div>
     </div>
   </div>
