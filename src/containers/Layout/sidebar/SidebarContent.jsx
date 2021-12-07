@@ -22,10 +22,18 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
         </SidebarCategory>
       </ul>
       <ul className="sidebar__block">
-        <SidebarCategory title="Example Pages" icon="diamond">
-          <SidebarLink title="Page one" route="/pages/one" onClick={handleHideSidebar} />
-          <SidebarLink title="Page two" route="/pages/two" onClick={handleHideSidebar} />
+        <SidebarCategory title="Program" icon="diamond">
+          <SidebarLink title="All Programs" route="/program" onClick={handleHideSidebar} />
+          <SidebarLink title="Create Program" route="/program/create" onClick={handleHideSidebar} />
         </SidebarCategory>
+        <SidebarLink title="Merchant"  icon="store" route="/merchant" />
+        <SidebarLink title="Import"  icon="download" route="/import" />
+        <SidebarLink title="Reports"  icon="book" route="/reports" />
+        <SidebarLink title="Roles"  icon="user" route="/roles" />
+        <SidebarLink title="Users"  icon="users" route="/users" />
+        <SidebarLink title="Events"  icon="calendar-full" route="/events" />
+        <SidebarLink title="Invoices"  icon="file-empty" route="/invoices" />
+        <SidebarLink title="Domains"  icon="layers" route="/domains" />
       </ul>
     </div>
   );

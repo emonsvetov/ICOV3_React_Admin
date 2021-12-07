@@ -9,6 +9,8 @@ import CheckYourEmail from '../Forgot/CheckYourEmail';
 import ForgotSuccess from '../Forgot/ForgotSuccess';
 import ExamplePageOne from '../Example/index';
 import ExamplePageTwo from '../ExampleTwo/index';
+import ProgramIndex from '../Program/index';
+import ProgramCreate from '../Program/program_create';
 
 const Pages = () => (
   <Switch>
@@ -17,11 +19,20 @@ const Pages = () => (
   </Switch>
 );
 
+const Programs = () => (
+  <Switch>
+    <Route path="/program/create" component={ProgramCreate} />
+    <Route path="/program" component={ProgramIndex} />
+    {/* <Route path="/program/dashboard" component={ProgramDashboard} /> */}
+  </Switch>
+);
+
 const wrappedRoutes = () => (
   <div>
     <Layout />
     <div className="container__wrap">
       <Route path="/pages" component={Pages} />
+      <Route path="/program" component={Programs} />
     </div>
   </div>
 );
