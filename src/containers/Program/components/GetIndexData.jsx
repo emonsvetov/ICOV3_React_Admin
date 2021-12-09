@@ -42,7 +42,7 @@ const CreateTableData = () => {
       },
       {
         Header: 'Program name',
-        accessor: 'pname',
+        accessor: 'program_name',
       },
       {
         Header: 'Corporate entity',
@@ -88,7 +88,7 @@ const CreateTableData = () => {
   };
 
   rows();
-  const reactTableData = { tableHeaderData: columns, tableRowsData: data };
+  const reactTableData = { columns: columns, data: data };
   return reactTableData;
 };
 

@@ -1,16 +1,16 @@
 import React from 'react';
 import { Card, CardBody, Col } from 'reactstrap';
-import IndexDataTable from './IndexDataTable';
-import GetIndexData from './GetIndexData';
+import CustomDataTable from './CustomDataTable';
+// import GetIndexData from './GetIndexData';
 // import GetIndexData from '../../Tables/CreateData';
 
 const ProgramIndex = () => {
-  const reactTableData = GetIndexData();
+  // const reactTableData = GetIndexData();
   return (
     <Col md={12}>
       <Card>
         <CardBody>
-          <IndexDataTable reactTableData={reactTableData} />
+          <CustomDataTable />
         </CardBody>
       </Card>
     </Col>

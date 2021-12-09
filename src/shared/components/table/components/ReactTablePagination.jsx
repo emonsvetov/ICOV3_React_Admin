@@ -26,6 +26,7 @@ const ReactTablePagination = ({
   setPageSize,
   manualPageSize,
 }) => {
+  // console.log(pageOptions)
   const arrayPageIndex = (pageIndex - 2) < 0
     ? pageOptions.slice(0, pageIndex + 3)
     : pageOptions.slice((pageIndex - 2), (pageIndex + 3));

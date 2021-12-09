@@ -1,27 +1,21 @@
-import React, { useEffect } from 'react';
-import CheckIcon from 'mdi-react/CheckIcon';
-import CloseIcon from 'mdi-react/CloseIcon';
+import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import CheckIcon from 'mdi-react/CheckIcon';
+import CloseIcon from 'mdi-react/CloseIcon';
 
 const CheckBoxField = ({
-  onChange,
-  defaultChecked,
-  disabled,
-  className,
-  name,
-  value,
-  label,
-  color,
+  disabled, className, name, value, onChange, label, color,
 }) => {
-  useEffect(() => {
-    onChange(defaultChecked);
-  }, [onChange, defaultChecked]);
-
   const CheckboxClass = classNames({
     'checkbox-btn': true,
     disabled,
   });
+
+  const changeHandler = () => {
+    onChange();
+  };
+
   return (
     <label
       className={`${CheckboxClass} ${className ? ` checkbox-btn--${className}` : ''}`}
@@ -32,7 +26,7 @@ const CheckBoxField = ({
         type="checkbox"
         id={name}
         name={name}
-        onChange={onChange}
+        onChange={changeHandler}
         checked={value}
         disabled={disabled}
       />
@@ -57,37 +51,43 @@ const CheckBoxField = ({
 };
 
 CheckBoxField.propTypes = {
-  onChange: PropTypes.func.isRequired,
+  onChange: PropTypes.func,
   name: PropTypes.string.isRequired,
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.bool,
   ]).isRequired,
   label: PropTypes.string,
-  defaultChecked: PropTypes.bool,
   disabled: PropTypes.bool,
   className: PropTypes.string,
   color: PropTypes.string,
 };
 
 CheckBoxField.defaultProps = {
+  onChange: () => {},
   label: '',
-  defaultChecked: false,
   disabled: false,
   className: '',
   color: '',
 };
 
 const renderCheckBoxField = ({
-  input, label, defaultChecked, disabled, className, color,
+  input,
+  label,
+  defaultChecked,
+  disabled,
+  className,
+  color,
+  ...other
 }) => (
   <CheckBoxField
-    {...input}
+    input={input}
     label={label}
     defaultChecked={defaultChecked}
     disabled={disabled}
     className={className}
     color={color}
+    {...other}
   />
 );
 

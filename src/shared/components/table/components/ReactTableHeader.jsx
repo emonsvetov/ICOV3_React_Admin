@@ -5,7 +5,7 @@ import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 
 const Header = ({ column, isSortable }) => {
-  console.log(column);
+  // console.log(column);
   return (
   <span className="react-table__column-header">
     <span className={isSortable ? 'react-table__column-header sortable' : ''}>

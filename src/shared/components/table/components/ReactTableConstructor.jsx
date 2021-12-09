@@ -54,7 +54,7 @@ const ReactTableConstructor = ({
     ...tableOptionalHook,
   );
 
-  console.log(state);
+  console.log(dataLength);
 
   return (
     <div>
