@@ -19,107 +19,121 @@ const required = value => value ? undefined : 'Required';
 //   </div>
 // )
 
-const SignupForm = () => (
-  <Form
-    onSubmit={onSubmit}
-    validate={validate}
-    render={({ handleSubmit, form, submitting, pristine, values }) => (
-    <form className="form" onSubmit={handleSubmit}>
-      {/* <div className="alert alert-danger fade show" role="alert"><div className="alert__content"><p>Email already exists. Please log in or register with a different email.</p></div></div> */}
-
-      <Field name="first_name">
-        {({ input, meta }) => (
-          <div className="form__form-group">
-            <span className="form__form-group-label">First Name</span>
-              <div className="form__form-group-field">
-                <div className="form__form-group-icon">
-                  <AccountCircleOutlineIcon />
-                </div>
-                <div className="form__form-group-row">
-                  <input type="text" {...input} placeholder="First Name" />
-                  {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                </div>
-            </div>
+const SignupForm = ({onSubmit, errors, loading}) => {
+  console.log(typeof errors)
+  return (
+    <Form
+      onSubmit={onSubmit}
+      validate={validate}
+      render={({ handleSubmit, form, submitting, pristine, values }) => (
+      <form className="form" onSubmit={handleSubmit}>
+        {errors && 
+        <div className="alert alert-danger fade show w100" role="alert">
+          <div className="alert__content">
+            <ul>
+            {
+            Object.keys(errors).map(function(k){
+                return <li key={k}>{errors[k]}</li>
+            })
+            }
+            </ul>
           </div>
-        )}
-      </Field>
+        </div>}
 
-      <Field name="last_name">
-        {({ input, meta }) => (
-          <div className="form__form-group">
-            <span className="form__form-group-label">Last Name</span>
-              <div className="form__form-group-field">
-                <div className="form__form-group-icon">
-                  <AccountCircleOutlineIcon />
-                </div>
-                <div className="form__form-group-row">
-                  <input type="text" {...input} placeholder="Last Name" />
-                  {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                </div>
+        <Field name="first_name">
+          {({ input, meta }) => (
+            <div className="form__form-group">
+              <span className="form__form-group-label">First Name</span>
+                <div className="form__form-group-field">
+                  <div className="form__form-group-icon">
+                    <AccountCircleOutlineIcon />
+                  </div>
+                  <div className="form__form-group-row">
+                    <input type="text" {...input} placeholder="First Name" />
+                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                  </div>
+              </div>
             </div>
-          </div>
-        )}
-      </Field>
+          )}
+        </Field>
 
-      <Field name="email">
-        {({ input, meta }) => (
-          <div className="form__form-group">
-            <span className="form__form-group-label">Email</span>
-              <div className="form__form-group-field">
-                <div className="form__form-group-icon">
-                  <EmailOutlineIcon />
-                </div>
-                <div className="form__form-group-row">
-                  <input type="text" {...input} placeholder="Email" />
-                  {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                </div>
+        <Field name="last_name">
+          {({ input, meta }) => (
+            <div className="form__form-group">
+              <span className="form__form-group-label">Last Name</span>
+                <div className="form__form-group-field">
+                  <div className="form__form-group-icon">
+                    <AccountCircleOutlineIcon />
+                  </div>
+                  <div className="form__form-group-row">
+                    <input type="text" {...input} placeholder="Last Name" />
+                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                  </div>
+              </div>
             </div>
-          </div>
-        )}
-      </Field>
+          )}
+        </Field>
 
-      <Field name="password">
-        {({ input, meta }) => (
-          <div className="form__form-group">
-            <span className="form__form-group-label">Password</span>
-              <div className="form__form-group-field">
-                <div className="form__form-group-icon">
-                  <LockOutlineIcon />
-                </div>
-                <div className="form__form-group-row">
-                  <input type="text" {...input} placeholder="Password" />
-                  {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                </div>
+        <Field name="email">
+          {({ input, meta }) => (
+            <div className="form__form-group">
+              <span className="form__form-group-label">Email</span>
+                <div className="form__form-group-field">
+                  <div className="form__form-group-icon">
+                    <EmailOutlineIcon />
+                  </div>
+                  <div className="form__form-group-row">
+                    <input type="text" {...input} placeholder="Email" />
+                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                  </div>
+              </div>
             </div>
-          </div>
-        )}
-      </Field>
+          )}
+        </Field>
 
-      <Field name="confirm_password">
-        {({ input, meta }) => (
-          <div className="form__form-group">
-            <span className="form__form-group-label">Confirm Password</span>
-              <div className="form__form-group-field">
-                <div className="form__form-group-icon">
-                  <LockOutlineIcon />
-                </div>
-                <div className="form__form-group-row">
-                  <input type="text" {...input} placeholder="Confirm Password" />
-                  {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                </div>
+        <Field name="password">
+          {({ input, meta }) => (
+            <div className="form__form-group">
+              <span className="form__form-group-label">Password</span>
+                <div className="form__form-group-field">
+                  <div className="form__form-group-icon">
+                    <LockOutlineIcon />
+                  </div>
+                  <div className="form__form-group-row">
+                    <input type="text" {...input} placeholder="Password" />
+                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                  </div>
+              </div>
             </div>
-          </div>
-        )}
-      </Field>
+          )}
+        </Field>
 
-      <button type="submit" className="btn btn-outline-primary account__btn account__btn--small" disabled={submitting}>Submit</button>
-      {/* <Link onSubmit={} className="btn btn-outline-primary account__btn account__btn--small" to="/signup">Create Account</Link> */}
+        <Field name="password_confirmation">
+          {({ input, meta }) => (
+            <div className="form__form-group">
+              <span className="form__form-group-label">Confirm Password</span>
+                <div className="form__form-group-field">
+                  <div className="form__form-group-icon">
+                    <LockOutlineIcon />
+                  </div>
+                  <div className="form__form-group-row">
+                    <input type="text" {...input} placeholder="Confirm Password" />
+                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                  </div>
+              </div>
+            </div>
+          )}
+        </Field>
 
-      <div className="text-center w100"><span className="form__form-group-label">Already have an account ?</span> <Link to="/login">Log In</Link></div>
-    </form>
-    )}
-  />
-)
+        <button type="submit" className="btn btn-outline-primary account__btn account__btn--small" disabled={loading}>Submit</button>
+        {/* <Link onSubmit={} className="btn btn-outline-primary account__btn account__btn--small" to="/signup">Create Account</Link> */}
+
+        <div className="text-center w100"><span className="form__form-group-label">Already have an account ?</span> <Link to="/login">Log In</Link></div>
+      </form>
+      )}
+    />
+  )
+}
 
 const validate = values => {
   let errors = {};
@@ -137,22 +151,22 @@ const validate = values => {
   if (!values.password) {
     errors.password = "Password is required";
   }
-  if (!values.confirm_password) {
-    errors.confirm_password = "Confirm Password is required";
+  if (!values.password_confirmation) {
+    errors.password_confirmation = "Confirm Password is required";
   }
-  if (values.password !== values.confirm_password) {
-    errors.confirm_password = "Confirm Password did not match";
+  if (values.password !== values.password_confirmation) {
+    errors.password_confirmation = "Confirm Password did not match";
   }
   return errors;
 };
 
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+// const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const onSubmit = async values => {
-  // window.alert("Before");
-  await sleep(400);
-  window.alert(JSON.stringify(values, 0, 2));
-};
+// const onSubmit = async values => {
+//   // window.alert("Before");
+//   await sleep(400);
+//   window.alert(JSON.stringify(values, 0, 2));
+// };
 
 export default SignupForm;
 

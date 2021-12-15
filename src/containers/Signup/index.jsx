@@ -1,15 +1,59 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Link } from 'react-router-dom';
 import FacebookIcon from 'mdi-react/FacebookIcon';
 import GooglePlusIcon from 'mdi-react/GooglePlusIcon';
 import SignupForm from './components/SignupForm';
 const IncentcoLogo = `${process.env.PUBLIC_URL}/img/logo-sm.png`;
 
+const axios = require('axios');
+
 const Signup = () => {
 
-  const onSubmit = (values) => {
-    alert("submitted");
-    console.log(values);
+  const [errors, setErrors] = useState(null);
+  const [loading, setLoading] = useState(false);
+  // const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+  const onSubmit = async(values) => {
+    // alert("submitted");
+    // console.log(values);
+    // const data = {
+    //   first_name: values.first_name,
+    //   last_name: values.last_name,
+    //   email: values.email,
+    //   password: values.password,
+    //   password_confirmation: values.password_confirmation,
+    // }
+    // console.log(data)
+
+    // try {
+    //   const resp = await axios.post('/organization/1/register', values);
+    //   console.log(resp)
+    // } catch (error) {
+    //   // Handle Error Here
+    //   // alert('NOWHERE')
+    //   console.log(error.response.data.errors);
+    //   setErrors(error.response.data.errors)
+    //   console.log(errors)
+    // }
+
+    setLoading(true)
+
+    // const perform = await axios.post('/organization/1/register', values);
+    axios.post('/organization/1/register', values)
+    .then( (res) => {
+      // console.log(res)
+      // console.log(res.status == 200)
+      if(res.status == 200)  {
+        localStorage.setItem("authToken", res.data.access_token);
+        localStorage.setItem("authUser", res.data.user);
+        window.location = '/signup/success'
+      }
+    })
+    .catch( error => {
+      console.log(error.response.data.errors);
+      setErrors(error.response.data.errors);
+      setLoading(false)
+    })
   }
 
   return (
@@ -26,7 +70,7 @@ const Signup = () => {
               </h3>
               <h4 className="account__subhead subhead">Create an account to continue</h4>
             </div>
-            <SignupForm onSubmit={onSubmit} />
+            <SignupForm onSubmit={onSubmit} errors={errors} loading={loading} />
             <div className="account__or">
               <p>Or Easily Using</p>
             </div>

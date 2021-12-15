@@ -7,13 +7,50 @@ import EyeIcon from 'mdi-react/EyeIcon';
 import LockOutlineIcon from 'mdi-react/LockOutlineIcon';
 import EmailOutlineIcon from 'mdi-react/EmailOutlineIcon';
 import renderCheckBoxField from '../../../shared/components/form/CheckBox';
+import {login} from '../../App/auth';
 
-const LogInForm = () => (
+const axios = require('axios');
+
+const LogInForm = () => {
+
+  const [errors, setErrors] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = async values => {
+
+    console.log(values);
+
+    axios.post('/login', values)
+    .then( (res) => {
+      // console.log(res)
+      // console.log(res.status == 200)
+      if(res.status == 200)  {
+        login(res.data)
+        var t = setTimeout(window.location = '/', 500)
+      }
+    })
+    .catch( error => {
+      // console.log(error.response.data.message);
+      setErrors(error.response.data.message);
+      setLoading(false)
+    })
+  };
+
+  return (
   <Form
     onSubmit={onSubmit}
     validate={validate}
     render={({ handleSubmit, form, submitting, pristine, values }) => (
     <form className="form" onSubmit={handleSubmit}>
+      {errors && 
+        <div className="alert alert-danger fade show w100" role="alert">
+          <div className="alert__content">
+            <ul>
+              <li>{errors}</li>
+            </ul>
+          </div>
+        </div>
+      }
       <Field name="email">
         {({ input, meta }) => (
           <div className="form__form-group">
@@ -58,13 +95,13 @@ const LogInForm = () => (
           />
         </div>
       </div>
-      <button type="submit" className="btn btn-primary account__btn account__btn--small" disabled={submitting}>Log In</button>
+      <button type="submit" className="btn btn-primary account__btn account__btn--small" disabled={loading}>Log In</button>
       {/* <Link className="btn btn-primary account__btn account__btn--small" to="/pages/one">Sign In</Link> */}
       <Link className="btn btn-outline-primary account__btn account__btn--small" to="/signup">Create Account</Link>
       </form>
     )}
   />
-)
+)}
 
 const validate = values => {
   let errors = {};
@@ -78,13 +115,5 @@ const validate = values => {
   }
   return errors;
 }
-
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-const onSubmit = async values => {
-  await sleep(400);
-  // window.alert(JSON.stringify(values, 0, 2));
-  window.location = '/pages/one'
-};
 
 export default LogInForm;

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import SidebarLink from './SidebarLink';
 import SidebarCategory from './SidebarCategory';
+import {logout} from '../../App/auth';
 
 const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
   const handleHideSidebar = () => {
@@ -11,15 +12,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
   return (
     <div className="sidebar__content">
       <ul className="sidebar__block">
-        <SidebarLink title="Log In" icon="exit" route="/log_in" onClick={handleHideSidebar} />
-        <SidebarCategory title="Layout" icon="layers">
-          <button type="button" className="sidebar__link" onClick={changeToLight}>
-            <p className="sidebar__link-title">Light Theme</p>
-          </button>
-          <button type="button" className="sidebar__link" onClick={changeToDark}>
-            <p className="sidebar__link-title">Dark Theme</p>
-          </button>
-        </SidebarCategory>
+        <SidebarLink title="Log Out" icon="exit" route="" onClick={logout} />
       </ul>
       <ul className="sidebar__block">
         <SidebarCategory title="Program" icon="diamond">
@@ -34,6 +27,16 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
         <SidebarLink title="Events"  icon="calendar-full" route="/events" />
         <SidebarLink title="Invoices"  icon="file-empty" route="/invoices" />
         <SidebarLink title="Domains"  icon="layers" route="/domains" />
+      </ul>
+      <ul className="sidebar__block">
+        <SidebarCategory title="Choose Theme" icon="layers">
+          <button type="button" className="sidebar__link" onClick={changeToLight}>
+            <p className="sidebar__link-title">Light Theme</p>
+          </button>
+          <button type="button" className="sidebar__link" onClick={changeToDark}>
+            <p className="sidebar__link-title">Dark Theme</p>
+          </button>
+        </SidebarCategory>
       </ul>
     </div>
   );

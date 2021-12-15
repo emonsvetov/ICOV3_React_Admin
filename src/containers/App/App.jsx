@@ -1,11 +1,12 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../../scss/app.scss';
-import Router from './Router';
+import Routes from './Routes';
 import store from './store';
 import ScrollToTop from './ScrollToTop';
+import axiosConfig from "./AxiosConfig";
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -13,6 +14,7 @@ const App = () => {
 
   useEffect(() => {
     window.addEventListener('load', () => {
+      axiosConfig();
       setIsLoading(false);
       setTimeout(() => setIsLoaded(true), 500);
     });
@@ -20,7 +22,7 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <BrowserRouter>
+      <Router>
         <ScrollToTop>
           <Fragment>
             {!isLoaded && (
@@ -33,11 +35,11 @@ const App = () => {
               </div>
             )}
             <div>
-              <Router />
+              <Routes />
             </div>
           </Fragment>
         </ScrollToTop>
-      </BrowserRouter>
+      </Router>
     </Provider>
   );
 };
