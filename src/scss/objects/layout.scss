@@ -7,17 +7,26 @@
 }
 
 .container__wrap {
-  padding-left: 0;
   padding-top: 90px;
   min-height: 100vh;
   transition: padding-left 0.3s;
+
+  @include directify($directions) {
+    #{directed('padding-left')}: 0px;
+  }
 
   @include themify($themes) {
     background: themed('colorBackgroundBody');
   }
 
   @media screen and (min-width: 576px) {
-    padding-left: 250px;
+    @include directify($directions) {
+      #{directed('padding-left')}: 250px;
+    }
+  }
+
+  @media screen and (max-width: 576px) {
+    padding-top: 150px;
   }
 }
 
@@ -26,20 +35,27 @@
   &.layout--collapse {
 
     & + .container__wrap {
-      padding-left: 0;
+
+      @include directify($directions) {
+        #{directed('padding-left')}: 0px;
+      }
 
       @media screen and (min-width: 576px) {
-        padding-left: 60px;
+        @include directify($directions) {
+          #{directed('padding-left')}: 60px;
+        }
       }
     }
   }
 
-  &.layout--top-navigation{
+  &.layout--top-navigation {
 
-    & + .container__wrap{
+    & + .container__wrap {
 
       @media screen and (min-width: 576px) {
-        padding-left: 0;
+        @include directify($directions) {
+          #{directed('padding-left')}: 0px;
+        }
       }
     }
   }

@@ -26,11 +26,14 @@ export const isAuthenticated = () => {
 }
 
 export const getToken = () => {
-    if (localStorage.getItem(AUTH_TOKEN_KEY)) {
-        return true;
-    }
-    return false;
+   return localStorage.getItem(AUTH_TOKEN_KEY);
 }
+
+export const getBearer = () => {
+    console.log(getAuthUser())
+    const AuthToken = getToken();
+    return AuthToken ? 'Bearer ' + AuthToken : null
+ }
 
 export const getAuthUser = () => {
     if( !isAuthenticated() ) return null;

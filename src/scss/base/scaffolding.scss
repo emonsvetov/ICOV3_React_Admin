@@ -4,15 +4,11 @@ main {
 
 body {
   margin: 0;
-  padding: 0;
+  padding: 0 !important;
   box-sizing: border-box;
   font-family: 'Roboto', sans-serif;
   font-size: 13px;
   line-height: 1.6;
-
-  @include themify($themes) {
-    color: themed('colorText');
-  }
 }
 
 * {
@@ -20,8 +16,10 @@ body {
 }
 
 ul, ol {
+  // doesn't do RTL, it break a sidebar
   padding-left: 15px;
   margin-bottom: 0;
+  list-style-image: url('../../shared/img/circle.svg');
 }
 
 a {

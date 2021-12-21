@@ -17,7 +17,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
       <ul className="sidebar__block">
         <SidebarCategory title="Program" icon="diamond">
           <SidebarLink title="All Programs" route="/program" onClick={handleHideSidebar} />
-          <SidebarLink title="Create Program" route="/program/create" onClick={handleHideSidebar} />
+          <SidebarLink title="Create Program" route="/program/add" onClick={handleHideSidebar} />
         </SidebarCategory>
         <SidebarLink title="Merchant"  icon="store" route="/merchant" />
         <SidebarLink title="Import"  icon="download" route="/import" />

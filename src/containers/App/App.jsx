@@ -6,7 +6,31 @@ import '../../scss/app.scss';
 import Routes from './Routes';
 import store from './store';
 import ScrollToTop from './ScrollToTop';
-import axiosConfig from "./AxiosConfig";
+import {getBearer} from './auth';
+// import axiosConfig from "./AxiosConfig";
+import axios from 'axios';
+
+axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
+axios.defaults.headers.common['Authorization'] = getBearer();
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+
+axios.interceptors.request.use(request => {
+    console.log(request);
+    // Edit request config
+    return request;
+}, error => {
+    console.log(error);
+    return Promise.reject(error);
+});
+
+axios.interceptors.response.use(response => {
+    console.log(response);
+    // Edit response config
+    return response;
+}, error => {
+    console.log(error);
+    return Promise.reject(error);
+});
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -14,7 +38,8 @@ const App = () => {
 
   useEffect(() => {
     window.addEventListener('load', () => {
-      axiosConfig();
+      // alert("Loaded")
+      // axiosConfig();
       setIsLoading(false);
       setTimeout(() => setIsLoaded(true), 500);
     });

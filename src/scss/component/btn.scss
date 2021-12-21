@@ -2,15 +2,22 @@
   border-radius: 5px;
   padding: 10px 25px;
   margin-bottom: 20px;
-  margin-right: 15px;
   transition: all 0.4s;
   font-size: 14px;
   position: relative;
   overflow: hidden;
   z-index: 0;
 
+  @include directify($directions) {
+    #{directed('margin-right')}: 15px;
+  }
+
   &:last-child {
     margin-right: 0;
+
+    @include directify($directions) {
+      #{directed('margin-right')}: 0;
+    }
   }
 
   &:before {
@@ -20,26 +27,39 @@
     border-radius: 50%;
     background-color: $color-accent;
     transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
-    transform: translate(-50%, -50%);
     z-index: -1;
     content: "";
     top: 0;
-    left: 0;
+
+    @include directify($directions) {
+      transform: #{directed('translate')};
+    }
+
+    @include directify($directions) {
+      #{directed('left')}: 0px;
+    }
   }
 
   p {
     display: flex;
     transition: all 0.3s;
     font-weight: 500;
-    color: #444444;
   }
 
   svg {
     height: 14px;
     width: 14px;
-    margin: 2px 5px 0 0;
+    margin-top: 2px;
+    margin-bottom: 0;
     transition: all 0.3s;
-    fill: #444444;
+
+    @include directify($directions) {
+      #{directed('margin-right')}: 5px;
+    }
+
+    @include directify($directions) {
+      #{directed('margin-left')}: 0px;
+    }
   }
 
   &:hover, &:focus, &:active, &:active:focus {
@@ -73,18 +93,28 @@
     &:hover {
 
       p {
-        color: #646777;
+        @include themify($themes) {
+          color: themed('colorText');
+        }
       }
 
       svg {
-        fill: #646777;
+        @include themify($themes) {
+          fill: themed('colorText');
+        }
       }
     }
 
     &.icon--right {
 
       svg {
-        margin: 2px 0 0 5px;
+        margin-top: 2px;
+        margin-bottom: 0;
+
+        @include directify($directions) {
+          #{directed('margin-right')}: 0px;
+          #{directed('margin-left')}: 5px;
+        }
       }
     }
   }
@@ -100,27 +130,27 @@
   }
 
   &.btn-secondary {
-    background-color: #e7e2e2;
-    border-color: #e7e2e2;
-    color: #646777;
+    background-color: $color-light-gray;
+    border-color: $color-light-gray;
+    color: $color-gray;
 
     &:before {
-      background-color: darken(#e7e2e2, 10%);
+      background-color: darken($color-light-gray, 10%);
     }
 
     &:hover, &:focus, &:active, &:active:focus {
-      border-color: darken(#e7e2e2, 10%);
-      color: #646777;
+      border-color: darken($color-light-gray, 10%);
+      color: $color-gray;
     }
 
     &:not([disabled]):not(.disabled):active, &:not([disabled]):not(.disabled).active {
-      background-color: #dddddd;
-      border-color: #dddddd;
+      background-color: $color-dusty-white;
+      border-color: $color-dusty-white;
     }
   }
 
   &.btn-outline-secondary {
-    border-color: #e7e2e2;
+    border-color: $color-light-gray;
 
     &, p {
 
@@ -137,20 +167,20 @@
     }
 
     &:before {
-      background-color: #e7e2e2;
+      background-color: $color-light-gray;
     }
 
     &:hover, &:focus, &:active, &:active:focus {
       background: transparent;
-      border-color: #e7e2e2;
-      color: #444444;
+      border-color: $color-light-gray;
+      color: $color-gray;
 
       p {
-        color: #444444;
+        color: $color-gray;
       }
 
       svg {
-        fill: #444444;
+        fill: $color-gray;
       }
     }
   }
@@ -218,7 +248,7 @@
   &.btn-warning {
     background-color: $color-yellow;
     border-color: $color-yellow;
-    color: #ffffff;
+    color: $color-white;
 
     &:before {
       background-color: $color-yellow-hover;
@@ -281,36 +311,37 @@
   &.icon, &.icon.btn-secondary {
 
     &.disabled {
-      background-color: #f2f4f7;
-      border-color: #f2f4f7;
-      color: #dddddd;
+      background-color: $color-background-body;
+      border-color: $color-background-body;
+      color: $color-dusty-white;
       pointer-events: none;
 
       p {
-        color: #dddddd;
+        color: $color-dusty-white;
       }
 
       svg {
-        fill: #dddddd;
+        fill: $color-dusty-white;
       }
 
     }
   }
 
   &.btn-primary, &.btn-danger, &.btn-warning, &.btn-success {
+
     p {
-      color: #ffffff;
+      color: $color-white;
     }
 
     svg {
-      fill: #ffffff;
+      fill: $color-white;
     }
   }
 
   &.btn-outline-primary, &.btn-outline-danger, &.btn-outline-warning, &.btn-outline-success {
 
     &:hover, &:focus, &:active, &:active:focus {
-      color: #ffffff;
+      color: $color-white;
       background: transparent;
     }
   }
@@ -322,11 +353,11 @@
     &:active, &:active:focus {
 
       p {
-        color: #ffffff;
+        color: $color-white;
       }
 
       svg {
-        fill: #ffffff;
+        fill: $color-white;
       }
     }
 
@@ -342,13 +373,16 @@
     &.expand--load {
 
       @keyframes rotating {
+
         from {
           transform: rotate(0deg);
         }
+
         to {
           transform: rotate(360deg);
         }
       }
+
       svg {
         width: 14px;
         animation: rotating 2s linear infinite;
@@ -362,7 +396,9 @@
   margin-bottom: 10px;
 
   & > * {
-    margin-right: 15px;
+    @include directify($directions) {
+      #{directed('margin-right')}: 15px;
+    }
 
     &:last-child {
       margin-right: 0;
@@ -391,9 +427,12 @@
   margin-bottom: -10px;
 
   .btn {
-    margin-right: 0;
     padding: 10px 15px;
     font-weight: 500;
+
+    @include directify($directions) {
+      #{directed('margin-right')}: 0px;
+    }
   }
 
   &.btn-group--justified {
@@ -429,5 +468,58 @@ button:focus, button:active {
 
   @include themify($themes) {
     background-color: themed('colorBackground');
+  }
+}
+
+.customizer {
+  position: fixed;
+  top: 0;
+  z-index: 102;
+
+  @include directify($directions) {
+    #{directed('right')}: 0px;
+  }
+
+  .customizer__toggle {
+
+    span {
+
+      @include directify($directions) {
+        #{directed('margin-right')}: 10px;
+        #{directed('margin-left')}: 0px;
+      }
+
+      @include themify($themes) {
+        color: themed('colorText');
+      }
+    }
+  }
+}
+
+.btn__wrapper--buy-now {
+  display: none;
+  position: fixed;
+  bottom: 30px;
+  z-index: 102;
+
+  @include directify($directions) {
+    #{directed('right')}: 10px;
+  }
+
+  @media screen and (min-width: 576px) {
+    display: inherit;
+    bottom: 50px;
+
+    @include directify($directions) {
+      #{directed('right')}: 25px;
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    bottom: 80px;
+
+    @include directify($directions) {
+      #{directed('right')}: 55px;
+    }
   }
 }

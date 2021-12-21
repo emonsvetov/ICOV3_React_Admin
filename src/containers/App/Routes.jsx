@@ -14,7 +14,8 @@ import ForgotSuccess from '../Forgot/ForgotSuccess';
 import ExamplePageOne from '../Example/index';
 import ExamplePageTwo from '../ExampleTwo/index';
 import ProgramIndex from '../Program/index';
-import ProgramCreate from '../Program/program_create';
+import AddProgram from '../Program/add_program';
+import TreeView from '../TreeViewBasic';
 
 const Pages = () => (
   <Switch>
@@ -26,7 +27,7 @@ const Pages = () => (
 
 const Programs = () => (
   <Switch>
-    <Route exact path="/program/create" component={ProgramCreate} />
+    <Route exact path="/program/add" component={AddProgram} />
     <Route exact path="/program" component={ProgramIndex} />
     {/* <Route path="/program/dashboard" component={ProgramDashboard} /> */}
   </Switch>
@@ -40,6 +41,7 @@ const privateRoutes = () => {
         <PrivateRoute exact path="/" component={Dashboard} />
         <PrivateRoute path="/pages" component={Pages} />
         <PrivateRoute path="/program" component={Programs} />
+        <PrivateRoute path="/treeview" component={TreeView} />
       </div>
     </div>
   )

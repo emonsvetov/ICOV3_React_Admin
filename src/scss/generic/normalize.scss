@@ -445,3 +445,32 @@ template {
 [hidden] {
   display: none;
 }
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  @include themify($themes) {
+    -webkit-text-fill-color: themed('colorText');
+    -webkit-box-shadow: 0 0 0 30px themed('colorBackground') inset !important;
+  }
+}
+
+pre::-webkit-scrollbar {
+  @include themify($themes) {
+    background-color: themed('colorTextAdditional');
+  }
+}
+pre::-webkit-scrollbar-button {
+  @include themify($themes) {
+    background-color: themed('colorScrollbar');
+  }
+}
+pre::-webkit-scrollbar-thumb {
+  @include themify($themes) {
+    background-color: themed('colorScrollbar');
+  }  
+}

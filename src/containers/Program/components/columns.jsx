@@ -1,9 +1,14 @@
-import {format} from 'date-fns'
+import {useState, useEffect} from "react";
+// import {format} from 'date-fns'
+
 import ChevronUpIcon from 'mdi-react/ChevronUpIcon';
 import ChevronRightIcon from 'mdi-react/ChevronRightIcon';
+import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
+import ContentCopyIcon from 'mdi-react/ContentCopyIcon';
+
 // import { ColumnFilter } from "./ColumnFilter"
 
-export const COLUMNS = [
+export const PROGRAM_COLUMNS = [
     {
         // Build our expander column
         id: 'expander', // Make sure it has an ID
@@ -40,7 +45,7 @@ export const COLUMNS = [
     },
     {
         Header: "Program Name",
-        accessor: "program_name",
+        accessor: "name",
         Footer:"Program Name"
     },
     {
@@ -64,11 +69,6 @@ export const COLUMNS = [
         accessor: "status",
         Footer: "Status",
         filter: 'equals'
-    },
-    {
-        Header: "Action",
-        accessor: "action",
-        Footer: "Action",
     },
 ]
 

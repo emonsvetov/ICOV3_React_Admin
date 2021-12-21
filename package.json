@@ -9,6 +9,9 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.60",
     "axios": "^0.24.0",
     "bootstrap": "^4.5.3",
     "classnames": "^2.2.6",
@@ -19,10 +22,14 @@
     "mdi-react": "^7.4.0",
     "node-sass": "^4.14.1",
     "prop-types": "^15.7.2",
+    "rc-time-picker": "^3.7.3",
     "react": "^17.0.1",
     "react-app-rewired": "^2.1.8",
     "react-beautiful-dnd": "^13.1.0",
+    "react-big-calendar": "^0.38.1",
+    "react-datepicker": "^4.5.0",
     "react-dom": "^17.0.1",
+    "react-draft-wysiwyg": "^1.14.7",
     "react-final-form": "^6.5.7",
     "react-highlight-words": "^0.17.0",
     "react-jwt": "^1.1.4",
@@ -32,11 +39,13 @@
     "react-select": "^5.2.1",
     "react-smooth-scrollbar": "^8.0.6",
     "react-table": "^7.7.0",
+    "react-vis": "^1.11.7",
     "reactstrap": "^8.7.1",
     "redux": "^4.0.5",
     "redux-actions": "^2.6.5",
     "redux-form": "^8.3.6",
     "redux-thunk": "^2.3.0",
+    "slick-carousel": "^1.8.1",
     "smooth-scrollbar": "^8.5.3"
   },
   "devDependencies": {

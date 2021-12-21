@@ -1,14 +1,12 @@
 .sidebar {
   position: fixed;
-  top: 0;
-  left: 0;
+  bottom: 0;
   z-index: 99;
   height: 100vh;
   width: 240px;
   box-shadow: 0 1px 30px 1px rgba(0, 0, 0, 0.11);
   padding-top: 60px;
-  transition: transform 0.3s, width 0.3s;
-  transform: translateX(calc(-100% - 20px));
+  transition: transform 0.3s;
 
   @include themify($themes) {
     background: themed('colorBackground');
@@ -19,7 +17,11 @@
   }
 
   &.sidebar--show {
-    transform: translateX(0);
+    display: block;
+
+    @include directify($directions) {
+      transform:  #{directed('sidebar-close')};
+    }
 
     .sidebar__back {
       display: block;
@@ -44,6 +46,10 @@
       opacity: 1;
     }
   }
+
+  @include themify($themes) {
+    background: themed('sidebarColor');
+  }
 }
 
 .sidebar__scroll {
@@ -57,7 +63,10 @@
 
     &.scrollbar-track-y {
       width: 2px;
-      margin-right: 3px;
+
+      @include directify($directions) {
+        #{directed('margin-right')}: 3px;
+      }
     }
 
     &.scrollbar-track-x {
@@ -117,22 +126,28 @@
   &:before {
     content: "";
     position: absolute;
-    left: 0;
     top: 0;
     height: 100%;
     width: 2px;
     background: $color-accent;
     opacity: 0;
     transition: all 0.3s;
+
+    @include directify($directions) {
+      #{directed('left')}: 0px;
+    }
   }
 
   p {
     position: absolute;
-    left: 43px;
-    width: 160px;
+    width: 180px;
     transition: left 0.3s;
     top: 50%;
     transform: translateY(-50%);
+
+    @include directify($directions) {
+      #{directed('left')}: 43px;
+    }
   }
 
   &:hover {
@@ -154,13 +169,17 @@
   line-height: 16px;
   position: relative;
   display: flex;
+  align-items: center;
 }
 
 .sidebar__link-icon {
-  margin-right: 10px;
   font-size: 13px;
   line-height: 13px;
-  color: #b1c3c8;
+  color: lighten($color-gray, 25%);
+
+  @include directify($directions) {
+    #{directed('margin-right')}: 10px;
+  }
 }
 
 .sidebar__submenu {
@@ -173,10 +192,16 @@
     padding-top: 0;
 
     .sidebar__link {
-      padding-left: 53px;
+
+      @include directify($directions) {
+        #{directed('padding-left')}: 53px;
+      }
 
       p {
-        left: 53px;
+
+        @include directify($directions) {
+          #{directed('left')}: 53px;
+        }
       }
     }
   }
@@ -186,9 +211,13 @@
   }
 
   .sidebar__link {
-    padding-left: 43px;
+
+    @include directify($directions) {
+      #{directed('padding-left')}: 43px;
+    }
 
     &:hover {
+
       @include themify($themes) {
         background-color: themed('colorBackground');
       }
@@ -200,15 +229,25 @@
   }
 }
 
+.rtl-support {
+
+  .sidebar__category-icon {
+    transform: rotate(180deg);
+  }
+}
+
 .sidebar__category-icon {
   position: absolute;
-  right: 15px;
   font-size: 10px;
   line-height: 14px;
   opacity: 1;
   transition: opacity 0.5s 0.2s, transform 0.3s;
   color: $color-gray;
+  top: 10px;
 
+  @include directify($directions) {
+    #{directed('right')}: 15px;
+  }
 }
 
 .sidebar__link-badge {
@@ -218,18 +257,24 @@
   font-size: 8px;
   font-weight: 400;
   padding: 2px;
-  margin-left: 5px;
   line-height: 9px;
   position: relative;
   text-transform: uppercase;
   border-radius: 7px;
 
+  @include directify($directions) {
+    #{directed('margin-left')}: 5px;
+  }
+
   span {
     position: absolute;
-    left: 0;
     top: 3px;
     width: 26px;
     text-align: center;
+
+    @include directify($directions) {
+      #{directed('left')}: 0px;
+    }
   }
 }
 
@@ -240,9 +285,10 @@
 .sidebar__category-wrap {
 
   &.sidebar__category-wrap--open {
-
-    .sidebar__category-icon {
-      transform: rotate(90deg);
+    & > .sidebar__category {
+      .sidebar__category-icon {
+        transform: rotate(90deg);
+      }
     }
   }
 }
@@ -253,18 +299,29 @@
   border-radius: 50%;
   top: -3px;
   display: block;
-  margin-left: 5px;
   background: $color-red;
+
+  @include directify($directions) {
+    #{directed('margin-left')}: 5px;
+  }
 }
 
 @media screen and (min-width: 576px) {
+  .sidebar--collapse {
+    .sidebar__category-wrap:hover {
+      .sidebar__submenu-wrap {
+        display: inherit !important;
+      }
+    }
+  }
 
   .sidebar {
-    transform: translateX(0);
 
     &.sidebar--no-desktop {
-      transform: translateX(calc(-100% - 20px));
 
+      @include directify($directions) {
+        //transform: translateX(calc(directed('-')100% directed('-') 20px));
+      }
       &.sidebar--show {
         transform: translateX(0);
       }
@@ -277,6 +334,7 @@
     &.sidebar--collapse {
       width: 55px;
       overflow: visible;
+      transition: transform 0.3s, width 0.3s;
 
       .sidebar__scroll, .sidebar__content {
         width: 55px;
@@ -289,52 +347,58 @@
         transition: 0s;
       }
 
-      .sidebar__category-wrap {
-
-        &:hover {
-
-          .sidebar__category {
-            width: 240px;
-
-            @include themify($themes) {
-              background: themed('colorHover');
-            }
-
-            &:before {
-              opacity: 1;
-            }
+      .sidebar__block > .sidebar__category-wrap:hover > .sidebar__category {
+        width: 240px;
+        .sidebar__category {
+          @include themify($themes) {
+            background: themed('colorHover');
           }
-
-          .sidebar__submenu-wrap {
-            width: 185px;
+          &:before {
+            opacity: 1;
           }
         }
       }
 
       .sidebar__submenu-wrap {
         position: absolute;
-        left: 55px;
         width: 0;
         transition: 0.3s;
-        overflow: hidden;
+        display: none;
+
+        @include directify($directions) {
+          #{directed('left')}: 55px;
+        }
 
         .sidebar__link {
           width: 185px;
-          padding-left: 15px;
+
+          @include directify($directions) {
+            #{directed('padding-left')}: 15px;
+          }
 
           p {
             position: relative;
-            left: 0;
             animation: none;
+
+            @include directify($directions) {
+              #{directed('left')}: 0px;
+            }
+
           }
         }
 
         .sidebar__submenu-wrap {
           position: relative;
-          left: 0;
+
+          @include directify($directions) {
+            #{directed('left')}: 0px;
+          }
 
           .sidebar__link {
-            padding-left: 30px;
+
+            @include directify($directions) {
+              #{directed('padding-left')}: 30px;
+            }
           }
         }
       }
@@ -342,16 +406,21 @@
       .sidebar__link {
         overflow: hidden;
         width: 55px;
-        background-color: transparent;
+        @include themify($themes) {
+          background: themed('colorBackground');
+        }
 
         p {
           position: absolute;
-          left: 70px;
           width: 160px;
+
+          @include directify($directions) {
+            #{directed('left')}: 70px;
+          }
+
         }
 
         &:hover {
-          width: 240px;
 
           @include themify($themes) {
             background: themed('colorHover');
@@ -365,9 +434,11 @@
       }
 
       .scrollbar-track.scrollbar-track-y {
-        margin-right: 188px;
-      }
 
+        @include directify($directions) {
+          #{directed('margin-right')}: 188px;
+        }
+      }
     }
   }
 
@@ -378,13 +449,38 @@
   .sidebar__wrapper--mobile {
     display: none;
   }
-
 }
 
-@media screen and (min-width: 992px) {
+@media (max-width: 575px) {
+
+  .sidebar {
+    display: none;
+    position: fixed;
+    top: 60px;
+    padding-top: 0;
+    z-index: 101;
+  }
+
+  .sidebar__content {
+    padding-top: 0;
+  }
+}
+
+@media screen and (min-width: 1300px) {
 
   .sidebar.sidebar--no-desktop {
     transform: translateX(0);
     display: none;
+  }
+}
+
+@media screen and (max-width: 1400px) {
+
+  .sidebar.sidebar--no-desktop {
+    display: none;
+  }
+
+  .sidebar.sidebar--no-desktop.sidebar--show {
+    display: block;
   }
 }
