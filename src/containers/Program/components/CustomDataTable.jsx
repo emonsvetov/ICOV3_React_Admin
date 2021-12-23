@@ -1,6 +1,6 @@
 import React, {useMemo, useState, useEffect} from "react";
 import { useTable, useSortBy, usePagination, useGlobalFilter, useFilters, useExpanded } from "react-table";
-import MOCK_DATA from "./MOCK_DATA.json";
+// import MOCK_DATA from "./MOCK_DATA.json";
 import { PROGRAM_COLUMNS } from "./columns";
 import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
@@ -137,10 +137,6 @@ const DataTable = () => {
         canNextPage,
         setPageSize,
         setGlobalFilter,
-        withDragAndDrop,
-        updateDraggableData,
-        updateEditableData,
-        dataLength,
         state,
         preFilteredRows
     } = useTable({

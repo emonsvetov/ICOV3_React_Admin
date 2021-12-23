@@ -1538,6 +1538,21 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@lemoncode/fonk-final-form@^2.3.4":
+  version "2.3.4"
+  resolved "https://registry.yarnpkg.com/@lemoncode/fonk-final-form/-/fonk-final-form-2.3.4.tgz#f66e8506a40575165db76c2676b7c7c5d20f154f"
+  integrity sha512-oGtsTaI45NvvNZP/4XcyeFbb9U2JLuKZhIpqr0zhRf+0nsb7DjR2LYQ5L+gMHgzhjqWfPoG5TFbQ/ShgDjNnbA==
+
+"@lemoncode/fonk-is-true-validator@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@lemoncode/fonk-is-true-validator/-/fonk-is-true-validator-1.0.1.tgz#cf0fb958386b1e04ae4c4ddfea0925c8343b0713"
+  integrity sha512-G0uvnh5GbAxrZ2IRH4m5qhrWbhIl+v+293OOZ84gC3qQr6cLohpfSs6X56Q3TtBWiUMzOTavlIe40BzJ0XliCQ==
+
+"@lemoncode/fonk@^1.5.1":
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/@lemoncode/fonk/-/fonk-1.5.1.tgz#cf0ce6012cc47ab0fd6f5ba276857a3d56f313c1"
+  integrity sha512-qBSpFOt2VarJXnuxzVsQ5aheA+8zqW6P2HzTrC4GUI2HP2nfxwz3384NKf3cnDWitSn2ODCo3OmWDiuGFTd/+w==
+
 "@material-ui/core@^4.12.3":
   version "4.12.3"
   resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.12.3.tgz#80d665caf0f1f034e52355c5450c0e38b099d3ca"

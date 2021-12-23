@@ -22,5 +22,26 @@
     font-size: 22px;
 }
 .modal-program{max-width: 600px;}
+.modal-program.modal-lg{max-width: 1052px;}
+@media (min-width: 1300px){
+.modal-lg, .modal-xl {
+    max-width: 1052px;
+}}
 .modal-program .modal-content{padding: 20px 40px 40px 15px;text-align:left;}
 .arrowIcon{font-size:20px !important; color:gray;}
+.resident-gifts .card-body{border-radius: 5px;}
+.resident-gifts .card-body .col-right p{color:#999999;}
+.resident-gifts .card{height: 120px;}
+.resident-gifts .card-body .card-img-top{width: 48px;}
+.thick{font-weight: 700;}
+.size16{font-size: 16px;}
+.w100.modal-header .modal-title{width:100% !important;}
+.justify-content-right{justify-content: right !important;}
+.theme-light .react-select__control, .theme-dark .react-select__control {min-height:auto;}
+.react-select__input-container{margin-top:0px !important;}
+.css-6j8wv5-Input{margin-top: 0px !important;padding-top: 0px !important;}
+#react-select-3-listbox{top:24px;}
+.colorgrey{color: #999999 !important;}
+.react-table__column-header.sortable{display: inline-block;margin-left: 2px;}
+.merchant_icon{max-height: 40px;width: auto;}
+.modal .row{width:100%;}

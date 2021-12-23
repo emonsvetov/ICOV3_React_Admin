@@ -1,10 +1,8 @@
-import {useState, useEffect} from "react";
+import { Link } from 'react-router-dom';
 // import {format} from 'date-fns'
 
 import ChevronUpIcon from 'mdi-react/ChevronUpIcon';
 import ChevronRightIcon from 'mdi-react/ChevronRightIcon';
-import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
-import ContentCopyIcon from 'mdi-react/ContentCopyIcon';
 
 // import { ColumnFilter } from "./ColumnFilter"
 
@@ -46,7 +44,8 @@ export const PROGRAM_COLUMNS = [
     {
         Header: "Program Name",
         accessor: "name",
-        Footer:"Program Name"
+        Footer:"Program Name",
+        Cell: ({ row, value }) => { return <Link to={`/program/resident-gifts/?id=${row.original.id}`} >{value}</Link>},
     },
     {
         Header: "Corporate entity",

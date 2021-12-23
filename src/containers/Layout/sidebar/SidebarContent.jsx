@@ -18,6 +18,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
         <SidebarCategory title="Program" icon="diamond">
           <SidebarLink title="All Programs" route="/program" onClick={handleHideSidebar} />
           <SidebarLink title="Create Program" route="/program/add" onClick={handleHideSidebar} />
+          <SidebarLink title="Resident Gifts" route="/program/resident-gifts" onClick={handleHideSidebar} />
         </SidebarCategory>
         <SidebarLink title="Merchant"  icon="store" route="/merchant" />
         <SidebarLink title="Import"  icon="download" route="/import" />

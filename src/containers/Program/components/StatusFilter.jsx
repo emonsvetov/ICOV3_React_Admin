@@ -1,6 +1,6 @@
 import React from 'react'
-import { Input, CustomInput } from "reactstrap"
-import renderSelectField from '@/shared/components/form/Select';
+// import { Input, CustomInput } from "reactstrap"
+// import renderSelectField from '@/shared/components/form/Select';
 import Select from 'react-select';
 export const StatusFilter = ({
     setFilter, preFilteredRows, id }) => {

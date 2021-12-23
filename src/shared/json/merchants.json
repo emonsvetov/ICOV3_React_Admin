@@ -1,0 +1,30 @@
+[
+    {
+        "id":1,
+        "logo":"amazon.png",
+        "name": "Amazon",
+        "featured": "Off",
+        "cost_to_program": "Yes"
+    },
+    {
+        "id":2,
+        "logo":"americanairlines.png",
+        "name": "American Airlines",
+        "featured": "Off",
+        "cost_to_program": "Yes"
+    },
+    {
+        "id":3,
+        "logo":"athleta.png",
+        "name": "Athleta",
+        "featured": "Off",
+        "cost_to_program": "Yes"
+    },
+    {
+        "id":4,
+        "logo":"bestbuy.png",
+        "name": "Best Buy",
+        "featured": "Off",
+        "cost_to_program": "Yes"
+    }
+]

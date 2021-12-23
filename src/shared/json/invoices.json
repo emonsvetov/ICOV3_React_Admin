@@ -1,0 +1,30 @@
+[
+    {
+        "id":1,
+        "ref":"100199920",
+        "merchant": "Amazon",
+        "date": "12/12/2021",
+        "total": "$100"
+    },
+    {
+        "id":2,
+        "ref":"100199921",
+        "merchant": "American Airlines",
+        "date": "12/12/2021",
+        "total": "$100"
+    },
+    {
+        "id":3,
+        "ref":"100199922",
+        "merchant": "Athleta",
+        "date": "12/12/2021",
+        "total": "$100"
+    },
+    {
+        "id":4,
+        "ref":"100199925",
+        "merchant": "Best Buy",
+        "date": "12/12/2021",
+        "total": "$100"
+    }
+]
