@@ -2,13 +2,15 @@ import React, {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import { Col, Container, Row, Card, CardBody, } from 'reactstrap';
 import Alert from '@/shared/components/Alert';
-import GeneralIcon from '@/shared/img/icon/general.svg';
-import AccountingIcon from '@/shared/img/icon/accounting.svg';
-import AwardingIcon from '@/shared/img/icon/awarding.svg';
-import InvoiceIcon from '@/shared/img/icon/invoice.svg';
-import EngagementIcon from '@/shared/img/icon/engagement.svg';
-import MerchantsIcon from '@/shared/img/icon/merchants.svg';
 import MainModalWrapper from './ResidentGifts/components/MainModalWrapper';
+
+const PUBLIC_URL = `${process.env.PUBLIC_URL}`;
+const GeneralIcon = `${PUBLIC_URL}/img/icon/general.svg`;
+const AccountingIcon = `${PUBLIC_URL}/img/icon/accounting.svg`;
+const AwardingIcon = `${PUBLIC_URL}/img/icon/awarding.svg`;
+const InvoiceIcon = `${PUBLIC_URL}/img/icon/invoice.svg`;
+const EngagementIcon = `${PUBLIC_URL}/img/icon/engagement.svg`;
+const MerchantsIcon = `${PUBLIC_URL}/img/icon/merchants.svg`;
 
 const ResidentGifts = () => {
     useEffect(() => {
