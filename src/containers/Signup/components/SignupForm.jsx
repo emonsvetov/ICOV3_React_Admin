@@ -20,7 +20,7 @@ const required = value => value ? undefined : 'Required';
 // )
 
 const SignupForm = ({onSubmit, errors, loading}) => {
-  console.log(typeof errors)
+  // console.log(typeof errors)
   return (
     <Form
       onSubmit={onSubmit}

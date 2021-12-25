@@ -44,8 +44,8 @@ const Signup = () => {
       // console.log(res)
       // console.log(res.status == 200)
       if(res.status == 200)  {
-        localStorage.setItem("authToken", res.data.access_token);
-        localStorage.setItem("authUser", res.data.user);
+        // localStorage.setItem("authToken", res.data.access_token);
+        // localStorage.setItem("authUser", JSON.stringify(res.data.user));
         window.location = '/signup/success'
       }
     })

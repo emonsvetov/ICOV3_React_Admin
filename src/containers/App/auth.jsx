@@ -11,11 +11,15 @@ export const login = data => {
 export const logout = (e) => {
     // alert("Hello")
     if( window.confirm( 'Are you sure to log out?') )    {
-        localStorage.removeItem(AUTH_USER_KEY);
-        localStorage.removeItem(AUTH_TOKEN_KEY);
+        flushUserSession();
         window.location = '/';
     }
     e.preventDefault();
+}
+
+export const flushUserSession = () => {
+    localStorage.removeItem(AUTH_USER_KEY);
+    localStorage.removeItem(AUTH_TOKEN_KEY);
 }
 
 export const isAuthenticated = () => {
@@ -30,13 +34,15 @@ export const getToken = () => {
 }
 
 export const getBearer = () => {
-    console.log(getAuthUser())
+    // console.log(getAuthUser())
     const AuthToken = getToken();
     return AuthToken ? 'Bearer ' + AuthToken : null
  }
 
 export const getAuthUser = () => {
+    // flushUserSession();
     if( !isAuthenticated() ) return null;
+    // console.log(localStorage.getItem(AUTH_USER_KEY))
     return JSON.parse(localStorage.getItem(AUTH_USER_KEY));
 }
 
