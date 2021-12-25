@@ -40,7 +40,7 @@ export const getBearer = () => {
  }
 
 export const getAuthUser = () => {
-    // flushUserSession();
+    flushUserSession();
     if( !isAuthenticated() ) return null;
     // console.log(localStorage.getItem(AUTH_USER_KEY))
     return JSON.parse(localStorage.getItem(AUTH_USER_KEY));
