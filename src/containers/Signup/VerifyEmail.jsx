@@ -9,7 +9,7 @@ import {
 import axios from 'axios';
 import { Col, Container, Row, Spinner} from 'reactstrap';
 import Alert from '@/shared/components/Alert';
-import {getAuthUser, AUTH_USER_KEY} from '../App/auth';
+import {getAuthUser, AUTH_USER_KEY, getToken} from '../App/auth';
 const TEXT_ALREADY_VERIFIED = 'You have verified your email already';
 const VerifyEmail = () => {
     const [id, setId] = useState(null);
@@ -77,6 +77,8 @@ const VerifyEmail = () => {
     }
     const init = () => {
         const user = getAuthUser();
+        // const token = getToken();
+        // console.log(token)
         if( !user.email_verified_at )   {
             processRequest();
             return;
@@ -101,9 +103,11 @@ const VerifyEmail = () => {
                 }
             }
             setLoading(false)
+            setInitialized(false)
         })
         .catch( error => {
             console.log(error)
+            setInitialized(false)
         })
         e.preventDefault();
     }
