@@ -25,7 +25,7 @@ const AddProgram = () => {
       // console.log(res.status == 200)
       if(res.status == 200)  {
         // var t = setTimeout(window.location = '/', 500)
-        // window.location = '/program?message=New program added successfully!'
+        window.location = '/program?message=New program added successfully!'
       }
     })
     .catch( error => {
