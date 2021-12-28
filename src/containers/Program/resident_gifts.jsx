@@ -115,7 +115,7 @@ const ResidentGifts = () => {
         <Col md="6" lg="4" xl="4">
             <Card>
                 <CardBody>
-                    <Row>
+                    <Row onClick={()=>{toggle('awarding')}}>
                         <Col md={3} className='col-left'>
                             <img src={AwardingIcon} class="card-img-top" alt="Awarding and Points" />
                         </Col>
@@ -130,7 +130,7 @@ const ResidentGifts = () => {
         <Col md="6" lg="4" xl="4">
             <Card>
                 <CardBody>
-                    <Row>
+                    <Row onClick={()=>{toggle('engagement')}}>
                         <Col md={3} className='col-left'>
                             <img src={EngagementIcon} class="card-img-top" alt="Engagement" />
                         </Col>

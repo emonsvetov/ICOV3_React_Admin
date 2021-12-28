@@ -1,0 +1,98 @@
+[
+    {
+        "name": "January",
+        "short": "Jan",
+        "number": 1,
+        "days": 31,
+        "label": "January",
+        "value": "January"
+    },
+    {
+        "name": "February",
+        "short": "Feb",
+        "number": 2,
+        "days": 28,
+        "label": "February",
+        "value": "February"
+    },
+    {
+        "name": "March",
+        "short": "Mar",
+        "number": 3,
+        "days": 31,
+        "label": "March",
+        "value": "March"
+    },
+    {
+        "name": "April",
+        "short": "Apr",
+        "number": 4,
+        "days": 30,
+        "label": "April",
+        "value": "April"
+    },
+    {
+        "name": "May",
+        "short": "May",
+        "number": 5,
+        "days": 31,
+        "label": "May",
+        "value": "May"
+    },
+    {
+        "name": "June",
+        "short": "Jun",
+        "number": 6,
+        "days": 30,
+        "label": "June",
+        "value": "June"
+    },
+    {
+        "name": "July",
+        "short": "Jul",
+        "number": 7,
+        "days": 31,
+        "label": "July",
+        "value": "July"
+    },
+    {
+        "name": "August",
+        "short": "Aug",
+        "number": 8,
+        "days": 31,
+        "label": "August",
+        "value": "August"
+    },
+    {
+        "name": "September",
+        "short": "Sep",
+        "number": 9,
+        "days": 30,
+        "label": "September",
+        "value": "September"
+    },
+    {
+        "name": "October",
+        "short": "Oct",
+        "number": 10,
+        "days": 31,
+        "label": "October",
+        "value": "October"
+    },
+    {
+        "name": "November",
+        "short": "Nov",
+        "number": 11,
+        "days": 30,
+        "label": "November",
+        "value": "November"
+    },
+    {
+        "name": "December",
+        "short": "Dec",
+        "number": 12,
+        "days": 31,
+        "label": "December",
+        "value": "December"
+    }
+]
