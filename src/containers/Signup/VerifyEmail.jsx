@@ -126,7 +126,7 @@ const VerifyEmail = () => {
                             <ProcessingBlock />
                         }
                         {
-                            errors && <RenderErrorBlock status403={status403} errors={errors} />
+                            errors && (!completed && !success) &&  <RenderErrorBlock status403={status403} errors={errors} />
                         }
                         {
                             completed && success && <RenderCompleted success={success}/>
