@@ -1,7 +1,7 @@
-import { isExpired, decodeToken } from "react-jwt";
+// import { isExpired, decodeToken } from "react-jwt";
 
-const AUTH_TOKEN_KEY = 'authToken';
-const AUTH_USER_KEY = 'authUser';
+export const AUTH_TOKEN_KEY = 'authToken';
+export const AUTH_USER_KEY = 'authUser';
 
 export const login = data => {
     localStorage.setItem(AUTH_TOKEN_KEY, data.access_token);
@@ -24,7 +24,16 @@ export const flushUserSession = () => {
 
 export const isAuthenticated = () => {
     if (localStorage.getItem(AUTH_TOKEN_KEY)) {
+        // console.log(getAuthUser())
         return true;
+    }
+    return false;
+}
+
+export const isVerified = () => {
+    var authUser = getAuthUser();
+    if ( authUser ) {
+        return authUser.email_verified_at !== null;
     }
     return false;
 }
@@ -40,14 +49,17 @@ export const getBearer = () => {
  }
 
 export const getAuthUser = () => {
-    // flushUserSession();
-    if( !isAuthenticated() ) return null;
-    // console.log(localStorage.getItem(AUTH_USER_KEY))
-    return JSON.parse(localStorage.getItem(AUTH_USER_KEY));
+    try {
+        const authUser = JSON.parse(localStorage.getItem(AUTH_USER_KEY))
+        return authUser
+    } catch (e) {
+        return null;
+    }
 }
 
 export const getAuthUserFullname = () => {
     const user = getAuthUser();
+    // console.log(isVerified())
     if( user ) return `${user.first_name} ${user.last_name}`
 }
 

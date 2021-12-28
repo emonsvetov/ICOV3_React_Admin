@@ -7,6 +7,7 @@ import MainWrapper from './MainWrapper';
 import LogIn from '../LogIn/index';
 import Signup from '../Signup/index';
 import SignupSuccess from '../Signup/SignupSuccess';
+import VerifyEmail from '../Signup/VerifyEmail';
 
 import Forgot from '../Forgot/index';
 import CheckYourEmail from '../Forgot/CheckYourEmail';
@@ -35,6 +36,17 @@ const Programs = () => (
     {/* <Route path="/program/dashboard" component={ProgramDashboard} /> */}
   </Switch>
 );
+
+const CustomPrivateRoute = (props) => {
+  return (
+    <div>
+      <Layout />
+      <div className="container__wrap">
+        <PrivateRoute to="/" {...props} />
+      </div>
+    </div>
+  )
+}
 
 const privateRoutes = () => {
   return (
@@ -79,6 +91,7 @@ const Routes = () => (
         <PublicRoute exact path="/forgot/checkemail" component={CheckYourEmail} restricted={true} />
         <PublicRoute exact path="/reset-password" component={Forgot} restricted={true} />
         <PublicRoute exact path="/forgot/success" component={ForgotSuccess} restricted={true} />
+        <CustomPrivateRoute path="/email/verify/:userid?/:vcode?" component={VerifyEmail} />
         <PrivateRoute path="/" component={privateRoutes} />
       </Switch>
     </main>
