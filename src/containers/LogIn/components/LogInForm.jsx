@@ -9,7 +9,8 @@ import EmailOutlineIcon from 'mdi-react/EmailOutlineIcon';
 import renderCheckBoxField from '../../../shared/components/form/CheckBox';
 import {login} from '../../App/auth';
 
-const axios = require('axios');
+// const axios = require('axios');
+import axios from '../../App/client'
 
 const LogInForm = () => {
 
@@ -18,7 +19,7 @@ const LogInForm = () => {
 
   const onSubmit = async values => {
 
-    console.log(values);
+    // console.log(values);
 
     axios.post('/login', values)
     .then( (res) => {
