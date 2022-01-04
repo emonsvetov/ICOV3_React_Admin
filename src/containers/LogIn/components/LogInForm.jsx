@@ -20,7 +20,7 @@ const LogInForm = () => {
 
     console.log(values);
 
-    axios.post('login', values)
+    axios.post('/login', values)
     .then( (res) => {
       // console.log(res)
       // console.log(res.status == 200)
