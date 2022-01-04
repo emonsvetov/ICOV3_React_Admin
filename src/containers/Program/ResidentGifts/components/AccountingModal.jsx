@@ -8,10 +8,6 @@ const AccountingModal = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
     const [loading, setLoading] = useState(false)
     const [usState, setUsState] = useState(null)
 
-    const handleStateChange = (selectedState) => {
-        // alert(JSON.stringify(selectedOption))
-        setUsState(selectedState)
-    }
     const onSubmitForm = values => {
         alert(JSON.stringify(values))
         setLoading(true)

@@ -17,6 +17,11 @@ import ExamplePageTwo from '../ExampleTwo/index';
 import ProgramIndex from '../Program/index';
 import AddProgram from '../Program/add_program';
 import ResidentGifts from '../Program/resident_gifts';
+import Pokemon from '../Program/components/pokemon';
+
+import UsersIndex from '../Users/index';
+import AddUser from '../Users/add_user';
+import ViewUser from '../Users/view_user';
 
 import TreeView from '../TreeViewBasic';
 
@@ -34,6 +39,14 @@ const Programs = () => (
     <Route exact path="/program/add" component={AddProgram} />
     <Route exact path="/program/resident-gifts" component={ResidentGifts} />
     {/* <Route path="/program/dashboard" component={ProgramDashboard} /> */}
+  </Switch>
+);
+
+const Users = () => (
+  <Switch>
+    <Route exact path="/users" component={UsersIndex} />
+    <Route exact path="/users/add" component={AddUser} />
+    <Route exact path="/users/view/:id" component={ViewUser} />
   </Switch>
 );
 
@@ -56,7 +69,9 @@ const privateRoutes = () => {
         <PrivateRoute exact path="/" component={Dashboard} />
         <PrivateRoute path="/pages" component={Pages} />
         <PrivateRoute path="/program" component={Programs} />
+        <PrivateRoute path="/users" component={Users} />
         <PrivateRoute path="/treeview" component={TreeView} />
+        <PrivateRoute path="/pokemon" component={Pokemon} />
       </div>
     </div>
   )

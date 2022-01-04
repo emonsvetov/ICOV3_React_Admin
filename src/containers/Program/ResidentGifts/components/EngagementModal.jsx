@@ -4,7 +4,7 @@ import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col } from '
 import { Form } from 'react-final-form';
 import formValidation from "@/shared/validation/program-engagement";
 
-const AwardingPointsModal = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
+const EngagementModal = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
     const [loading, setLoading] = useState(false)
     const onSubmitForm = values => {
         alert(JSON.stringify(values))
@@ -197,7 +197,7 @@ const AwardingPointsModal = ({isOpen, setOpen, toggle, programId, theme, rtl}) =
     </Modal>
     )
 }
-export default AwardingPointsModal;
+export default EngagementModal;
 // ProgramInfo.propTypes = {
 //     theme: ThemeProps.isRequired,
 //     rtl: RTLProps.isRequired

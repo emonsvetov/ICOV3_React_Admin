@@ -39,7 +39,7 @@ export const PROGRAM_COLUMNS = [
         Footer:"#",
         disableFilters:true,
         disableGlobalFilters:true,
-        sticky:'left'
+        // sticky:'left'
     },
     {
         Header: "Program Name",
@@ -49,7 +49,7 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "Corporate entity",
-        accessor: "corp_entity",
+        accessor: "corporate_entity",
         Footer:"Corporate entity"
     },
     // { 

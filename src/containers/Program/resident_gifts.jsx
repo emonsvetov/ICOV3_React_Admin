@@ -11,6 +11,7 @@ const AwardingIcon = `${PUBLIC_URL}/img/icon/awarding.svg`;
 const InvoiceIcon = `${PUBLIC_URL}/img/icon/invoice.svg`;
 const EngagementIcon = `${PUBLIC_URL}/img/icon/engagement.svg`;
 const MerchantsIcon = `${PUBLIC_URL}/img/icon/merchants.svg`;
+const EventsIcon = `${PUBLIC_URL}/img/icon/events.svg`;
 
 const ResidentGifts = () => {
     useEffect(() => {
@@ -136,6 +137,23 @@ const ResidentGifts = () => {
                         </Col>
                         <Col md={9} className='col-right pl-0'>
                             <h5>Engagement</h5>
+                            <p>Description</p>
+                        </Col>
+                    </Row>
+                </CardBody>
+            </Card>
+        </Col>
+      </Row>
+      <Row>
+        <Col md="6" lg="4" xl="4">
+            <Card>
+                <CardBody>
+                    <Row onClick={()=>{toggle('events')}}>
+                        <Col md={3} className='col-left'>
+                            <img src={EventsIcon} class="card-img-top" alt="Events" />
+                        </Col>
+                        <Col md={9} className='col-right pl-0'>
+                            <h5>Events</h5>
                             <p>Description</p>
                         </Col>
                     </Row>
