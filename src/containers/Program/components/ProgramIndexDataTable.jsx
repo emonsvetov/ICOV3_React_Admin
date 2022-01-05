@@ -24,11 +24,13 @@ const initialState = {
     queryPageIndex: 0,
     queryPageSize: 10,
     totalCount: null,
-    queryPageFilter:{}
+    queryPageFilter:{},
+    queryPageSortBy: [],
 };
 
 const PAGE_CHANGED = 'PAGE_CHANGED';
 const PAGE_SIZE_CHANGED = 'PAGE_SIZE_CHANGED';
+const PAGE_SORT_CHANGED = 'PAGE_SORT_CHANGED'
 const PAGE_FILTER_CHANGED = 'PAGE_FILTER_CHANGED';
 const TOTAL_COUNT_CHANGED = 'TOTAL_COUNT_CHANGED';
 
@@ -43,6 +45,11 @@ const reducer = (state, { type, payload }) => {
         return {
             ...state,
             queryPageSize: payload,
+        };
+    case PAGE_SORT_CHANGED:
+        return {
+            ...state,
+            queryPageSortBy: payload,
         };
     case PAGE_FILTER_CHANGED:
         return {
@@ -59,15 +66,20 @@ const reducer = (state, { type, payload }) => {
   }
 };
 
-const fetchProgramData = async (page, pageSize, pageFilterO = null) => {
+const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
     // const offset = page * pageSize;
     const params = []
     let paramStr = ''
     if( pageFilterO ) {
         if(pageFilterO.status !== 'undefined' && pageFilterO.status) params.push(`status=${pageFilterO.status}`)
-        if(pageFilterO.programPhase !== 'undefined' && pageFilterO.programPhase) params.push(`programPhase=${pageFilterO.programPhase}`)
+        if(pageFilterO.keyword !== 'undefined' && pageFilterO.keyword) params.push(`keyword=${pageFilterO.keyword}`)
         // console.log(params)
         paramStr = params.join('&')
+    }
+    if( pageSortBy.length > 0 ) {
+        const sortParams = pageSortBy[0];
+        const sortyByDir = sortParams.desc ? 'desc' : 'asc'
+        paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
     }
     try {
         const response = await axios.get(
@@ -91,7 +103,7 @@ const DataTable = () => {
 
     const [isMoveOpen, setMoveOpen] = useState(false)
     const [isCopyOpen, setCopyOpen] = useState(false)
-    const [filter, setFilter] = useState({status:'', programPhase:''});
+    const [filter, setFilter] = useState({status:'', keyword:''});
     // var [data, setData] = useState([]);
     const [selected, setSelected] = React.useState([]);
     const [originalSelected, setOriginalSelected] = React.useState([]);
@@ -99,15 +111,15 @@ const DataTable = () => {
     const [formError, setFormError] = React.useState('');
     const [loading, setLoading] = React.useState(false);
 
-    const onClickFilterCallback = (status, programPhase) => {
-        // alert(JSON.stringify({status, programPhase}))
+    const onClickFilterCallback = (status, keyword) => {
+        // alert(JSON.stringify({status, keyword}))
         // alert(JSON.stringify(filter))
-        if(filter.status === status && filter.programPhase === programPhase)    {
+        if(filter.status === status && filter.keyword === keyword)    {
             alert('No change in filters')
             return
         }
-        setFilter({status, programPhase})
-        // alert(status, programPhase)
+        setFilter({status, keyword})
+        // alert(status, keyword)
     }
 
     const onClickStartMoveProgram = ( programId ) => {
@@ -167,12 +179,12 @@ const DataTable = () => {
     ]
     let columns = useMemo( () => program_columns, [])
 
-    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter }, dispatch] =
+    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
     React.useReducer(reducer, initialState);
 
     const { isLoading, error, data, isSuccess } = useQuery(
-        ['programs', queryPageIndex, queryPageSize, queryPageFilter],
-        () => fetchProgramData(queryPageIndex, queryPageSize, queryPageFilter),
+        ['programs', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
+        () => fetchProgramData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
         {
             keepPreviousData: true,
             staleTime: Infinity,
@@ -198,13 +210,14 @@ const DataTable = () => {
         nextPage,
         canNextPage,
         setPageSize,
-        state: { pageIndex, pageSize }
+        state: { pageIndex, pageSize, sortBy }
     } = useTable({
         columns,
         data: data ? data.results : [],
         initialState: {
             pageIndex: queryPageIndex,
             pageSize: queryPageSize,
+            sortBy: queryPageSortBy,
         },
         manualPagination: true, // Tell the usePagination
         pageCount: data ? totalPageCount : null,
@@ -228,6 +241,11 @@ const DataTable = () => {
         dispatch({ type: PAGE_SIZE_CHANGED, payload: pageSize });
         gotoPage(0);
     }, [pageSize, gotoPage]);
+
+    useEffect(() => {
+        dispatch({ type: PAGE_SORT_CHANGED, payload: sortBy });
+        gotoPage(0);
+    }, [sortBy, gotoPage]);
 
     React.useEffect(() => {
         // alert(PAGE_FILTER_CHANGED)
@@ -382,8 +400,8 @@ const Sorting = ({ column }) => (
       ) : (
         <span>
           {column.isSortedDesc
-            ? <SortDescendingIcon />
-            : <SortAscendingIcon />}
+            ? <SortAscendingIcon />
+            : <SortDescendingIcon />}
         </span>
       )}
     </span>

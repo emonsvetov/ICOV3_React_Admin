@@ -45,7 +45,7 @@ export const PROGRAM_COLUMNS = [
         Header: "Program Name",
         accessor: "name",
         Footer:"Program Name",
-        Cell: ({ row, value }) => { return <Link to={`/program/resident-gifts/?id=${row.original.id}`} >{value}</Link>},
+        Cell: ({ row, value }) => { return <Link to={`/program/view/${row.original.id}`}>{value}</Link>},
     },
     {
         Header: "Corporate entity",

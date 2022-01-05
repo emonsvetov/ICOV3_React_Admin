@@ -10,15 +10,15 @@ const statusOptions = [
 
 const ProgramFilter = ({onClickFilterCallback}) => {
     const [status, setStatus] = React.useState('')
-    const [programPhase, setProgramPhase] = React.useState('')
+    const [keyword, setKeyword] = React.useState('')
     const onStatusChange = (selectedOption) => {
         setStatus(selectedOption.value)
     };
     const onProgramPhaseChange = (e) => {
-        setProgramPhase( e.target.value)
+        setKeyword( e.target.value)
     }
     const onClickFilter = () => {
-        onClickFilterCallback(status, programPhase)
+        onClickFilterCallback(status, keyword)
     }
     const statusPlaceholder = status ? status : 'All'
     return (
@@ -37,10 +37,10 @@ const ProgramFilter = ({onClickFilterCallback}) => {
             <div className="col-md-4">
                 <div className="">
                     <input 
-                        value={programPhase}
+                        value={keyword}
                         onChange={onProgramPhaseChange}
                         type="text"
-                        placeholder="Program phase"
+                        placeholder="Program phrase"
                     />
                 </div>
             </div>

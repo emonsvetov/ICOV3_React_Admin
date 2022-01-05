@@ -16,7 +16,7 @@ import ExamplePageOne from '../Example/index';
 import ExamplePageTwo from '../ExampleTwo/index';
 import ProgramIndex from '../Program/index';
 import AddProgram from '../Program/add_program';
-import ResidentGifts from '../Program/resident_gifts';
+import ProgramView from '../Program/view';
 import Pokemon from '../Program/components/pokemon';
 
 import UsersIndex from '../Users/index';
@@ -37,7 +37,7 @@ const Programs = () => (
   <Switch>
     <Route exact path="/program" component={ProgramIndex} />
     <Route exact path="/program/add" component={AddProgram} />
-    <Route exact path="/program/resident-gifts" component={ResidentGifts} />
+    <Route exact path="/program/view/:id" component={ProgramView} />
     {/* <Route path="/program/dashboard" component={ProgramDashboard} /> */}
   </Switch>
 );

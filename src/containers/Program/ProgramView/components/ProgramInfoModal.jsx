@@ -5,10 +5,10 @@ import { Form, Field } from 'react-final-form';
 import Select from 'react-select';
 import US_STATES from "@/shared/json/usstates.json";
 
-const ProgramInfo = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
+const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
     const [loading, setLoading] = useState(false)
     const [usState, setUsState] = useState(null)
-
+    var [data, setData] = useState(data)
     const handleStateChange = (selectedState) => {
         // alert(JSON.stringify(selectedOption))
         setUsState(selectedState)
@@ -33,7 +33,29 @@ const ProgramInfo = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
                 onSubmit={onSubmitForm}
                 validate={validate}
                 initialValues={{
-                    // program_type: "Employee"
+                    name: data.name,
+                    external_id: data.external_id,
+                    corporate_entity: data.corporate_entity,
+                    address: data.address,
+                    address_ext: data.address_ext,
+                    city: data.city,
+                    state: data.state,
+                    cc_email_list: data.cc_email_list,
+                    bcc_email_list: data.bcc_email_list,
+                    sub_program_groups: data.sub_program_groups,
+                    archive_program: data.archive_program,
+                    deactivate_account: data.deactivate_account,
+                    enable_global_search: data.enable_global_search,
+                    factor_valuation: data.factor_valuation,
+                    prefix: data.prefix,
+                    public_contact_email: data.public_contact_email,
+                    external_id: data.external_id,
+                    external_id: data.external_id,
+                    external_id: data.external_id,
+                    external_id: data.external_id,
+                    external_id: data.external_id,
+                    external_id: data.external_id,
+                    external_id: data.external_id,
                 }}
             >
             {({ handleSubmit, form, submitting, pristine, values }) => (
@@ -42,7 +64,7 @@ const ProgramInfo = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
             <Row className='w100'>
                 <Col md="6" lg="6" xl="6">
                     <h3 style={{"font-weight": 500}}>General</h3>
-                    <h5 style={{"font-weight": 500, color:'#999'}}>Resident Gifts</h5>
+                    <h5 style={{"font-weight": 500, color:'#999'}}>{data.name}</h5>
                 </Col>
                 <Col md="6" lg="6" xl="6" className='text-right'>
                     <ButtonToolbar className="modal__footer flex justify-content-right w100">
@@ -99,7 +121,7 @@ const ProgramInfo = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
                             </Field>
                             <div className="form__form-group">
                                 <Field
-                                    name="create_sub_program_groups"
+                                    name="sub_program_groups"
                                     type="checkbox"
                                     component={renderCheckBoxField}
                                     label="Create sub program groups"
@@ -120,10 +142,10 @@ const ProgramInfo = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
                                 />
                             </div>
 
-                            <Field name="factor_for_points_validation">
+                            <Field name="factor_valuation">
                             {({ input, meta }) => (
                                 <div className="form__form-group">
-                                    <span className="form__form-group-label">Factor for points validation</span>
+                                    <span className="form__form-group-label">Factor for points valuation</span>
                                     <div className="form__form-group-field">
                                         <div className="form__form-group-row">
                                             <input type="text" {...input} placeholder="Factor for points validation" />
@@ -282,7 +304,7 @@ const ProgramInfo = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
                             </Field>  
                         </Col>
                         <Col md="6" lg="4" xl="4">
-                            <Field name="address_line_2">
+                            <Field name="address_ext">
                             {({ input, meta }) => (
                                 <div className="form__form-group">
                                     <span className="form__form-group-label">Address line 2</span>

@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Col, Container, Row, Card, CardBody, } from 'reactstrap';
 import Alert from '@/shared/components/Alert';
-import MainModalWrapper from './ResidentGifts/components/MainModalWrapper';
+import MainModalWrapper from './ProgramView/components/MainModalWrapper';
+import axios from 'axios'
 
 const PUBLIC_URL = `${process.env.PUBLIC_URL}`;
 const GeneralIcon = `${PUBLIC_URL}/img/icon/general.svg`;
@@ -13,22 +14,26 @@ const EngagementIcon = `${PUBLIC_URL}/img/icon/engagement.svg`;
 const MerchantsIcon = `${PUBLIC_URL}/img/icon/merchants.svg`;
 const EventsIcon = `${PUBLIC_URL}/img/icon/events.svg`;
 
-const ResidentGifts = () => {
-    useEffect(() => {
-        checkFlashMessage()
-        getProgramId()
-    })
+const ProgramView = () => {
+    const { id } = useParams()
     const [message, setMessage] = useState('')
-    const [id, setId] = useState(null)
+    const [data, setData] = useState(null)
     const [modalName, setModalName] = useState(null)
     const [isOpen, setOpen] = useState(false)
-    const getProgramId = () => {
-        const params = new URLSearchParams(window.location.search)
-        let id = params.get('id')
-        if( id ) {
-            setId(id)
+    useEffect(() => {
+        checkFlashMessage()
+        fetchProgramData()
+    },[])
+
+    const fetchProgramData = async() => {
+        try {
+            const response = await axios.get(`/organization/1/program/${id}`);
+            // console.log(response)
+            setData(response.data)
+        } catch (e) {
+            throw new Error(`API error:${e?.message}`);
         }
-    }
+    };
     const checkFlashMessage = () => {
         const params = new URLSearchParams(window.location.search)
         let message = params.get('message')
@@ -40,12 +45,14 @@ const ResidentGifts = () => {
         if( name ) setModalName(name)
         setOpen(prevState => !prevState)
     }
+
+  if( !data ) return 'Loading...'
   return (
-    <Container className="resident-gifts">
+    <Container className="program-view">
       <Row>
         <Col md={12}>
           <h3 className="page-title">All Programs</h3>
-          <h3 class="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/program">Programs</Link> / Resident Gifts</h3>
+          <h3 class="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/program">Programs</Link> / {data.name}</h3>
           {message !== "" && <Alert color="success">{message}</Alert>}
         </Col>
       </Row>
@@ -64,7 +71,7 @@ const ResidentGifts = () => {
                     </Row>
                 </CardBody>
             </Card>
-            <MainModalWrapper name={modalName} isOpen={isOpen} setOpen={setOpen} toggle={toggle} programId={id} />
+            <MainModalWrapper data={data} name={modalName} isOpen={isOpen} setOpen={setOpen} toggle={toggle} programId={id} />
         </Col>
         <Col md="6" lg="4" xl="4">
             <Card>
@@ -164,4 +171,4 @@ const ResidentGifts = () => {
     </Container>
 )}
 
-export default ResidentGifts;
+export default ProgramView;

@@ -9,8 +9,7 @@ import EmailOutlineIcon from 'mdi-react/EmailOutlineIcon';
 import renderCheckBoxField from '../../../shared/components/form/CheckBox';
 import {login} from '../../App/auth';
 
-// const axios = require('axios');
-import axios from '../../App/client'
+const axios = require('axios');
 
 const LogInForm = () => {
 
