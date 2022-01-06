@@ -23,7 +23,6 @@ const AddEventForm = () => {
     
 
     const handleTemplateChange = (selectedTemplate) => {
-        console.log(selectedTemplate);
         setTemplate('selectedTemplate')
     }
     
