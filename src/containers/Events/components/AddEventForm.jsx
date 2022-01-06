@@ -1,7 +1,11 @@
 import React, {useState} from 'react';
 import { Form, Field } from 'react-final-form';
 import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
-import { Link } from 'react-router-dom'
+import {
+    useHistory,
+    useLocation
+  } from "react-router-dom";
+
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from '@/shared/components/form/ToggleButton';
@@ -20,21 +24,39 @@ const AddEventForm = () => {
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
     const [template, setTemplate] = useState(null)
-    
+    const history = useHistory();
 
     const handleTemplateChange = (selectedTemplate) => {
         setTemplate('selectedTemplate')
     }
-    
+    const location = useLocation();
+    const programId = location.pathname.split('/')[3];
+  
     
     const onSubmit = values => {
-        values["organization_id"] = 1
+        
+        let eventData = {};
+
+        eventData["organization_id"] = 1
+        eventData["program_id"] = programId;
+        let {name, amount, allow_amount_overriding, post_to_social_wall, message} = values;
+        eventData.name = name;
+        eventData.amount = amount;
+        eventData.allow_amount_overriding = allow_amount_overriding;
+        eventData.post_to_social_wall = post_to_social_wall;
+        eventData.message = message;
+        //static
+        eventData.type_id = 1;
+        eventData.icon = "icon";
+        eventData.email_template_id = 1;
+
         // setLoading(true)
-        axios.put('/organization/1/users/create', values)
+        
+        axios.post(`/organization/1/program/${programId}/event`, eventData)
         .then( (res) => {
         //   console.log(res)
           if(res.status == 200)  {
-            window.location = `/users/view/${res.data.id}`
+            window.location = `/program/view/${programId}`
           }
         })
         .catch( error => {
@@ -70,19 +92,16 @@ const AddEventForm = () => {
             </Col>
             <Col md="6" lg="6" xl="6" className='text-right'>
                 <ButtonToolbar className="modal__footer flex justify-content-right w100">
-                <Link style={{paddingRight:'18px', paddingTop:'6px'}}
-                                className=""
-                                to="/events"
-                                >Cancel
-                                </Link>
-                    
+                
+                    <Button outline color="primary" className="mr-3" onClick={history.goBack}>Cancel</Button>{' '}
+
                     <Button type="submit" disabled={loading} className="btn btn-primary" color="#ffffff">Save</Button>
                 </ButtonToolbar>
             </Col>
         </Row>
         <Row>
             <Col md="6" lg="4" xl="4">
-                <Field name="event_name">
+                <Field name="name">
                 {({ input, meta }) => (
                     <div className="form__form-group">
                         <span className="form__form-group-label">Event Name</span>
@@ -112,7 +131,7 @@ const AddEventForm = () => {
         </Row>
         <Row>
             <Col md="6" lg="4" xl="4">
-                <Field name="template" component="select">
+                <Field name="email_template_id" component="select">
                 {({ input, meta }) => (
                     <div className="form__form-group">
                         <span className="form__form-group-label">Select a Template</span>
@@ -207,7 +226,7 @@ const AddEventForm = () => {
                     <div className="form__form-group-field">
                        <span className="form__form-group-label" style={{width:'200%'}}>Post to Social Wall</span>
                         <Field
-                        name="social_wall"
+                        name="post_to_social_wall"
                         component={renderToggleButtonField}
                         />
                     </div>
@@ -233,7 +252,7 @@ const AddEventForm = () => {
                     <div className="form__form-group-field">
                        <span className="form__form-group-label" style={{width:'200%'}}>Allow amount to be overridden</span>
                         <Field
-                        name="allow_overridden"
+                        name="allow_amount_overriding"
                         component={renderToggleButtonField}
                         />
                     </div>
@@ -287,7 +306,7 @@ const AddEventForm = () => {
         </Row>
         <Row>
             <Col md="12" lg="12" xl="12">
-                <Field name="event_message">
+                <Field name="message">
                 {({ input, meta }) => (
                     <div className="form__form-group">
                         <span className="form__form-group-label">Event Message</span>
