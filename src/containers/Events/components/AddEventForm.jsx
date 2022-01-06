@@ -1,9 +1,9 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState} from 'react';
 import { Form, Field } from 'react-final-form';
 import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
 import { Link } from 'react-router-dom'
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
-import formValidation from "@/shared/validation/adduser";
+import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from '@/shared/components/form/ToggleButton';
 import Select from 'react-select';
 import axios from 'axios';
@@ -20,7 +20,6 @@ const AddEventForm = () => {
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
     const [template, setTemplate] = useState(null)
-    
     
 
     const handleTemplateChange = (selectedTemplate) => {
@@ -84,7 +83,7 @@ const AddEventForm = () => {
         </Row>
         <Row>
             <Col md="6" lg="4" xl="4">
-                <Field name="first_name">
+                <Field name="event_name">
                 {({ input, meta }) => (
                     <div className="form__form-group">
                         <span className="form__form-group-label">Event Name</span>
@@ -105,7 +104,7 @@ const AddEventForm = () => {
                     <div className="form__form-group-field">
                        <span className="form__form-group-label" style={{width:'200%'}}>Enable This Event</span>
                         <Field
-                        name="phone_notifications"
+                        name="enable_event"
                         component={renderToggleButtonField}
                         />
                     </div>
@@ -114,7 +113,7 @@ const AddEventForm = () => {
         </Row>
         <Row>
             <Col md="6" lg="4" xl="4">
-                <Field name="role" component="select">
+                <Field name="template" component="select">
                 {({ input, meta }) => (
                     <div className="form__form-group">
                         <span className="form__form-group-label">Select a Template</span>
@@ -140,7 +139,7 @@ const AddEventForm = () => {
         </Row>
         <Row>
             <Col md="6" lg="4" xl="4">
-                <Field name="email">
+                <Field name="amount">
                 {({ input, meta }) => (
                     <div className="form__form-group">
                         <span className="form__form-group-label">Amount</span>
@@ -155,7 +154,7 @@ const AddEventForm = () => {
                 </Field>
             </Col>
             <Col md="6" lg="4" xl="4">
-                <Field name="phone">
+                <Field name="ledger_code">
                 {({ input, meta }) => (
                     <div className="form__form-group">
                         <span className="form__form-group-label">Ledger Code</span>
@@ -178,7 +177,7 @@ const AddEventForm = () => {
                 <span className="form__form-group-label">Icon</span>
                 <div className="form__form-group-field">
                     <Field
-                    name="files"
+                    name="icon"
                     component={renderDropZoneField}
                     customHeight
                     />
@@ -192,7 +191,7 @@ const AddEventForm = () => {
                         <span className="form__form-group-label">Email Template</span>
                         <div className="form__form-group-field">
                             <Field
-                                name="textarea"
+                                name="email_template"
                                 component="textarea"
                                 type="text"
                             />
@@ -244,7 +243,7 @@ const AddEventForm = () => {
         </Row>
         <Row>
             <Col md="6" lg="4" xl="4">
-                <Field name="email">
+                <Field name="min_amount">
                 {({ input, meta }) => (
                     <div className="form__form-group">
                         <span className="form__form-group-label">Min amount award override</span>
@@ -259,7 +258,7 @@ const AddEventForm = () => {
                 </Field>
             </Col>
             <Col md="6" lg="4" xl="4">
-                <Field name="phone">
+                <Field name="max_amount">
                 {({ input, meta }) => (
                     <div className="form__form-group">
                         <span className="form__form-group-label">Max amount award override</span>
@@ -289,7 +288,7 @@ const AddEventForm = () => {
         </Row>
         <Row>
             <Col md="12" lg="12" xl="12">
-                <Field name="award_level">
+                <Field name="event_message">
                 {({ input, meta }) => (
                     <div className="form__form-group">
                         <span className="form__form-group-label">Event Message</span>
