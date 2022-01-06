@@ -23,10 +23,11 @@ const AddEventForm = () => {
     
     
 
-    const handleTemplateChange = useCallback((selectedTemplate) => {
-        setTemplate(selectedTemplate)
+    const handleTemplateChange = (selectedTemplate) => {
+        console.log(selectedTemplate);
+        setTemplate('selectedTemplate')
     }
-    );
+    
     
     const onSubmit = values => {
         values["organization_id"] = 1
@@ -121,7 +122,7 @@ const AddEventForm = () => {
                             <div className="form__form-group-row">
                                 <Select
                                     value={template}
-                                    onChange={handleTemplateChange}
+                                    onInputChange={(e)=> handleTemplateChange(e) }
                                     options={TEMPLATES}
                                     clearable={false}
                                     className="react-select"
