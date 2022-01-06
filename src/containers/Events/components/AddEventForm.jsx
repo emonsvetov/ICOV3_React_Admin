@@ -41,10 +41,10 @@ const AddEventForm = () => {
     }
     
     const onClickCancel = () => {
-        window.location = '/users'
+        window.location = '/events'
     }
 
-    const rolePlaceholder = role ? role : 'Select Role'
+    const rolePlaceholder = role ? role : 'Select a Template'
 
     return (
     <Form
@@ -92,7 +92,7 @@ const AddEventForm = () => {
             <Col md="6" lg="4" xl="4">
                 <div className="form__form-group">
                     <div className="form__form-group-field">
-                       <span className="form__form-group-label">Enable This Event</span>
+                       <span className="form__form-group-label" style={{width:'200%'}}>Enable This Event</span>
                         <Field
                         name="phone_notifications"
                         component={renderToggleButtonField}
@@ -163,7 +163,7 @@ const AddEventForm = () => {
             <Col md="6" lg="4" xl="4">
                 <div className="form__form-group">
                     <div className="form__form-group-field">
-                       <span className="form__form-group-label">Post to Social Wall</span>
+                       <span className="form__form-group-label" style={{width:'200%'}}>Post to Social Wall</span>
                         <Field
                         name="social_wall"
                         component={renderToggleButtonField}
@@ -176,7 +176,7 @@ const AddEventForm = () => {
             <Col md="6" lg="4" xl="4">
                 <div className="form__form-group">
                     <div className="form__form-group-field">
-                       <span className="form__form-group-label">Included in Budget</span>
+                       <span className="form__form-group-label" style={{width:'200%'}}>Included in Budget</span>
                         <Field
                         name="included_budget"
                         component={renderToggleButtonField}
@@ -189,7 +189,7 @@ const AddEventForm = () => {
             <Col md="6" lg="4" xl="4">
                 <div className="form__form-group">
                     <div className="form__form-group-field">
-                       <span className="form__form-group-label">Allow amount to be overridden</span>
+                       <span className="form__form-group-label" style={{width:'200%'}}>Allow amount to be overridden</span>
                         <Field
                         name="allow_overridden"
                         component={renderToggleButtonField}
@@ -234,7 +234,7 @@ const AddEventForm = () => {
             <Col md="6" lg="4" xl="4">
                 <div className="form__form-group">
                     <div className="form__form-group-field">
-                       <span className="form__form-group-label">Award Message Editable</span>
+                       <span className="form__form-group-label" style={{width:'200%'}}>Award Message Editable</span>
                         <Field
                         name="message_editable"
                         component={renderToggleButtonField}
