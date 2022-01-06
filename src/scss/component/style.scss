@@ -51,3 +51,21 @@
 .container .card-body form .row{width:100%;}
 .react-select {height: 32px;}
 .infoview > .row{margin-bottom: 15px;}
+
+//add-event
+.table .resizable-table th:first-child, .table .resizable-table td:first-child {
+    max-width: 150px;
+    min-width: 45px !important;
+}
+
+
+.dropzone.dropzone--custom-height {
+    min-height: 79px;
+    height: auto;
+}
+
+.dropzone__input {
+
+    min-height: 60px;
+
+}

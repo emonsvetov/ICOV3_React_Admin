@@ -1,26 +1,31 @@
 import React, {useState} from 'react';
 import { Form, Field } from 'react-final-form';
 import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
+import { Link } from 'react-router-dom'
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
-import formValidation from "@/shared/validation/adduser";
+import formValidation from "@/shared/validation/addEvent";
+import renderToggleButtonField from '@/shared/components/form/ToggleButton';
 import Select from 'react-select';
 import axios from 'axios';
+import renderDropZoneField from './MyDropZone';
 
-const ROLES = [
-    {label: 'Admin', value: 'Admin'},
-    {label: 'Customer', value: 'Customer'},
-    {label: 'Agent', value: 'Agent'},
+const TEMPLATES = [
+    {label: 'Birthday', value: 'Birthday'},
+    {label: 'Work Anniversary', value: 'Work Anniversary'},
+    {label: 'Custom Template', value: 'Custom Template'},
 ]
 
-const AddUserForm = () => {
+const AddEventForm = () => {
 
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [role, setRole] = useState(null)
-  
-    const handleRoleChange = (selectedRole) => {
-        setRole(selectedRole)
+    const [template, setTemplate] = useState(null)
+    
+
+    const handleTemplateChange = (selectedTemplate) => {
+        setTemplate('selectedTemplate')
     }
+    
     
     const onSubmit = values => {
         values["organization_id"] = 1
@@ -40,11 +45,11 @@ const AddUserForm = () => {
     }
     
     const onClickCancel = () => {
-        window.location = '/users'
+        window.location = '/events'
     }
 
-    const rolePlaceholder = role ? role : 'Select Role'
-
+    const templatePlaceholder = template ? template : 'Select a Template'
+    
     return (
     <Form
         onSubmit={onSubmit}
@@ -61,39 +66,29 @@ const AddUserForm = () => {
         }
         <Row className='w100'>
             <Col md="6" lg="6" xl="6">
-                <h3 className="mb-4">User Profile</h3>
+                <h3 className="mb-4">Event Detail</h3>
             </Col>
             <Col md="6" lg="6" xl="6" className='text-right'>
                 <ButtonToolbar className="modal__footer flex justify-content-right w100">
-                    <Button outline color="primary" className="mr-3" onClick={onClickCancel}>Cancel</Button>{' '}
+                <Link style={{paddingRight:'18px', paddingTop:'6px'}}
+                                className=""
+                                to="/events"
+                                >Cancel
+                                </Link>
+                    
                     <Button type="submit" disabled={loading} className="btn btn-primary" color="#ffffff">Save</Button>
                 </ButtonToolbar>
             </Col>
         </Row>
         <Row>
             <Col md="6" lg="4" xl="4">
-                <Field name="first_name">
+                <Field name="event_name">
                 {({ input, meta }) => (
                     <div className="form__form-group">
-                        <span className="form__form-group-label">First Name</span>
+                        <span className="form__form-group-label">Event Name</span>
                         <div className="form__form-group-field">
                             <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="First Name" />
-                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                            </div>
-                        </div>
-                    </div>
-                )}
-                </Field>
-            </Col>
-            <Col md="6" lg="4" xl="4">
-                <Field name="last_name">
-                {({ input, meta }) => (
-                    <div className="form__form-group">
-                        <span className="form__form-group-label">Last Name</span>
-                        <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Last Name" />
+                                <input type="text" {...input} placeholder="Event Name" />
                                 {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                             </div>
                         </div>
@@ -104,19 +99,32 @@ const AddUserForm = () => {
         </Row>
         <Row>
             <Col md="6" lg="4" xl="4">
-                <Field name="role" component="select">
+                <div className="form__form-group">
+                    <div className="form__form-group-field">
+                       <span className="form__form-group-label" style={{width:'200%'}}>Enable This Event</span>
+                        <Field
+                        name="enable_event"
+                        component={renderToggleButtonField}
+                        />
+                    </div>
+                </div>
+            </Col>
+        </Row>
+        <Row>
+            <Col md="6" lg="4" xl="4">
+                <Field name="template" component="select">
                 {({ input, meta }) => (
                     <div className="form__form-group">
-                        <span className="form__form-group-label">State</span>
+                        <span className="form__form-group-label">Select a Template</span>
                         <div className="form__form-group-field">
                             <div className="form__form-group-row">
                                 <Select
-                                    value={role}
-                                    onChange={(handleRoleChange)}
-                                    options={ROLES}
+                                    value={template}
+                                    onInputChange={(e)=> handleTemplateChange(e) }
+                                    options={TEMPLATES}
                                     clearable={false}
                                     className="react-select"
-                                    placeholder={rolePlaceholder}
+                                    placeholder={templatePlaceholder}
                                     classNamePrefix="react-select"
                                     {...input}
                                 />
@@ -130,13 +138,13 @@ const AddUserForm = () => {
         </Row>
         <Row>
             <Col md="6" lg="4" xl="4">
-                <Field name="email">
+                <Field name="amount">
                 {({ input, meta }) => (
                     <div className="form__form-group">
-                        <span className="form__form-group-label">Email</span>
+                        <span className="form__form-group-label">Amount</span>
                         <div className="form__form-group-field">
                             <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Email" />
+                                <input type="text" {...input} placeholder="Amount" />
                                 {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                             </div>
                         </div>
@@ -145,13 +153,117 @@ const AddUserForm = () => {
                 </Field>
             </Col>
             <Col md="6" lg="4" xl="4">
-                <Field name="phone">
+                <Field name="ledger_code">
                 {({ input, meta }) => (
                     <div className="form__form-group">
-                        <span className="form__form-group-label">Phone Number</span>
+                        <span className="form__form-group-label">Ledger Code</span>
                         <div className="form__form-group-field">
                             <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Phone Number" />
+                                <input type="text" {...input} placeholder="Ledger Code" />
+                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                            </div>
+                        </div>
+                    </div>
+                )}
+                </Field>
+            </Col>
+        </Row>
+        {
+            template?
+            <>
+            <Row>
+                <Col md="12" lg="8" xl="8">
+                <span className="form__form-group-label">Icon</span>
+                <div className="form__form-group-field">
+                    <Field
+                    name="icon"
+                    component={renderDropZoneField}
+                    customHeight
+                    />
+                </div>
+                
+                </Col>
+            </Row>
+            <Row>
+                <Col md="12" lg="8" xl="8">
+                    <div className="form__form-group">
+                        <span className="form__form-group-label">Email Template</span>
+                        <div className="form__form-group-field">
+                            <Field
+                                name="email_template"
+                                component="textarea"
+                                type="text"
+                            />
+                        </div>
+                    </div>
+                </Col>
+            </Row>
+            </>
+            :''
+        }
+        <Row>
+            <Col md="6" lg="4" xl="4">
+                <div className="form__form-group">
+                    <div className="form__form-group-field">
+                       <span className="form__form-group-label" style={{width:'200%'}}>Post to Social Wall</span>
+                        <Field
+                        name="social_wall"
+                        component={renderToggleButtonField}
+                        />
+                    </div>
+                </div>
+            </Col>
+        </Row>
+        <Row>
+            <Col md="6" lg="4" xl="4">
+                <div className="form__form-group">
+                    <div className="form__form-group-field">
+                       <span className="form__form-group-label" style={{width:'200%'}}>Included in Budget</span>
+                        <Field
+                        name="included_budget"
+                        component={renderToggleButtonField}
+                        />
+                    </div>
+                </div>
+            </Col>
+        </Row>
+        <Row>
+            <Col md="6" lg="4" xl="4">
+                <div className="form__form-group">
+                    <div className="form__form-group-field">
+                       <span className="form__form-group-label" style={{width:'200%'}}>Allow amount to be overridden</span>
+                        <Field
+                        name="allow_overridden"
+                        component={renderToggleButtonField}
+                        />
+                    </div>
+                </div>
+            </Col>
+        </Row>
+        <Row>
+            <Col md="6" lg="4" xl="4">
+                <Field name="min_amount">
+                {({ input, meta }) => (
+                    <div className="form__form-group">
+                        <span className="form__form-group-label">Min amount award override</span>
+                        <div className="form__form-group-field">
+                            <div className="form__form-group-row">
+                                <input type="text" {...input} placeholder="Min amount award override" />
+                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                            </div>
+                        </div>
+                    </div>
+                )}
+                </Field>
+            </Col>
+            <Col md="6" lg="4" xl="4">
+                <Field name="max_amount">
+                {({ input, meta }) => (
+                    <div className="form__form-group">
+                        <span className="form__form-group-label">Max amount award override</span>
+                        <div className="form__form-group-field">
+                            <div className="form__form-group-row">
+                                <input type="text" {...input} placeholder="Max amount award override" />
                                 {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                             </div>
                         </div>
@@ -162,60 +274,26 @@ const AddUserForm = () => {
         </Row>
         <Row>
             <Col md="6" lg="4" xl="4">
-                <Field name="award_level">
-                {({ input, meta }) => (
-                    <div className="form__form-group">
-                        <span className="form__form-group-label">Award Level</span>
-                        <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Award Level" />
-                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                            </div>
-                        </div>
+                <div className="form__form-group">
+                    <div className="form__form-group-field">
+                       <span className="form__form-group-label" style={{width:'200%'}}>Award Message Editable</span>
+                        <Field
+                        name="message_editable"
+                        component={renderToggleButtonField}
+                        />
                     </div>
-                )}
-                </Field>
-            </Col>
-            <Col md="6" lg="4" xl="4">
-                <Field name="work_anniversary">
-                {({ input, meta }) => (
-                    <div className="form__form-group">
-                        <span className="form__form-group-label">Work Anniversary</span>
-                        <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Work Anniversary" />
-                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                            </div>
-                        </div>
-                    </div>
-                )}
-                </Field>
-            </Col>
-            <Col md="6" lg="4" xl="4">
-                <Field name="dob">
-                {({ input, meta }) => (
-                    <div className="form__form-group">
-                        <span className="form__form-group-label">Birthday</span>
-                        <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Birthday" />
-                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                            </div>
-                        </div>
-                    </div>
-                )}
-                </Field>
+                </div>
             </Col>
         </Row>
         <Row>
-            <Col md="6" lg="4" xl="4">
-                <Field name="division">
+            <Col md="12" lg="12" xl="12">
+                <Field name="event_message">
                 {({ input, meta }) => (
                     <div className="form__form-group">
-                        <span className="form__form-group-label">Department / Team</span>
+                        <span className="form__form-group-label">Event Message</span>
                         <div className="form__form-group-field">
                             <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Department / Team" />
+                                <input type="text" {...input} placeholder="Event Message" />
                                 {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                             </div>
                         </div>
@@ -223,40 +301,12 @@ const AddUserForm = () => {
                 )}
                 </Field>
             </Col>
-            <Col md="6" lg="4" xl="4">
-                <Field name="employee_number">
-                {({ input, meta }) => (
-                    <div className="form__form-group">
-                        <span className="form__form-group-label">Employee Number</span>
-                        <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Employee Number" />
-                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                            </div>
-                        </div>
-                    </div>
-                )}
-                </Field>
-            </Col>
-            <Col md="6" lg="4" xl="4">
-                <Field name="supervisor_employee_number">
-                {({ input, meta }) => (
-                    <div className="form__form-group">
-                        <span className="form__form-group-label">Supervisor ID</span>
-                        <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Supervisor ID" />
-                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                            </div>
-                        </div>
-                    </div>
-                )}
-                </Field>
-            </Col>
+           
         </Row>
+       
     </form>
     )}
   </Form>
 )}
 
-export default AddUserForm;
+export default AddEventForm;

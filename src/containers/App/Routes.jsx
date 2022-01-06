@@ -23,6 +23,10 @@ import UsersIndex from '../Users/index';
 import AddUser from '../Users/add_user';
 import ViewUser from '../Users/view_user';
 
+import EventsIndex from '../Events/index';
+import AddEvent from '../Events/add_event';
+import ViewEvent from '../Events/view_event';
+
 import TreeView from '../TreeViewBasic';
 
 const Pages = () => (
@@ -50,6 +54,14 @@ const Users = () => (
   </Switch>
 );
 
+const Events = () => (
+  <Switch>
+    <Route exact path="/events" component={EventsIndex} />
+    <Route exact path="/events/add" component={AddEvent} />
+    <Route exact path="/events/view/:id" component={ViewEvent} />
+  </Switch>
+);
+
 const CustomPrivateRoute = (props) => {
   return (
     <div>
@@ -70,6 +82,7 @@ const privateRoutes = () => {
         <PrivateRoute path="/pages" component={Pages} />
         <PrivateRoute path="/program" component={Programs} />
         <PrivateRoute path="/users" component={Users} />
+        <PrivateRoute path="/events" component={Events} />
         <PrivateRoute path="/treeview" component={TreeView} />
         <PrivateRoute path="/pokemon" component={Pokemon} />
       </div>
