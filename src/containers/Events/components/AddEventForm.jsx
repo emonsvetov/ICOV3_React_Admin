@@ -3,6 +3,7 @@ import { Form, Field } from 'react-final-form';
 import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/adduser";
+import renderToggleButtonField from '@/shared/components/form/ToggleButton';
 import Select from 'react-select';
 import axios from 'axios';
 
@@ -61,7 +62,7 @@ const AddEventForm = () => {
         }
         <Row className='w100'>
             <Col md="6" lg="6" xl="6">
-                <h3 className="mb-4">User Profile</h3>
+                <h3 className="mb-4">Event Detail</h3>
             </Col>
             <Col md="6" lg="6" xl="6" className='text-right'>
                 <ButtonToolbar className="modal__footer flex justify-content-right w100">
@@ -75,25 +76,10 @@ const AddEventForm = () => {
                 <Field name="first_name">
                 {({ input, meta }) => (
                     <div className="form__form-group">
-                        <span className="form__form-group-label">First Name</span>
+                        <span className="form__form-group-label">Event Name</span>
                         <div className="form__form-group-field">
                             <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="First Name" />
-                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                            </div>
-                        </div>
-                    </div>
-                )}
-                </Field>
-            </Col>
-            <Col md="6" lg="4" xl="4">
-                <Field name="last_name">
-                {({ input, meta }) => (
-                    <div className="form__form-group">
-                        <span className="form__form-group-label">Last Name</span>
-                        <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Last Name" />
+                                <input type="text" {...input} placeholder="Event Name" />
                                 {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                             </div>
                         </div>
@@ -104,10 +90,23 @@ const AddEventForm = () => {
         </Row>
         <Row>
             <Col md="6" lg="4" xl="4">
+                <div className="form__form-group">
+                    <div className="form__form-group-field">
+                       <span className="form__form-group-label">Enable This Event</span>
+                        <Field
+                        name="phone_notifications"
+                        component={renderToggleButtonField}
+                        />
+                    </div>
+                </div>
+            </Col>
+        </Row>
+        <Row>
+            <Col md="6" lg="4" xl="4">
                 <Field name="role" component="select">
                 {({ input, meta }) => (
                     <div className="form__form-group">
-                        <span className="form__form-group-label">State</span>
+                        <span className="form__form-group-label">Select a Template</span>
                         <div className="form__form-group-field">
                             <div className="form__form-group-row">
                                 <Select
@@ -133,10 +132,10 @@ const AddEventForm = () => {
                 <Field name="email">
                 {({ input, meta }) => (
                     <div className="form__form-group">
-                        <span className="form__form-group-label">Email</span>
+                        <span className="form__form-group-label">Amount</span>
                         <div className="form__form-group-field">
                             <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Email" />
+                                <input type="text" {...input} placeholder="Amount" />
                                 {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                             </div>
                         </div>
@@ -148,10 +147,10 @@ const AddEventForm = () => {
                 <Field name="phone">
                 {({ input, meta }) => (
                     <div className="form__form-group">
-                        <span className="form__form-group-label">Phone Number</span>
+                        <span className="form__form-group-label">Ledger Code</span>
                         <div className="form__form-group-field">
                             <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Phone Number" />
+                                <input type="text" {...input} placeholder="Ledger Code" />
                                 {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                             </div>
                         </div>
@@ -162,13 +161,97 @@ const AddEventForm = () => {
         </Row>
         <Row>
             <Col md="6" lg="4" xl="4">
+                <div className="form__form-group">
+                    <div className="form__form-group-field">
+                       <span className="form__form-group-label">Post to Social Wall</span>
+                        <Field
+                        name="social_wall"
+                        component={renderToggleButtonField}
+                        />
+                    </div>
+                </div>
+            </Col>
+        </Row>
+        <Row>
+            <Col md="6" lg="4" xl="4">
+                <div className="form__form-group">
+                    <div className="form__form-group-field">
+                       <span className="form__form-group-label">Included in Budget</span>
+                        <Field
+                        name="included_budget"
+                        component={renderToggleButtonField}
+                        />
+                    </div>
+                </div>
+            </Col>
+        </Row>
+        <Row>
+            <Col md="6" lg="4" xl="4">
+                <div className="form__form-group">
+                    <div className="form__form-group-field">
+                       <span className="form__form-group-label">Allow amount to be overridden</span>
+                        <Field
+                        name="allow_overridden"
+                        component={renderToggleButtonField}
+                        />
+                    </div>
+                </div>
+            </Col>
+        </Row>
+        <Row>
+            <Col md="6" lg="4" xl="4">
+                <Field name="email">
+                {({ input, meta }) => (
+                    <div className="form__form-group">
+                        <span className="form__form-group-label">Min amount award override</span>
+                        <div className="form__form-group-field">
+                            <div className="form__form-group-row">
+                                <input type="text" {...input} placeholder="Min amount award override" />
+                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                            </div>
+                        </div>
+                    </div>
+                )}
+                </Field>
+            </Col>
+            <Col md="6" lg="4" xl="4">
+                <Field name="phone">
+                {({ input, meta }) => (
+                    <div className="form__form-group">
+                        <span className="form__form-group-label">Max amount award override</span>
+                        <div className="form__form-group-field">
+                            <div className="form__form-group-row">
+                                <input type="text" {...input} placeholder="Max amount award override" />
+                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                            </div>
+                        </div>
+                    </div>
+                )}
+                </Field>
+            </Col>
+        </Row>
+        <Row>
+            <Col md="6" lg="4" xl="4">
+                <div className="form__form-group">
+                    <div className="form__form-group-field">
+                       <span className="form__form-group-label">Award Message Editable</span>
+                        <Field
+                        name="message_editable"
+                        component={renderToggleButtonField}
+                        />
+                    </div>
+                </div>
+            </Col>
+        </Row>
+        <Row>
+            <Col md="12" lg="12" xl="12">
                 <Field name="award_level">
                 {({ input, meta }) => (
                     <div className="form__form-group">
-                        <span className="form__form-group-label">Award Level</span>
+                        <span className="form__form-group-label">Event Message</span>
                         <div className="form__form-group-field">
                             <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Award Level" />
+                                <input type="text" {...input} placeholder="Event Message" />
                                 {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                             </div>
                         </div>
@@ -176,84 +259,9 @@ const AddEventForm = () => {
                 )}
                 </Field>
             </Col>
-            <Col md="6" lg="4" xl="4">
-                <Field name="work_anniversary">
-                {({ input, meta }) => (
-                    <div className="form__form-group">
-                        <span className="form__form-group-label">Work Anniversary</span>
-                        <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Work Anniversary" />
-                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                            </div>
-                        </div>
-                    </div>
-                )}
-                </Field>
-            </Col>
-            <Col md="6" lg="4" xl="4">
-                <Field name="dob">
-                {({ input, meta }) => (
-                    <div className="form__form-group">
-                        <span className="form__form-group-label">Birthday</span>
-                        <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Birthday" />
-                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                            </div>
-                        </div>
-                    </div>
-                )}
-                </Field>
-            </Col>
+           
         </Row>
-        <Row>
-            <Col md="6" lg="4" xl="4">
-                <Field name="division">
-                {({ input, meta }) => (
-                    <div className="form__form-group">
-                        <span className="form__form-group-label">Department / Team</span>
-                        <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Department / Team" />
-                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                            </div>
-                        </div>
-                    </div>
-                )}
-                </Field>
-            </Col>
-            <Col md="6" lg="4" xl="4">
-                <Field name="employee_number">
-                {({ input, meta }) => (
-                    <div className="form__form-group">
-                        <span className="form__form-group-label">Employee Number</span>
-                        <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Employee Number" />
-                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                            </div>
-                        </div>
-                    </div>
-                )}
-                </Field>
-            </Col>
-            <Col md="6" lg="4" xl="4">
-                <Field name="supervisor_employee_number">
-                {({ input, meta }) => (
-                    <div className="form__form-group">
-                        <span className="form__form-group-label">Supervisor ID</span>
-                        <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Supervisor ID" />
-                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                            </div>
-                        </div>
-                    </div>
-                )}
-                </Field>
-            </Col>
-        </Row>
+       
     </form>
     )}
   </Form>

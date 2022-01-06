@@ -1,7 +1,7 @@
 import React from 'react';
 import { Col, Container, Row } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import AddEventForm from './components/AddEventForm';
+import AddEventForm from './components/AddEvent';
 
 const AddEvent = () => (
   <Container className="dashboard">
