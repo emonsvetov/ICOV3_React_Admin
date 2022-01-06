@@ -1,19 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import CheckIcon from 'mdi-react/CheckIcon';
 import CloseIcon from 'mdi-react/CloseIcon';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { renderComponentField } from '@/shared/components/form/FormField';
 
-export const CheckBoxField = ({
-  checked,
+const CheckBoxField = ({
   onChange,
-  name,
-  label,
+  defaultChecked = false,
   disabled,
   className,
+  name,
+  value = null,
+  label,
   color,
 }) => {
+  useEffect(() => {
+    onChange(defaultChecked);
+  }, [onChange, defaultChecked]);
+
   const CheckboxClass = classNames({
     'checkbox-btn': true,
     disabled,
@@ -29,7 +33,7 @@ export const CheckBoxField = ({
         id={name}
         name={name}
         onChange={onChange}
-        checked={checked}
+        checked={defaultChecked}
         disabled={disabled}
       />
       <span
@@ -53,10 +57,14 @@ export const CheckBoxField = ({
 };
 
 CheckBoxField.propTypes = {
-  checked: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
+  // value: PropTypes.oneOfType([
+  //   PropTypes.string,
+  //   PropTypes.bool,
+  // ]).isRequired,
   label: PropTypes.string,
+  defaultChecked: PropTypes.bool,
   disabled: PropTypes.bool,
   className: PropTypes.string,
   color: PropTypes.string,
@@ -64,9 +72,48 @@ CheckBoxField.propTypes = {
 
 CheckBoxField.defaultProps = {
   label: '',
+  defaultChecked: false,
   disabled: false,
   className: '',
   color: '',
 };
 
-export default renderComponentField(CheckBoxField);
+const renderCheckBoxField = ({
+  input, label, defaultChecked, disabled, className, color, value
+}) => (
+  <CheckBoxField
+    {...input}
+    label={label}
+    defaultChecked={defaultChecked}
+    disabled={disabled}
+    className={className}
+    color={color}
+    value={value}
+  />
+);
+
+renderCheckBoxField.propTypes = {
+  input: PropTypes.shape({
+    onChange: PropTypes.func,
+    name: PropTypes.string,
+    value: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.bool,
+    ]),
+  }).isRequired,
+  label: PropTypes.string,
+  defaultChecked: PropTypes.bool,
+  disabled: PropTypes.bool,
+  className: PropTypes.string,
+  color: PropTypes.string,
+};
+
+renderCheckBoxField.defaultProps = {
+  label: '',
+  defaultChecked: false,
+  disabled: false,
+  className: '',
+  color: '',
+};
+
+export default renderCheckBoxField;

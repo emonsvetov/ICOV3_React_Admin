@@ -1,8 +1,10 @@
 import React, {useState} from 'react';
-import renderCheckBoxField from '@/shared/components/form/CheckBox';
 import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
 import Select from 'react-select';
+import axios from 'axios'
+import renderCheckBoxField from '@/shared/components/form/CheckBox';
+import renderSelectField from '@/shared/components/form/Select';
 import US_STATES from "@/shared/json/usstates.json";
 
 const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
@@ -13,11 +15,18 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
         // alert(JSON.stringify(selectedOption))
         setUsState(selectedState)
     }
-    const onSubmitForm = values => {
+    const onSubmitForm = async (values) => {
         alert(JSON.stringify(values))
         setLoading(true)
+        try {
+            const response = await axios.put(`/organization/1/program/${data.id}`, values);
+            console.log(response)
+            setLoading(false)
+        } catch (e) {
+            throw new Error(`API error:${e?.message}`);
+            setLoading(false)
+        }
         // setTimeout(alert('Allset'), 2000)
-        setLoading(false)
     }
     const validate = values => {
         // let errors = {};
@@ -49,7 +58,7 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
                     factor_valuation: data.factor_valuation,
                     prefix: data.prefix,
                     public_contact_email: data.public_contact_email,
-                    external_id: data.external_id,
+                    zip: data.zip,
                     external_id: data.external_id,
                     external_id: data.external_id,
                     external_id: data.external_id,
@@ -63,8 +72,8 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
         <ModalHeader className='w100'>
             <Row className='w100'>
                 <Col md="6" lg="6" xl="6">
-                    <h3 style={{"font-weight": 500}}>General</h3>
-                    <h5 style={{"font-weight": 500, color:'#999'}}>{data.name}</h5>
+                    <h3 style={{"fontWeight": 500}}>General</h3>
+                    <h5 style={{"fontWeight": 500, color:'#999'}}>{data.name}</h5>
                 </Col>
                 <Col md="6" lg="6" xl="6" className='text-right'>
                     <ButtonToolbar className="modal__footer flex justify-content-right w100">
@@ -125,9 +134,6 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
                                     type="checkbox"
                                     component={renderCheckBoxField}
                                     label="Create sub program groups"
-                                    // initialValue={item.defaultChecked}
-                                    // disabled={item.disabled}
-                                    // className={className}
                                 />
                             </div>
                             <div className="form__form-group">
@@ -136,9 +142,6 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
                                     type="checkbox"
                                     component={renderCheckBoxField}
                                     label="Archive program"
-                                    // initialValue={item.defaultChecked}
-                                    // disabled={item.disabled}
-                                    // className={className}
                                 />
                             </div>
 
@@ -202,6 +205,7 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
                                     type="checkbox"
                                     component={renderCheckBoxField}
                                     label="Enable global search"
+                                    // defaultChecked={data.enable_global_search}
                                 />    
                             </div> 
                             <div className="form__form-group">
@@ -210,6 +214,7 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
                                     type="checkbox"
                                     component={renderCheckBoxField}
                                     label="Deactivate account"
+                                    // defaultChecked={data.deactivate_account}
                                 />   
                             </div>
                         </Col>
@@ -351,14 +356,20 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
                                 </Field>  
                             </Col>
                             <Col md="6" lg="4" xl="4">
-                                <Field name="state" component="select">
+                                <Field
+                                    name="state"
+                                    component={renderSelectField}
+                                    options={US_STATES}
+                                    placeholder={statePlaceholder}
+                                />
+                                {/* <Field name="state" component="select">
                                 {({ input, meta }) => (
                                     <div className="form__form-group">
                                     <span className="form__form-group-label">State</span>
                                     <div className="form__form-group-field">
                                         <div className="form__form-group-row">
                                     <Select
-                                        value={usState}
+                                        // value={usState}
                                         onChange={handleStateChange}
                                         options={US_STATES}
                                         clearable={false}
@@ -371,20 +382,7 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
                                             </div>
                                         </div>
                                 )}
-                                </Field>
-                                {/* <Field name="state">
-                                    {({ input, meta }) => (
-                                        <div className="form__form-group">
-                                            <span className="form__form-group-label">State</span>
-                                            <div className="form__form-group-field">
-                                                <div className="form__form-group-row">
-                                                    <input type="text" {...input} placeholder="State" />
-                                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-                                    </Field>   */}
+                                </Field> */}
                             </Col>
                         </Row>
                 

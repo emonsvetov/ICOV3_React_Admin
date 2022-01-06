@@ -331,7 +331,7 @@ const DataTable = () => {
                     </table>
                     <Modal className="modal-program" isOpen={isMoveOpen} toggle={() => setMoveOpen(true)}>
                         <ModalHeader>
-                            <h3 style={{"font-weight": 500}}>Move Program to</h3>
+                            <h3 style={{"fontWeight": 500}}>Move Program to</h3>
                         </ModalHeader>
                         <ModalBody>
                             <ProgramTreeView data={data} handleSelect={handleSelect} selected={selected} />

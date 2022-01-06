@@ -52,7 +52,7 @@ const ProgramView = () => {
       <Row>
         <Col md={12}>
           <h3 className="page-title">All Programs</h3>
-          <h3 class="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/program">Programs</Link> / {data.name}</h3>
+          <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/program">Programs</Link> / {data.name}</h3>
           {message !== "" && <Alert color="success">{message}</Alert>}
         </Col>
       </Row>
@@ -62,7 +62,7 @@ const ProgramView = () => {
                 <CardBody>
                     <Row onClick={()=>{toggle('general')}}>
                         <Col md={3} className='col-left'>
-                            <img src={GeneralIcon} class="card-img-top" alt="General" />
+                            <img src={GeneralIcon} className="card-img-top" alt="General" />
                         </Col>
                         <Col md={9} className='col-right pl-0'>
                             <h5>General</h5>
@@ -78,7 +78,7 @@ const ProgramView = () => {
                 <CardBody>
                     <Row onClick={()=>{toggle('merchants')}}>
                         <Col md={3} className='col-left'>
-                            <img src={MerchantsIcon} class="card-img-top" alt="Merchants" />
+                            <img src={MerchantsIcon} className="card-img-top" alt="Merchants" />
                         </Col>
                         <Col md={9} className='col-right pl-0'>
                             <h5>Merchants</h5>
@@ -93,7 +93,7 @@ const ProgramView = () => {
                 <CardBody>
                     <Row onClick={()=>{toggle('invoices')}}>
                         <Col md={3} className='col-left'>
-                            <img src={InvoiceIcon} class="card-img-top" alt="Invoice and Statement" />
+                            <img src={InvoiceIcon} className="card-img-top" alt="Invoice and Statement" />
                         </Col>
                         <Col md={9} className='col-right pl-0'>
                             <h5>Invoice and Statement</h5>
@@ -110,7 +110,7 @@ const ProgramView = () => {
                 <CardBody>
                     <Row onClick={()=>{toggle('accounting')}}>
                         <Col md={3} className='col-left'>
-                            <img src={AccountingIcon} class="card-img-top" alt="Accounting" />
+                            <img src={AccountingIcon} className="card-img-top" alt="Accounting" />
                         </Col>
                         <Col md={9} className='col-right pl-0'>
                             <h5>Accounting</h5>
@@ -125,7 +125,7 @@ const ProgramView = () => {
                 <CardBody>
                     <Row onClick={()=>{toggle('awarding')}}>
                         <Col md={3} className='col-left'>
-                            <img src={AwardingIcon} class="card-img-top" alt="Awarding and Points" />
+                            <img src={AwardingIcon} className="card-img-top" alt="Awarding and Points" />
                         </Col>
                         <Col md={9} className='col-right pl-0'>
                             <h5>Awarding and Points</h5>
@@ -140,7 +140,7 @@ const ProgramView = () => {
                 <CardBody>
                     <Row onClick={()=>{toggle('engagement')}}>
                         <Col md={3} className='col-left'>
-                            <img src={EngagementIcon} class="card-img-top" alt="Engagement" />
+                            <img src={EngagementIcon} className="card-img-top" alt="Engagement" />
                         </Col>
                         <Col md={9} className='col-right pl-0'>
                             <h5>Engagement</h5>
@@ -157,7 +157,7 @@ const ProgramView = () => {
                 <CardBody>
                     <Row onClick={()=>{toggle('events')}}>
                         <Col md={3} className='col-left'>
-                            <img src={EventsIcon} class="card-img-top" alt="Events" />
+                            <img src={EventsIcon} className="card-img-top" alt="Events" />
                         </Col>
                         <Col md={9} className='col-right pl-0'>
                             <h5>Events</h5>

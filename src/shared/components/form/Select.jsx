@@ -1,10 +1,11 @@
 import React from 'react';
 import Select from 'react-select';
 import PropTypes from 'prop-types';
+import { renderComponentField } from '@/shared/components/form/FormField';
 
-export const SelectField = ({
+export const SelectField = React.forwardRef(({
   onChange, value, name, placeholder, options,
-}) => {
+}, ref) => {
   const handleChange = (selectedOption) => {
     onChange(selectedOption);
   };
@@ -19,9 +20,10 @@ export const SelectField = ({
       className="react-select"
       placeholder={placeholder}
       classNamePrefix="react-select"
+      ref={ref}
     />
   );
-};
+});
 
 SelectField.propTypes = {
   onChange: PropTypes.func.isRequired,
@@ -45,41 +47,4 @@ SelectField.defaultProps = {
   options: [],
 };
 
-const renderSelectField = ({
-  input, meta, options, placeholder, className,
-}) => (
-  <div className={`form__form-group-input-wrap ${className}`}>
-    <SelectField
-      {...input}
-      options={options}
-      placeholder={placeholder}
-    />
-    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-  </div>
-);
-
-renderSelectField.propTypes = {
-  input: PropTypes.shape({
-    onChange: PropTypes.func,
-    name: PropTypes.string,
-  }).isRequired,
-  meta: PropTypes.shape({
-    touched: PropTypes.bool,
-    error: PropTypes.string,
-  }),
-  options: PropTypes.arrayOf(PropTypes.shape({
-    value: PropTypes.string,
-    label: PropTypes.string,
-  })),
-  placeholder: PropTypes.string,
-  className: PropTypes.string,
-};
-
-renderSelectField.defaultProps = {
-  meta: null,
-  options: [],
-  placeholder: '',
-  className: '',
-};
-
-export default renderSelectField;
+export default renderComponentField(SelectField);
