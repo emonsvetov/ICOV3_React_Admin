@@ -1,27 +1,32 @@
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import { Form, Field } from 'react-final-form';
 import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
+import { Link } from 'react-router-dom'
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/adduser";
 import renderToggleButtonField from '@/shared/components/form/ToggleButton';
 import Select from 'react-select';
 import axios from 'axios';
+import renderDropZoneField from './MyDropZone';
 
-const ROLES = [
-    {label: 'Admin', value: 'Admin'},
-    {label: 'Customer', value: 'Customer'},
-    {label: 'Agent', value: 'Agent'},
+const TEMPLATES = [
+    {label: 'Birthday', value: 'Birthday'},
+    {label: 'Work Anniversary', value: 'Work Anniversary'},
+    {label: 'Custom Template', value: 'Custom Template'},
 ]
 
 const AddEventForm = () => {
 
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [role, setRole] = useState(null)
-  
-    const handleRoleChange = (selectedRole) => {
-        setRole(selectedRole)
+    const [template, setTemplate] = useState(null)
+    
+    
+
+    const handleTemplateChange = useCallback((selectedTemplate) => {
+        setTemplate(selectedTemplate)
     }
+    );
     
     const onSubmit = values => {
         values["organization_id"] = 1
@@ -44,8 +49,8 @@ const AddEventForm = () => {
         window.location = '/events'
     }
 
-    const rolePlaceholder = role ? role : 'Select a Template'
-
+    const templatePlaceholder = template ? template : 'Select a Template'
+    
     return (
     <Form
         onSubmit={onSubmit}
@@ -66,7 +71,12 @@ const AddEventForm = () => {
             </Col>
             <Col md="6" lg="6" xl="6" className='text-right'>
                 <ButtonToolbar className="modal__footer flex justify-content-right w100">
-                    <Button outline color="primary" className="mr-3" onClick={onClickCancel}>Cancel</Button>{' '}
+                <Link style={{paddingRight:'18px', paddingTop:'6px'}}
+                                className=""
+                                to="/events"
+                                >Cancel
+                                </Link>
+                    
                     <Button type="submit" disabled={loading} className="btn btn-primary" color="#ffffff">Save</Button>
                 </ButtonToolbar>
             </Col>
@@ -110,12 +120,12 @@ const AddEventForm = () => {
                         <div className="form__form-group-field">
                             <div className="form__form-group-row">
                                 <Select
-                                    value={role}
-                                    onChange={handleRoleChange}
-                                    options={ROLES}
+                                    value={template}
+                                    onChange={handleTemplateChange}
+                                    options={TEMPLATES}
                                     clearable={false}
                                     className="react-select"
-                                    placeholder={rolePlaceholder}
+                                    placeholder={templatePlaceholder}
                                     classNamePrefix="react-select"
                                     {...input}
                                 />
@@ -159,6 +169,39 @@ const AddEventForm = () => {
                 </Field>
             </Col>
         </Row>
+        {
+            template?
+            <>
+            <Row>
+                <Col md="12" lg="8" xl="8">
+                <span className="form__form-group-label">Icon</span>
+                <div className="form__form-group-field">
+                    <Field
+                    name="files"
+                    component={renderDropZoneField}
+                    customHeight
+                    />
+                </div>
+                
+                </Col>
+            </Row>
+            <Row>
+                <Col md="12" lg="8" xl="8">
+                    <div className="form__form-group">
+                        <span className="form__form-group-label">Email Template</span>
+                        <div className="form__form-group-field">
+                            <Field
+                                name="textarea"
+                                component="textarea"
+                                type="text"
+                            />
+                        </div>
+                    </div>
+                </Col>
+            </Row>
+            </>
+            :''
+        }
         <Row>
             <Col md="6" lg="4" xl="4">
                 <div className="form__form-group">

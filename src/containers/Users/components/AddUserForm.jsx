@@ -112,7 +112,7 @@ const AddUserForm = () => {
                             <div className="form__form-group-row">
                                 <Select
                                     value={role}
-                                    onChange={handleRoleChange}
+                                    onChange={(handleRoleChange)}
                                     options={ROLES}
                                     clearable={false}
                                     className="react-select"

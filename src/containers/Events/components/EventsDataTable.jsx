@@ -90,7 +90,7 @@ const EventsDataTable = () => {
     placeholder: 'Search by First name...',
   };
   const onClickCancel = () => {
-    window.location = '/users'
+    window.location = '/events'
 }
   return (
     <Col md={12} lg={12}>
@@ -110,7 +110,7 @@ const EventsDataTable = () => {
                     {/* <Button outline color="primary" className="mr-3" onClick={onClickCancel}>Cancel</Button>{' '} */}
                     <Link style={{paddingRight:'32px', paddingTop:'11px'}}
                                 className=""
-                                to="/events/add"
+                                to="/events"
                                 >Cancel
                                 </Link>
 
