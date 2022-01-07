@@ -4,6 +4,8 @@ import { Col, Container, Row } from 'reactstrap';
 import ProgramIndexCard from './components/ProgramIndex';
 import Alert from '@/shared/components/Alert';
 
+import {sendFlashMessage} from '../../redux/actions/flashActions';
+
 const ProgramIndex = () => {
   useEffect(() => {
     checkFlashMessage()

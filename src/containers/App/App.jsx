@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../../scss/app.scss';
@@ -9,6 +9,8 @@ import ScrollToTop from './ScrollToTop';
 import {getBearer} from './auth';
 // import axiosConfig from "./AxiosConfig";
 import axios from 'axios';
+import FlashMessage from "@/shared/FlashMessage";
+// import UserAction from "./user_action";
 
 axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
 axios.defaults.headers.common['Authorization'] = getBearer();
@@ -61,6 +63,7 @@ const App = () => {
             )}
             <div>
               <Routes />
+              <FlashMessage />
             </div>
           </Fragment>
         </ScrollToTop>
