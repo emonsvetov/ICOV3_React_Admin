@@ -1,6 +1,5 @@
-export const getLabelByCode = (code, list) => {
-    // console.log(list.find( item => item.value === code)?.label)
-    return list.find( item => item.value === code)?.label
+export const getLabelByCode = (value, list) => {
+    return list.find( item => item.value === value)?.label
 }
 
 export const patch4Select = (data, field, list, cb) => {
@@ -11,7 +10,7 @@ export const patch4Select = (data, field, list, cb) => {
         ...data, 
         ...{
             [field]: {
-                label: typeof cb === 'function' ? cb(data[field], list) : data[field],
+                label: typeof cb === 'function' ? cb(data[field], list) : getLabelByCode(data[field], list),
                 value: data[field]
             }
         }

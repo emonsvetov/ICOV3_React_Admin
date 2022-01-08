@@ -76,7 +76,7 @@ const AddUserForm = () => {
 
     // console.log(user)
 
-    user = patch4Select(user, "role", ROLES, getLabelByCode)
+    user = patch4Select(user, "role", ROLES)
 
     return (
     <Form
