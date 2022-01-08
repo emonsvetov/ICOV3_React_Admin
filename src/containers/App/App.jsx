@@ -9,8 +9,7 @@ import ScrollToTop from './ScrollToTop';
 import {getBearer} from './auth';
 // import axiosConfig from "./AxiosConfig";
 import axios from 'axios';
-import FlashMessage from "@/shared/FlashMessage";
-// import UserAction from "./user_action";
+import FlashMessage from "@/shared/components/flash/FlashMessage";
 
 axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
 axios.defaults.headers.common['Authorization'] = getBearer();

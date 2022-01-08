@@ -1,23 +1,25 @@
 import React, {useState} from 'react';
 import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
-import Select from 'react-select';
 import axios from 'axios'
-import {useDispatch} from 'react-redux';
-import {sendModalFlashMessage} from '@/redux/actions/flashActions';
-import ModalFlashMessage from "@/shared/ModalFlashMessage";
+// import {useDispatch} from 'react-redux';
+// import {sendModalFlashMessage} from '@/redux/actions/flashActions';
+// import ModalFlashMessage from "@/shared/components/flash/ModalFlashMessage";
+
+import {useDispatch, sendModalFlashMessage, ModalFlashMessage} from "@/shared/components/flash";
+
 import renderCheckBoxField from '@/shared/components/form/CheckBox';
 import renderSelectField from '@/shared/components/form/Select';
 import US_STATES from "@/shared/json/usstates.json";
 
-import formValidation from "@/shared/validation/programInfo";
+import formValidation from "@/shared/validation/program-info";
 
 const getLabelByCode = code => {
     return US_STATES.find( state => state.value === code)?.label
 }
 
 const prepareForValidation = values => {
-    const clean = {state: values.state.value}
+    const clean = {state: values.state?.value}
     return {...values, ...clean}
 }
 
@@ -33,18 +35,22 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
     const onSubmitForm = async (values) => {
         setLoading(true)
         // alert(values.state.value)
-        values.state = values.state.value
-        data  = {...data, ...values}
-        // alert(JSON.stringify(data))
+        values.state = values?.state?.value
+        const savedata  = {...data, ...values}
+        // alert(JSON.stringify(savedata))
         // return;
         try {
-            const response = await axios.put(`/organization/1/program/${data.id}`, data);
-            console.log(response)
+            const response = await axios.put(`/organization/1/program/${data.id}`, savedata);
+            // console.log(response)
             setLoading(false)
-            dispatch(sendModalFlashMessage('Program Info has been updated', 'alert-success'))
+            setData( values )
+            if( response.status === 200)    {
+                dispatch(sendModalFlashMessage('Program has been updated', 'alert-success'))
+            }
         } catch (e) {
-            throw new Error(`API error:${e?.message}`);
             setLoading(false)
+            dispatch(sendModalFlashMessage('Program could not be updated', 'alert-danger'))
+            throw new Error(`API error:${e?.message}`)
         }
         // setTimeout(alert('Allset'), 2000)
     }
@@ -379,7 +385,6 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
                                             name="state"
                                             component={renderSelectField}
                                             options={US_STATES}
-                                            placeholder={statePlaceholder}
                                         />
                                     </div>
                                 </div>

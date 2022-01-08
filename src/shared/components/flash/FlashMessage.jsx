@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';  
 import {useDispatch, useSelector} from 'react-redux';
-import {sendFlashMessage} from '../redux/actions/flashActions';
+import {sendFlashMessage} from '@/redux/actions/flashActions';
 
 const FlashMessage = () => {
 

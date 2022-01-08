@@ -10,9 +10,9 @@ import AwardingPointsModal from './AwardingPointsModal';
 import EngagementModal from './EngagementModal';
 import EventsModal from './EventsModal';
 
-const MainModalWrapper = ({data, name, isOpen, setOpen, toggle, programId, theme, rtl}) => {
+const MainModalWrapper = ({data, name, isOpen, setOpen, toggle, theme, rtl}) => {
     const props = {
-        data, isOpen, setOpen, toggle, programId, theme, rtl
+        data, isOpen, setOpen, toggle, theme, rtl
     }
     // console.log(name)
     return (

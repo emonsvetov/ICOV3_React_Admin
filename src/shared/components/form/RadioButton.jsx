@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import CheckIcon from 'mdi-react/CheckIcon';
 import CloseIcon from 'mdi-react/CloseIcon';
 import * as PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { renderComponentField } from '@/shared/components/form/FormField';
 
 const RadioButtonField = ({
-  defaultChecked,
   onChange,
   radioValue,
   className,
@@ -14,11 +14,7 @@ const RadioButtonField = ({
   name,
   value,
 }) => {
-  useEffect(() => {
-    if (defaultChecked) {
-      onChange(radioValue);
-    }
-  }, [defaultChecked, onChange, radioValue]);
+  // alert(value)
   const RadioButtonClass = classNames({
     'radio-btn': true,
     disabled,
@@ -57,7 +53,6 @@ RadioButtonField.propTypes = {
   name: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
   label: PropTypes.oneOfType([PropTypes.element, PropTypes.string]),
-  defaultChecked: PropTypes.bool,
   disabled: PropTypes.bool,
   radioValue: PropTypes.string,
   className: PropTypes.string,
@@ -65,43 +60,9 @@ RadioButtonField.propTypes = {
 
 RadioButtonField.defaultProps = {
   label: '',
-  defaultChecked: false,
   disabled: false,
   radioValue: '',
   className: '',
 };
 
-const renderRadioButtonField = ({
-  input, label, defaultChecked, disabled, className, radioValue,
-}) => (
-  <RadioButtonField
-    {...input}
-    label={label}
-    defaultChecked={defaultChecked}
-    disabled={disabled}
-    radioValue={radioValue}
-    className={className}
-  />
-);
-
-renderRadioButtonField.propTypes = {
-  input: PropTypes.shape({
-    onChange: PropTypes.func,
-    name: PropTypes.string,
-  }).isRequired,
-  label: PropTypes.oneOfType([PropTypes.element, PropTypes.string]),
-  defaultChecked: PropTypes.bool,
-  disabled: PropTypes.bool,
-  radioValue: PropTypes.string,
-  className: PropTypes.string,
-};
-
-renderRadioButtonField.defaultProps = {
-  label: '',
-  defaultChecked: false,
-  disabled: false,
-  radioValue: '',
-  className: '',
-};
-
-export default renderRadioButtonField;
+export default renderComponentField(RadioButtonField);
