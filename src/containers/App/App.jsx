@@ -9,6 +9,7 @@ import ScrollToTop from './ScrollToTop';
 import {getBearer} from './auth';
 // import axiosConfig from "./AxiosConfig";
 import axios from 'axios';
+require('dotenv').config()
 import FlashMessage from "@/shared/components/flash/FlashMessage";
 
 axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
