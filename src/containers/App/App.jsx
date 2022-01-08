@@ -9,8 +9,9 @@ import ScrollToTop from './ScrollToTop';
 import {getBearer} from './auth';
 // import axiosConfig from "./AxiosConfig";
 import axios from 'axios';
+require('dotenv').config()
 
-axios.defaults.baseURL = 'http://localhost:8000/api/v1/' || process.env.REACT_APP_BASE_URL;
+axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
 axios.defaults.headers.common['Authorization'] = getBearer();
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
