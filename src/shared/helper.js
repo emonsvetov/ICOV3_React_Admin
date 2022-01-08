@@ -3,7 +3,7 @@ export const getLabelByCode = (code, list) => {
     return list.find( item => item.value === code)?.label
 }
 
-export const patch4Select = (data, field, cb, list) => {
+export const patch4Select = (data, field, list, cb) => {
     // console.log(data[field])
     // console.log(list)
     if( typeof data[field] === 'object') return data //in case it is already patched!
@@ -11,7 +11,7 @@ export const patch4Select = (data, field, cb, list) => {
         ...data, 
         ...{
             [field]: {
-                label: (cb && list) ? cb(data[field], list) : data[field],
+                label: typeof cb === 'function' ? cb(data[field], list) : data[field],
                 value: data[field]
             }
         }
