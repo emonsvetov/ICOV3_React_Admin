@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { Provider, useSelector } from 'react-redux';
+import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../../scss/app.scss';
@@ -7,10 +7,8 @@ import Routes from './Routes';
 import store from './store';
 import ScrollToTop from './ScrollToTop';
 import {getBearer} from './auth';
-// import axiosConfig from "./AxiosConfig";
-import axios from 'axios';
-require('dotenv').config()
-import FlashMessage from "@/shared/components/flash/FlashMessage";
+import axios from 'axios'
+import FlashMessage from "@/shared/components/flash/FlashMessage"
 
 axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
 axios.defaults.headers.common['Authorization'] = getBearer();
@@ -40,8 +38,6 @@ const App = () => {
 
   useEffect(() => {
     window.addEventListener('load', () => {
-      // alert("Loaded")
-      // axiosConfig();
       setIsLoading(false);
       setTimeout(() => setIsLoaded(true), 500);
     });

@@ -6,6 +6,7 @@ import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
 import formValidation from "@/shared/validation/adduser";
 import Select from 'react-select';
 import axios from 'axios';
+import {getLabelByCode, patch4Select, unpatchSelect} from '@/shared/helper'
 
 const ROLES = [
     {label: 'Admin', value: 'Admin'},
@@ -16,7 +17,7 @@ const ROLES = [
 const fetchUser = async ( id ) => {
     try {
         const response = await axios.get(`/organization/1/user/${id}`);
-        console.log(response)
+        // console.log(response)
         return response.data;
     } catch (e) {
         throw new Error(`API error:${e?.message}`);
@@ -30,7 +31,7 @@ const AddUserForm = () => {
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(true)
     const [role, setRole] = useState(null)
-    const [user, setUser] = useState(null)
+    let [user, setUser] = useState(null)
 
     useEffect( () => { //consider using react-query to fetch data. Check view user for an example!
         fetchUser(id)
@@ -47,9 +48,11 @@ const AddUserForm = () => {
     const onSubmit = values => {
         values["organization_id"] = 1
         // setLoading(true)
+        values = unpatchSelect(values, ["role"])
+        // console.log(values)
+        // return
         axios.put(`/organization/1/user/${user.id}`, values)
         .then( (res) => {
-        //   console.log(res)
           if(res.status == 200)  {
             window.location = `/users/view/${user.id}`
           }
@@ -67,27 +70,19 @@ const AddUserForm = () => {
 
     const rolePlaceholder = role ? role : 'Select Role'
 
-    if ( !user && loading)    {
+    if ( !user )    {
         return 'loading..'
     }
 
-    console.log(user)
+    // console.log(user)
+
+    user = patch4Select(user, "role", getLabelByCode, ROLES)
 
     return (
     <Form
         onSubmit={onSubmit}
-        validate={(values) => formValidation.validateForm(values)}
-        initialValues={{
-            first_name: user.first_name,
-            last_name: user.last_name,
-            email: user.email,
-            phone: user.phone,
-            role: user.role,
-            award_level: user.award_level,
-            work_anniversary: user.work_anniversary,
-            employee_number: user.employee_number,
-            supervisor_employee_number: user.supervisor_employee_number,
-        }}
+        validate={(values) => formValidation.validateForm(unpatchSelect(values, ["role"]))}
+        initialValues={user}
     >
     {({ handleSubmit, form, submitting, pristine, values }) => (
     <form className="form" onSubmit={handleSubmit}>
