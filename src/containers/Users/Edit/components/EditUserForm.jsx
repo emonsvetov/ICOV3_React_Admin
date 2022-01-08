@@ -1,5 +1,6 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Form, Field } from 'react-final-form';
+import { useParams } from 'react-router-dom'
 import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/adduser";
@@ -12,11 +13,32 @@ const ROLES = [
     {label: 'Agent', value: 'Agent'},
 ]
 
+const fetchUser = async ( id ) => {
+    try {
+        const response = await axios.get(`/organization/1/user/${id}`);
+        console.log(response)
+        return response.data;
+    } catch (e) {
+        throw new Error(`API error:${e?.message}`);
+    }
+};
+
 const AddUserForm = () => {
 
+    let { id } = useParams();
+
     const [error, setError] = useState(false)
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [role, setRole] = useState(null)
+    const [user, setUser] = useState(null)
+
+    useEffect( () => { //consider using react-query to fetch data. Check view user for an example!
+        fetchUser(id)
+        .then( data => {
+            setUser(data);
+            setLoading(false)
+        })
+    }, [])
   
     const handleRoleChange = (selectedRole) => {
         setRole(selectedRole)
@@ -25,11 +47,11 @@ const AddUserForm = () => {
     const onSubmit = values => {
         values["organization_id"] = 1
         // setLoading(true)
-        axios.put('/organization/1/users/create', values)
+        axios.put(`/organization/1/user/${user.id}`, values)
         .then( (res) => {
         //   console.log(res)
           if(res.status == 200)  {
-            window.location = `/users/view/${res.data.id}`
+            window.location = `/users/view/${user.id}`
           }
         })
         .catch( error => {
@@ -40,16 +62,31 @@ const AddUserForm = () => {
     }
     
     const onClickCancel = () => {
-        window.location = '/users'
+        window.location = `/users/view/${user.id}`
     }
 
     const rolePlaceholder = role ? role : 'Select Role'
+
+    if ( !user && loading)    {
+        return 'loading..'
+    }
+
+    console.log(user)
 
     return (
     <Form
         onSubmit={onSubmit}
         validate={(values) => formValidation.validateForm(values)}
         initialValues={{
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            phone: user.phone,
+            role: user.role,
+            award_level: user.award_level,
+            work_anniversary: user.work_anniversary,
+            employee_number: user.employee_number,
+            supervisor_employee_number: user.supervisor_employee_number,
         }}
     >
     {({ handleSubmit, form, submitting, pristine, values }) => (
@@ -107,7 +144,7 @@ const AddUserForm = () => {
                 <Field name="role" component="select">
                 {({ input, meta }) => (
                     <div className="form__form-group">
-                        <span className="form__form-group-label">State</span>
+                        <span className="form__form-group-label">Role</span>
                         <div className="form__form-group-field">
                             <div className="form__form-group-row">
                                 <Select
@@ -183,7 +220,7 @@ const AddUserForm = () => {
                         <span className="form__form-group-label">Work Anniversary</span>
                         <div className="form__form-group-field">
                             <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Work Anniversary" />
+                                <input type="date" {...input} placeholder="Work Anniversary" />
                                 {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                             </div>
                         </div>
@@ -198,7 +235,7 @@ const AddUserForm = () => {
                         <span className="form__form-group-label">Birthday</span>
                         <div className="form__form-group-field">
                             <div className="form__form-group-row">
-                                <input type="text" {...input} placeholder="Birthday" />
+                                <input type="date" {...input} placeholder="Birthday" />
                                 {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                             </div>
                         </div>

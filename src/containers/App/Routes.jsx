@@ -22,6 +22,7 @@ import Pokemon from '../Program/components/pokemon';
 import UsersIndex from '../Users/index';
 import AddUser from '../Users/add_user';
 import ViewUser from '../Users/view_user';
+import EditUser from '../Users/edit_user';
 
 import EventsIndex from '../Events/index';
 import AddEvent from '../Events/add_event';
@@ -51,6 +52,7 @@ const Users = () => (
     <Route exact path="/users" component={UsersIndex} />
     <Route exact path="/users/add" component={AddUser} />
     <Route exact path="/users/view/:id" component={ViewUser} />
+    <Route exact path="/users/edit/:id" component={EditUser} />
   </Switch>
 );
 

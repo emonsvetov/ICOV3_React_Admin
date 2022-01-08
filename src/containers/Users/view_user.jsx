@@ -61,6 +61,10 @@ const ViewUser = () => {
                                     <Col md="6" lg="6" xl="6">
                                         <h3 className="mb-4">User Profile</h3>
                                     </Col>
+                                    <Col md="6" lg="6" xl="6" className="text-right">
+                                        <Link className="" to={`/users/edit/${data.id}`}>Edit</Link>
+                                    </Col>
+                                    
                                 </Row>
                                 <Row>
                                     <Col md="2" lg="2" xl="2" sm="2" className='label'>
@@ -102,6 +106,55 @@ const ViewUser = () => {
                                         {data.phone}
                                     </Col>
                                 </Row>
+                                <Row>
+                                    <Col md="2" lg="2" xl="2" sm="2" className='label'>
+                                        Award Level:
+                                    </Col>
+                                    <Col md="10" lg="10" xl="10" sm="10">
+                                        {data.award_level}
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col md="2" lg="2" xl="2" sm="2" className='label'>
+                                        Work Anniversary:
+                                    </Col>
+                                    <Col md="10" lg="10" xl="10" sm="10">
+                                        {data.work_anniversary}
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col md="2" lg="2" xl="2" sm="2" className='label'>
+                                        Department / Team:
+                                    </Col>
+                                    <Col md="10" lg="10" xl="10" sm="10">
+                                        {data.division}
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col md="2" lg="2" xl="2" sm="2" className='label'>
+                                        Birthday:
+                                    </Col>
+                                    <Col md="10" lg="10" xl="10" sm="10">
+                                        {data.dob}
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col md="2" lg="2" xl="2" sm="2" className='label'>
+                                        Employee Number:
+                                    </Col>
+                                    <Col md="10" lg="10" xl="10" sm="10">
+                                        {data.employee_number}
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col md="2" lg="2" xl="2" sm="2" className='label'>
+                                        Supervisor ID:
+                                    </Col>
+                                    <Col md="10" lg="10" xl="10" sm="10">
+                                        {data.supervisor_employee_number}
+                                    </Col>
+                                </Row>
+                                
                             </CardBody>
                         </Card>
                     </Col>

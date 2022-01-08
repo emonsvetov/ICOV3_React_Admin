@@ -49,7 +49,7 @@ const AwardingPointsModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
         setLoading(true)
         
         data  = {...data, ...prepareForValidation(values)}
-        delete data.unknown
+        delete data.unknown //neet to remove when we have all fields
         // alert(JSON.stringify(data))
         // return;
         try {
