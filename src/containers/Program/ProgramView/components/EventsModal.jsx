@@ -202,6 +202,7 @@ const Sorting = ({ column }) => (
     </span>
 );
 export default EventsModal;
+
 // ProgramInfo.propTypes = {
 //     theme: ThemeProps.isRequired,
 //     rtl: RTLProps.isRequired

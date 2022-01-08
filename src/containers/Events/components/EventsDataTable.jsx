@@ -7,7 +7,6 @@ import {
 } from 'reactstrap';
 import ReactTableBase from '@/shared/components/table/ReactTableBase';
 
-
 const reorder = (rows, startIndex, endIndex) => {
   const result = Array.from(rows);
   const [removed] = result.splice(startIndex, 1);
@@ -15,8 +14,6 @@ const reorder = (rows, startIndex, endIndex) => {
 
   return result;
 };
-
-
 
 const EventsDataTable = () => {
   const reactTableData = CreateTableData();

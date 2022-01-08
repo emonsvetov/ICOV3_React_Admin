@@ -105,7 +105,7 @@ const DataTable = () => {
         setUseFilter(true)
         setKeyword(filter)
     }
-
+    
     let columns = useMemo( () => USERS_COLUMNS, [])
 
     const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
