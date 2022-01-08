@@ -58,8 +58,8 @@ const Users = () => (
 
 const Events = () => (
   <Switch>
-    <Route exact path="/events" component={EventsIndex} />
-    <Route exact path="/events/add" component={AddEvent} />
+    {/* <Route exact path="/events" component={EventsIndex} /> */}
+    <Route exact path="/events/add/:id" component={AddEvent} />
     <Route exact path="/events/view/:id" component={ViewEvent} />
   </Switch>
 );

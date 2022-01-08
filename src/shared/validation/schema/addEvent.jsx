@@ -2,13 +2,11 @@ import { Validators } from '@lemoncode/fonk';
 Validators.required.setErrorMessage("This field is required");
 const validationSchema = {
     field: {
-        event_name: [Validators.required.validator],
+        name: [Validators.required.validator],
+        // icon: [Validators.required.validator],
         amount: [Validators.required.validator],
-        ledger_code: [Validators.required.validator],        
-        email_template: [Validators.required.validator],
-        min_amount: [Validators.required.validator],
-        max_amount: [Validators.required.validator],
-        event_message: [Validators.required.validator]
+        email_template_id: [Validators.required.validator],     
+        message: [Validators.required.validator]
         
     }
 }

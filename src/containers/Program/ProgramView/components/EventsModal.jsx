@@ -2,6 +2,7 @@ import React, {useMemo, useState, useEffect} from 'react';
 import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col } from 'reactstrap';
 // import { Form, Field } from 'react-final-form';
 // import Select from 'react-select';
+import { Link } from 'react-router-dom'
 import EVENTS from "@/shared/json/events.json";
 import { useTable, useSortBy, usePagination } from "react-table";
 import DeleteOutlineIcon from 'mdi-react/DeleteOutlineIcon';
@@ -115,7 +116,14 @@ const EventsModal = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
                 <Col md="6" lg="6" xl="6" className='text-right'>
                     <ButtonToolbar className="modal__footer flex justify-content-right w100">
                         <Button outline color="primary" className="mr-3" onClick={toggle}>Cancel</Button>{' '}
-                        <Button type="button" onClick={onClickAddEvent} disabled={loading} className="btn btn-primary" color="#ffffff">Add Event</Button>
+                        <Link style={{maxWidth:'200px', marginBottom: 0 } }
+                                className="btn btn-primary account__btn account__btn--small"
+                                to={`/events/add/${programId}`}
+                                >Add Event
+                                </Link>
+                        {/* <Button type="button" onClick={onClickAddEvent} disabled={loading} className="btn btn-primary" color="#ffffff">
+                            Add Event
+                        </Button> */}
                     </ButtonToolbar>
                 </Col>
             </Row>
@@ -194,6 +202,7 @@ const Sorting = ({ column }) => (
     </span>
 );
 export default EventsModal;
+
 // ProgramInfo.propTypes = {
 //     theme: ThemeProps.isRequired,
 //     rtl: RTLProps.isRequired
