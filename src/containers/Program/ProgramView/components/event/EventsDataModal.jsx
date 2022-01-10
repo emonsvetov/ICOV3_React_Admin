@@ -25,19 +25,20 @@ const EventsDataModal = ({
   isOpen,
   setOpen,
   toggle,
-  programId,
+  data,
   theme,
   rtl,
 }) => {
   const reactTableData = CreateTableData();
   
-  
   const [step, setStep] = useState(0);  
-  
+  var [data, setData] = useState(data)
+
   const handleStep = (step) =>{
     setStep(step);
   }
   const RenderEventsData = (props) =>{
+    const {programId} = props;
     useEffect( () => {
       fetchEvents();
     }, []);
@@ -138,7 +139,7 @@ const EventsDataModal = ({
     >
       <ModalBody className="modal-lg">
         <Col md={12} lg={12}>
-        { step === 0 && <RenderEventsData onStep = { handleStep} />}
+        { step === 0 && <RenderEventsData programId = {data.id} onStep = { handleStep} />}
         { step === 1 && <AddEventForm onStep = { handleStep} />}
         { step === 2 && <AddIconForm onStep = { handleStep} />}
           
