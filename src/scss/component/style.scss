@@ -17,6 +17,7 @@
 }
 .text-blue, .link, .a, a{
     color: #70bbfd !important;
+    cursor: pointer;
 }
 .font-22{
     font-size: 22px;
@@ -87,4 +88,10 @@
     top:0;
     background-color: #ffffff;
     z-index: 999;
+}
+.input-spinner{
+    position: absolute;
+    right: 40px;
+    top: 8px;
+    color: coral;
 }

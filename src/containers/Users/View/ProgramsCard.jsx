@@ -1,20 +1,23 @@
-import React, {useState} from 'react'
+import React, {useState, useCallback, useEffect} from 'react'
 import { Col, Row, Card, CardBody } from 'reactstrap'
 // import Select from 'react-select'
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import axios from 'axios'
+import useDebounce from "@/useDebounce"
+import {Spinner} from 'reactstrap'
 
 const queryClient = new QueryClient()
 
 const search = async( queryKeyword ) => {
     if( queryKeyword.trim().length < 2) return []
 
-    return PROGRAMS;
+    // console.log("searching..")
 
     try {
         const response = await axios.get(
-        `/organization/1/program?minimal=true`
+        `/organization/1/program?minimal=true&keyword=${queryKeyword}`
         );
+        console.log(response)
         const results = response.data;
         return results;
     } catch (e) {
@@ -31,28 +34,24 @@ const PROGRAMS = [
 const ProgramsCard = ( {user}) => {
 
     const [keyword, setKeyword] = useState('')
-    const [results, setResults] = useState([])
+
+    const debouncedKeyword = useDebounce(keyword, 500);
 
     const { isLoading, error, data, isSuccess } = useQuery(
-        ['users', keyword],
-        () => search(keyword),
+        ['users', debouncedKeyword],
+        () => search(debouncedKeyword),
         {
             keepPreviousData: false,
             staleTime: Infinity,
         }
     )
 
-    console.log(data)
-
-    const onSearchChange = (e) => {
+    const onChangeSearchKeyword = (e) => {
         const s = e.target.value
         setKeyword(s)
-        setResults([])
-        if( s.trim().length < 2)   {
-            return
-        }
-        setResults(PROGRAMS)
     }
+
+    console.log(data)
 
     return(
         <Card>
@@ -63,7 +62,8 @@ const ProgramsCard = ( {user}) => {
                         <form className='form'>
                             <div className="form__form-group-field">
                                 <div className="form__form-group-row">
-                                    <input value={keyword} onChange={onSearchChange} type="text" name="keyword" placeholder="Search programs by ID or name" className='select-input' />
+                                    <input value={keyword} onChange={onChangeSearchKeyword} type="text" name="keyword" placeholder="Search programs by ID or name" className='select-input' />
+                                    {isLoading && <Spinner animation="border" size="sm" className='input-spinner' variant="warning" />}
                                     <span class="sidebar__link-icon lnr lnr-chevron-down select-arrow"></span>
                                 </div>
                             </div>
@@ -71,9 +71,8 @@ const ProgramsCard = ( {user}) => {
                             
                                 <div className='program-search_results'>
                                 {error && "Error fetching"}
-                                {isLoading && "Loading..."}
                                 {isSuccess && data.length > 0 &&
-                                    PROGRAMS.map( (program, i) => <RenderResultItem program={program} key={`item-program-{${i}}`} /> )
+                                    data.map( (program, i) => <RenderResultItem program={program} key={`item-program-{${i}}`} /> )
                                 }
                                 </div>
                             {
@@ -105,4 +104,12 @@ const RenderResultItem = ({ program }) => (
     </Row>
 )
 
-export default ProgramsCard
+const ProgramsCardWrapper = () => {
+    return (
+        <QueryClientProvider client={queryClient}>
+            <ProgramsCard />
+        </QueryClientProvider>
+    )
+}
+
+export default ProgramsCardWrapper;
