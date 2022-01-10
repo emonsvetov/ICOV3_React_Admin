@@ -10,6 +10,7 @@ import {getBearer} from './auth';
 import axios from 'axios'
 import FlashMessage from "@/shared/components/flash/FlashMessage"
 
+require('dotenv').config()
 axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
 axios.defaults.headers.common['Authorization'] = getBearer();
 axios.defaults.headers.post['Content-Type'] = 'application/json';
