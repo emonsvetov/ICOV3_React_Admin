@@ -15,7 +15,7 @@
 .account__wrapper {
     min-width: 500px;
 }
-.text-blue{
+.text-blue, .link, .a, a{
     color: #70bbfd !important;
 }
 .font-22{
@@ -72,3 +72,19 @@
 
 .hide-error .form__form-group-error{display:none;}
 .label-mb-0 .radio-btn{margin-bottom:0 !important;}
+.select-arrow{
+    position: absolute;
+    right: 12px;
+    top: 10px;
+}
+.row-item-program{border-bottom:1px solid #EAEAEA}
+.row-program-list-wrap{
+    border:0
+}
+.program-search_results{
+    position: absolute;
+    width:100%;
+    top:0;
+    background-color: #ffffff;
+    z-index: 999;
+}
