@@ -3,6 +3,7 @@ import { Col, Container, Row, Card, CardBody } from 'reactstrap';
 import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
+import ProgramsCard from './View/ProgramsCard'
 
 const queryClient = new QueryClient()
 
@@ -157,6 +158,11 @@ const ViewUser = () => {
                                 
                             </CardBody>
                         </Card>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col md={12}>
+                        <ProgramsCard user={data} />
                     </Col>
                 </Row>
             </Container>

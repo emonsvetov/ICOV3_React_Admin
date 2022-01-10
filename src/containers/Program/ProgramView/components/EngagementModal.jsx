@@ -3,23 +3,38 @@ import CheckboxField from '@/shared/components/form/CheckboxField';
 import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col } from 'reactstrap';
 import { Form } from 'react-final-form';
 import formValidation from "@/shared/validation/program-engagement";
+import axios from 'axios'
+import {useDispatch, sendModalFlashMessage, ModalFlashMessage} from "@/shared/components/flash";
 
-const EngagementModal = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
+const EngagementModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
     const [loading, setLoading] = useState(false)
-    const onSubmitForm = values => {
-        alert(JSON.stringify(values))
+    var [data, setData] = useState(data)
+    const dispatch = useDispatch()
+    const onSubmitForm = async values => {
         setLoading(true)
-        // setTimeout(alert('Allset'), 2000)
-        setLoading(false)
+        data  = {...data, ...values}
+        // alert(JSON.stringify(data))
+        try {
+            const response = await axios.put(`/organization/1/program/${data.id}`, data);
+            // console.log(response)
+            setLoading(false)
+            setData( values )
+            if( response.status === 200)    {
+                dispatch(sendModalFlashMessage('Program has been updated', 'alert-success'))
+            }
+        } catch (e) {
+            setLoading(false)
+            dispatch(sendModalFlashMessage('Program could not be updated', 'alert-danger'))
+            throw new Error(`API error:${e?.message}`);
+        }
     }
     return (
     <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
+        <ModalFlashMessage />
         <Form
         onSubmit={onSubmitForm}
         validate={(values) => formValidation.validateForm(values)}
-        initialValues={{
-            allow_multiple_participants_per_unit:true
-        }}
+        initialValues={data}
         >
         {({ handleSubmit, form, submitting, pristine, values }) => (
         <form className="form" onSubmit={handleSubmit}>
