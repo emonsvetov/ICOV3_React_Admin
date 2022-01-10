@@ -12,7 +12,7 @@ const CreateTableData = () => {
       {
           Header: "Event Name",
           accessor: "name",
-          Cell: ({ row, value }) => { return <Link to={`/events/view/${row.original.id}`} >{value}</Link>},
+          Cell: ({ row, value }) => { return <Link to={`/program/view/${row.original.program_id}/${row.original.id}`} >{value}</Link>},
       },
       {
           Header: "Type",
