@@ -1,13 +1,30 @@
 import React, {useState} from 'react';
 import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
-import Select from 'react-select';
 import axios from 'axios'
+// import {useDispatch} from 'react-redux';
+// import {sendModalFlashMessage} from '@/redux/actions/flashActions';
+// import ModalFlashMessage from "@/shared/components/flash/ModalFlashMessage";
+
+import {useDispatch, sendModalFlashMessage, ModalFlashMessage} from "@/shared/components/flash";
+
 import renderCheckBoxField from '@/shared/components/form/CheckBox';
 import renderSelectField from '@/shared/components/form/Select';
 import US_STATES from "@/shared/json/usstates.json";
 
+import formValidation from "@/shared/validation/program-info";
+
+const getLabelByCode = code => {
+    return US_STATES.find( state => state.value === code)?.label
+}
+
+const prepareForValidation = values => {
+    const clean = {state: values.state?.value}
+    return {...values, ...clean}
+}
+
 const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
+    const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
     const [usState, setUsState] = useState(null)
     var [data, setData] = useState(data)
@@ -16,15 +33,24 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
         setUsState(selectedState)
     }
     const onSubmitForm = async (values) => {
-        alert(JSON.stringify(values))
         setLoading(true)
+        // alert(values.state.value)
+        values.state = values?.state?.value
+        const savedata  = {...data, ...values}
+        // alert(JSON.stringify(savedata))
+        // return;
         try {
-            const response = await axios.put(`/organization/1/program/${data.id}`, values);
-            console.log(response)
+            const response = await axios.put(`/organization/1/program/${data.id}`, savedata);
+            // console.log(response)
             setLoading(false)
+            setData( values )
+            if( response.status === 200)    {
+                dispatch(sendModalFlashMessage('Program has been updated', 'alert-success'))
+            }
         } catch (e) {
-            throw new Error(`API error:${e?.message}`);
             setLoading(false)
+            dispatch(sendModalFlashMessage('Program could not be updated', 'alert-danger'))
+            throw new Error(`API error:${e?.message}`)
         }
         // setTimeout(alert('Allset'), 2000)
     }
@@ -38,17 +64,19 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
     const statePlaceholder = usState ? usState.label : 'State'
     return (
     <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
+        <ModalFlashMessage />
         <Form
                 onSubmit={onSubmitForm}
-                validate={validate}
+                validate={(values) => formValidation.validateForm(prepareForValidation(values))}
                 initialValues={{
                     name: data.name,
+                    type: data.name,
                     external_id: data.external_id,
                     corporate_entity: data.corporate_entity,
                     address: data.address,
                     address_ext: data.address_ext,
                     city: data.city,
-                    state: data.state,
+                    state: {value:data.state, label: getLabelByCode(data.state)},
                     cc_email_list: data.cc_email_list,
                     bcc_email_list: data.bcc_email_list,
                     sub_program_groups: data.sub_program_groups,
@@ -58,13 +86,7 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
                     factor_valuation: data.factor_valuation,
                     prefix: data.prefix,
                     public_contact_email: data.public_contact_email,
-                    zip: data.zip,
-                    external_id: data.external_id,
-                    external_id: data.external_id,
-                    external_id: data.external_id,
-                    external_id: data.external_id,
-                    external_id: data.external_id,
-                    external_id: data.external_id,
+                    zip: data.zip
                 }}
             >
             {({ handleSubmit, form, submitting, pristine, values }) => (
@@ -356,33 +378,16 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
                                 </Field>  
                             </Col>
                             <Col md="6" lg="4" xl="4">
-                                <Field
-                                    name="state"
-                                    component={renderSelectField}
-                                    options={US_STATES}
-                                    placeholder={statePlaceholder}
-                                />
-                                {/* <Field name="state" component="select">
-                                {({ input, meta }) => (
-                                    <div className="form__form-group">
+                                <div className="form__form-group">
                                     <span className="form__form-group-label">State</span>
                                     <div className="form__form-group-field">
-                                        <div className="form__form-group-row">
-                                    <Select
-                                        // value={usState}
-                                        onChange={handleStateChange}
-                                        options={US_STATES}
-                                        clearable={false}
-                                        className="react-select"
-                                        placeholder={statePlaceholder}
-                                        classNamePrefix="react-select"
-                                    />
-                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                        <Field
+                                            name="state"
+                                            component={renderSelectField}
+                                            options={US_STATES}
+                                        />
                                     </div>
-                                            </div>
-                                        </div>
-                                )}
-                                </Field> */}
+                                </div>
                             </Col>
                         </Row>
                 

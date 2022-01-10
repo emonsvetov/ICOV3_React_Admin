@@ -7,7 +7,7 @@ const validationSchema = {
         // country: [Validators.required.validator],
         // use_budget_cascading: [Validators.required.validator, isTrue.validator],
         // enable_budget_summary: [Validators.required.validator, isTrue.validator],
-        is_pay_in_advance: [Validators.required.validator],
+        // is_pay_in_advance: [Validators.required.validator],
     }
 }
 export default validationSchema;
