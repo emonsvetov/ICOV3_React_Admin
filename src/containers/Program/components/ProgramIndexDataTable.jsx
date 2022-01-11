@@ -11,12 +11,12 @@ import ReactTablePagination from '@/shared/components/table/components/ReactTabl
 // import { StatusFilter } from "./StatusFilter";
 import ProgramFilter  from "./ProgramsFilter";
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar } from 'reactstrap';
+import axios from 'axios'
 import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
 import ContentCopyIcon from 'mdi-react/ContentCopyIcon';
-import ProgramTreeView from "./ProgramTreeView";
 import CopyProgramModal from "./CopyProgramModal";
+import MoveProgramModal from "./MoveProgramModal";
+import {renameChildrenToSubrows} from '@/shared/helpers'
 
 const queryClient = new QueryClient()
 
@@ -86,7 +86,7 @@ const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) 
         `/organization/1/program?page=${page}&limit=${pageSize}&${paramStr}`
         );
         const data = {
-            results: response.data.data,
+            results: renameChildrenToSubrows(response.data.data),
             count: response.data.total
         };
         // console.log(data)
@@ -105,11 +105,6 @@ const DataTable = () => {
     const [isCopyOpen, setCopyOpen] = useState(false)
     const [filter, setFilter] = useState({status:'', keyword:''});
     // var [data, setData] = useState([]);
-    const [selected, setSelected] = React.useState([]);
-    const [originalSelected, setOriginalSelected] = React.useState([]);
-
-    const [formError, setFormError] = React.useState('');
-    const [loading, setLoading] = React.useState(false);
 
     const onClickFilterCallback = (status, keyword) => {
         // alert(JSON.stringify({status, keyword}))
@@ -124,33 +119,14 @@ const DataTable = () => {
 
     const onClickStartMoveProgram = ( programId ) => {
         setMovingProgramId(programId)
-        setSelected(programId)
         setMoveOpen(true)
-        setOriginalSelected(programId)
     }
     const onClickStartCopyProgram = ( programId ) => {
         setCopyingProgramId(programId)
         setCopyOpen(true)
         // setOriginalSelected(programId)
     }
-    const handleSelect = (event, nodeIds) => {
-        // alert(nodeIds)
-        setSelected(nodeIds);
-    };
-    const onClickMoveConfrim = () => {
-        setFormError('')
-        setLoading(true)
-        // alert(JSON.stringify({selected, movingProgramId}))
-        console.log(movingProgramId)
-        console.log(selected)
-        if( selected.length <=0 ) setFormError('Select a program to move to');
-        else if( selected === movingProgramId )  setFormError('Select a different program to move to');
-        else   {
-            alert('Allset')
-        }
-        setLoading(false)
-    };
-    const toggle = () => {
+    const moveToggle = () => {
         setMoveOpen(prevState => !prevState);
     };
     const copyToggle = () => {
@@ -329,20 +305,8 @@ const DataTable = () => {
                             ))}
                         </tfoot> */}
                     </table>
-                    <Modal className="modal-program" isOpen={isMoveOpen} toggle={() => setMoveOpen(true)}>
-                        <ModalHeader>
-                            <h3 style={{"fontWeight": 500}}>Move Program to</h3>
-                        </ModalHeader>
-                        <ModalBody>
-                            <ProgramTreeView data={data} handleSelect={handleSelect} selected={selected} />
-                            {formError && <span className="form__form-group-error">{formError}</span>}
-                        </ModalBody>
-                        <ButtonToolbar className="modal__footer flex justify-content-right">
-                            <Button outline color="primary" className="mr-3" onClick={toggle}>Cancel</Button>{' '}
-                            <Button type="submit" disabled={selected===originalSelected || loading} className="btn btn-primary" color="#ffffff" onClick={onClickMoveConfrim}>Confirm</Button>
-                        </ButtonToolbar>
-                    </Modal>
                     <CopyProgramModal isOpen={isCopyOpen} setOpen={setCopyOpen} toggle={copyToggle} programId={copyingProgramId}/>
+                    <MoveProgramModal isOpen={isMoveOpen} setOpen={setMoveOpen} toggle={moveToggle} programId={movingProgramId} />
                 </div>
                 {(rows.length > 0) && (
                     <>

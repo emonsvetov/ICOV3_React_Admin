@@ -61,4 +61,37 @@ export const themes = {
     }
 };
 
+// Object with no prototype to avoid false matches on `toString` and other built-ins
+var mapChildrenToSubrows = Object.assign(Object.create(null), {
+    "children": "subRows"
+});
+function refit_keys(o){
+    var build, key, destKey, value;
+    if (o === null || typeof o !== "object") {
+        return o;
+    }
+    if (Array.isArray(o)) {
+        return o.map(refit_keys);
+    }
+    build = {};
+    for (key in o) {
+        destKey = mapChildrenToSubrows[key] || key;
+        value = o[key];
+        if (typeof value === "object") {
+            value = refit_keys(value);
+        }
+        build[destKey] = value;
+    }
+    return build;
+}
+
+export const renameChildrenToSubrows = data => {
+    let newData = []
+    data.map( row => {
+        let newRow = refit_keys( row )
+        newData.push( newRow )
+    })
+    return newData;
+}
+
   
