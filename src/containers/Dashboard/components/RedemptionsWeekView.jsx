@@ -157,7 +157,7 @@ const RedemptionsWeekView = ({ dir, themeName }) => {
             <YAxis tickLine={false} tickFormatter={toPercent} orientation={dir === 'rtl' ? 'right' : 'left'} />
             <Tooltip content={<RedemptionsWeekViewTooltipContent colorForKey={{ uv: '#555555' }} theme={themeName} />} />
             <CartesianGrid vertical={false} />
-            <Bar dataKey="uv" name="Total" fill="#f2f4f7" barSize={20} />
+            <Bar dataKey="uv" name="Total" fill="#7edbff" barSize={20} />
             {/* <Line type="linear" name="Departures" dataKey="departure" stroke="#b8e986" />
             <Line type="linear" name="Arrivals" dataKey="arrival" stroke="#48b5ff" /> */}
           </ComposedChart>
