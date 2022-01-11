@@ -26,7 +26,7 @@ import EditUser from '../Users/edit_user';
 
 import EventsIndex from '../Events/index';
 import AddEvent from '../Events/add_event';
-import ViewEvent from '../Events/view_event';
+import ViewEvent from '../Program/ProgramView/components/event/EventDetail';
 
 import TreeView from '../TreeViewBasic';
 
@@ -43,6 +43,7 @@ const Programs = () => (
     <Route exact path="/program" component={ProgramIndex} />
     <Route exact path="/program/add" component={AddProgram} />
     <Route exact path="/program/view/:id" component={ProgramView} />
+    <Route exact path="/program/view/:programId/:eventId" component={ViewEvent} />
     {/* <Route path="/program/dashboard" component={ProgramDashboard} /> */}
   </Switch>
 );
@@ -55,6 +56,7 @@ const Users = () => (
     <Route exact path="/users/edit/:id" component={EditUser} />
   </Switch>
 );
+
 
 const Events = () => (
   <Switch>
