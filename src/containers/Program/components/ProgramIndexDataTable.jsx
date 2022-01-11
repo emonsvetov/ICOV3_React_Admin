@@ -85,6 +85,8 @@ const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) 
         const response = await axios.get(
         `/organization/1/program?page=${page}&limit=${pageSize}&${paramStr}`
         );
+        // console.log(response)
+        if( response.data.length === 0) return {results:[],count:0}
         const data = {
             results: renameChildrenToSubrows(response.data.data),
             count: response.data.total
@@ -239,7 +241,7 @@ const DataTable = () => {
     }, [data?.count]);
 
     if (error) {
-        return <p>Error</p>;
+        return <p>Error: {JSON.stringify(error)}</p>;
     }
 
     if (isLoading) {
