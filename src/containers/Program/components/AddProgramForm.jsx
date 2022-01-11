@@ -15,6 +15,15 @@ const AddProgramForm = ( ) => {
         // console.log(values);
         // alert(JSON.stringify(values))
         // return;
+        values = {...values, 
+            ...{
+                setup_fee: 100,
+                is_pay_in_advance: 1, 
+                is_invoice_for_rewards: 1 ,
+                is_add_default_merchants: 1
+            }
+        }
+
         setLoading(true)
         axios.post('/organization/1/program', values)
         .then( (res) => {
@@ -87,86 +96,6 @@ const AddProgramForm = ( ) => {
                         component={renderRadioButtonField}
                         label="Resident"
                         radioValue="Resident"
-                    />
-                </Col>
-            </Row>
-        </div>
-
-        <Field name="setup_fee">
-        {({ input, meta }) => (
-            <div className="form__form-group">
-                <span className="form__form-group-label">Setup fee</span>
-                <div className="form__form-group-field">
-                    <div className="form__form-group-row">
-                        <input type="text" {...input} placeholder="Setup fee" />
-                        {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                    </div>
-                </div>
-            </div>
-        )}
-        </Field>
-
-        <div className="form__form-group label-mb-0">
-            <span className="form__form-group-label">Pay in advance?</span>
-            <Row className='w100'>
-                <Col md="6" lg="6" xl="6">
-                    <Field
-                        name="is_pay_in_advance"
-                        component={renderRadioButtonField}
-                        label="Yes"
-                        radioValue="1"
-                    />
-                </Col>
-                <Col md="6" lg="6" xl="6" className='hide-error'>
-                    <Field
-                        name="is_pay_in_advance"
-                        component={renderRadioButtonField}
-                        label="No"
-                        radioValue="0"
-                    />
-                </Col>
-            </Row>
-        </div>
-
-        <div className="form__form-group label-mb-0">
-            <span className="form__form-group-label">Invoice for rewards?</span>
-            <Row className='w100'>
-                <Col md="6" lg="6" xl="6">
-                    <Field
-                        name="is_invoice_for_rewards"
-                        component={renderRadioButtonField}
-                        label="Yes"
-                        radioValue="1"
-                    />
-                </Col>
-                <Col md="6" lg="6" xl="6" className='hide-error'>
-                    <Field
-                        name="is_invoice_for_rewards"
-                        component={renderRadioButtonField}
-                        label="No"
-                        radioValue="0"
-                    />
-                </Col>
-            </Row>
-        </div>
-
-        <div className="form__form-group label-mb-0">
-            <span className="form__form-group-label">Add default merchants?</span>
-            <Row className='w100'>
-                <Col md="6" lg="6" xl="6">
-                    <Field
-                        name="is_add_default_merchants"
-                        component={renderRadioButtonField}
-                        label="Yes"
-                        radioValue="1"
-                    />
-                </Col>
-                <Col md="6" lg="6" xl="6" className='hide-error'>
-                    <Field
-                        name="is_add_default_merchants"
-                        component={renderRadioButtonField}
-                        label="No"
-                        radioValue="0"
                     />
                 </Col>
             </Row>
