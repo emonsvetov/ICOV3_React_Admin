@@ -6,7 +6,7 @@ import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
 import formValidation from "@/shared/validation/adduser";
 import Select from 'react-select';
 import axios from 'axios';
-import {getLabelByCode, patch4Select, unpatchSelect} from '@/shared/helper'
+import {getLabelByCode, patch4Select, unpatchSelect} from '@/shared/helpers'
 
 const ROLES = [
     {label: 'Admin', value: 'Admin'},

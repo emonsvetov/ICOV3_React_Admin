@@ -4,6 +4,7 @@ import PublicRoute from './PublicRoute';
 import PrivateRoute from './PrivateRoute';
 import Layout from '../Layout/index';
 import MainWrapper from './MainWrapper';
+import Dashboard from '../Dashboard/index';
 import LogIn from '../LogIn/index';
 import Signup from '../Signup/index';
 import SignupSuccess from '../Signup/SignupSuccess';
@@ -90,14 +91,6 @@ const privateRoutes = () => {
         <PrivateRoute path="/treeview" component={TreeView} />
         <PrivateRoute path="/pokemon" component={Pokemon} />
       </div>
-    </div>
-  )
-}
-
-const Dashboard = () => {
-  return (
-    <div>
-      Hello Dashboard!
     </div>
   )
 }

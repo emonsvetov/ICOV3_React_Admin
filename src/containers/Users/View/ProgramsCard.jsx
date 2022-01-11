@@ -8,17 +8,18 @@ import {Spinner} from 'reactstrap'
 
 const queryClient = new QueryClient()
 
-const search = async( queryKeyword ) => {
+const search = async( queryKeyword, cbShow ) => {
     if( queryKeyword.trim().length < 2) return []
 
     // console.log("searching..")
 
     try {
         const response = await axios.get(
-        `/organization/1/program?minimal=true&keyword=${queryKeyword}`
+        `/organization/1/program?minimal=true&findById=true&keyword=${queryKeyword}`
         );
-        console.log(response)
+        // console.log(response)
         const results = response.data;
+        cbShow(true)
         return results;
     } catch (e) {
         throw new Error(`API error:${e?.message}`)
@@ -34,12 +35,13 @@ const PROGRAMS = [
 const ProgramsCard = ( {user}) => {
 
     const [keyword, setKeyword] = useState('')
+    const [show, setShow] = useState(false)
 
     const debouncedKeyword = useDebounce(keyword, 500);
 
     const { isLoading, error, data, isSuccess } = useQuery(
-        ['users', debouncedKeyword],
-        () => search(debouncedKeyword),
+        ['users', debouncedKeyword, setShow],
+        () => search(debouncedKeyword, setShow),
         {
             keepPreviousData: false,
             staleTime: Infinity,
@@ -49,9 +51,14 @@ const ProgramsCard = ( {user}) => {
     const onChangeSearchKeyword = (e) => {
         const s = e.target.value
         setKeyword(s)
+    }    
+    
+    const toggleResults = () => {
+        setShow( ! show )
     }
 
-    console.log(data)
+    // console.log(data)
+    // console.log(show)
 
     return(
         <Card>
@@ -62,17 +69,24 @@ const ProgramsCard = ( {user}) => {
                         <form className='form'>
                             <div className="form__form-group-field">
                                 <div className="form__form-group-row">
-                                    <input value={keyword} onChange={onChangeSearchKeyword} type="text" name="keyword" placeholder="Search programs by ID or name" className='select-input' />
+                                    <input value={keyword} onChange={onChangeSearchKeyword} type="text" name="keyword" placeholder="Search programs by ID or name" className='select-input' autoComplete='off' />
                                     {isLoading && <Spinner animation="border" size="sm" className='input-spinner' variant="warning" />}
-                                    <span class="sidebar__link-icon lnr lnr-chevron-down select-arrow"></span>
+                                    <span onClick={toggleResults} className={`sidebar__link-icon lnr select-arrow ${ show ? 'lnr-chevron-down' : 'lnr-chevron-up'}`}></span>
                                 </div>
                             </div>
                             <div className='form__form-group-field row-program-list-wrap flex-column position-relative'>
                             
                                 <div className='program-search_results'>
                                 {error && "Error fetching"}
-                                {isSuccess && data.length > 0 &&
-                                    data.map( (program, i) => <RenderResultItem program={program} key={`item-program-{${i}}`} /> )
+                                {isSuccess && show && 
+                                    <>
+                                        {
+                                            data.length > 0 &&
+                                            data.map( (program, i) => <RenderResultItem program={program} key={`item-program-{${i}}`} /> )
+                                        }
+
+                                        {data.length == 0 && 'No program found'}
+                                    </>
                                 }
                                 </div>
                             {
