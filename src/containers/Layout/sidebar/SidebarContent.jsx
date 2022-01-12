@@ -24,7 +24,6 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
         <SidebarLink title="Reports"  icon="book" route="/reports" />
         <SidebarLink title="Roles"  icon="user" route="/roles" />
         <SidebarLink title="Users"  icon="users" route="/users" />
-        <SidebarLink title="Events"  icon="calendar-full" route="/events" />
         <SidebarLink title="Invoices"  icon="file-empty" route="/invoices" />
         <SidebarLink title="Domains"  icon="layers" route="/domains" />
       </ul>
