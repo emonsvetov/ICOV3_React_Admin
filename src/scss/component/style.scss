@@ -95,3 +95,22 @@
     top: 8px;
     color: coral;
 }
+.resizer {
+    display: inline-block;
+    background: #EAEAEA;
+    width: 4px;
+    height: 100%;
+    position: absolute;
+    right: 10px;
+    top: 0;
+    transform: translateX(50%);
+    z-index: 1;
+    touch-action:none;
+}
+.resizer.isResizing {
+    background: #CCCCCC;
+}
+.chevron-expand{
+    width: 20px;
+    height: 20px;
+}

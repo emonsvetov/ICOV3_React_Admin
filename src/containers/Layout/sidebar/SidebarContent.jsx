@@ -19,12 +19,12 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
           <SidebarLink title="All Programs" route="/program" onClick={handleHideSidebar} />
           <SidebarLink title="Create Program" route="/program/add" onClick={handleHideSidebar} />
         </SidebarCategory>
-        <SidebarLink title="Merchant"  icon="store" route="/merchant" />
+        <SidebarLink title="Merchants"  icon="store" route="/merchants" />
         <SidebarLink title="Import"  icon="download" route="/import" />
         <SidebarLink title="Reports"  icon="book" route="/reports" />
         <SidebarLink title="Roles"  icon="user" route="/roles" />
         <SidebarLink title="Users"  icon="users" route="/users" />
-        <SidebarLink title="Invoices"  icon="file-empty" route="/invoices" />
+        <SidebarLink title="Physical Orders"  icon="file-empty" route="/physical-orders" />
         <SidebarLink title="Domains"  icon="layers" route="/domains" />
       </ul>
       <ul className="sidebar__block">

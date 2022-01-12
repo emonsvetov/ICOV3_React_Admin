@@ -29,6 +29,9 @@ import EventsIndex from '../Events/index';
 import AddEvent from '../Events/add_event';
 import ViewEvent from '../Program/ProgramView/components/event/EventDetail';
 
+import MerchantsIndex from '../Merchants/index';
+import AddMerchant from '../Merchants/add_merchant';
+
 import TreeView from '../TreeViewBasic';
 
 const Pages = () => (
@@ -46,6 +49,13 @@ const Programs = () => (
     <Route exact path="/program/view/:id" component={ProgramView} />
     <Route exact path="/program/view/:programId/:eventId" component={ViewEvent} />
     {/* <Route path="/program/dashboard" component={ProgramDashboard} /> */}
+  </Switch>
+);
+
+const Merchants = () => (
+  <Switch>
+    <Route exact path="/merchants" component={MerchantsIndex} />
+    <Route exact path="/merchants/add" component={AddMerchant} />
   </Switch>
 );
 
@@ -86,6 +96,7 @@ const privateRoutes = () => {
         <PrivateRoute exact path="/" component={Dashboard} />
         <PrivateRoute path="/pages" component={Pages} />
         <PrivateRoute path="/program" component={Programs} />
+        <PrivateRoute path="/merchants" component={Merchants} />
         <PrivateRoute path="/users" component={Users} />
         <PrivateRoute path="/events" component={Events} />
         <PrivateRoute path="/treeview" component={TreeView} />

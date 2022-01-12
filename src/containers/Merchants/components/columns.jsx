@@ -29,7 +29,7 @@ export const PROGRAM_COLUMNS = [
                 },
               })}
             >
-              {row.isExpanded ? <ChevronUpIcon className="chevron-expand" /> : <ChevronRightIcon className="chevron-expand" />}
+              {row.isExpanded ? <ChevronUpIcon /> : <ChevronRightIcon/>}
             </span>
         ) : null,
     },
@@ -46,6 +46,22 @@ export const PROGRAM_COLUMNS = [
         accessor: "name",
         Footer:"Program Name",
         Cell: ({ row, value }) => { return <Link to={`/program/view/${row.original.id}`}>{value}</Link>},
+    },
+    {
+        Header: "Corporate entity",
+        accessor: "corporate_entity",
+        Footer:"Corporate entity"
+    },
+    // { 
+    //     Header: "Domain",
+    //     accessor: "date_of_borth",
+    //     Footer:"Date of Birth",
+    //     Cell: ({ value }) => { return format(new Date(value), 'dd/MM/yyyy')},
+    // },
+    {
+        Header: "Domain",
+        accessor: "domain",
+        Footer:"Domain",
     },
     {
         Header: "Status",

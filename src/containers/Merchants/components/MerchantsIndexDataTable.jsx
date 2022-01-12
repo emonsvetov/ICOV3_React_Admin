@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useMemo} from "react";
-import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
+import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useBlockLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 // import MOCK_DATA from "./MOCK_DATA.json";
 import { PROGRAM_COLUMNS } from "./columns";
@@ -9,13 +9,13 @@ import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 // import { GlobalFilter } from "./GlobalFilter";
 // import { StatusFilter } from "./StatusFilter";
-import ProgramFilter  from "./ProgramsFilter";
+import MerchantsFilter  from "./MerchantsFilter";
 import { Link } from 'react-router-dom';
 import axios from 'axios'
 import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
 import ContentCopyIcon from 'mdi-react/ContentCopyIcon';
-import CopyProgramModal from "./CopyProgramModal";
-import MoveProgramModal from "./MoveProgramModal";
+// import CopyProgramModal from "./CopyProgramModal";
+// import MoveProgramModal from "./MoveProgramModal";
 import {renameChildrenToSubrows} from '@/shared/helpers'
 
 const queryClient = new QueryClient()
@@ -148,21 +148,13 @@ const DataTable = () => {
     let program_columns = [
         ...PROGRAM_COLUMNS, 
         ...[{
-            Header: "",
+            Header: "Action",
             accessor: "action",
+            Footer: "Action",
             Cell: ({ row }) => <RenderActions row={row} />,
         }]
     ]
     let columns = useMemo( () => program_columns, [])
-
-    const defaultColumn = React.useMemo(
-        () => ({
-          minWidth: 30,
-          width: 150,
-          maxWidth: 400,
-        }),
-        []
-    )
 
     const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
     React.useReducer(reducer, initialState);
@@ -209,14 +201,12 @@ const DataTable = () => {
         autoResetSortBy: false,
         autoResetExpanded: false,
         autoResetPage: false,
-        defaultColumn,
-        
     },
     useSortBy,
     useExpanded,
     usePagination,
-    useResizeColumns, 
-    useFlexLayout,
+    useResizeColumns,
+    useBlockLayout
     );
     // const [statusFilterValue, setStatusFilterValue] = useState("");
     const manualPageSize = []
@@ -265,13 +255,13 @@ const DataTable = () => {
                     <form className="form form--horizontal">
                         <div className="form__form-group pb-4">
                             <div className="col-md-9 col-lg-9">
-                                <ProgramFilter onClickFilterCallback={onClickFilterCallback} />
+                                <MerchantsFilter onClickFilterCallback={onClickFilterCallback} />
                             </div>
                             <div className="col-md-3 col-lg-3 text-right pr-0">
                                 <Link style={{maxWidth:'200px'}}
                                 className="btn btn-primary account__btn account__btn--small"
                                 to="/program/add"
-                                >Add new program
+                                >Add new merchant
                                 </Link>
                             </div>
                         </div>
@@ -300,15 +290,14 @@ const DataTable = () => {
                                 prepareRow(row);
                                 // console.log(row)
                                 const subCount = (row.id.match(/\./g) || []).length
-                                // const paddingCount = subCount > 0 ? Number(subCount) + 3 : 0;
+                                const paddingCount = subCount > 0 ? Number(subCount) + 2 : 0;
                                 // console.log(subCount)
                                 return (
                                     <tr {...row.getRowProps()}>
                                         {
                                             row.cells.map( cell => {
                                                 // console.log(cell)
-                                                const paddingLeft = subCount * 20
-                                                return <td {...cell.getCellProps()}><span style={cell.column.Header==='#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span></td>
+                                                return <td {...cell.getCellProps()}><span className={cell.column.Header==='#' ? `pl-${paddingCount}` : ''}>{cell.render('Cell')}</span></td>
                                             })
                                         }
                                     </tr>
@@ -325,8 +314,6 @@ const DataTable = () => {
                             ))}
                         </tfoot> */}
                     </table>
-                    {copyingProgram && <CopyProgramModal isOpen={isCopyOpen} setOpen={setCopyOpen} toggle={copyToggle} program={copyingProgram}/>}
-                    <MoveProgramModal isOpen={isMoveOpen} setOpen={setMoveOpen} toggle={moveToggle} programId={movingProgramId} />
                 </div>
                 {(rows.length > 0) && (
                     <>
