@@ -1,21 +1,12 @@
 export const FLASH_MESSAGE = 'FLASH_MESSAGE';
-export const MODAL_FLASH_MESSAGE = 'MODAL_FLASH_MESSAGE';
 
-export const sendFlashMessage = (message, className) => {
+export const sendFlashMessage = (message, className, type) => {
   return {
     type: FLASH_MESSAGE,
     payload: {
       message,
-      className
+      className,
+      type
     }
   }
-};
-export const sendModalFlashMessage = (message, className) => {
-    return {
-        type: MODAL_FLASH_MESSAGE,
-        payload: {
-            message,
-            className
-        }
-    }
 };

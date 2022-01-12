@@ -5,7 +5,7 @@ import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/program-add";
 import axios from 'axios';
 
-const AddProgramForm = ( ) => {
+const AddProgramForm = ( {program} ) => {
 
     const [errors, setErrors] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -20,9 +20,13 @@ const AddProgramForm = ( ) => {
                 setup_fee: 100,
                 is_pay_in_advance: 1, 
                 is_invoice_for_rewards: 1 ,
-                is_add_default_merchants: 1
+                is_add_default_merchants: 1,
+                program_id: program ? program.id : null
             }
         }
+
+        // alert(JSON.stringify(values))
+        // return
 
         setLoading(true)
         axios.post('/organization/1/program', values)
@@ -30,8 +34,8 @@ const AddProgramForm = ( ) => {
             // console.log(res)
             // console.log(res.status == 200)
             if(res.status == 200)  {
-            // var t = setTimeout(window.location = '/', 500)
-            window.location = '/program?message=New program added successfully!'
+                // var t = setTimeout(window.location = '/', 500)
+                window.location = '/program?message=New program added successfully!'
             }
         })
         .catch( error => {
@@ -46,7 +50,7 @@ const AddProgramForm = ( ) => {
         onSubmit={onSubmitAddProgram}
         validate={(values) => formValidation.validateForm(values)}
         initialValues={{
-            // program_type: "Employee"
+            name: program ? program.name + ' copy' : ''
         }}
     >
     {({ handleSubmit, form, submitting, pristine, values }) => (

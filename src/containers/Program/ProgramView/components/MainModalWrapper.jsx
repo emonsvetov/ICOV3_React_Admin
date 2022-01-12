@@ -8,6 +8,7 @@ import InvoicesModal from './InvoicesModal';
 import AccountingModal from './AccountingModal';
 import AwardingPointsModal from './AwardingPointsModal';
 import EngagementModal from './EngagementModal';
+import AddProgramModal from './AddProgramModal';
 // import EventsModal from './EventsModal';
 import EventsModal from '../components/event/EventsDataModal';
 
@@ -38,6 +39,9 @@ const MainModalWrapper = ({data, name, isOpen, setOpen, toggle, theme, rtl}) => 
         }
         {
             name==='events' && <EventsModal {...props} />
+        }
+        {
+            name==='addprogram' && <AddProgramModal {...props} />
         }
         </>
     )

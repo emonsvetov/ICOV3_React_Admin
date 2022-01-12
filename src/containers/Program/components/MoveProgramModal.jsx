@@ -3,7 +3,7 @@ import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar } from 'reactstrap
 import ProgramTreeView from "./ProgramTreeView";
 import axios from 'axios'
 import {renameChildrenToSubrows} from '@/shared/helpers'
-import {useDispatch, sendModalFlashMessage, ModalFlashMessage} from "@/shared/components/flash"
+import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
 
 
 const fetchProgramData = async () => {
@@ -47,23 +47,25 @@ const MoveProgramModal = ({isOpen, setOpen, toggle, programId}) => {
         // alert(JSON.stringify({selected, programId}))
         // console.log(programId)
         // console.log(selected)
+        // return;
         if( selected.length <=0 ) setFormError('Select a program to move to');
         else if( selected === programId )  setFormError('Select a different program to move to');
         else   {
             try {
                 let formData = {
-                    program_id: selected
+                    program_id: selected === 'allprograms' ? null : selected
                 }
                 setLoading( true )
-                const response = await axios.patch(`/organization/1/program/${programId}`, formData);
-                console.log(response)
+                const response = await axios.patch(`/organization/1/program/${programId}/move`, formData);
+                // console.log(response)
                 setLoading(false)
                 if( response.status === 200)    {
-                    dispatch(sendModalFlashMessage('Program has been moved', 'alert-success'))
+                    dispatch(sendFlashMessage('Program has been moved', 'alert-success', 'top'))
+                    let tmp = setTimeout(()=> window.location = '/program', 2000)
                 }
             } catch (e) {
                 setLoading(false)
-                dispatch(sendModalFlashMessage('Program could not be moved', 'alert-danger'))
+                dispatch(sendFlashMessage('Program could not be moved', 'alert-danger', 'top'))
                 throw new Error(`API error:${e?.message}`);
             }
         }
@@ -76,7 +78,6 @@ const MoveProgramModal = ({isOpen, setOpen, toggle, programId}) => {
     // console.log(originalSelected)
     return (
         <Modal className="modal-program" isOpen={isOpen} toggle={() => setOpen(true)}>
-            <ModalFlashMessage />
             <ModalHeader>
                 <h3 style={{"fontWeight": 500}}>Move Program to</h3>
             </ModalHeader>

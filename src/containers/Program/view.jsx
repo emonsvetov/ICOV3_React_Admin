@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Col, Container, Row, Card, CardBody, } from 'reactstrap';
 import Alert from '@/shared/components/Alert';
 import MainModalWrapper from './ProgramView/components/MainModalWrapper';
+import AddProgramModal from './ProgramView/components/AddProgramModal';
 import axios from 'axios'
 
 const PUBLIC_URL = `${process.env.PUBLIC_URL}`;
@@ -50,10 +51,13 @@ const ProgramView = () => {
   return (
     <Container className="program-view">
       <Row>
-        <Col md={12}>
+        <Col md={6}>
           <h3 className="page-title">All Programs</h3>
           <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/program">Programs</Link> / {data.name}</h3>
           {message !== "" && <Alert color="success">{message}</Alert>}
+        </Col>
+        <Col md={6} className='text-right'>
+        <span style={{maxWidth:'200px'}} className="btn btn-primary account__btn account__btn--small" onClick={()=>toggle('addprogram')}>Add new program</span>
         </Col>
       </Row>
       <Row>

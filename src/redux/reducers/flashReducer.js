@@ -2,7 +2,8 @@ import {FLASH_MESSAGE} from '../actions/flashActions';
 
 const initialState = {  
   message: null,
-  className: null
+  className: 'alert-success',
+  type: 'nav'
 }
 
 export default (state = initialState, action) => {  

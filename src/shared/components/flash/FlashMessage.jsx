@@ -7,7 +7,7 @@ const FlashMessage = () => {
     const dispatch = useDispatch();
     const flashMessage = useSelector(state => state.flashMessage)
 
-    const {message, className} = flashMessage;
+    const {message, className, type} = flashMessage;
 
     useEffect(
         () => {
@@ -23,12 +23,18 @@ const FlashMessage = () => {
       return null;
     }
 
+    let style = {
+      position:'fixed',
+      top: '60px',
+      zIndex:666
+    }
+
+    if( type === 'top')  {
+      style = {...style, ...{top:0, left:0, zIndex:1060}}
+    }
+
     return (
-      <div className="w100" style={{
-          position:'fixed',
-          top: '60px',
-          zIndex:666
-      }}>
+      <div className="w100" style={style}>
         <div 
         className={'col-md-12 alert justify-content-center text-white ' + className} 
         role="alert">

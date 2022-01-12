@@ -6,7 +6,7 @@ import { Form, Field } from 'react-final-form';
 import formValidation from "@/shared/validation/program-awarding";
 import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import MONTHS from "@/shared/json/months.json";
-import {useDispatch, sendModalFlashMessage, ModalFlashMessage} from "@/shared/components/flash";
+import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
 import axios from 'axios'
 import renderSelectField from '@/shared/components/form/Select'
 
@@ -58,11 +58,11 @@ const AwardingPointsModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
             setLoading(false)
             setData( values )
             if( response.status === 200)    {
-                dispatch(sendModalFlashMessage('Program has been updated', 'alert-success'))
+                dispatch(sendFlashMessage('Program has been updated', 'alert-success'))
             }
         } catch (e) {
             setLoading(false)
-            dispatch(sendModalFlashMessage('Program could not be updated', 'alert-danger'))
+            dispatch(sendFlashMessage('Program could not be updated', 'alert-danger'))
             throw new Error(`API error:${e?.message}`);
         }
     }
@@ -86,7 +86,6 @@ const AwardingPointsModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
     // console.log(initialValues)
     return (
     <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
-        <ModalFlashMessage/>
         <Form
         onSubmit={onSubmitForm}
         validate={(values) => formValidation.validateForm(prepareForValidation(values))}

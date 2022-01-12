@@ -6,7 +6,7 @@ import axios from 'axios'
 // import {sendModalFlashMessage} from '@/redux/actions/flashActions';
 // import ModalFlashMessage from "@/shared/components/flash/ModalFlashMessage";
 
-import {useDispatch, sendModalFlashMessage, ModalFlashMessage} from "@/shared/components/flash";
+import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
 
 import renderCheckBoxField from '@/shared/components/form/CheckBox';
 import renderSelectField from '@/shared/components/form/Select';
@@ -45,11 +45,11 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
             setLoading(false)
             setData( values )
             if( response.status === 200)    {
-                dispatch(sendModalFlashMessage('Program has been updated', 'alert-success'))
+                dispatch(sendFlashMessage('Program has been updated', 'alert-success', 'top'))
             }
         } catch (e) {
             setLoading(false)
-            dispatch(sendModalFlashMessage('Program could not be updated', 'alert-danger'))
+            dispatch(sendFlashMessage('Program could not be updated', 'alert-danger', 'top'))
             throw new Error(`API error:${e?.message}`)
         }
         // setTimeout(alert('Allset'), 2000)
@@ -64,7 +64,6 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
     const statePlaceholder = usState ? usState.label : 'State'
     return (
     <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
-        <ModalFlashMessage />
         <Form
                 onSubmit={onSubmitForm}
                 validate={(values) => formValidation.validateForm(prepareForValidation(values))}

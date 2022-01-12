@@ -101,7 +101,7 @@ const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) 
 const DataTable = () => {
 
     const [movingProgramId, setMovingProgramId] = useState(null)
-    const [copyingProgramId, setCopyingProgramId] = useState(null)
+    const [copyingProgram, setCopyingProgram] = useState(null)
 
     const [isMoveOpen, setMoveOpen] = useState(false)
     const [isCopyOpen, setCopyOpen] = useState(false)
@@ -123,10 +123,9 @@ const DataTable = () => {
         setMovingProgramId(programId)
         setMoveOpen(true)
     }
-    const onClickStartCopyProgram = ( programId ) => {
-        setCopyingProgramId(programId)
+    const onClickStartCopyProgram = ( program ) => {
+        setCopyingProgram(program)
         setCopyOpen(true)
-        // setOriginalSelected(programId)
     }
     const moveToggle = () => {
         setMoveOpen(prevState => !prevState);
@@ -140,7 +139,7 @@ const DataTable = () => {
                 <span>
                     <FolderMoveOutlineIcon onClick={() => onClickStartMoveProgram(row.original.id)} />
                     <span style={{width:'15px', display: 'inline-block'}}></span>
-                    <ContentCopyIcon onClick={() => onClickStartCopyProgram(row.original.id)} />
+                    <ContentCopyIcon onClick={() => onClickStartCopyProgram(row.original)} />
                 </span>
             </>
         )
@@ -307,7 +306,7 @@ const DataTable = () => {
                             ))}
                         </tfoot> */}
                     </table>
-                    <CopyProgramModal isOpen={isCopyOpen} setOpen={setCopyOpen} toggle={copyToggle} programId={copyingProgramId}/>
+                    {copyingProgram && <CopyProgramModal isOpen={isCopyOpen} setOpen={setCopyOpen} toggle={copyToggle} program={copyingProgram}/>}
                     <MoveProgramModal isOpen={isMoveOpen} setOpen={setMoveOpen} toggle={moveToggle} programId={movingProgramId} />
                 </div>
                 {(rows.length > 0) && (

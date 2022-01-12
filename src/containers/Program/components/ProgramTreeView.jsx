@@ -57,7 +57,7 @@ const ProgramTreeView = ({data, handleSelect, selected}) => {
                     // expanded={expanded}
                     // onNodeToggle={handleToggle}
                     onNodeSelect={handleSelect}
-                    defaultSelected={selected}
+                    defaultSelected={selected ? selected : null}
                 >
                     <TreeItem nodeId="allprograms" label="All Programs" disableSelection={true}>
                         <RenderBuildTree data={data} />

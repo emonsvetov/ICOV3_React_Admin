@@ -6,13 +6,31 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { ThemeProps, RTLProps } from '../../../shared/prop-types/ReducerProps';
 import renderCheckBoxField from '@/shared/components/form/CheckBox';
+import axios from 'axios'
 
-const CopyProgramModal = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
+const CopyProgramModal = ({isOpen, setOpen, toggle, program, theme, rtl}) => {
     const [loading, setLoading] = useState(false)
-    const onSubmitCopyForm = () => {
+    const [sourceProgram, setSourceProgram] = useState(program)
+    const [programId, setProgramId] = useState(program.id)
+    const onSubmitCopyForm = values => {
         setLoading(true)
-        setTimeout(alert('Allset'), 2000)
-        setLoading(false)
+        if( typeof values.create_as_sub !== 'undefined' && values.create_as_sub )   {
+            sourceProgram.program_id = programId
+        }
+        delete sourceProgram.id
+        sourceProgram.name = values.name
+        // alert(values.create_as_sub)
+        // alert(JSON.stringify(sourceProgram))
+        axios.post('/organization/1/program', sourceProgram)
+        .then( (res) => {
+            if(res.status == 200)  {
+                window.location = '/program?message=Program copied successfully!'
+            }
+        })
+        .catch( error => {
+            console.log(error.response.data);
+            setLoading(false)
+        })
     }
     const validate = values => {
         let errors = {};
@@ -31,7 +49,7 @@ const CopyProgramModal = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
                 onSubmit={onSubmitCopyForm}
                 validate={validate}
                 initialValues={{
-                    // program_type: "Employee"
+                    name: program.name
                 }}
             >
             {({ handleSubmit, form, submitting, pristine, values }) => (
@@ -54,7 +72,7 @@ const CopyProgramModal = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
                         name="create_as_sub"
                         type="checkbox"
                         component={renderCheckBoxField}
-                        label="Create as subprogram under “[program 1]”"
+                        label={`Create as subprogram under "${program.name}"`}
                         // initialValue={item.defaultChecked}
                         // disabled={item.disabled}
                         // className={className}
@@ -64,7 +82,6 @@ const CopyProgramModal = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
                         <Button outline color="primary" className="mr-3" onClick={toggle}>Cancel</Button>{' '}
                         <Button type="submit" disabled={loading} className="btn btn-primary" color="#ffffff">Confirm</Button>
                     </ButtonToolbar>
-                    <input type="hidden" name='source_program_id' value={programId} />
                 </form>
             )}
             </Form>

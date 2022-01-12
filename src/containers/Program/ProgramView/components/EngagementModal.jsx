@@ -4,7 +4,7 @@ import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col } from '
 import { Form } from 'react-final-form';
 import formValidation from "@/shared/validation/program-engagement";
 import axios from 'axios'
-import {useDispatch, sendModalFlashMessage, ModalFlashMessage} from "@/shared/components/flash";
+import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
 
 const EngagementModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
     const [loading, setLoading] = useState(false)
@@ -20,17 +20,16 @@ const EngagementModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
             setLoading(false)
             setData( values )
             if( response.status === 200)    {
-                dispatch(sendModalFlashMessage('Program has been updated', 'alert-success'))
+                dispatch(sendFlashMessage('Program has been updated', 'alert-success', 'top'))
             }
         } catch (e) {
             setLoading(false)
-            dispatch(sendModalFlashMessage('Program could not be updated', 'alert-danger'))
+            dispatch(sendFlashMessage('Program could not be updated', 'alert-danger', 'top'))
             throw new Error(`API error:${e?.message}`);
         }
     }
     return (
     <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
-        <ModalFlashMessage />
         <Form
         onSubmit={onSubmitForm}
         validate={(values) => formValidation.validateForm(values)}

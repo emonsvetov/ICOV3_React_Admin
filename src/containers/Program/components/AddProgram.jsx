@@ -3,7 +3,7 @@ import { Card, CardBody, Col } from 'reactstrap';
 import FolderPlusOutlineIcon from 'mdi-react/FolderPlusOutlineIcon';
 import AddProgramForm from './AddProgramForm';
 
-const AddProgram = () => {
+const AddProgram = ({program}) => {
   return(
   <Col md={12}>
     <Card>
@@ -15,7 +15,7 @@ const AddProgram = () => {
             <div  className='text-center'><FolderPlusOutlineIcon size={34} color='#70bbfd' /></div>
             <h3 className="text-center text-blue font-22">Create a new program</h3>
           </div>
-          <AddProgramForm />
+          <AddProgramForm program={program} />
         </Col>
         <Col md={4}>
         </Col>
