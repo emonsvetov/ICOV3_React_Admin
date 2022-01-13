@@ -260,7 +260,7 @@ const DataTable = () => {
                             <div className="col-md-3 col-lg-3 text-right pr-0">
                                 <Link style={{maxWidth:'200px'}}
                                 className="btn btn-primary account__btn account__btn--small"
-                                to="/program/add"
+                                to="/merchants/add"
                                 >Add new merchant
                                 </Link>
                             </div>

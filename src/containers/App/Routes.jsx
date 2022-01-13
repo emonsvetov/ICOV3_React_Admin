@@ -25,7 +25,7 @@ import AddUser from '../Users/add_user';
 import ViewUser from '../Users/view_user';
 import EditUser from '../Users/edit_user';
 
-import EventsIndex from '../Events/index';
+// import EventsIndex from '../Events/index';
 import AddEvent from '../Events/add_event';
 import ViewEvent from '../Program/ProgramView/components/event/EventDetail';
 

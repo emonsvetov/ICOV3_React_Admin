@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import Select from 'react-select';
 import CheckboxField from '@/shared/components/form/CheckboxField';
 import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
