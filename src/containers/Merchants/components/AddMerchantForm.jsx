@@ -38,7 +38,9 @@ const AddUserForm = () => {
     const onSubmit = values => {
         alert(JSON.stringify(values))
         return
-        axios.put(`/organization/1/user/`, values)
+        axios.post(`/organization/1/user/`, values, {
+            "Content-Type": "multipart/form-data"
+        })
         .then( (res) => {
           if(res.status == 200)  {
             window.location = `/users/view/`
