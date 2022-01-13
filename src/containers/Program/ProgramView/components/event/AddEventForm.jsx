@@ -36,7 +36,7 @@ const AddEventForm = (props) => {
     setTemplate(selectedTemplate.value);
   };
   const set_path = (name) => {
-    const path = "http://localhost:8000" + name;
+    const path = process.env.SERVER_URL + name;
     return path;
   };
   const toggle = () => {
