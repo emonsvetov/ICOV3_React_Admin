@@ -8,9 +8,8 @@ import { useParams, useHistory } from "react-router-dom";
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
-import Select from "react-select";
 import axios from "axios";
-import renderDropZoneField from "./MyDropZone";
+import renderSelectField from '@/shared/components/form/Select'
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import Tabs from "./Tabs";
 
@@ -135,6 +134,7 @@ const EventDetail = () => {
         return <p>Loading...</p>;
     }
     if( isSuccess )   {
+        
         return (
             <Container className="dashboard">
                 <Col md={12}>
@@ -170,7 +170,7 @@ const EventDetail = () => {
                             initialValues={{
                                 name: data.name,
                                 amount: data.amount,
-                                // email_template_id: data.email_template_id,
+                                email_template_id: TEMPLATES.find(obj => obj.value === data.email_template_id),
                                 ledger_code: data.ledger_code,
                                 post_to_social_wall: data.post_to_social_wall,
                                 include_in_budget: data.include_in_budget,
@@ -247,6 +247,7 @@ const EventDetail = () => {
                                             className="form__form-group-label"
                                             style={{ width: "200%" }}
                                         >
+
                                             Enable This Event
                                         </span>
                                         <Field
@@ -265,17 +266,19 @@ const EventDetail = () => {
                                             </span>
                                             <div className="form__form-group-field">
                                             <div className="form__form-group-row">
-                                                <Select
-                                                name = "email_template_id"
-                                                value={(template === null ) ? TEMPLATES.find(obj => obj.value === data.email_template_id) : TEMPLATES.find(obj => obj.value === template)}
-                                                onChange={(e) => handleTemplateChange(e)}
-                                                options = {TEMPLATES}
-                                                clearable={false}
-                                                className="react-select"
+                                            <Field 
+                                                name="email_template_id"
+                                                options={TEMPLATES}
                                                 placeholder={templatePlaceholder}
-                                                classNamePrefix="react-select"
-                                                required={true}
-                                                />
+                                                // defaultValue={data.email_template_id}
+                                                // initialValue={{ label: "Happy Birthday", value: 1 }}
+                                                // initialValue={(data.email_template_id === null ) ? null : TEMPLATES.find(obj => obj.value === data.email_template_id)}
+                                                component={renderSelectField}
+                                                parse={value => {
+                                                    handleTemplateChange(value)
+                                                    return value;
+                                                }}
+                                            />
                                         
                                             </div>
                                             </div>

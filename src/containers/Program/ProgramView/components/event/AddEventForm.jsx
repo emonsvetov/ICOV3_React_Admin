@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
-import Select from "react-select";
+import renderSelectField from '@/shared/components/form/Select'
 import axios from "axios";
 import Tabs from "./Tabs";
 
@@ -195,22 +195,16 @@ const AddEventForm = (props) => {
                   </span>
                   <div className="form__form-group-field">
                     <div className="form__form-group-row">
-                      <Select
-                        name="email_template_id"
-                        value={
-                          template === null
-                            ? ""
-                            : TEMPLATES.find((obj) => obj.value === template)
-                        }
-                        onChange={(e) => handleTemplateChange(e)}
-                        // onChange={(e)=>{alert(e.target.value)}}
-                        options={TEMPLATES}
-                        clearable={false}
-                        className="react-select"
-                        placeholder={templatePlaceholder}
-                        classNamePrefix="react-select"
-                        required={true}
-                      />
+                        <Field 
+                              name="email_template_id"
+                              options={TEMPLATES}
+                              placeholder={templatePlaceholder}
+                              component={renderSelectField}
+                              parse={value => {
+                                handleTemplateChange(value)
+                                  return value;
+                              }}
+                          />
                     </div>
                   </div>
                 </div>
