@@ -69,7 +69,7 @@ const Tabs = (props) => {
     }
         
     values.files.forEach(element => {
-        data.append('icon[]', element, element.name)    
+        data.append('icon[]', element)    
     });
 
     axios
