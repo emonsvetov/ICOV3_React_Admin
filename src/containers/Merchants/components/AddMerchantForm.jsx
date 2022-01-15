@@ -36,20 +36,21 @@ const AddUserForm = () => {
     }
     
     const onSubmit = values => {
-        alert(JSON.stringify(values))
-        return
-        axios.post(`/organization/1/user/`, values, {
+        // alert(JSON.stringify(values))
+        // return
+        axios.post(`/organization/1/merchant`, values, {
             "Content-Type": "multipart/form-data"
         })
         .then( (res) => {
-          if(res.status == 200)  {
-            window.location = `/users/view/`
-          }
+            console.log(res)
+            if(res.status == 200)  {
+                window.location = `/users/view/`
+            }
         })
         .catch( error => {
-          //console.log(error.response.data);
-          setError(error.response.data.errors);
-          setLoading(false)
+            //console.log(error.response.data);
+            setError(error.response.data.errors);
+            setLoading(false)
         })
     }
     
