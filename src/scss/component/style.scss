@@ -70,6 +70,80 @@
     min-height: 60px;
 
 }
+.border_hover_div{
+    width: 100%;
+    min-height: 64px;
+    cursor: pointer;
+    border: 1px solid #f2f4f7;
+    display: flex;
+    
+    &:hover{
+        background-image: linear-gradient(-45deg , #eff1f5 25%, transparent 25%, transparent 50%, #eff1f5 50%, #eff1f5 75%, transparent 75%, transparent);
+        background-size: 30px 30px;
+        animation: striped 2s linear infinite;
+    }
+    .text{
+        margin: auto;
+        color: #4291D8;
+    }
+    .email_icon{
+        height: 75px;
+        img{
+            height: 100%;
+            width: auto;
+        }
+    }
+}
+.border_div{
+    width: 100%;
+    min-height: 64px;
+    border: 1px solid #f2f4f7;
+    display: flex;
+
+    .text{
+        padding: 16px 326px 8px 16px;
+    }
+    
+}
+
+
+//iamge library
+
+.img_wrap{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.img_wrap li{ 
+    padding: 8px;
+    margin: 0;
+    color: #3c434a;
+    cursor: pointer;
+    list-style: none;
+    text-align: center;
+    -webkit-user-select: none;
+    user-select: none;
+    width: 16.6666%;
+    box-sizing: border-box;
+    transition: all 0.3s ease-in-out;
+    margin-bottom: 5px;
+    margin-right: 5px;
+}
+
+.img_wrap li.active{
+    box-shadow:  0 0 0 3px #fff, inset 0 0 0 3px #2271b1
+}
+
+.img_wrap li > div.preview{ 
+    position: relative;
+    box-shadow: inset 0 2px 15px rgba($color: #000000, $alpha: 0.1);
+    background: #f0f0f1;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    padding: 2px;
+}
 
 .hide-error .form__form-group-error{display:none;}
 .label-mb-0 .radio-btn{margin-bottom:0 !important;}

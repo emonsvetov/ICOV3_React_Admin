@@ -93,23 +93,22 @@ const EventsDataModal = ({
             </Col>
             <Col md="6" lg="6" xl="6" className="text-right">
               <ButtonToolbar className="modal__footer flex justify-content-right w100">
-                {/* <Button outline color="primary" className="mr-3" onClick={onClickCancel}>Cancel</Button>{' '} */}
-                <Link
-                  style={{ paddingRight: "32px", paddingTop: "11px" }}
-                  className=""
-                  onClick={toggle}
-                >
+                  <Button
+                    outline
+                    color="primary"
+                    className="mr-3"
+                    onClick={toggle}
+                  >
                   Cancel
-                </Link>
-
-                <Link
-                  style={{ maxWidth: "200px" }}
-                  className="btn btn-primary account__btn account__btn--small"
-                  onClick = {() => props.onStep(1)}
-                  
-                >
-                  Add Event
-                </Link>
+                  </Button>{" "}
+                  <Button
+                    type="submit"
+                    onClick = {() => props.onStep(1)}
+                    className="btn btn-primary"
+                    color="#ffffff"
+                  >
+                    Add Event
+                  </Button>
               </ButtonToolbar>
             </Col>
           </Row>
@@ -130,7 +129,7 @@ const EventsDataModal = ({
     )
   }
   
-
+  
   return (
     <Modal
       className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`}

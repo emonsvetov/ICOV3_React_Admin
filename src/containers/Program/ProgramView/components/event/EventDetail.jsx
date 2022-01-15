@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { Form, Field } from "react-final-form";
-import { Row, Col, ButtonToolbar, Button, Card, CardBody, Container  } from "reactstrap";
+import {   Modal,
+    ModalBody, Row, Col, ButtonToolbar, Button, Card, CardBody, Container  } from "reactstrap";
+
 import { useParams, useHistory } from "react-router-dom";
 
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
-import Select from "react-select";
 import axios from "axios";
-import renderDropZoneField from "./MyDropZone";
+import renderSelectField from '@/shared/components/form/Select'
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
+import Tabs from "./Tabs";
+
 
 const queryClient = new QueryClient()
 
@@ -23,10 +26,15 @@ const fetchEvent = async ( pId, eId ) => {
 };
 
 const TEMPLATES = [
-  { label: "Birthday", value: 0 },
-  { label: "Work Anniversary", value: 1 },
-  { label: "Custom Template", value: 2 },
+    { label: "Birthday", value: 1 },
+    { label: "Work Anniversary", value: 2 },
+    { label: "Custom Template", value: 3 },
 ];
+const EMAIL_TEMPLATES = [
+    { label: "Happy Birthday", value: 1 },
+    { label: "Good Job", value: 2 },
+    { label: "Custom Template Email", value: 3 },
+  ];
 
 const EventDetail = () => {
   const { programId, eventId } = useParams();
@@ -34,13 +42,26 @@ const EventDetail = () => {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [template, setTemplate] = useState(null);
-  let history = useHistory();
-  const handleTemplateChange = (selectedTemplate) => {
-      
-    setTemplate( "selectedTemplate" );
+  const [isOpen, setOpen] = useState(false);
+  const [icon, setIcon] = useState("");
+  const [iconId, setIconId] = useState(null);
+
+  const [activeTab, setActiveTab] = useState('2');
+
+  const tabToggle = (tab) => {
+    if (activeTab !== tab) setActiveTab(tab);
   };
-  
+
+  const handleTemplateChange = (selectedTemplate) => {    
+    setTemplate( selectedTemplate.value);
+  };
+  const set_path = (name )=> {
+    const path = "http://localhost:8000" + name;
+    return path;
+  }
+  let history = useHistory();
   const onSubmit = (values) => {
+      
     let eventData = Object.assign(values);
 
     eventData["organization_id"] = 1;
@@ -50,16 +71,16 @@ const EventDetail = () => {
 
     //static
     eventData.type_id = 1;
-    eventData.icon = "icon";
-
-    if(template){
-        
-        eventData['email_template_id'] = eventData['email_template_id']['value'];
-    }
-    // setLoading(true)
+    eventData.icon_id = iconId?iconId:data.icon_id;
+    eventData.icon = icon?icon: data.icon;
+    eventData.email_template_id = template ? template : 3;
     
+    // setLoading(true)
+    // 
+
     axios
-      .put(`/organization/1/program/${programId}/event/${eventId}`, eventData)
+      .put(`/organization/1/program/${programId}/event/${eventId}`, eventData,
+      )
       .then((res) => {
         //   console.log(res)
         if (res.status == 200) {
@@ -78,7 +99,24 @@ const EventDetail = () => {
     history.goBack();
   };
 
-  const templatePlaceholder = template ? template : "Select a Template";
+  const handleClick = () => {
+    //seticon
+
+    setOpen(false)
+  };
+
+  const toggle = () => {
+    setOpen(prevState => !prevState)
+  }
+  
+
+  function handlePickImage(img, imgId){
+    setOpen(false)
+    setIcon(img)
+    setIconId(imgId)
+  } 
+
+   const templatePlaceholder = template ? template : "Select a Template";
 
     const { isLoading, loadingError, data, isSuccess, remove } = useQuery(
         ['event', programId, eventId],
@@ -102,12 +140,37 @@ const EventDetail = () => {
                 <Col md={12}>
                     <Card>
                         <CardBody style={{display:'flex'}}>
+                            {
+                                <Modal
+                                    className={`modal-program modal-lg ltr-support`}
+                                    isOpen={isOpen}
+                                    toggle={toggle}
+                                    >
+                                    <ModalBody className="modal-lg">
+                                        <Col md={12} lg={12}>
+                                            <Row className='w100'>
+                                                <Col md="6" lg="6" xl="6">
+                                                    <h3>Insert Icon</h3>
+                                                    
+                                                </Col>
+                                                
+                                            </Row>
+                                            <div className="pt-5 tabs">
+                                                <Tabs onOK = {handlePickImage} activeTab = {activeTab} toggle = {tabToggle} onCancel = {() =>setOpen(false)}/>
+                                            </div>
+                                        
+                                        </Col>
+                                    </ModalBody>
+                                </Modal>
+                            }
+
                             <Form
                             onSubmit={onSubmit}
                             validate={(values) => formValidation.validateForm(values)}
                             initialValues={{
                                 name: data.name,
                                 amount: data.amount,
+                                email_template_id: TEMPLATES.find(obj => obj.value === data.email_template_id),
                                 ledger_code: data.ledger_code,
                                 post_to_social_wall: data.post_to_social_wall,
                                 include_in_budget: data.include_in_budget,
@@ -115,6 +178,7 @@ const EventDetail = () => {
                                 message: data.message
                             }}
                             >
+                            
                             {({ handleSubmit, form, submitting, pristine, values }) => (
                                 <form className="form" onSubmit={handleSubmit}>
                                 {error && (
@@ -183,6 +247,7 @@ const EventDetail = () => {
                                             className="form__form-group-label"
                                             style={{ width: "200%" }}
                                         >
+
                                             Enable This Event
                                         </span>
                                         <Field
@@ -195,34 +260,30 @@ const EventDetail = () => {
                                 </Row>
                                 <Row>
                                     <Col md="6" lg="4" xl="4">
-                                    <Field name="email_template_id" component="select">
-                                        {({ input, meta }) => (
                                         <div className="form__form-group">
                                             <span className="form__form-group-label">
                                             Select a Template
                                             </span>
                                             <div className="form__form-group-field">
                                             <div className="form__form-group-row">
-                                                <Select
-                                                value={(data.email_template_id === null ) ? null : TEMPLATES.find(obj => obj.value === data.email_template_id)}
-                                                onInputChange={(e) => handleTemplateChange(e)}
+                                            <Field 
+                                                name="email_template_id"
                                                 options={TEMPLATES}
-                                                clearable={false}
-                                                className="react-select"
                                                 placeholder={templatePlaceholder}
-                                                classNamePrefix="react-select"
-                                                {...input}
-                                                />
-                                                {meta.touched && meta.error && (
-                                                <span className="form__form-group-error">
-                                                    {meta.error}
-                                                </span>
-                                                )}
+                                                // defaultValue={data.email_template_id}
+                                                // initialValue={{ label: "Happy Birthday", value: 1 }}
+                                                // initialValue={(data.email_template_id === null ) ? null : TEMPLATES.find(obj => obj.value === data.email_template_id)}
+                                                component={renderSelectField}
+                                                parse={value => {
+                                                    handleTemplateChange(value)
+                                                    return value;
+                                                }}
+                                            />
+                                        
                                             </div>
                                             </div>
                                         </div>
-                                        )}
-                                    </Field>
+                                        
                                     </Col>
                                 </Row>
                                 <Row>
@@ -270,40 +331,57 @@ const EventDetail = () => {
                                     </Field>
                                     </Col>
                                 </Row>
-                                {template ? (
-                                    <>
-                                    <Row>
-                                        <Col md="12" lg="8" xl="8">
-                                        <span className="form__form-group-label">Icon</span>
+                                
+                                <Row>
+                                    <Col md="12" lg="8" xl="8">
+                                    <div className="form__form-group">
+                                    <span className="form__form-group-label">Icon</span>
                                         <div className="form__form-group-field">
-                                            <Field
-                                            name="icon"
-                                            component={renderDropZoneField}
-                                            customHeight
-                                            />
-                                        </div>
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col md="12" lg="8" xl="8">
-                                        <div className="form__form-group">
-                                            <span className="form__form-group-label">
-                                            Email Template
-                                            </span>
-                                            <div className="form__form-group-field">
-                                            <Field
-                                                name="email_template"
-                                                component="textarea"
-                                                type="text"
-                                            />
+                                        <div className="form__form-group-row">
+                                           
+                                            <div className="border_hover_div" onClick={() =>setOpen(true)}>
+                                            {data.icon=='default' && !icon ?
+                                            <div className="text">+ Add an Icon</div>:
+                                            <>
+                                                <div className="email_icon">
+                                                    <img src={icon?set_path(icon):set_path(data.icon)} alt="icons" />
+                                                </div>
+                                                <div className="text">Change Icon</div>
+                                            </>
+                                            }
+                                            
+                                            
+                                            
                                             </div>
                                         </div>
-                                        </Col>
-                                    </Row>
-                                    </>
-                                ) : (
-                                    ""
-                                )}
+                                        </div>
+                                    </div>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col md="12" lg="8" xl="8">
+                                    <Field name="email_template">
+                                        {({ input, meta }) => (
+                                        <div className="form__form-group">
+                                            <span className="form__form-group-label">Email Template</span>
+                                            <div className="form__form-group-field">
+                                            <div className="form__form-group-row">
+                                            <div className="border_div" >
+
+                                                <div className="text">
+                                                    {template ? EMAIL_TEMPLATES.find(obj => obj.value === template).label : EMAIL_TEMPLATES.find(obj => obj.value === data.email_template_id).label}
+                                                </div>
+
+                                            </div>
+                                                
+                                            </div>
+                                            </div>
+                                        </div>
+                                        )}
+                                        </Field>
+                                    </Col>
+                                </Row>
+                                    
                                 <Row>
                                     <Col md="6" lg="4" xl="4">
                                     <div className="form__form-group">
