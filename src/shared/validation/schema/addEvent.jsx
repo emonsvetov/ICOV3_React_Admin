@@ -4,8 +4,9 @@ const validationSchema = {
     field: {
         name: [Validators.required.validator],
         // icon: [Validators.required.validator],
+        // type_id: [Validators.required.validator],
         amount: [Validators.required.validator],
-        email_template_id: [Validators.required.validator],     
+        email_template_id: [Validators.required.validator],
         message: [Validators.required.validator]
         
     }
