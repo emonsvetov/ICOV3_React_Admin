@@ -44,7 +44,7 @@ const AddUserForm = () => {
         .then( (res) => {
             console.log(res)
             if(res.status == 200)  {
-                window.location = `/users/view/`
+                // window.location = `/users/view/`
             }
         })
         .catch( error => {
