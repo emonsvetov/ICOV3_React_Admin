@@ -1,8 +1,8 @@
 import React, {useState, useEffect, useMemo} from "react";
-import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useBlockLayout } from "react-table";
+import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 // import MOCK_DATA from "./MOCK_DATA.json";
-import { PROGRAM_COLUMNS } from "./columns";
+import { COLUMNS } from "./columns";
 import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
@@ -66,14 +66,12 @@ const reducer = (state, { type, payload }) => {
   }
 };
 
-const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
+const fetchMerchantData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
     // const offset = page * pageSize;
     const params = []
     let paramStr = ''
     if( pageFilterO ) {
-        if(pageFilterO.status !== 'undefined' && pageFilterO.status) params.push(`status=${pageFilterO.status}`)
         if(pageFilterO.keyword !== 'undefined' && pageFilterO.keyword) params.push(`keyword=${pageFilterO.keyword}`)
-        // console.log(params)
         paramStr = params.join('&')
     }
     if( pageSortBy.length > 0 ) {
@@ -83,7 +81,7 @@ const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) 
     }
     try {
         const response = await axios.get(
-        `/organization/1/program?page=${page}&limit=${pageSize}&${paramStr}`
+        `/organization/1/merchant?page=${page}&limit=${pageSize}&${paramStr}`
         );
         // console.log(response)
         if( response.data.length === 0) return {results:[],count:0}
@@ -100,68 +98,46 @@ const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) 
 
 const DataTable = () => {
 
-    const [movingProgramId, setMovingProgramId] = useState(null)
-    const [copyingProgram, setCopyingProgram] = useState(null)
-
-    const [isMoveOpen, setMoveOpen] = useState(false)
-    const [isCopyOpen, setCopyOpen] = useState(false)
-    const [filter, setFilter] = useState({status:'', keyword:''});
+    const [filter, setFilter] = useState({ keyword:''});
     // var [data, setData] = useState([]);
 
-    const onClickFilterCallback = (status, keyword) => {
+    const onClickFilterCallback = (keyword) => {
         // alert(JSON.stringify({status, keyword}))
         // alert(JSON.stringify(filter))
-        if(filter.status === status && filter.keyword === keyword)    {
+        if(filter.keyword === keyword)    {
             alert('No change in filters')
             return
         }
-        setFilter({status, keyword})
+        setFilter({keyword})
         // alert(status, keyword)
     }
+    // const RenderActions = ({row}) => {
+    //     return (
+    //         <>
+    //             <span>
+    //                 View
+    //             </span>
+    //         </>
+    //     )
+    // }
 
-    const onClickStartMoveProgram = ( programId ) => {
-        setMovingProgramId(programId)
-        setMoveOpen(true)
-    }
-    const onClickStartCopyProgram = ( program ) => {
-        setCopyingProgram(program)
-        setCopyOpen(true)
-    }
-    const moveToggle = () => {
-        setMoveOpen(prevState => !prevState);
-    };
-    const copyToggle = () => {
-        setCopyOpen(prevState => !prevState);
-    };
-    const RenderActions = ({row}) => {
-        return (
-            <>
-                <span>
-                    <FolderMoveOutlineIcon onClick={() => onClickStartMoveProgram(row.original.id)} />
-                    <span style={{width:'15px', display: 'inline-block'}}></span>
-                    <ContentCopyIcon onClick={() => onClickStartCopyProgram(row.original)} />
-                </span>
-            </>
-        )
-    }
-
-    let program_columns = [
-        ...PROGRAM_COLUMNS, 
-        ...[{
-            Header: "Action",
-            accessor: "action",
-            Footer: "Action",
-            Cell: ({ row }) => <RenderActions row={row} />,
-        }]
-    ]
-    let columns = useMemo( () => program_columns, [])
+    // let program_columns = [
+    //     ...COLUMNS, 
+    //     ...[{
+    //         Header: "Action",
+    //         accessor: "action",
+    //         Footer: "Action",
+    //         Cell: ({ row }) => <RenderActions row={row} />,
+    //     }]
+    // ]
+    let columns = useMemo( () => COLUMNS, [])
 
     const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
     React.useReducer(reducer, initialState);
 
     const { isLoading, error, data, isSuccess } = useQuery(
-        ['programs', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
-        () => fetchProgramData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
+        ['merchants', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
+        () => fetchMerchantData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
         {
             keepPreviousData: true,
             staleTime: Infinity,
@@ -206,7 +182,7 @@ const DataTable = () => {
     useExpanded,
     usePagination,
     useResizeColumns,
-    useBlockLayout
+    useFlexLayout
     );
     // const [statusFilterValue, setStatusFilterValue] = useState("");
     const manualPageSize = []
@@ -251,7 +227,7 @@ const DataTable = () => {
     if(isSuccess)
     return (
             <>
-                <div className='table react-table'>
+                <div className='table react-table merchant-table'>
                     <form className="form form--horizontal">
                         <div className="form__form-group pb-4">
                             <div className="col-md-9 col-lg-9">
@@ -260,7 +236,7 @@ const DataTable = () => {
                             <div className="col-md-3 col-lg-3 text-right pr-0">
                                 <Link style={{maxWidth:'200px'}}
                                 className="btn btn-primary account__btn account__btn--small"
-                                to="/program/add"
+                                to="/merchants/add"
                                 >Add new merchant
                                 </Link>
                             </div>
@@ -270,8 +246,8 @@ const DataTable = () => {
                         <thead>
                             {headerGroups.map( (headerGroup) => (
                                 <tr {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map( column => (
-                                        <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                    {headerGroup.headers.map( (column, i) => (
+                                        <th className={`cell-column-${i}`} {...column.getHeaderProps(column.getSortByToggleProps())}>
                                             {column.render('Header')}
                                             {column.isSorted ? <Sorting column={column} /> : ''}
                                             <div
@@ -295,9 +271,9 @@ const DataTable = () => {
                                 return (
                                     <tr {...row.getRowProps()}>
                                         {
-                                            row.cells.map( cell => {
+                                            row.cells.map( (cell, i) => {
                                                 // console.log(cell)
-                                                return <td {...cell.getCellProps()}><span className={cell.column.Header==='#' ? `pl-${paddingCount}` : ''}>{cell.render('Cell')}</span></td>
+                                                return <td className={`cell-column-${i}`} {...cell.getCellProps()}><span className={cell.column.Header==='#' ? `pl-${paddingCount}` : ''}>{cell.render('Cell')}</span></td>
                                             })
                                         }
                                     </tr>

@@ -1,9 +1,10 @@
 import { Field } from 'react-final-form';
-const CheckboxField = ( {name, label} ) => {
+const CheckboxField = ( {name, label, onChange} ) => {
     return (
         <Field
             name={name}
             type="checkbox"
+            onChange={onChange}
         >
         {({ input, meta }) => (
             <label className="checkbox-btn flex-column" htmlFor={name}>
