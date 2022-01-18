@@ -8,6 +8,7 @@ import showResults from '@/utils/showResults';
 import DropFiles from './DropFiles';
 import axios from 'axios';
 import { object } from 'prop-types';
+require('dotenv').config()
 
 const Tabs = (props) => {
   
@@ -30,10 +31,10 @@ const Tabs = (props) => {
   const set_path = (name )=> {
       let path;
       if(name.path.includes('uploads')){
-        path = "http://localhost:8000" + name.path;
+        path = process.env.REACT_APP_SERVER_BASE_URL + name.path;
       }
       else{
-        path = "http://localhost:8000/uploads/icons/" + name.path;
+        path = process.env.REACT_APP_SERVER_BASE_URL + "/uploads/icons/" + name.path;
       }
     
     return path;
@@ -74,9 +75,9 @@ const Tabs = (props) => {
     values.files.forEach(element => {
         data.append('icon[]', element)    
     });
-
+    
     axios
-    .post(`/event_icons`, data, {
+    .post(`/event_icons/organization/1`, data,{
             headers: {
                 "Content-type": "multipart/form-data",
             },       

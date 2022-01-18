@@ -56,7 +56,7 @@ const EventDetail = () => {
     setTemplate( selectedTemplate.value);
   };
   const set_path = (name )=> {
-    const path = "http://localhost:8000" + name;
+    const path = process.env.REACT_APP_SERVER_BASE_URL + name;
     return path;
   }
   let history = useHistory();
