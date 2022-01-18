@@ -31,7 +31,8 @@ const ViewMerchant = () => {
         })
     }, [id])
 
-    const onClickDelete = () => {
+    const onClickDelete = (e) => {
+        e.preventDefault()
         setLoading( true )
         axios.delete(`/merchant/${merchant.id}`)
         .then( (res) => { 
@@ -48,7 +49,8 @@ const ViewMerchant = () => {
         })
     }    
     
-    const onClickChangeStatus = () => {
+    const onClickChangeStatus = (e) => {
+        e.preventDefault()
         setLoading( true )
         const newStatus = merchant.status ? 0 : 1
         axios.patch(`/merchant/${merchant.id}/status`, {status: newStatus})
@@ -104,9 +106,9 @@ const ViewMerchant = () => {
                                     </Col>
                                     <Col md="6" lg="6" xl="6" className="text-right">
                                         <ButtonToolbar className="flex justify-content-right w100">
-                                            <Button type="button" disabled={loading} className="btn btn-primary btn-sm"><Link className='color-white' to={`/merchants/edit/${merchant.id}`}>Edit</Link></Button>
-                                            <Button type="button" disabled={loading} className="btn btn-primary btn-sm color-white" onClick={() => {if(window.confirm('Are you sure to delete this merchant?')){onClickDelete()}}}>Delete</Button>
-                                            <Button type="button" disabled={loading} className="btn btn-primary btn-sm color-white" onClick={onClickChangeStatus}>Active</Button>
+                                            <Link className='text-blue' to={`/merchants/edit/${merchant.id}`}>Edit</Link>
+                                            <Link disabled={loading} className="text-danger" onClick={(e) => {if(window.confirm('Are you sure to delete this merchant?')){onClickDelete(e)}}}>Delete</Link>
+                                            <Link disabled={loading} className="text-grey" onClick={onClickChangeStatus}>Active</Link>
                                         </ButtonToolbar>
                                     </Col>
                                 </Row>

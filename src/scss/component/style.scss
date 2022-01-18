@@ -42,7 +42,7 @@
 .react-select__input-container{margin-top:0px !important;}
 .css-6j8wv5-Input{margin-top: 0px !important;padding-top: 0px !important;}
 #react-select-3-listbox{top:24px;}
-.colorgrey{color: #999999 !important;}
+.colorgrey, .text-grey, .text-gray{color: #999999 !important;}
 .react-table__column-header.sortable{display: inline-block;margin-left: 2px;}
 .merchant_icon{max-height: 40px;width: auto;}
 .modal .row{width:100%;}
@@ -203,3 +203,9 @@
 }
 .dropzone-img img{width:auto}
 .color-white{color: #ffffff !important;}
+.ltr-support .btn-toolbar > a {
+    margin-right: 35px;
+}
+.ltr-support .btn-toolbar > a:last-child {
+    margin-right: 0px;
+}
