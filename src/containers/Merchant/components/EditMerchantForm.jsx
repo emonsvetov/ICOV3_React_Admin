@@ -11,12 +11,11 @@ import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import WYSIWYGEditor from '@/shared/components/form/WYSIWYGEditor'
 import {TOA_OPTIONS} from '@/shared/options'
 import { useParams } from 'react-router-dom'
-import {ORGANIZATION_ID} from '../../App/auth'
 
 
 const fetchMerchant = async ( id ) => {
     try {
-        const response = await axios.get(`/organization/${ORGANIZATION_ID}/merchant/${id}`);
+        const response = await axios.get(`/merchant/${id}`);
         return response.data;
     } catch (e) {
         throw new Error(`API error:${e?.message}`);
@@ -52,13 +51,13 @@ const EditMerchantForm = () => {
     const onSubmit = values => {
         values = unpatchMerchantFields(values)
         // values = unpatchMerchantMediaURL(values)
-        alert(JSON.stringify(values))
+        // alert(JSON.stringify(values))
         // return;
         let formData = mapFormDataUploads( values )
         // console.log(data)
         // return
         formData.append('_method', 'PUT')
-        axios.post(`/organization/1/merchant/${merchant.id}`, formData, {
+        axios.post(`/merchant/${merchant.id}`, formData, {
             "Content-Type": "multipart/form-data",
             "Access-Control-Allow-Origin": "*"
         })
