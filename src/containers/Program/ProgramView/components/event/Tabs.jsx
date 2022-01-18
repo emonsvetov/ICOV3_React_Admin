@@ -29,14 +29,8 @@ const Tabs = (props) => {
 
   
   const set_path = (name )=> {
-      let path;
-      if(name.path.includes('uploads')){
-        path = process.env.REACT_APP_API_STORAGE_URL + "/app/public" + name.path;
-      }
-      else{
-        path = process.env.REACT_APP_API_STORAGE_URL + "/app/public" + name.path;
-      }
     
+    let path = process.env.REACT_APP_API_STORAGE_URL + "/" + name.path;  
     return path;
   }
 

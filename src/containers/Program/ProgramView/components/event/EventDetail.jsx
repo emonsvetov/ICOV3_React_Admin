@@ -56,7 +56,7 @@ const EventDetail = () => {
     setTemplate( selectedTemplate.value);
   };
   const set_path = (name )=> {
-    const path = process.env.REACT_APP_API_STORAGE_URL + "/app/public" + name;
+    const path = process.env.REACT_APP_API_STORAGE_URL + "/" + name;
     return path;
   }
   let history = useHistory();
