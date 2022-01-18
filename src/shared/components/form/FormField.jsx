@@ -14,7 +14,7 @@ const FormField = ({
     )}
   >
     <Component {...props} {...input} />
-    {error && <Error error={error} />}
+    {touched && error && <Error error={error} />}
   </div>
 );
 

@@ -3,6 +3,8 @@
 export const AUTH_TOKEN_KEY = 'authToken';
 export const AUTH_USER_KEY = 'authUser';
 
+export const ORGANIZATION_ID = 1
+
 export const login = data => {
     localStorage.setItem(AUTH_TOKEN_KEY, data.access_token);
     localStorage.setItem(AUTH_USER_KEY, JSON.stringify(data.user));

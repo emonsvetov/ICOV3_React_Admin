@@ -2,54 +2,79 @@ import React, {useState, useEffect} from 'react';
 import { Form, Field } from 'react-final-form';
 import CheckboxField from '@/shared/components/form/CheckBox';
 import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
-// import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/merchants/addMerchant";
 import renderSelectField from '@/shared/components/form/Select';
 import axios from 'axios';
-import {getLabelByCode, patch4Select, unpatchSelect} from '@/shared/helpers'
+import {mapFormDataUploads, patchMerchantMediaURL, unpatchMerchantFields} from '@/shared/helpers'
 import renderDropZoneField from '@/shared/components/form/DropZone';
+import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
+import WYSIWYGEditor from '@/shared/components/form/WYSIWYGEditor'
+import {TOA_OPTIONS} from '@/shared/options'
+import { useParams } from 'react-router-dom'
+import {ORGANIZATION_ID} from '../../App/auth'
 
-const ROLES = [
-    {label: 'Admin', value: 'Admin'},
-    {label: 'Customer', value: 'Customer'},
-    {label: 'Agent', value: 'Agent'},
-]
 
-const TOA_OPTIONS = [
-    {label:'Default Production API', value: 1},
-    {label:'Visa Debit Card 2- (Cardinal)', value: 2},
-    {label:'Visa Debit Card 4, Visa Prepaid card, Visa Debit Card Landmark, Visa Prepaid Debit Card', value: 3},
-    {label:'Visa Debit Card', value: 4},
-    {label:'Peak Visa Debit', value: 5},
-    {label:'Visa Debit Card (Related Group)', value: 6},
-    {label:'Sandbox API', value: 7},
-]
+const fetchMerchant = async ( id ) => {
+    try {
+        const response = await axios.get(`/organization/${ORGANIZATION_ID}/merchant/${id}`);
+        return response.data;
+    } catch (e) {
+        throw new Error(`API error:${e?.message}`);
+    }
+};
 
-const AddUserForm = () => {
+const EditMerchantForm = () => {
 
-    const [error, setError] = useState(false)
+    const dispatch = useDispatch()
+    let { id } = useParams();
+
+    // alert(id)
+
     const [loading, setLoading] = useState(false)
     const [useTango, setUseTango] = useState(false)
+    const [errors, setErrors] = useState(null)
+    let [merchant, setMerchant] = useState(null)
+    //initialValues={patchMerchantMediaWithURL(merchant, ['logo', 'icon', 'large_icon', 'banner'])}
+
+    useEffect( ()=>{
+        setLoading(true)
+        fetchMerchant( id )
+        .then( response => {
+            setMerchant(response)
+            setLoading(false)
+        })
+    }, [id])
 
     const onChangeUseTangoAPI = () => {
         setUseTango( !useTango )
     }
-    
+
     const onSubmit = values => {
+        values = unpatchMerchantFields(values)
+        // values = unpatchMerchantMediaURL(values)
         alert(JSON.stringify(values))
-        return
-        axios.post(`/organization/1/user/`, values, {
-            "Content-Type": "multipart/form-data"
+        // return;
+        let formData = mapFormDataUploads( values )
+        // console.log(data)
+        // return
+        formData.append('_method', 'PUT')
+        axios.post(`/organization/1/merchant/${merchant.id}`, formData, {
+            "Content-Type": "multipart/form-data",
+            "Access-Control-Allow-Origin": "*"
         })
-        .then( (res) => {
-          if(res.status == 200)  {
-            window.location = `/users/view/`
-          }
+        .then( (res) => { 
+            // console.log(res)
+            if(res.status == 200)  {
+                window.location = `/merchants?message=Merchant updated successfully!`
+            }
         })
         .catch( error => {
-          //console.log(error.response.data);
-          setError(error.response.data.errors);
-          setLoading(false)
+            console.log(error)
+            // console.log(JSON.stringify(error.response.data.errors));
+            setErrors(error.response.data.errors);
+            dispatch(sendFlashMessage(JSON.stringify(error.response.data.errors), 'alert-danger'))
+            // throw new Error(`API error:${e?.message}`);
+            setLoading(false)
         })
     }
     
@@ -57,24 +82,30 @@ const AddUserForm = () => {
         window.location = `/merchants`
     }
 
+    if( loading || !merchant ) return <p>Loading...</p>
+
+    // patchMerchantMediaWithURL()
+
+    // console.log(merchant)
+    merchant = patchMerchantMediaURL( merchant )
+    // console.log(merchant)
+
     return (
     <Form
         onSubmit={onSubmit}
         validate={(values) => formValidation.validateForm(values)}
-        initialValues={{
-
-        }}
+        initialValues={merchant}
     >
     {({ handleSubmit, form, submitting, pristine, values }) => (
     <form className="form" onSubmit={handleSubmit}>
-        {error && 
+        {errors && 
             <div className="alert alert-danger fade show w100 mb-4" role="alert">
-                <div className="alert__content">{error}</div>
+                <div className="alert__content">{errors}</div>
             </div>
         }
         <Row className='w100'>
             <Col md="6" lg="6" xl="6">
-                <h3 className="mb-4">Add Merchant</h3>
+                <h3 className="mb-4">Edit Merchant</h3>
             </Col>
             <Col md="6" lg="6" xl="6" className='text-right'>
                 <ButtonToolbar className="modal__footer flex justify-content-right w100">
@@ -118,43 +149,55 @@ const AddUserForm = () => {
         <Row>
             <Col md="3" lg="3" xl="3">
                 <div className="form__form-group">
-                    <CheckboxField 
+                    <Field
                         name="is_default"
+                        type="checkbox"
+                        component={CheckboxField}
                         label="Default"
                     />
                 </div>
                 <div className="form__form-group">
-                    <CheckboxField 
+                    <Field 
                         name="is_premium"
                         label="Premium"
+                        type="checkbox"
+                        component={CheckboxField}
                     />
                 </div>
             </Col>
             <Col md="3" lg="3" xl="3">
                 <div className="form__form-group">
-                    <CheckboxField 
+                    <Field 
                     name="physical_order"
                     label="Physical Order"
+                    type="checkbox"
+                    component={CheckboxField}
                 />
                 </div>
                 <div className="form__form-group">
-                    <CheckboxField 
+                    <Field 
                         name="requires_shipping"
                         label="Requires Shipping"
+                        type="checkbox"
+                        component={CheckboxField}
                     />
                 </div>
             </Col>
             <Col md="3" lg="3" xl="3">
                 <div className="form__form-group">
-                    <CheckboxField 
+                    <Field 
                         name="giftcodes_require_pin"
                         label="Gift Codes Require PIN"
+                        type="checkbox"
+                        component={CheckboxField}
                     />
                 </div>
                 <div className="form__form-group">
-                    <CheckboxField 
+                    <Field 
                     name="display_popup"
                     label="Display Popup"
+                    type="checkbox"
+                    component={CheckboxField}
                 />
                 </div>
             </Col>
@@ -162,10 +205,15 @@ const AddUserForm = () => {
         <Row>
             <Col md="6" lg="6" xl="6">
                 <div className="form__form-group">
-                    <CheckboxField 
+                    <Field 
                         name="use_tango_api"
                         label="Use Tango API"
-                        onChange={onChangeUseTangoAPI}
+                        type="checkbox"
+                        component={CheckboxField}
+                        parse={ value => {
+                            onChangeUseTangoAPI()
+                            return value
+                        }}
                     /> 
                 </div>
                 {useTango && 
@@ -200,72 +248,69 @@ const AddUserForm = () => {
                 </Field>  
             </Col>
         </Row>        
-        <Row>
+        <Row className='mb-3'>
             <Col md="8" lg="8" xl="8">
-                <Field name="description" component="textarea" type="text">
-                {({ input, meta }) => (
-                    <div className="form__form-group">
-                        <span className="form__form-group-label">Description</span>
-                        <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                                <textarea name="textarea" type="text" {...input}></textarea>
-                                {/* <input type="textarea" {...input} placeholder="Description" /> */}
-                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                            </div>
-                        </div>
-                    </div>
-                )}
-                </Field>  
+                <Field
+                    name="description"
+                    component={WYSIWYGEditor}
+                />
             </Col>
         </Row>
-        <Row>
+        <Row className='mb-3'>
             <Col md="8" lg="8" xl="8">
-                <Field name="redemption_instruction" component="textarea" type="text">
-                {({ input, meta }) => (
-                    <div className="form__form-group">
-                        <span className="form__form-group-label">Redemption Instruction</span>
-                        <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                                <textarea name="textarea" type="text" {...input}></textarea>
-                                {/* <input type="textarea" {...input} placeholder="Description" /> */}
-                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                            </div>
-                        </div>
-                    </div>
-                )}
-                </Field>  
+                <Field
+                    name="redemption_instruction"
+                    component={WYSIWYGEditor}
+                />
             </Col>
         </Row>
         <Row>
             <Col md="8" lg="8" xl="8">
                 <div className="form__form-group">
                     <span className="form__form-group-label">Logo</span>
-                    <div className="form__form-group-field">
+                    <div className="form__form-group-field  flex-column">
                         <Field
                         name="logo"
                         component={renderDropZoneField}
+                        multiple={false}
                         customHeight
                         />
+                        <RenderImage src={merchant.logo} />
                     </div>
                 </div>
                 <div className="form__form-group">
                     <span className="form__form-group-label">Icon</span>
-                    <div className="form__form-group-field">
+                    <div className="form__form-group-field flex-column">
                         <Field
                         name="icon"
                         component={renderDropZoneField}
+                        multiple={false}
                         customHeight
                         />
+                        <RenderImage src={merchant.icon} />
                     </div>
                 </div>
                 <div className="form__form-group">
                     <span className="form__form-group-label">Large Icon</span>
-                    <div className="form__form-group-field">
+                    <div className="form__form-group-field flex-column">
                         <Field
-                        name="large_icon"
-                        component={renderDropZoneField}
-                        customHeight
+                            name="large_icon"
+                            component={renderDropZoneField}
+                            multiple={false}
+                            customHeight
                         />
+                        <RenderImage src={merchant.large_icon} />
+                    </div>
+                </div>
+                <div className="form__form-group">
+                    <span className="form__form-group-label">Banner</span>
+                    <div className="form__form-group-field flex-column">
+                        <Field
+                            name="banner"
+                            component={renderDropZoneField}
+                            multiple={false}
+                        />
+                        <RenderImage src={merchant.banner} />
                     </div>
                 </div>
             </Col>
@@ -275,4 +320,12 @@ const AddUserForm = () => {
   </Form>
 )}
 
-export default AddUserForm;
+const RenderImage = ({src}) => {
+    if( !src || typeof src === 'undefined' ) return ''
+    return (
+        <div className='dropzone-img'>
+            <img src={src} />
+        </div>
+    )
+}
+export default EditMerchantForm;

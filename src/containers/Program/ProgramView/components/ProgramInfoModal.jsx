@@ -54,13 +54,6 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
         }
         // setTimeout(alert('Allset'), 2000)
     }
-    const validate = values => {
-        // let errors = {};
-        // if (!values.name) {
-        //     errors.name = "Program name is required";
-        // }
-        // return errors;
-    }
     const statePlaceholder = usState ? usState.label : 'State'
     return (
     <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
