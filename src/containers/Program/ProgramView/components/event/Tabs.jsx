@@ -74,7 +74,7 @@ const Tabs = (props) => {
     });
     
     axios
-    .post(`/event_icons/organization/1`, data,{
+    .post(`/organization/1/event_icons`, data,{
             headers: {
                 "Content-type": "multipart/form-data",
             },       

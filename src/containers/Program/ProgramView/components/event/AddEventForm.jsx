@@ -180,7 +180,7 @@ const AddEventForm = (props) => {
                       Enable This Event
                     </span>
                     <Field
-                      name="enable_event"
+                      name="enable"
                       component={renderToggleButtonField}
                     />
                   </div>
