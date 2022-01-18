@@ -1,7 +1,7 @@
 import React from 'react';
-import { Col, Container, Row } from 'reactstrap';
+import { Col, Container, Row, Card, CardBody } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import AddMerchantForm from './components/AddMerchant';
+import AddMerchantForm from './components/AddMerchantForm';
 
 const AddMerchant = () => (
   <Container className="dashboard">
@@ -12,7 +12,13 @@ const AddMerchant = () => (
       </Col>
     </Row>
     <Row>
-      <AddMerchantForm />
+      <Col md={12}>
+        <Card>
+          <CardBody style={{display:'flex'}}>
+            <AddMerchantForm />
+          </CardBody>
+        </Card>
+      </Col>
     </Row>
   </Container>
 );
