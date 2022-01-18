@@ -72,9 +72,9 @@ const Tabs = (props) => {
     values.files.forEach(element => {
         data.append('icon[]', element)    
     });
-
+    
     axios
-    .post(`/event_icons`, data,{
+    .post(`/event_icons/organization/1`, data,{
             headers: {
                 "Content-type": "multipart/form-data",
             },       
