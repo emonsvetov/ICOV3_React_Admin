@@ -1,9 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import { Col, Container, Row, Card, CardBody, ButtonToolbar, ListGroup, ListGroupItem } from 'reactstrap';
+import { Col, Container, Row, Card, CardBody, ListGroup, ListGroupItem } from 'reactstrap';
 import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
-import {answerYesNo} from '@/shared/helpers'
-import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
+import MerchantDetails from './View/components/MerchantDetails';
 
 const MERCHANT_MENU_LINKS = [
     {
@@ -49,10 +48,11 @@ const fetchMerchant = async ( id ) => {
 const ViewMerchant = () => {
 
     let { id } = useParams();
-    const dispatch = useDispatch()
+
     const [isLoading, setIsLoading] = useState(true) //first page load!
-    const [loading, setLoading] = useState(false)
+    
     let [merchant, setMerchant] = useState(null)
+    const [selected, setSelected] = useState('details')
 
     useEffect( ()=>{
         fetchMerchant( id )
@@ -62,45 +62,8 @@ const ViewMerchant = () => {
         })
     }, [id])
 
-    const onClickDelete = (e) => {
-        e.preventDefault()
-        setLoading( true )
-        axios.delete(`/merchant/${merchant.id}`)
-        .then( (res) => { 
-            // console.log(res)
-            if(res.status == 200)  {
-                window.location = `/merchants?message=Merchant deleted successfully!`
-            }
-        })
-        .catch( error => {
-            console.log(error)
-            setLoading( false )
-            dispatch(sendFlashMessage(JSON.stringify(error.response.data), 'alert-danger'))
-            // throw new Error(`API error:${e?.message}`);
-        })
-    }    
-    
-    const onClickChangeStatus = (e) => {
-        e.preventDefault()
-        setLoading( true )
-        const newStatus = merchant.status ? 0 : 1
-        axios.patch(`/merchant/${merchant.id}/status`, {status: newStatus})
-        .then( (res) => {
-            setLoading( false )
-            console.log(res)
-
-            if(res.status == 200)  {
-                setMerchant({...merchant, ...{status: newStatus}})
-                dispatch(sendFlashMessage('Merchant status updated successfully', 'alert-success'))
-                // window.location = `/merchants?message=Merchant deleted successfully!`
-            }
-        })
-        .catch( error => {
-            console.log(error)
-            setLoading( false )
-            dispatch(sendFlashMessage(JSON.stringify(error.response.data), 'alert-danger'))
-            // throw new Error(`API error:${e?.message}`);
-        })
+    const onClickMenuItem = (item) => {
+        setSelected(item.value)
     }
 
     // const refresh = () => {
@@ -115,12 +78,14 @@ const ViewMerchant = () => {
         return <p>Loading...</p>;
     }
 
-    const RenderItem = (item) => (
-        <ListGroupItem
-            href="#"
-            tag="a"
-        >{item.label}</ListGroupItem>
-    )
+    const RenderItem = ({item, key}) => {
+        return (<ListGroupItem
+            className={selected === item.value ? 'selected' : ''}
+            href="#" 
+            tag="a" 
+            key={key} 
+            onClick={()=>onClickMenuItem(item)}>{item.label}</ListGroupItem>)
+    }
 
     const RenderMenu = () => {
         return (
@@ -132,8 +97,6 @@ const ViewMerchant = () => {
         )
     }
 
-
-
     if( !isLoading && merchant )   {
         return (
             <Container className="dashboard">
@@ -142,9 +105,6 @@ const ViewMerchant = () => {
                         <h3 className="page-title">{merchant.name}</h3>
                         <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/merchants">Merchants</Link> / {merchant.name}</h3>
                         {/* <span onClick={refresh}>Refresh</span> */}
-                    </Col>
-                    <Col md={6} className="text-right">
-                        
                     </Col>
                 </Row>
                 <Row>
@@ -160,162 +120,8 @@ const ViewMerchant = () => {
                     <Col md={12}>
                         <Card>
                             <CardBody className='infoview'>
-                                <Row>
-                                    <Col md="6" lg="6" xl="6">
-                                        <h3 className="mb-4">Merchant Details</h3>
-                                    </Col>
-                                    <Col md="6" lg="6" xl="6" className="text-right">
-                                        <ButtonToolbar className="flex justify-content-right w100">
-                                            <Link className='text-blue' to={`/merchants/edit/${merchant.id}`}>Edit</Link>
-                                            <Link disabled={loading} className="text-danger" onClick={(e) => {if(window.confirm('Are you sure to delete this merchant?')){onClickDelete(e)}}}>Delete</Link>
-                                            <Link disabled={loading} className="text-grey" onClick={onClickChangeStatus}>Active</Link>
-                                        </ButtonToolbar>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md="4" lg="4" xl="4" sm="4" className='label'>
-                                        Merchant Name:
-                                    </Col>
-                                    <Col md="8" lg="8" xl="8" sm="8">
-                                        {merchant.name}
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md="4" lg="4" xl="4" sm="4" className='label'>
-                                        Merchant Code:
-                                    </Col>
-                                    <Col md="8" lg="8" xl="8" sm="8">
-                                        {merchant.merchant_code}
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md="4" lg="4" xl="4" sm="4" className='label'>
-                                        Status:
-                                    </Col>
-                                    <Col md="8" lg="8" xl="8" sm="8">
-                                        {merchant.status ? 'Active' : 'Inactive'}
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md="4" lg="4" xl="4" sm="4" className='label'>
-                                        Default:
-                                    </Col>
-                                    <Col md="8" lg="8" xl="8" sm="8">
-                                        {answerYesNo(merchant.is_default)}
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md="4" lg="4" xl="4" sm="4" className='label'>
-                                        Premium:
-                                    </Col>
-                                    <Col md="8" lg="8" xl="8" sm="8">
-                                        {answerYesNo(merchant.is_permium)}
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md="4" lg="4" xl="4" sm="4" className='label'>
-                                        Gift Codes Require PIN:
-                                    </Col>
-                                    <Col md="8" lg="8" xl="8" sm="8">
-                                        {answerYesNo(merchant.giftcodes_require_pin)}
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md="4" lg="4" xl="4" sm="4" className='label'>
-                                        Requires Shipping:
-                                    </Col>
-                                    <Col md="8" lg="8" xl="8" sm="8">
-                                        {answerYesNo(merchant.requires_shipping)}
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md="4" lg="4" xl="4" sm="4" className='label'>
-                                        Physical Order:
-                                    </Col>
-                                    <Col md="8" lg="8" xl="8" sm="8">
-                                        {answerYesNo(merchant.physical_order)}
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md="4" lg="4" xl="4" sm="4" className='label'>
-                                        Use Tango API:
-                                    </Col>
-                                    <Col md="8" lg="8" xl="8" sm="8">
-                                        {answerYesNo(merchant.use_tango_api)}
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md="4" lg="4" xl="4" sm="4" className='label'>
-                                        Display Popup:
-                                    </Col>
-                                    <Col md="8" lg="8" xl="8" sm="8">
-                                        {answerYesNo(merchant.display_popup)}
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md="4" lg="4" xl="4" sm="4" className='label'>
-                                        Available Gift Codes:
-                                    </Col>
-                                    <Col md="8" lg="8" xl="8" sm="8">
-                                        {34}
-                                    </Col>
-                                </Row>                                
-                                <Row>
-                                    <Col md="4" lg="4" xl="4" sm="4" className='label'>
-                                        Redeemed Gift Codes:
-                                    </Col>
-                                    <Col md="8" lg="8" xl="8" sm="8">
-                                        {1234}
-                                    </Col>
-                                </Row>     
-                                <Row>
-                                    <Col md="4" lg="4" xl="4" sm="4" className='label'>
-                                        Logo:
-                                    </Col>
-                                    <Col md="8" lg="8" xl="8" sm="8">
-                                        <img className='merchant-index-logo' src={`${process.env.REACT_APP_API_STORAGE_URL}/${merchant.logo}`} />
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md="4" lg="4" xl="4" sm="4" className='label'>
-                                        Icon:
-                                    </Col>
-                                    <Col md="8" lg="8" xl="8" sm="8">
-                                        <img className='merchant-index-logo' src={`${process.env.REACT_APP_API_STORAGE_URL}/${merchant.icon}`} />
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md="4" lg="4" xl="4" sm="4" className='label'>
-                                        Large Icon:
-                                    </Col>
-                                    <Col md="8" lg="8" xl="8" sm="8">
-                                    {merchant.large_icon && <img className='merchant-index-logo' src={`${process.env.REACT_APP_API_STORAGE_URL}/${merchant.large_icon}`} />}
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md="4" lg="4" xl="4" sm="4" className='label'>
-                                        Banner:
-                                    </Col>
-                                    <Col md="8" lg="8" xl="8" sm="8">
-                                        {merchant.banner && <img className='merchant-index-logo' src={`${process.env.REACT_APP_API_STORAGE_URL}/${merchant.banner}`} />}
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md="4" lg="4" xl="4" sm="4" className='label'>
-                                        Use Website as Redemption URL:
-                                    </Col>
-                                    <Col md="8" lg="8" xl="8" sm="8">
-                                        {answerYesNo(merchant.website_is_redemption_url)}
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md="4" lg="4" xl="4" sm="4" className='label'>
-                                        Get Gift Codes from Root Merchant:
-                                    </Col>
-                                    <Col md="8" lg="8" xl="8" sm="8">
-                                        {answerYesNo(merchant.get_gift_codes_from_root)}
-                                    </Col>
-                                </Row>
+                                {selected === 'details' && <MerchantDetails data={merchant}/>}
+                                {selected === 'available_gift_codes' && <p>Render Available Gift Codes Component...</p>}
                             </CardBody>
                         </Card>
                     </Col>
