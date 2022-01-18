@@ -2,14 +2,13 @@ import React, {useState, useEffect} from 'react';
 import { Col, Container, Row, Card, CardBody, ButtonToolbar, Button } from 'reactstrap';
 import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
-import {ORGANIZATION_ID} from '../App/auth'
 import {answerYesNo} from '@/shared/helpers'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 
 const fetchMerchant = async ( id ) => {
     try {
         console.log('fetching merchant')
-        const response = await axios.get(`/organization/${ORGANIZATION_ID}/merchant/${id}`);
+        const response = await axios.get(`/merchant/${id}`);
         return response.data;
     } catch (e) {
         throw new Error(`API error:${e?.message}`);
@@ -34,7 +33,7 @@ const ViewMerchant = () => {
 
     const onClickDelete = () => {
         setLoading( true )
-        axios.delete(`/organization/1/merchant/${merchant.id}`)
+        axios.delete(`/merchant/${merchant.id}`)
         .then( (res) => { 
             // console.log(res)
             if(res.status == 200)  {
@@ -52,7 +51,7 @@ const ViewMerchant = () => {
     const onClickChangeStatus = () => {
         setLoading( true )
         const newStatus = merchant.status ? 0 : 1
-        axios.patch(`/organization/1/merchant/${merchant.id}/status`, {status: newStatus})
+        axios.patch(`/merchant/${merchant.id}/status`, {status: newStatus})
         .then( (res) => {
             setLoading( false )
             console.log(res)
