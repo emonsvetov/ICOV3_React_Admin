@@ -12,7 +12,7 @@ import {useDispatch, sendFlashMessage, FlashMessage} from "@/shared/components/f
 
 
 require('dotenv').config()
-axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
+axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL + '/api/v1';  
 axios.defaults.headers.common['Authorization'] = getBearer();
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
