@@ -1,9 +1,40 @@
 import React, {useState, useEffect} from 'react';
-import { Col, Container, Row, Card, CardBody, ButtonToolbar, Button } from 'reactstrap';
+import { Col, Container, Row, Card, CardBody, ButtonToolbar, ListGroup, ListGroupItem } from 'reactstrap';
 import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
 import {answerYesNo} from '@/shared/helpers'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
+
+const MERCHANT_MENU_LINKS = [
+    {
+        value: 'details',
+        label: 'Details'
+    },
+    {
+        value: 'available_gift_codes',
+        label: 'Available Gift Codes'
+    },
+    {
+        value: 'redeemed_gift_codes',
+        label: 'Redeemed Gift Codes'
+    },
+    {
+        value: 'transferred_gift_codes',
+        label: 'Transferred Gift Codes'
+    },
+    {
+        value: 'optimal_amount',
+        label: 'Optimal Amount'
+    },
+    {
+        value: 'sub_merchants',
+        label: 'Sub Merchants'
+    },
+    {
+        value: 'callbacks',
+        label: 'Callbacks'
+    },
+]
 
 const fetchMerchant = async ( id ) => {
     try {
@@ -83,6 +114,26 @@ const ViewMerchant = () => {
     if (isLoading) {
         return <p>Loading...</p>;
     }
+
+    const RenderItem = (item) => (
+        <ListGroupItem
+            href="#"
+            tag="a"
+        >{item.label}</ListGroupItem>
+    )
+
+    const RenderMenu = () => {
+        return (
+            <ListGroup horizontal>
+            {
+                MERCHANT_MENU_LINKS.map( (item, i) => <RenderItem item={item} key={'menu-item-'+i} />)
+            }
+            </ListGroup>
+        )
+    }
+
+
+
     if( !isLoading && merchant )   {
         return (
             <Container className="dashboard">
@@ -94,6 +145,15 @@ const ViewMerchant = () => {
                     </Col>
                     <Col md={6} className="text-right">
                         
+                    </Col>
+                </Row>
+                <Row>
+                    <Col md={12}>
+                        <Card>
+                            <CardBody className='merchant-view-menu'>
+                                <RenderMenu />
+                            </CardBody>
+                        </Card>
                     </Col>
                 </Row>
                 <Row>

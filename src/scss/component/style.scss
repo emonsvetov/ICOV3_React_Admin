@@ -209,3 +209,7 @@
 .ltr-support .btn-toolbar > a:last-child {
     margin-right: 0px;
 }
+
+.merchant-view-menu.card-body{padding: .75rem 1rem;}
+.merchant-view-menu .list-group-horizontal > .list-group-item{border: 0;color:#444444;padding:0.30rem .75rem}
+.merchant-view-menu .list-group-horizontal > .list-group-item.selected{background-color: #f2f4f7;}
