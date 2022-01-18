@@ -36,7 +36,7 @@ const AddEventForm = (props) => {
     setTemplate(selectedTemplate.value);
   };
   const set_path = (name) => {
-    const path = process.env.REACT_APP_SERVER_BASE_URL + name;
+    const path = process.env.REACT_APP_API_STORAGE_URL + "/" + name;
     return path;
   };
   const toggle = () => {
