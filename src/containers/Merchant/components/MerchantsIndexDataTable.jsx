@@ -81,7 +81,7 @@ const fetchMerchantData = async (page, pageSize, pageFilterO = null, pageSortBy)
     }
     try {
         const response = await axios.get(
-        `/organization/1/merchant?page=${page}&limit=${pageSize}&${paramStr}`
+        `/merchant?page=${page}&limit=${pageSize}&${paramStr}`
         );
         // console.log(response)
         if( response.data.length === 0) return {results:[],count:0}

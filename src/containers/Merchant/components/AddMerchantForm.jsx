@@ -10,7 +10,6 @@ import renderDropZoneField from '@/shared/components/form/DropZone';
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import WYSIWYGEditor from '@/shared/components/form/WYSIWYGEditor'
 import {TOA_OPTIONS} from '@/shared/options'
-import {ORGANIZATION_ID} from '../../App/auth'
 
 const AddMerchantForm = () => {
 
@@ -27,7 +26,7 @@ const AddMerchantForm = () => {
         // alert(JSON.stringify(values))
         const data = mapFormDataUploads( values )
         console.log(data)
-        axios.post(`/${ORGANIZATION_ID}/1/merchant`, data, {
+        axios.post(`/merchant`, data, {
             "Content-Type": "multipart/form-data",
             "Access-Control-Allow-Origin": "*"
         })
