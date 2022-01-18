@@ -94,4 +94,84 @@ export const renameChildrenToSubrows = data => {
     return newData;
 }
 
+export const mapFormDataUploads = (values, multiple = false) => {
+    let data = new FormData()
+    for (const [key, value] of Object.entries(values)) {
+        // console.log(value)
+        // console.log(typeof value)
+        if(value && typeof value === 'object')  {
+            if( multiple )    {
+                value.map( itemValue => {
+                    data.append(`${key}[]`, itemValue)
+                })
+            }   else {
+                data.append(key, value[0])
+            }
+        }   else {
+            data.append(key, value)
+        }
+    }
+    return data
+}
+
+export const answerYesNo = value => value ? 'Yes' : 'No'
+
+export const MERCHANT_MEDIA_FIELDS = ['logo', 'icon', 'large_icon', 'banner']
+
+export const patchMerchantMediaURL = ( merchant ) => {
+    if( !merchant ) return merchant;
+    for (const [key, value] of Object.entries(merchant)) {
+        if( inArray(key, MERCHANT_MEDIA_FIELDS) && value && value.indexOf(process.env.REACT_APP_API_STORAGE_URL) === -1)  {
+            merchant[key] = `${process.env.REACT_APP_API_STORAGE_URL}/${value}`
+        }
+    }
+    return merchant
+}
+
+export const unpatchMerchantMedia = ( merchant ) => {
+    if( !merchant ) return merchant;
+    for (const [key, value] of Object.entries(merchant)) {
+        if( inArray(key, MERCHANT_MEDIA_FIELDS) && typeof value === 'string')  {
+            delete merchant[key]
+        }
+    }
+    return merchant
+}
+
+export const unpatchMerchantFields = (values) => {
+    let data = {}
+    for (const [key, value] of Object.entries(values)) {
+        if( value === null || ( key === 'created_at' || key === 'updated_at') ) {
+            //noting to do! Do not add field?
+        }   else if( typeof value === 'boolean' )   {
+            data[key] = value ? 1 : 0
+        }   else   {
+            data[key] = value
+        }
+    }
+    data = unpatchMerchantMedia(data) //more unpatches here
+    return data;
+}
+
+function arrayCompare(a1, a2) {
+    if (a1.length != a2.length) return false;
+    var length = a2.length;
+    for (var i = 0; i < length; i++) {
+        if (a1[i] !== a2[i]) return false;
+    }
+    return true;
+}
+
+export const inArray = (needle, haystack) => {
+    var length = haystack.length;
+    for(var i = 0; i < length; i++) {
+        if(typeof haystack[i] == 'object') {
+            if(arrayCompare(haystack[i], needle)) return true;
+        } else {
+            if(haystack[i] == needle) return true;
+        }
+    }
+    return false;
+}
+
   

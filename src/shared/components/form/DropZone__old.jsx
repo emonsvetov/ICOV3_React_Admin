@@ -1,7 +1,6 @@
 import React from 'react';
 import Dropzone from 'react-dropzone';
 import PropTypes from 'prop-types';
-import { renderComponentField } from '@/shared/components/form/FormField';
 
 const DropZoneField = ({
   value, customHeight, name, onChange,
@@ -69,4 +68,23 @@ DropZoneField.defaultProps = {
   customHeight: false,
 };
 
-export default renderComponentField(DropZoneField);
+const renderDropZoneField = ({ input, customHeight }) => (
+  <DropZoneField
+    {...input}
+    customHeight={customHeight}
+  />
+);
+
+renderDropZoneField.propTypes = {
+  input: PropTypes.shape({
+    name: PropTypes.string,
+    onChange: PropTypes.func,
+  }).isRequired,
+  customHeight: PropTypes.bool,
+};
+
+renderDropZoneField.defaultProps = {
+  customHeight: false,
+};
+
+export default renderDropZoneField;

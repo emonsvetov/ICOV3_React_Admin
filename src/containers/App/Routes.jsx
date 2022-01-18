@@ -13,6 +13,7 @@ import VerifyEmail from '../Signup/VerifyEmail';
 import Forgot from '../Forgot/index';
 import CheckYourEmail from '../Forgot/CheckYourEmail';
 import ForgotSuccess from '../Forgot/ForgotSuccess';
+import Example from '../Example/tiny';
 import ExamplePageOne from '../Example/index';
 import ExamplePageTwo from '../ExampleTwo/index';
 import ProgramIndex from '../Program/index';
@@ -25,10 +26,15 @@ import AddUser from '../Users/add_user';
 import ViewUser from '../Users/view_user';
 import EditUser from '../Users/edit_user';
 
+// import EventsIndex from '../Events/index';
+import AddEvent from '../Events/add_event';
 import ViewEvent from '../Program/ProgramView/components/event/EventDetail';
 
-import MerchantsIndex from '../Merchants/index';
-import AddMerchant from '../Merchants/add_merchant';
+import MerchantsIndex from '../Merchant/index';
+import AddMerchant from '../Merchant/add_merchant';
+import ViewMerchant from '../Merchant/view_merchant';
+import EditMerchant from '../Merchant/edit_merchant';
+
 
 import TreeView from '../TreeViewBasic';
 
@@ -54,6 +60,8 @@ const Merchants = () => (
   <Switch>
     <Route exact path="/merchants" component={MerchantsIndex} />
     <Route exact path="/merchants/add" component={AddMerchant} />
+    <Route exact path="/merchants/view/:id" component={ViewMerchant} />
+    <Route exact path="/merchants/edit/:id" component={EditMerchant} />
   </Switch>
 );
 
@@ -97,6 +105,7 @@ const privateRoutes = () => {
         <PrivateRoute path="/events" component={Events} />
         <PrivateRoute path="/treeview" component={TreeView} />
         <PrivateRoute path="/pokemon" component={Pokemon} />
+        <PrivateRoute path="/example" component={Example} />
       </div>
     </div>
   )

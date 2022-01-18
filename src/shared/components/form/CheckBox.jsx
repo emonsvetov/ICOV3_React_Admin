@@ -31,6 +31,7 @@ export const CheckBoxField = ({
         onChange={onChange}
         checked={checked}
         disabled={disabled}
+        value={checked ? 1 : 0}
       />
       <span
         className="checkbox-btn__checkbox-custom"

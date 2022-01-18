@@ -62,6 +62,9 @@ const Tabs = (props) => {
   }
 
   function handleUpload(values){
+
+    alert(JSON.stringify(values))
+    return;
       
     let data = new FormData();
     

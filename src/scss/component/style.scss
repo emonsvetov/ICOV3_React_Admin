@@ -188,3 +188,18 @@
     width: 20px;
     height: 20px;
 }
+.merchant-index-logo{max-width: 80px;}
+.merchant-table .cell-column-0{max-width: 50px !important;}
+.merchant-table .cell-column-2, .merchant-table .cell-column-5, .merchant-table .cell-column-6, .merchant-table .cell-column-7{max-width: 80px !important;}
+.mw-120{max-width: 120px;}
+// .dropzone-img {
+//     position: absolute;
+//     left: 50%;
+//     top: 50%;
+//     transform: translate(-50%,-50%);
+// }
+.dropzone-img {
+    width: 100%
+}
+.dropzone-img img{width:auto}
+.color-white{color: #ffffff !important;}
