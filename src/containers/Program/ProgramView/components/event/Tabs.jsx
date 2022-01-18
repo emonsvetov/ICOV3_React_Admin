@@ -63,8 +63,6 @@ const Tabs = (props) => {
 
   function handleUpload(values){
 
-    alert(JSON.stringify(values))
-    return;
       
     let data = new FormData();
     
@@ -77,7 +75,7 @@ const Tabs = (props) => {
     });
     
     axios
-    .post(`/event_icons/organization/1`, data,{
+    .post(`/organization/1/event_icons`, data,{
             headers: {
                 "Content-type": "multipart/form-data",
             },       
