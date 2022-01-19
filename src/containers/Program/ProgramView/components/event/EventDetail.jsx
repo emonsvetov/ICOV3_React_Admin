@@ -84,7 +84,8 @@ const EventDetail = () => {
       .then((res) => {
         //   console.log(res)
         if (res.status == 200) {
-          window.location = `/program/view/${programId}`;
+        //   window.location = `/program/view/${programId}`;
+            history.goBack();
         }
       })
       .catch((error) => {

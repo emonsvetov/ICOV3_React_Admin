@@ -69,7 +69,7 @@ const AddEventForm = (props) => {
     eventData.message = message;
     eventData.email_template_id = template ? template : 3;
     eventData.icon = icon ?icon:"default";
-    // eventData.icon_id = iconId;
+    eventData.icon_id = iconId;
 
     //static
     eventData.type_id = 1;
