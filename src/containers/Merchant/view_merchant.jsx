@@ -3,6 +3,7 @@ import { Col, Container, Row, Card, CardBody, ListGroup, ListGroupItem } from 'r
 import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
 import MerchantDetails from './View/components/MerchantDetails';
+import AvailableGiftCodes from './View/components/AvailableGiftCodes';
 
 const MERCHANT_MENU_LINKS = [
     {
@@ -44,6 +45,7 @@ const fetchMerchant = async ( id ) => {
         throw new Error(`API error:${e?.message}`);
     }
 };
+
 
 const ViewMerchant = () => {
 
@@ -121,7 +123,7 @@ const ViewMerchant = () => {
                         <Card>
                             <CardBody className='infoview'>
                                 {selected === 'details' && <MerchantDetails data={merchant}/>}
-                                {selected === 'available_gift_codes' && <p>Render Available Gift Codes Component...</p>}
+                                {selected === 'available_gift_codes' && <AvailableGiftCodes /> }
                             </CardBody>
                         </Card>
                     </Col>
