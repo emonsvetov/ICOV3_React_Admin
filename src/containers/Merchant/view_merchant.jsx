@@ -4,6 +4,11 @@ import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
 import MerchantDetails from './View/components/MerchantDetails';
 import AvailableGiftCodes from './View/components/AvailableGiftCodes';
+import RedeemedGiftCodes from './View/components/RedeemedGiftCodes';
+import TransferedGiftCodes from './View/components/TransferedGiftCodes';
+import OptimalAmount from './View/components/OptimalAmount';
+import SubMerchants from './View/components/SubMerchants';
+import Callbacks from './View/components/Callbacks';
 
 const MERCHANT_MENU_LINKS = [
     {
@@ -124,6 +129,12 @@ const ViewMerchant = () => {
                             <CardBody className='infoview'>
                                 {selected === 'details' && <MerchantDetails data={merchant}/>}
                                 {selected === 'available_gift_codes' && <AvailableGiftCodes /> }
+                                {selected === 'redeemed_gift_codes' && <RedeemedGiftCodes /> }
+                                {selected === 'transferred_gift_codes' && <TransferedGiftCodes /> }
+                                {selected === 'optimal_amount' && <OptimalAmount /> }
+                                {selected === 'sub_merchants' && <SubMerchants /> }
+                                {selected === 'callbacks' && <Callbacks /> }
+                                
                             </CardBody>
                         </Card>
                     </Col>
