@@ -1,20 +1,15 @@
 import React, {useState, useEffect, useMemo} from "react";
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
-import MOCK_DATA from "./mockData/MOCK_DATA.json";
-import createColumns  from "./columns/availableGiftCodesColumns";
+import MOCK_DATA from "./mockData/CALLBACKS.json";
+import createColumns  from "./columns/callbacksColumns";
 import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
-// import { GlobalFilter } from "./GlobalFilter";
-// import { StatusFilter } from "./StatusFilter";
-import AvailableGiftCodesFilter  from "./Filters/AvailableGiftCodesFilter";
+
 import { Link } from 'react-router-dom';
 import axios from 'axios'
-import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
-import ContentCopyIcon from 'mdi-react/ContentCopyIcon';
-
 import {renameChildrenToSubrows} from '@/shared/helpers'
 
 
@@ -108,16 +103,7 @@ const DataTable = () => {
     const [filter, setFilter] = useState({ keyword:''});
     // var [data, setData] = useState([]);
 
-    const onClickFilterCallback = (keyword) => {
-        // alert(JSON.stringify({status, keyword}))
-        // alert(JSON.stringify(filter))
-        if(filter.keyword === keyword)    {
-            alert('No change in filters')
-            return
-        }
-        setFilter({keyword})
-        // alert(status, keyword)
-    }
+    
     
     let columns = useMemo( () => COLUMNS, [])
 
@@ -220,13 +206,13 @@ const DataTable = () => {
                     <form className="form form--horizontal">
                         <div className="form__form-group pb-4">
                             <div className="col-md-9 col-lg-9">
-                                <AvailableGiftCodesFilter onClickFilterCallback={onClickFilterCallback} />
+                                
                             </div>
                             <div className="col-md-3 col-lg-3 text-right pr-0">
                                 <Link style={{maxWidth:'200px'}}
                                 className="btn btn-primary account__btn account__btn--small"
                                 to={{}}
-                                >Upload Gift Codes
+                                >Add Callback
                                 </Link>
                             </div>
                         </div>
