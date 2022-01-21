@@ -30,12 +30,31 @@ const EventsDataModal = ({
   rtl,
 }) => {
   const reactTableData = CreateTableData();
+
+  let event_columns = [
+      ...reactTableData.tableHeaderData, 
+      ...[{
+          Header: "",
+          accessor: "action",
+          Cell: ({ row }) => <RenderActions row={row} />,
+      }]
+  ]
+  let columns = useMemo( () => event_columns, [])
   
   const [step, setStep] = useState(0);  
   var [data, setData] = useState(data)
 
   const handleStep = (step) =>{
     setStep(step);
+  }
+  const RenderActions = ({row}) => {
+      return (
+          <>
+              <Link to={`/program/${data.id}/event/${row.original.id}/edit`}>
+                  View
+              </Link>
+          </>
+      )
   }
   const RenderEventsData = (props) =>{
     const {programId} = props;
@@ -50,32 +69,11 @@ const EventsDataModal = ({
       setData(result.data);
     }
     const [data, setData] = useState(null);
-    const [isEditable, setIsEditable] = useState(false);
-    const [isResizable, setIsResizable] = useState(true);
-    const [isSortable, setIsSortable] = useState(true);
-    const [withDragAndDrop, setWithDragAndDrop] = useState(false);
-    const [withPagination, setWithPaginationTable] = useState(true);
-    const [withSearchEngine, setWithSearchEngine] = useState(false);
-    const updateEditableData = (rowIndex, columnId, value) => {
-      setData((old) =>
-        old.map((item, index) => {
-          if (index === rowIndex) {
-            return {
-              ...old[rowIndex],
-              [columnId]: value,
-            };
-          }
-          return item;
-        })
-      );
-    };
+    const isResizable = true
+    const isSortable = true
     const tableConfig = {
-      isEditable,
       isResizable,
       isSortable,
-      withDragAndDrop,
-      withPagination,
-      withSearchEngine,
       manualPageSize: [10, 20, 30, 40],
       placeholder: "Search by Event name...",
     };
@@ -115,13 +113,12 @@ const EventsDataModal = ({
           {!data?'Loading...': 
           <ReactTableBase
             key={
-              withSearchEngine || isResizable || isEditable
+                isResizable
                 ? "modified"
                 : "common"
             }
-            columns={reactTableData.tableHeaderData}
+            columns={columns}
             data={data}
-            updateEditableData={updateEditableData}
             tableConfig={tableConfig}
           />
           }

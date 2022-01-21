@@ -135,13 +135,15 @@
     box-shadow:  0 0 0 3px #fff, inset 0 0 0 3px #2271b1
 }
 
-.img_wrap li > div.preview{ 
+.img_wrap li > div.preview{
+    display: flex;
+    align-items: center;
     position: relative;
     box-shadow: inset 0 2px 15px rgba($color: #000000, $alpha: 0.1);
     background: #f0f0f1;
     cursor: pointer;
     width: 100%;
-    height: 100%;
+    height: 120px;
     padding: 2px;
 }
 
@@ -213,3 +215,5 @@
 .merchant-view-menu.card-body{padding: .75rem 1rem;}
 .merchant-view-menu .list-group-horizontal > .list-group-item{border: 0;color:#444444;padding:0.30rem .75rem}
 .merchant-view-menu .list-group-horizontal > .list-group-item.selected{background-color: #f2f4f7;}
+.delete-icon-icon{position: absolute;bottom:0;right: 0;}
+.modal-program-events-icons .tabs{overflow: visible;}
