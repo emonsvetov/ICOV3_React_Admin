@@ -26,17 +26,15 @@ const AddEventForm = (props) => {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [template, setTemplate] = useState(null);
-  const [icon, setIcon] = useState("");
-  const [iconId, setIconId] = useState(1);
-
+  let [icon, setIcon] = useState(null);
   const [isOpen, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("2");
 
   const handleTemplateChange = (selectedTemplate) => {
     setTemplate(selectedTemplate.value);
   };
-  const set_path = (name) => {
-    const path = process.env.REACT_APP_API_STORAGE_URL + "/" + name;
+  const set_path = (pickedIcon) => {
+    const path = process.env.REACT_APP_API_STORAGE_URL + "/" + pickedIcon.path;
     return path;
   };
   const toggle = () => {
@@ -68,11 +66,13 @@ const AddEventForm = (props) => {
     eventData.post_to_social_wall = post_to_social_wall;
     eventData.message = message;
     eventData.email_template_id = template ? template : 3;
-    eventData.icon = icon ?icon:"default";
-    eventData.icon_id = iconId;
+    eventData.event_icon_id = icon.id;
 
     //static
     eventData.type_id = 1;
+
+    // console.log(eventData)
+    // return
     
     axios
       .post(`/organization/1/program/${programId.id}/event`, eventData)
@@ -94,10 +94,9 @@ const AddEventForm = (props) => {
     props.onStep(0);
   };
 
-  function handlePickImage(img, id) {
+  function handlePickImage( pickedIcon ) {
     setOpen(false);
-    setIcon(img);
-    setIconId(id);
+    setIcon(pickedIcon);
   }
 
   const templatePlaceholder = template ? template : "Select a Template";
@@ -277,7 +276,7 @@ const AddEventForm = (props) => {
                               )}
                             </div>
                             <div className="text">
-                              {icon ? icon : "+ Add an Icon"}
+                              {icon ? icon.name : "+ Add an Icon"}
                             </div>
                           </div>
                         </div>
@@ -344,7 +343,7 @@ const AddEventForm = (props) => {
                       Included in Budget
                     </span>
                     <Field
-                      name="included_budget"
+                      name="include_in_budget"
                       component={renderToggleButtonField}
                     />
                   </div>
@@ -432,7 +431,7 @@ const AddEventForm = (props) => {
                       Award Message Editable
                     </span>
                     <Field
-                      name="message_editable"
+                      name="award_message_editable"
                       component={renderToggleButtonField}
                     />
                   </div>
@@ -471,7 +470,7 @@ const AddEventForm = (props) => {
       </Form>
       {
         <Modal
-          className={`modal-program modal-lg ltr-support`}
+          className={`modal-program-events-icons modal-lg ltr-support`}
           isOpen={isOpen}
           toggle={toggle}
         >
@@ -484,9 +483,10 @@ const AddEventForm = (props) => {
               </Row>
               <div className="pt-5 tabs">
                 <Tabs
-                  onOK={handlePickImage}
+                  onSelectIconOK={handlePickImage}
                   activeTab={activeTab}
                   onCancel={() => setOpen(false)}
+                  icon={icon}
                 />
               </div>
             </Col>

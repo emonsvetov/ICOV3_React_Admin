@@ -12,7 +12,7 @@ const CreateTableData = () => {
       {
           Header: "Event Name",
           accessor: "name",
-          Cell: ({ row, value }) => { return <Link to={`/program/view/${row.original.program_id}/${row.original.id}`} >{value}</Link>},
+          Cell: ({ row, value }) => { return <Link to={`/program/${row.original.program_id}/event/${row.original.id}/edit`} >{value}</Link>},
       },
       {
           Header: "Type",
@@ -24,8 +24,7 @@ const CreateTableData = () => {
           accessor: "status",
           Cell: ({ row, value }) => { return 'Enabled'},
       }
-    ],
-    [],
+    ]
   );
 
   const data = [];
