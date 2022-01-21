@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Field } from "react-final-form";
 import {   Modal,
     ModalBody, Row, Col, ButtonToolbar, Button, Card, CardBody, Container  } from "reactstrap";
@@ -10,15 +10,12 @@ import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
 import axios from "axios";
 import renderSelectField from '@/shared/components/form/Select'
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import Tabs from "./Tabs";
-
-
-const queryClient = new QueryClient()
+import {ORGANIZATION_ID} from '../../../../App/auth';
 
 const fetchEvent = async ( pId, eId ) => {
     try {
-        const response = await axios.get(`/organization/1/program/${pId}/event/${eId}`);
+        const response = await axios.get(`/organization/${ORGANIZATION_ID}/program/${pId}/event/${eId}`);
         return response.data;
     } catch (e) {
         throw new Error(`API error:${e?.message}`);
@@ -36,15 +33,16 @@ const EMAIL_TEMPLATES = [
     { label: "Custom Template Email", value: 3 },
   ];
 
-const EventDetail = () => {
+const Edit = () => {
+
   const { programId, eventId } = useParams();
 
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [template, setTemplate] = useState(null);
   const [isOpen, setOpen] = useState(false);
-  const [icon, setIcon] = useState("");
-  const [iconId, setIconId] = useState(null);
+  const [icon, setIcon] = useState(null);
+  const [event, setEvent] = useState(null)
 
   const [activeTab, setActiveTab] = useState('2');
 
@@ -55,87 +53,78 @@ const EventDetail = () => {
   const handleTemplateChange = (selectedTemplate) => {    
     setTemplate( selectedTemplate.value);
   };
-  const set_path = (name )=> {
-    const path = process.env.REACT_APP_API_STORAGE_URL + "/" + name;
+  const set_path = ( icon )=> {
+    const path = process.env.REACT_APP_API_STORAGE_URL + "/" + icon.path;
     return path;
   }
-  let history = useHistory();
-  const onSubmit = (values) => {
-      
-    let eventData = Object.assign(values);
 
-    eventData["organization_id"] = 1;
-    eventData["program_id"] = programId;
-    
-    // delete eventData['email_template_id'];
+  useEffect( () => {
+    setLoading(true)
+    fetchEvent(programId, eventId)
+    .then( res => {
+        setEvent(res)
+        setLoading(false)
+    })
+  }, [programId, eventId]);
 
-    //static
-    eventData.type_id = 1;
-    eventData.icon_id = iconId?iconId:data.icon_id;
-    eventData.icon = icon?icon: data.icon;
-    eventData.email_template_id = template ? template : 3;
-    
-    // setLoading(true)
-    // 
+    let history = useHistory();
 
-    axios
-      .put(`/organization/1/program/${programId}/event/${eventId}`, eventData,
-      )
-      .then((res) => {
-        //   console.log(res)
-        if (res.status == 200) {
-        //   window.location = `/program/view/${programId}`;
-            history.goBack();
-        }
-      })
-      .catch((error) => {
-        //console.log(error.response.data);
-        setError(error.response.data.errors);
-        setLoading(false);
-      });
-  };
+    const onSubmit = (values) => {
+        console.log(values)
+        let eventData = Object.assign(values);
 
-  const onClickCancel = () => {
-    
-    history.goBack();
-  };
+        eventData["organization_id"] = 1;
+        eventData["program_id"] = programId;
+        
+        // delete eventData['email_template_id'];
 
-  const handleClick = () => {
-    //seticon
+        //static
+        eventData.type_id = 1;
+        eventData.event_icon_id = icon ? icon.id : event.event_icon_id;
+        eventData.email_template_id = template ? template : 3;
+        
+        // setLoading(true)
+        //
+        // console.log(eventData)
+        // return;//
 
-    setOpen(false)
-  };
+        axios
+        .put(`/organization/${ORGANIZATION_ID}/program/${programId}/event/${eventId}`, eventData,
+        )
+        .then((res) => {
+              console.log(res)
+            if (res.status == 200) {
+            //   window.location = `/program/view/${programId}`;
+                history.goBack();
+            }
+        })
+        .catch((error) => {
+            //console.log(error.response.data);
+            setError(error.response.data.errors);
+            setLoading(false);
+        });
+    };
 
-  const toggle = () => {
-    setOpen(prevState => !prevState)
-  }
-  
+    const onClickCancel = () => {
+        history.goBack();
+    }
 
-  function handlePickImage(img, imgId){
-    setOpen(false)
-    setIcon(img)
-    setIconId(imgId)
-  } 
+    const toggle = () => {
+        setOpen(prevState => !prevState)
+    }
+
+    function handlePickImage( selectedIcon ){
+        setOpen(false)
+        setIcon(selectedIcon)
+    }
 
    const templatePlaceholder = template ? template : "Select a Template";
 
-    const { isLoading, loadingError, data, isSuccess, remove } = useQuery(
-        ['event', programId, eventId],
-        () => fetchEvent( programId, eventId ),
-        {
-            keepPreviousData: false,
-            staleTime: Infinity,
-        }
-    )
-
-    if (loadingError) {
-        return <p>Error loading event</p>;
-    }
-    if (isLoading) {
+    if (loading || !event) {
         return <p>Loading...</p>;
     }
-    if( isSuccess )   {
-        
+    console.log(event)
+    if( event )   {
         return (
             <Container className="dashboard">
                 <Col md={12}>
@@ -152,12 +141,16 @@ const EventDetail = () => {
                                             <Row className='w100'>
                                                 <Col md="6" lg="6" xl="6">
                                                     <h3>Insert Icon</h3>
-                                                    
                                                 </Col>
-                                                
                                             </Row>
                                             <div className="pt-5 tabs">
-                                                <Tabs onOK = {handlePickImage} activeTab = {activeTab} toggle = {tabToggle} onCancel = {() =>setOpen(false)}/>
+                                                <Tabs 
+                                                    onSelectIconOK = {handlePickImage} 
+                                                    activeTab = {activeTab} 
+                                                    toggle = {tabToggle} 
+                                                    onCancel = {() =>setOpen(false)}
+                                                    icon={icon}
+                                                />
                                             </div>
                                         
                                         </Col>
@@ -168,16 +161,7 @@ const EventDetail = () => {
                             <Form
                             onSubmit={onSubmit}
                             validate={(values) => formValidation.validateForm(values)}
-                            initialValues={{
-                                name: data.name,
-                                amount: data.amount,
-                                email_template_id: TEMPLATES.find(obj => obj.value === data.email_template_id),
-                                ledger_code: data.ledger_code,
-                                post_to_social_wall: data.post_to_social_wall,
-                                include_in_budget: data.include_in_budget,
-                                allow_amount_overriding: data.allow_amount_overriding,
-                                message: data.message
-                            }}
+                            initialValues={event}
                             >
                             
                             {({ handleSubmit, form, submitting, pristine, values }) => (
@@ -252,7 +236,7 @@ const EventDetail = () => {
                                             Enable This Event
                                         </span>
                                         <Field
-                                            name="enable_event"
+                                            name="enable"
                                             component={renderToggleButtonField}
                                         />
                                         </div>
@@ -271,9 +255,9 @@ const EventDetail = () => {
                                                 name="email_template_id"
                                                 options={TEMPLATES}
                                                 placeholder={templatePlaceholder}
-                                                // defaultValue={data.email_template_id}
+                                                // defaultValue={event.email_template_id}
                                                 // initialValue={{ label: "Happy Birthday", value: 1 }}
-                                                // initialValue={(data.email_template_id === null ) ? null : TEMPLATES.find(obj => obj.value === data.email_template_id)}
+                                                // initialValue={(event.email_template_id === null ) ? null : TEMPLATES.find(obj => obj.value === event.email_template_id)}
                                                 component={renderSelectField}
                                                 parse={value => {
                                                     handleTemplateChange(value)
@@ -341,11 +325,11 @@ const EventDetail = () => {
                                         <div className="form__form-group-row">
                                            
                                             <div className="border_hover_div" onClick={() =>setOpen(true)}>
-                                            {data.icon=='default' && !icon ?
+                                            { !icon & !event.event_icon_id ?
                                             <div className="text">+ Add an Icon</div>:
                                             <>
                                                 <div className="email_icon">
-                                                    <img src={icon?set_path(icon):set_path(data.icon)} alt="icons" />
+                                                    <img src={ icon ? set_path(icon) : set_path(event.icon)} alt="icons" />
                                                 </div>
                                                 <div className="text">Change Icon</div>
                                             </>
@@ -370,7 +354,7 @@ const EventDetail = () => {
                                             <div className="border_div" >
 
                                                 <div className="text">
-                                                    {template ? EMAIL_TEMPLATES.find(obj => obj.value === template).label : EMAIL_TEMPLATES.find(obj => obj.value === data.email_template_id).label}
+                                                    {template ? EMAIL_TEMPLATES.find(obj => obj.value === template).label : EMAIL_TEMPLATES.find(obj => obj.value === event.email_template_id).label}
                                                 </div>
 
                                             </div>
@@ -500,7 +484,7 @@ const EventDetail = () => {
                                             Award Message Editable
                                         </span>
                                         <Field
-                                            name="message_editable"
+                                            name="award_message_editable"
                                             component={renderToggleButtonField}
                                         />
                                         </div>
@@ -545,14 +529,4 @@ const EventDetail = () => {
     }
 };
 
-
-const Wrapper = () => {
-    return (
-        <QueryClientProvider client={queryClient}>
-            <EventDetail />
-        </QueryClientProvider>
-    )
-}
-
-export default Wrapper;
-
+export default Edit;
