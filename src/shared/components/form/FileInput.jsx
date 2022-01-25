@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { renderComponentField } from '@/shared/components/form/FormField';
 
-export const FileInputField = ({ onChange, name, value }) => {
+export const FileInputField = React.forwardRef(({ onChange, name, value }, ref) => {
   const handleChange = (e) => {
     e.preventDefault();
     const files = [...e.target.files];
@@ -17,10 +18,11 @@ export const FileInputField = ({ onChange, name, value }) => {
         name={name}
         id={name}
         onChange={handleChange}
+        ref={ref}
       />
     </div>
   );
-};
+});
 
 FileInputField.propTypes = {
   onChange: PropTypes.func.isRequired,
@@ -37,26 +39,4 @@ FileInputField.defaultProps = {
   value: null,
 };
 
-const renderFileInputField = ({ input, meta }) => (
-  <div className="form__form-group-input-wrap">
-    <FileInputField {...input} />
-    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-  </div>
-);
-
-renderFileInputField.propTypes = {
-  input: PropTypes.shape({
-    onChange: PropTypes.func,
-    name: PropTypes.string,
-  }).isRequired,
-  meta: PropTypes.shape({
-    touched: PropTypes.bool,
-    error: PropTypes.string,
-  }),
-};
-
-renderFileInputField.defaultProps = {
-  meta: null,
-};
-
-export default renderFileInputField;
+export default renderComponentField(FileInputField);
