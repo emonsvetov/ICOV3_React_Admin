@@ -34,6 +34,7 @@ import MerchantsIndex from '../Merchant/index';
 import AddMerchant from '../Merchant/add_merchant';
 import ViewMerchant from '../Merchant/view_merchant';
 import EditMerchant from '../Merchant/edit_merchant';
+import Merchant from '../Program/ProgramView/components/Merchant';
 
 
 import TreeView from '../TreeViewBasic';
@@ -52,6 +53,7 @@ const Programs = () => (
     <Route exact path="/program/add" component={AddProgram} />
     <Route exact path="/program/view/:id" component={ProgramView} />
     <Route exact path="/program/:programId/event/:eventId/edit" component={EditEvent} />
+    <Route exact path="/program/:programId/merchants" component={Merchant} />
     {/* <Route path="/program/dashboard" component={ProgramDashboard} /> */}
   </Switch>
 );

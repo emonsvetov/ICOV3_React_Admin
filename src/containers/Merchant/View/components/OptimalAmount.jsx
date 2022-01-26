@@ -2,7 +2,9 @@ import React, {useState, useEffect, useMemo} from "react";
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import MOCK_DATA from "./mockData/OPTIMAL.json";
-import createColumns  from "./columns/optimalAmountColumns";
+
+import {OPTIMAL_AMOUNT_COLUMNS} from "./columns";
+
 import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
@@ -99,13 +101,13 @@ const fetchMerchantData = async (page, pageSize, pageFilterO = null, pageSortBy)
 };
 
 const DataTable = () => {
-    const COLUMNS = createColumns();
+    
     const [filter, setFilter] = useState({ keyword:''});
     // var [data, setData] = useState([]);
 
     
     
-    let columns = useMemo( () => COLUMNS, [])
+    let columns = useMemo( () => OPTIMAL_AMOUNT_COLUMNS, [])
 
     const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
     React.useReducer(reducer, initialState);

@@ -106,7 +106,21 @@
     
 }
 
+//Program merchant
 
+.toggle-btn-row {
+    justify-content: flex-start;
+    display: inline-flex;
+    padding: 4px 0;
+    margin-bottom: 0;
+    cursor: pointer;
+  
+    .toggle-btn__input {
+      height: 0;
+      width: 0;
+      visibility: hidden;
+    }
+  }
 //iamge library
 
 .img_wrap{

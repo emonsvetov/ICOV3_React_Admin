@@ -2,7 +2,9 @@ import React, {useState, useEffect, useMemo} from "react";
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import MOCK_DATA from "./mockData/MOCK_DATA.json";
-import createColumns  from "./columns/availableGiftCodesColumns";
+
+import {AVAILABLE_GIFT_CODES_COLUMNS}  from "./columns";
+
 import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
@@ -16,22 +18,10 @@ import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
 import ContentCopyIcon from 'mdi-react/ContentCopyIcon';
 import ReactTableBase from '@/shared/components/table/ReactTableBase';
 import CreateTableData from './columns/giftCodesColumns';
-import { Form, Field } from "react-final-form";
+
+import UploadGiftCodesModal from "./UploadGiftCodesModal";
 
 import {renameChildrenToSubrows} from '@/shared/helpers'
-
-import {
-    Modal,
-    ModalBody,
-    ModalHeader,
-    Button,
-    Card,
-    CardBody,
-    ButtonToolbar,
-    Row,
-    Col,
-  } from "reactstrap";
-
 
 const queryClient = new QueryClient()
 
@@ -119,54 +109,14 @@ const fetchMerchantData = async (page, pageSize, pageFilterO = null, pageSortBy)
 };
 
 const DataTable = () => {
-    const COLUMNS = createColumns();
+    
     const [filter, setFilter] = useState({ keyword:''});
     const [isOpen, setOpen] = useState(false)
-    const UPLOAD_COLUMNS = CreateTableData();
-    const [csvRows, setCsvData] = useState([]);
-    const [csvFile, setCsvFile] = useState();
-    
-
-    const processCSV = (str, delim=',') => {
-        const headers = str.slice(0,str.indexOf('\n')).split(delim);
-        const rows = str.slice(str.indexOf('\n')+1).split('\n');
-        rows.pop();
-        const newArray = rows.map( row => {
-            const values = row.split(delim);
-            const eachObject = headers.reduce((obj, header, i) => {
-                obj[header] = values[i];
-                return obj;
-            }, {})
-            return eachObject;
-        })
-        setCsvData(newArray)
-    }
-    const submit = (file) => {
-        // const file = csvFile;
-        const reader = new FileReader();
-
-        reader.onload = function(e) {
-            const text = e.target.result;
-            console.log(text);
-            processCSV(text) // plugged in here
-        }
-
-        reader.readAsText(file);
-    }
 
     const toggle = () => {
         setOpen(prevState => !prevState)
     }
-    const [isEditable, setIsEditable] = useState(false);
-    const [isResizable, setIsResizable] = useState(true);
     
-
-    // var [data, setData] = useState([]);
-    const tableConfig = {
-        isEditable,
-        isResizable,    
-    };
-
     const onClickFilterCallback = (keyword) => {
         // alert(JSON.stringify({status, keyword}))
         // alert(JSON.stringify(filter))
@@ -178,7 +128,7 @@ const DataTable = () => {
         // alert(status, keyword)
     }
     
-    let columns = useMemo( () => COLUMNS, [])
+    let columns = useMemo( () => AVAILABLE_GIFT_CODES_COLUMNS, [])
     
 
     const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
@@ -340,6 +290,7 @@ const DataTable = () => {
                         </tfoot> */}
                     </table>
                 </div>
+                <UploadGiftCodesModal isOpen={isOpen} setOpen={setOpen} toggle={toggle}  />
                 {(rows.length > 0) && (
                     <>
                         <ReactTablePagination
@@ -385,90 +336,7 @@ const DataTable = () => {
                         </div>
                     </>
                 )}
-                <Modal
-                className={`modal-program-events-icons modal-lg ltr-support`}
-                isOpen={isOpen}
-                toggle={toggle}
-                >
-                <ModalHeader className='w100'>
-                    <Row className='w100'>
-                        <Col md="6" lg="6" xl="6">
-                            <h3>Upload Gift Codes to a Merchant</h3>
-                            <h5 className="colorgrey">{data.name}</h5>
-                        </Col>
-                        <Col md="6" lg="6" xl="6" className='text-right'>
-                            <ButtonToolbar className="modal__footer flex justify-content-right w100">
-                                <Button outline color="primary" className="mr-3" onClick={toggle}>Cancel</Button>{' '}
-                                <Button type="submit"  className="btn btn-primary" color="#ffffff">Upload</Button>
-                            </ButtonToolbar>
-                        </Col>
-                    </Row>
-                </ModalHeader>
-                <ModalBody className="modal-lg">
-                    <Row>
-                        <Col md="6" lg="4" xl="4">
-                            <div className="form__form-group">
-                                <Form onSubmit={(values) => {
-                                    if(csvFile)
-                                        submit()
-                                }}>
-                                {({ handleSubmit, form, submitting, pristine, values }) => (
-                                <form className="form" onSubmit={handleSubmit}>
-                                    {error && (
-                                    <div
-                                        className="alert alert-danger fade show w100 mb-4"
-                                        role="alert"
-                                    >
-                                        <div className="alert__content">{error}</div>
-                                    </div>
-                                    )}
-                                    <Field name="name">
-                                        {({ input, meta }) => (
-                                        <div className="form__form-group">
-                                            <span className="form__form-group-label">CSV File</span>
-                                            <div className="form__form-group-field">
-                                                <div className="form__form-group-row">
-                                                    <input
-                                                        type='file'
-                                                        accept='.csv'
-                                                        id='csvFile'
-                                                        {...input}
-                                                        onChange={(e) => {
-                                                            submit(e.target.files[0])
-                                                            // setCsvFile(e.target.files[0])
-                                                        }}
-                                                    >
-                                                    </input>
-                                                    {meta.touched && meta.error && (
-                                                    <span className="form__form-group-error">
-                                                        {meta.error}
-                                                    </span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        )}
-                                    </Field>
-
-                                
-
-                                    </form>
-        )}
-                                </Form>
-                            </div>
-                        </Col>
-                    </Row>
-
-                <ReactTableBase
-                    
-                    columns={UPLOAD_COLUMNS}
-                    data={csvRows}
-                    key={isResizable || isEditable ? 'modified' : 'common'}
-            
-                    tableConfig={tableConfig}
-                />
-                </ModalBody>
-                </Modal>
+               
             </>
     )
 }
