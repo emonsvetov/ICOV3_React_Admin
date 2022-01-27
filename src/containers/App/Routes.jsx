@@ -41,6 +41,7 @@ import AddDomain from '../Domain/add_domain';
 import ViewDomain from '../Domain/view_domain';
 import EditDomain from '../Domain/edit_domain';
 
+import OrdersIndex from '../PhysicalOrders/index';
 
 import TreeView from '../TreeViewBasic';
 
@@ -90,6 +91,13 @@ const Domains = () => (
   </Switch>
 );
 
+const PhysicalOrders = () => (
+  <Switch>
+    <Route exact path="/physical-orders" component={OrdersIndex} />
+    
+  </Switch>
+);
+
 
 const Events = () => (
   <Switch>
@@ -120,6 +128,7 @@ const privateRoutes = () => {
         <PrivateRoute path="/users" component={Users} />
         <PrivateRoute path="/events" component={Events} />
         <PrivateRoute path="/domains" component={Domains} />
+        <PrivateRoute path="/physical-orders" component={PhysicalOrders} />
         <PrivateRoute path="/treeview" component={TreeView} />
         <PrivateRoute path="/pokemon" component={Pokemon} />
         <PrivateRoute path="/example" component={Example} />
