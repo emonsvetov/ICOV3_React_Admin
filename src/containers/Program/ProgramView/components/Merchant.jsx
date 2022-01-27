@@ -163,6 +163,8 @@ const Merchant = (props) => {
             </>
         )
     }
+                   
+    
     
     const [filter, setFilter] = useState({ keyword:''});
     const onClickFilterCallback = (keyword) => {
@@ -195,10 +197,10 @@ const Merchant = (props) => {
             Cell: ({ row }) => <RenderToggle row={row} />
         },
         {
-            Header: "Action",
-            accessor: "action",
+            Header: "Active",
+            accessor: "active",
             // Footer: "Action",
-            Cell: ({ row }) => <RenderActions row={row} />
+            Cell: ({ row }) => <RenderToggle row={row} />
         }
     ]
     let columns = useMemo( () => MERCHANT_COLUMNS, [])

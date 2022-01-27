@@ -36,6 +36,11 @@ import ViewMerchant from '../Merchant/view_merchant';
 import EditMerchant from '../Merchant/edit_merchant';
 import Merchant from '../Program/ProgramView/components/Merchant';
 
+import DomainsIndex from '../Domain/index';
+import AddDomain from '../Domain/add_domain';
+import ViewDomain from '../Domain/view_domain';
+import EditDomain from '../Domain/edit_domain';
+
 
 import TreeView from '../TreeViewBasic';
 
@@ -76,6 +81,15 @@ const Users = () => (
   </Switch>
 );
 
+const Domains = () => (
+  <Switch>
+    <Route exact path="/domains" component={DomainsIndex} />
+    <Route exact path="/domains/add" component={AddDomain} />
+    <Route exact path="/domains/view/:id" component={ViewDomain} />
+    <Route exact path="/domains/edit/:id" component={EditDomain} />
+  </Switch>
+);
+
 
 const Events = () => (
   <Switch>
@@ -105,6 +119,7 @@ const privateRoutes = () => {
         <PrivateRoute path="/merchants" component={Merchants} />
         <PrivateRoute path="/users" component={Users} />
         <PrivateRoute path="/events" component={Events} />
+        <PrivateRoute path="/domains" component={Domains} />
         <PrivateRoute path="/treeview" component={TreeView} />
         <PrivateRoute path="/pokemon" component={Pokemon} />
         <PrivateRoute path="/example" component={Example} />
