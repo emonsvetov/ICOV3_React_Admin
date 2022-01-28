@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios'
 import {renameChildrenToSubrows} from '@/shared/helpers'
 
+import AddSubmerchantModal from "./AddSubmerchantModal";
 
 const queryClient = new QueryClient()
 
@@ -102,7 +103,12 @@ const DataTable = () => {
     
     const [filter, setFilter] = useState({ keyword:''});
     // var [data, setData] = useState([]);
+    
+    const [isOpen, setOpen] = useState(false)
 
+    const toggle = () => {
+        setOpen(prevState => !prevState)
+    }
     
     
     let columns = useMemo( () => SUB_MERCHANTS_COLUMNS, [])
@@ -211,7 +217,7 @@ const DataTable = () => {
                             <div className="col-md-3 col-lg-3 text-right pr-0">
                                 <Link style={{maxWidth:'200px'}}
                                 className="btn btn-primary account__btn account__btn--small"
-                                to={{}}
+                                onClick={()=>toggle()}
                                 >Add Sub Merchant
                                 </Link>
                             </div>
@@ -266,6 +272,7 @@ const DataTable = () => {
                         </tfoot> */}
                     </table>
                 </div>
+                <AddSubmerchantModal isOpen={isOpen} setOpen={setOpen} toggle={toggle}  />
                 {(rows.length > 0) && (
                     <>
                         <ReactTablePagination

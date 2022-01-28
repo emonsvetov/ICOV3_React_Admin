@@ -4,7 +4,6 @@ export const AVAILABLE_GIFT_CODES_COLUMNS = [
     {
         Header: "Codes",
         accessor: "code",
-        Cell: ({ row, value }) => { return <Link to={{}}>{value}</Link>},
         width: 165,
     },
     {
@@ -138,7 +137,6 @@ export const REDEEMED_GIFT_CODES_COULMNS = [
     {
         Header: "Codes",
         accessor: "code",
-        Cell: ({ row, value }) => { return <Link to={{}}>{value}</Link>},
         width: 165,
     },
     {
@@ -212,7 +210,6 @@ export const TRANSFERED_GIFT_CODES_COLUMNS = [
     {
         Header: "Codes",
         accessor: "code",
-        Cell: ({ row, value }) => { return <Link to={{}}>{value}</Link>},
         width: 165,
     },
     {
