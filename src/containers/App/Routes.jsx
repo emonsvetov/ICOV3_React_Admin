@@ -20,6 +20,9 @@ import ProgramIndex from '../Program/index';
 import AddProgram from '../Program/add_program';
 import ProgramView from '../Program/view';
 import Pokemon from '../Program/components/pokemon';
+import Merchant from '../Program/ProgramView/components/Merchant';
+import SubProgram from '../Program/ProgramView/components/subprogram';
+import ProgramUsers from '../Program/ProgramView/components/programUsers';
 
 import UsersIndex from '../Users/index';
 import AddUser from '../Users/add_user';
@@ -34,7 +37,7 @@ import MerchantsIndex from '../Merchant/index';
 import AddMerchant from '../Merchant/add_merchant';
 import ViewMerchant from '../Merchant/view_merchant';
 import EditMerchant from '../Merchant/edit_merchant';
-import Merchant from '../Program/ProgramView/components/Merchant';
+
 
 import DomainsIndex from '../Domain/index';
 import AddDomain from '../Domain/add_domain';
@@ -46,6 +49,7 @@ import EditOrder from '../PhysicalOrders/edit_order';
 import TangoOrder from '../PhysicalOrders/tango_order';
 
 import TreeView from '../TreeViewBasic';
+
 
 const Pages = () => (
   <Switch>
@@ -62,6 +66,8 @@ const Programs = () => (
     <Route exact path="/program/view/:id" component={ProgramView} />
     <Route exact path="/program/:programId/event/:eventId/edit" component={EditEvent} />
     <Route exact path="/program/:programId/merchants" component={Merchant} />
+    <Route exact path="/program/:programId/subprograms" component={SubProgram} />
+    <Route exact path="/program/:programId/users" component={ProgramUsers} />
     {/* <Route path="/program/dashboard" component={ProgramDashboard} /> */}
   </Switch>
 );

@@ -172,6 +172,36 @@ const ProgramView = () => {
                 </CardBody>
             </Card>
         </Col>
+        <Col md="6" lg="4" xl="4">
+            <Card>
+                <CardBody>
+                    <Row onClick={()=>{history.push(`/program/${id}/users`)}}>
+                        <Col md={3} className='col-left'>
+                            <img src={EventsIcon} className="card-img-top" alt="Users" />
+                        </Col>
+                        <Col md={9} className='col-right pl-0'>
+                            <h5>Users</h5>
+                            <p>Description</p>
+                        </Col>
+                    </Row>
+                </CardBody>
+            </Card>
+        </Col>
+        <Col md="6" lg="4" xl="4">
+            <Card>
+                <CardBody>
+                    <Row onClick={()=>{history.push(`/program/${id}/subprograms`)}}>
+                        <Col md={3} className='col-left'>
+                            <img src={EventsIcon} className="card-img-top" alt="Sub Programs" />
+                        </Col>
+                        <Col md={9} className='col-right pl-0'>
+                            <h5>Sub Programs</h5>
+                            <p>Description</p>
+                        </Col>
+                    </Row>
+                </CardBody>
+            </Card>
+        </Col>
       </Row>
     </Container>
 )}
