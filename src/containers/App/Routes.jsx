@@ -42,6 +42,8 @@ import ViewDomain from '../Domain/view_domain';
 import EditDomain from '../Domain/edit_domain';
 
 import OrdersIndex from '../PhysicalOrders/index';
+import EditOrder from '../PhysicalOrders/edit_order';
+import TangoOrder from '../PhysicalOrders/tango_order';
 
 import TreeView from '../TreeViewBasic';
 
@@ -94,7 +96,12 @@ const Domains = () => (
 const PhysicalOrders = () => (
   <Switch>
     <Route exact path="/physical-orders" component={OrdersIndex} />
-    
+    <Route exact path="/physical-orders/edit/:id" component={EditOrder} />
+  </Switch>
+);
+const TangoOrders = () => (
+  <Switch>
+    <Route exact path="/tango-orders/details/:id" component={TangoOrder} />
   </Switch>
 );
 
@@ -129,6 +136,7 @@ const privateRoutes = () => {
         <PrivateRoute path="/events" component={Events} />
         <PrivateRoute path="/domains" component={Domains} />
         <PrivateRoute path="/physical-orders" component={PhysicalOrders} />
+        <PrivateRoute path="/tango-orders" component={TangoOrders} />
         <PrivateRoute path="/treeview" component={TreeView} />
         <PrivateRoute path="/pokemon" component={Pokemon} />
         <PrivateRoute path="/example" component={Example} />

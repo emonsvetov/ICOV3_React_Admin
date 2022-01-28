@@ -5,7 +5,7 @@ import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
-import { ORDERS_COLUMNS } from "./columns";
+import { PENDING_COLUMNS } from "./columns";
 import MOCK_DATA from "./MOCK_DATA.json";
 import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
@@ -135,7 +135,7 @@ const PendingOrders = (  ) => {
         // })
     }    
     
-    let columns = useMemo( () => ORDERS_COLUMNS, [])
+    let columns = useMemo( () => PENDING_COLUMNS, [])
 
     const defaultColumn = React.useMemo(
         () => ({
@@ -248,20 +248,7 @@ const PendingOrders = (  ) => {
                 <Card>
                     <CardBody className='infoview'>
                         <div className='table react-table'>
-                            <form className="form form--horizontal">
-                                <div className="form__form-group pb-4">
-                                    <div className="col-md-9 col-lg-9">
-                                        {/* <ProgramFilter onClickFilterCallback={onClickFilterCallback} /> */}
-                                    </div>
-                                    <div className="col-md-3 col-lg-3 text-right pr-0">
-                                        <Link style={{maxWidth:'200px'}}
-                                        className="btn btn-primary account__btn account__btn--small"
-                                        onClick={() =>{alert('Added Successfully!')}}
-                                        >Add program
-                                        </Link>
-                                    </div>
-                                </div>
-                            </form>
+                            
                             <table {...getTableProps()} className="table">
                                 <thead>
                                     {headerGroups.map( (headerGroup) => (
