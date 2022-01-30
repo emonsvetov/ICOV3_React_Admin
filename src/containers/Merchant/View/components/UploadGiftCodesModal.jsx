@@ -54,7 +54,7 @@ const UploadGiftCodesModal = ({
     }
 
     const onSubmit = values => {
-        // alert(JSON.stringify(values))
+        // alert(JSON.stringify(values.name))
         if( values.name )   submit( values.name.file )
     }
 
@@ -86,7 +86,7 @@ const UploadGiftCodesModal = ({
                     <Row className='w100'>
                         <Col md="6" lg="6" xl="6">
                             <h3>Upload Gift Codes to a Merchant</h3>
-                            <h5 className="colorgrey">{data.name}</h5>
+                            {/* <h5 className="colorgrey">{data.name}</h5> */}
                         </Col>
                         <Col md="6" lg="6" xl="6" className='text-right'>
                             <ButtonToolbar className="modal__footer flex justify-content-right w100">
