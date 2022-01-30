@@ -1,20 +1,19 @@
 import React, {useState, useEffect, useMemo} from "react";
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
-import MOCK_DATA from "./mockData/MOCK_DATA.json";
-
-import {AVAILABLE_GIFT_CODES_COLUMNS}  from "./columns";
-
+import MOCK_DATA from "./MOCK_DATA.json";
+import { COLUMNS } from "./columns";
 import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 // import { GlobalFilter } from "./GlobalFilter";
 // import { StatusFilter } from "./StatusFilter";
-import AvailableGiftCodesFilter  from "./Filters/AvailableGiftCodesFilter";
-import UploadGiftCodesModal  from "./UploadGiftCodesModal";
+import DomainFilter  from "./DomainFilter";
 import { Link } from 'react-router-dom';
 import axios from 'axios'
+import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
+import ContentCopyIcon from 'mdi-react/ContentCopyIcon';
 
 import {renameChildrenToSubrows} from '@/shared/helpers'
 
@@ -65,13 +64,6 @@ const reducer = (state, { type, payload }) => {
       throw new Error(`Unhandled action type: ${type}`);
   }
 };
-const fetchMockData = () => {
-    const data = {
-        results: renameChildrenToSubrows(MOCK_DATA),
-        count: 15
-    };
-    return data;
-};
 
 const fetchMerchantData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
     // const offset = page * pageSize;
@@ -104,38 +96,56 @@ const fetchMerchantData = async (page, pageSize, pageFilterO = null, pageSortBy)
 };
 
 const DataTable = () => {
-    
-    const [filter, setFilter] = useState({ keyword:''});
-    const [isOpen, setOpen] = useState(false)
 
-    const toggle = () => {
-        setOpen(prevState => !prevState)
-    }
+    const [filter, setFilter] = useState({ keyword:''});
+
     const onClickFilterCallback = (keyword) => {
-        // alert(JSON.stringify({status, keyword}))
-        // alert(JSON.stringify(filter))
+        
         if(filter.keyword === keyword)    {
             alert('No change in filters')
             return
         }
         setFilter({keyword})
-        // alert(status, keyword)
+        
     }
-    
-    let columns = useMemo( () => AVAILABLE_GIFT_CODES_COLUMNS, [])
-    
+    const RenderActions = ({row}) => {
+        return (
+            <>
+                <span>
+                    <Link to={`/domains/view/${row.original.access_key}`}>View </Link>
+                    <span style={{width:'15px', display: 'inline-block'}}></span>
+                    <Link onClick={() => {alert(`Are you sure to delete?`)}}>Delete </Link>
+                </span>
+            </>
+        )
+    }
+    let domain_columns = [
+        ...COLUMNS, 
+        ...[{
+            Header: "Actions",
+            accessor: "action",
+            Cell: ({ row }) => <RenderActions row={row} />,
+        }]
+    ]
+    let columns = useMemo( () => domain_columns, [])
+
+    //mock data
+    const [data, setData] = useState( useMemo( () => MOCK_DATA, []) );
+    const [isLoading, setLoading] = useState(false);
+    const [isSuccess, setSuccess] = useState(true);
+    const [error, setError] = useState(null);
 
     const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
     React.useReducer(reducer, initialState);
 
-    const { isLoading, error, data, isSuccess } = useQuery(
-        ['merchants', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
-        () => fetchMockData(),
-        {
-            keepPreviousData: true,
-            staleTime: Infinity,
-        }
-    );
+    // const { isLoading, error, data, isSuccess } = useQuery(
+    //     ['domains', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
+    //     () => fetchMerchantData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
+    //     {
+    //         keepPreviousData: true,
+    //         staleTime: Infinity,
+    //     }
+    // );
 
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
@@ -159,7 +169,8 @@ const DataTable = () => {
         state: { pageIndex, pageSize, sortBy }
     } = useTable({
         columns,
-        data: data ? data.results : [],
+        // data: data ? data.results : [],
+        data,
         initialState: {
             pageIndex: queryPageIndex,
             pageSize: queryPageSize,
@@ -220,17 +231,17 @@ const DataTable = () => {
     if(isSuccess)
     return (
             <>
-                <div className='table react-table available-table'>
+                <div className='table react-table'>
                     <form className="form form--horizontal">
                         <div className="form__form-group pb-4">
                             <div className="col-md-9 col-lg-9">
-                                <AvailableGiftCodesFilter onClickFilterCallback={onClickFilterCallback} />
+                                <DomainFilter onClickFilterCallback={onClickFilterCallback} />
                             </div>
                             <div className="col-md-3 col-lg-3 text-right pr-0">
                                 <Link style={{maxWidth:'200px'}}
                                 className="btn btn-primary account__btn account__btn--small"
-                                onClick={()=>toggle()}
-                                >Upload Gift Codes
+                                to="/domains/add"
+                                >Add new Domain
                                 </Link>
                             </div>
                         </div>
@@ -284,7 +295,6 @@ const DataTable = () => {
                         </tfoot> */}
                     </table>
                 </div>
-                <UploadGiftCodesModal isOpen={isOpen} setOpen={setOpen} toggle={toggle}  />
                 {(rows.length > 0) && (
                     <>
                         <ReactTablePagination
@@ -330,7 +340,6 @@ const DataTable = () => {
                         </div>
                     </>
                 )}
-                <UploadGiftCodesModal isOpen={isOpen} toggle={toggle} data={data} />
             </>
     )
 }
@@ -347,7 +356,7 @@ const Sorting = ({ column }) => (
         </span>
       )}
     </span>
-);
+  );
 
 const TableWrapper = () => {
     return (
@@ -358,5 +367,3 @@ const TableWrapper = () => {
 }
 
 export default TableWrapper;
-
-

@@ -20,6 +20,9 @@ import ProgramIndex from '../Program/index';
 import AddProgram from '../Program/add_program';
 import ProgramView from '../Program/view';
 import Pokemon from '../Program/components/pokemon';
+import Merchant from '../Program/ProgramView/components/Merchant';
+import SubProgram from '../Program/ProgramView/components/subprogram';
+import ProgramUsers from '../Program/ProgramView/components/programUsers';
 
 import UsersIndex from '../Users/index';
 import AddUser from '../Users/add_user';
@@ -36,7 +39,17 @@ import ViewMerchant from '../Merchant/view_merchant';
 import EditMerchant from '../Merchant/edit_merchant';
 
 
+import DomainsIndex from '../Domain/index';
+import AddDomain from '../Domain/add_domain';
+import ViewDomain from '../Domain/view_domain';
+import EditDomain from '../Domain/edit_domain';
+
+import OrdersIndex from '../PhysicalOrders/index';
+import EditOrder from '../PhysicalOrders/edit_order';
+import TangoOrder from '../PhysicalOrders/tango_order';
+
 import TreeView from '../TreeViewBasic';
+
 
 const Pages = () => (
   <Switch>
@@ -52,6 +65,9 @@ const Programs = () => (
     <Route exact path="/program/add" component={AddProgram} />
     <Route exact path="/program/view/:id" component={ProgramView} />
     <Route exact path="/program/:programId/event/:eventId/edit" component={EditEvent} />
+    <Route exact path="/program/:programId/merchants" component={Merchant} />
+    <Route exact path="/program/:programId/subprograms" component={SubProgram} />
+    <Route exact path="/program/:programId/users" component={ProgramUsers} />
     {/* <Route path="/program/dashboard" component={ProgramDashboard} /> */}
   </Switch>
 );
@@ -71,6 +87,27 @@ const Users = () => (
     <Route exact path="/users/add" component={AddUser} />
     <Route exact path="/users/view/:id" component={ViewUser} />
     <Route exact path="/users/edit/:id" component={EditUser} />
+  </Switch>
+);
+
+const Domains = () => (
+  <Switch>
+    <Route exact path="/domains" component={DomainsIndex} />
+    <Route exact path="/domains/add" component={AddDomain} />
+    <Route exact path="/domains/view/:id" component={ViewDomain} />
+    <Route exact path="/domains/edit/:id" component={EditDomain} />
+  </Switch>
+);
+
+const PhysicalOrders = () => (
+  <Switch>
+    <Route exact path="/physical-orders" component={OrdersIndex} />
+    <Route exact path="/physical-orders/edit/:id" component={EditOrder} />
+  </Switch>
+);
+const TangoOrders = () => (
+  <Switch>
+    <Route exact path="/tango-orders/details/:id" component={TangoOrder} />
   </Switch>
 );
 
@@ -103,6 +140,9 @@ const privateRoutes = () => {
         <PrivateRoute path="/merchants" component={Merchants} />
         <PrivateRoute path="/users" component={Users} />
         <PrivateRoute path="/events" component={Events} />
+        <PrivateRoute path="/domains" component={Domains} />
+        <PrivateRoute path="/physical-orders" component={PhysicalOrders} />
+        <PrivateRoute path="/tango-orders" component={TangoOrders} />
         <PrivateRoute path="/treeview" component={TreeView} />
         <PrivateRoute path="/pokemon" component={Pokemon} />
         <PrivateRoute path="/example" component={Example} />

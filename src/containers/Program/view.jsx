@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useHistory } from 'react-router-dom';
 import { Col, Container, Row, Card, CardBody, } from 'reactstrap';
 import Alert from '@/shared/components/Alert';
 import MainModalWrapper from './ProgramView/components/MainModalWrapper';
@@ -20,7 +20,8 @@ const ProgramView = () => {
     const [message, setMessage] = useState('')
     const [data, setData] = useState(null)
     const [modalName, setModalName] = useState(null)
-    const [isOpen, setOpen] = useState(false)
+    const [isOpen, setOpen] = useState(false);
+    let history = useHistory();
     useEffect(() => {
         checkFlashMessage()
         fetchProgramData()
@@ -80,7 +81,7 @@ const ProgramView = () => {
         <Col md="6" lg="4" xl="4">
             <Card>
                 <CardBody>
-                    <Row onClick={()=>{toggle('merchants')}}>
+                    <Row onClick={()=>{history.push(`/program/${id}/merchants`)}}>
                         <Col md={3} className='col-left'>
                             <img src={MerchantsIcon} className="card-img-top" alt="Merchants" />
                         </Col>
@@ -165,6 +166,36 @@ const ProgramView = () => {
                         </Col>
                         <Col md={9} className='col-right pl-0'>
                             <h5>Events</h5>
+                            <p>Description</p>
+                        </Col>
+                    </Row>
+                </CardBody>
+            </Card>
+        </Col>
+        <Col md="6" lg="4" xl="4">
+            <Card>
+                <CardBody>
+                    <Row onClick={()=>{history.push(`/program/${id}/users`)}}>
+                        <Col md={3} className='col-left'>
+                            <img src={EventsIcon} className="card-img-top" alt="Users" />
+                        </Col>
+                        <Col md={9} className='col-right pl-0'>
+                            <h5>Users</h5>
+                            <p>Description</p>
+                        </Col>
+                    </Row>
+                </CardBody>
+            </Card>
+        </Col>
+        <Col md="6" lg="4" xl="4">
+            <Card>
+                <CardBody>
+                    <Row onClick={()=>{history.push(`/program/${id}/subprograms`)}}>
+                        <Col md={3} className='col-left'>
+                            <img src={EventsIcon} className="card-img-top" alt="Sub Programs" />
+                        </Col>
+                        <Col md={9} className='col-right pl-0'>
+                            <h5>Sub Programs</h5>
                             <p>Description</p>
                         </Col>
                     </Row>

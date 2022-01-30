@@ -2,7 +2,7 @@ import React, {useState, useEffect, useMemo} from "react";
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import MOCK_DATA from "./mockData/CALLBACKS.json";
-import createColumns  from "./columns/callbacksColumns";
+import {CALLBACKS_COLUMNS} from './columns'
 import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
@@ -11,7 +11,7 @@ import ReactTablePagination from '@/shared/components/table/components/ReactTabl
 import { Link } from 'react-router-dom';
 import axios from 'axios'
 import {renameChildrenToSubrows} from '@/shared/helpers'
-
+import AddCallbackModal from "./AddCallbackModal";
 
 const queryClient = new QueryClient()
 
@@ -99,13 +99,17 @@ const fetchMerchantData = async (page, pageSize, pageFilterO = null, pageSortBy)
 };
 
 const DataTable = () => {
-    const COLUMNS = createColumns();
+    
     const [filter, setFilter] = useState({ keyword:''});
     // var [data, setData] = useState([]);
+    const [isOpen, setOpen] = useState(false)
 
+    const toggle = () => {
+        setOpen(prevState => !prevState)
+    }
     
     
-    let columns = useMemo( () => COLUMNS, [])
+    let columns = useMemo( () => CALLBACKS_COLUMNS, [])
 
     const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
     React.useReducer(reducer, initialState);
@@ -211,7 +215,7 @@ const DataTable = () => {
                             <div className="col-md-3 col-lg-3 text-right pr-0">
                                 <Link style={{maxWidth:'200px'}}
                                 className="btn btn-primary account__btn account__btn--small"
-                                to={{}}
+                                onClick={() =>toggle()}
                                 >Add Callback
                                 </Link>
                             </div>
@@ -266,6 +270,7 @@ const DataTable = () => {
                         </tfoot> */}
                     </table>
                 </div>
+                <AddCallbackModal isOpen={isOpen} setOpen={setOpen} toggle={toggle}  />
                 {(rows.length > 0) && (
                     <>
                         <ReactTablePagination

@@ -148,7 +148,6 @@ const UploadGiftCodesModal = ({
         </Modal>
     )
 }
-
 UploadGiftCodesModal.propTypes = {
     theme: ThemeProps.isRequired,
     rtl: RTLProps.isRequired
