@@ -12,13 +12,9 @@ import ReactTablePagination from '@/shared/components/table/components/ReactTabl
 // import { GlobalFilter } from "./GlobalFilter";
 // import { StatusFilter } from "./StatusFilter";
 import AvailableGiftCodesFilter  from "./Filters/AvailableGiftCodesFilter";
+import UploadGiftCodesModal  from "./UploadGiftCodesModal";
 import { Link } from 'react-router-dom';
 import axios from 'axios'
-import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
-import ContentCopyIcon from 'mdi-react/ContentCopyIcon';
-import ReactTableBase from '@/shared/components/table/ReactTableBase';
-
-import UploadGiftCodesModal from "./UploadGiftCodesModal";
 
 import {renameChildrenToSubrows} from '@/shared/helpers'
 
@@ -115,7 +111,6 @@ const DataTable = () => {
     const toggle = () => {
         setOpen(prevState => !prevState)
     }
-    
     const onClickFilterCallback = (keyword) => {
         // alert(JSON.stringify({status, keyword}))
         // alert(JSON.stringify(filter))
@@ -335,7 +330,7 @@ const DataTable = () => {
                         </div>
                     </>
                 )}
-               
+                <UploadGiftCodesModal isOpen={isOpen} toggle={toggle} data={data} />
             </>
     )
 }
