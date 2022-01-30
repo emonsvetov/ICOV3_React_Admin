@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
 import { useParams, useHistory } from "react-router-dom";
-import formValidation from "@/shared/validation/program-add";
+import formValidation from "@/shared/validation/domain";
 import axios from 'axios';
 
 const AddDomainForm = ( ) => {

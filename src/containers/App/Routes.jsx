@@ -20,6 +20,9 @@ import ProgramIndex from '../Program/index';
 import AddProgram from '../Program/add_program';
 import ProgramView from '../Program/view';
 import Pokemon from '../Program/components/pokemon';
+import Merchant from '../Program/ProgramView/components/Merchant';
+import SubProgram from '../Program/ProgramView/components/subprogram';
+import ProgramUsers from '../Program/ProgramView/components/programUsers';
 
 import UsersIndex from '../Users/index';
 import AddUser from '../Users/add_user';
@@ -34,7 +37,7 @@ import MerchantsIndex from '../Merchant/index';
 import AddMerchant from '../Merchant/add_merchant';
 import ViewMerchant from '../Merchant/view_merchant';
 import EditMerchant from '../Merchant/edit_merchant';
-import Merchant from '../Program/ProgramView/components/Merchant';
+
 
 import DomainsIndex from '../Domain/index';
 import AddDomain from '../Domain/add_domain';
@@ -42,8 +45,11 @@ import ViewDomain from '../Domain/view_domain';
 import EditDomain from '../Domain/edit_domain';
 
 import OrdersIndex from '../PhysicalOrders/index';
+import EditOrder from '../PhysicalOrders/edit_order';
+import TangoOrder from '../PhysicalOrders/tango_order';
 
 import TreeView from '../TreeViewBasic';
+
 
 const Pages = () => (
   <Switch>
@@ -60,6 +66,8 @@ const Programs = () => (
     <Route exact path="/program/view/:id" component={ProgramView} />
     <Route exact path="/program/:programId/event/:eventId/edit" component={EditEvent} />
     <Route exact path="/program/:programId/merchants" component={Merchant} />
+    <Route exact path="/program/:programId/subprograms" component={SubProgram} />
+    <Route exact path="/program/:programId/users" component={ProgramUsers} />
     {/* <Route path="/program/dashboard" component={ProgramDashboard} /> */}
   </Switch>
 );
@@ -94,7 +102,12 @@ const Domains = () => (
 const PhysicalOrders = () => (
   <Switch>
     <Route exact path="/physical-orders" component={OrdersIndex} />
-    
+    <Route exact path="/physical-orders/edit/:id" component={EditOrder} />
+  </Switch>
+);
+const TangoOrders = () => (
+  <Switch>
+    <Route exact path="/tango-orders/details/:id" component={TangoOrder} />
   </Switch>
 );
 
@@ -129,6 +142,7 @@ const privateRoutes = () => {
         <PrivateRoute path="/events" component={Events} />
         <PrivateRoute path="/domains" component={Domains} />
         <PrivateRoute path="/physical-orders" component={PhysicalOrders} />
+        <PrivateRoute path="/tango-orders" component={TangoOrders} />
         <PrivateRoute path="/treeview" component={TreeView} />
         <PrivateRoute path="/pokemon" component={Pokemon} />
         <PrivateRoute path="/example" component={Example} />

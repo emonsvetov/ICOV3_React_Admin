@@ -32,13 +32,9 @@ const OrdersIndex = () => {
 
     const [selected, setSelected] = useState('pending')
 
-    // useEffect( ()=>{
-    //     fetchDomain( id )
-    //     .then( response => {
-    //         setDomain(response)
-    //         setIsLoading(false)
-    //     })
-    // }, [id])
+    useEffect( ()=>{
+      console.log(selected)
+    }, [selected])
 
     const onClickMenuItem = (item) => {
         setSelected(item.value)

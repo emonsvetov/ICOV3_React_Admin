@@ -17,7 +17,6 @@ import axios from 'axios'
 import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
 import ContentCopyIcon from 'mdi-react/ContentCopyIcon';
 import ReactTableBase from '@/shared/components/table/ReactTableBase';
-import CreateTableData from './columns/giftCodesColumns';
 
 import UploadGiftCodesModal from "./UploadGiftCodesModal";
 

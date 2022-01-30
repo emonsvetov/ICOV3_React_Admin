@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { Form, Field } from 'react-final-form';
 import CheckboxField from '@/shared/components/form/CheckBox';
 import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
-import formValidation from "@/shared/validation/merchants/addMerchant";
+import formValidation from "@/shared/validation/domain";
 import renderSelectField from '@/shared/components/form/Select';
 import axios from 'axios';
 

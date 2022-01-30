@@ -11,6 +11,7 @@ import EngagementModal from './EngagementModal';
 import AddProgramModal from './AddProgramModal';
 // import EventsModal from './EventsModal';
 import EventsModal from '../components/event/EventsDataModal';
+// import SubProgramsModal from './subprogram/SubProgramsModal'
 
 const MainModalWrapper = ({data, name, isOpen, setOpen, toggle, theme, rtl}) => {
     const props = {
@@ -43,6 +44,10 @@ const MainModalWrapper = ({data, name, isOpen, setOpen, toggle, theme, rtl}) => 
         {
             name==='addprogram' && <AddProgramModal {...props} />
         }
+        {
+            name==='users' && <AddProgramModal {...props} />
+        }
+        
         </>
     )
 }

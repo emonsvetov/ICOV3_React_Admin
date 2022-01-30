@@ -8,6 +8,7 @@ import { Form, Field } from 'react-final-form';
 import axios from 'axios'
 import ReactTableBase from '@/shared/components/table/ReactTableBase';
 // import formValidation from "@/shared/validation/program-accounting";
+import renderFileInputField from '@/shared/components/form/FileInput';
 
 import {GIFT_CODES_COLUMNS} from './columns'
 
@@ -58,14 +59,12 @@ const UploadGiftCodesModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
     }
     return (
     <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
-        <Form
-        onSubmit={onSubmitForm}
-        // validate={(values) => formValidation.validateForm(values)}
-        
-       
-        >
+        <Form onSubmit={(values) => {
+                if(csvFile)
+                    submit()
+            }}>
         {({ handleSubmit, form, submitting, pristine, values }) => (
-        <form className="form" onSubmit={handleSubmit}>
+        <form className="form form--horizontal" onSubmit={handleSubmit}>
             <ModalHeader className='w100'>
                 <Row className='w100'>
                     <Col md="6" lg="6" xl="6">
@@ -80,17 +79,28 @@ const UploadGiftCodesModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
                 </Row>
             </ModalHeader>
             <ModalBody className="modal-lg">
-                    <Row>
-                        <Col md="6" lg="4" xl="4">
-                            <div className="form__form-group">
-                                <Form onSubmit={(values) => {
-                                    if(csvFile)
-                                        submit()
-                                }}>
-                                {({ handleSubmit, form, submitting, pristine, values }) => (
-                                <form className="form" onSubmit={handleSubmit}>
-                                    
-                                    <Field name="name">
+               
+                <Row>
+                    <Col md="12" >
+                        <div className="form__form-group">
+                            <span className="form__form-group-label">CSV file</span>
+                            <div className="form__form-group-field">
+                                <Field
+                                    name="name"
+                                    component={renderFileInputField}
+                                    accept='.csv'
+                                    parse={value => {
+                                        submit(value.file)
+                                        return value;
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </Col>
+                </Row>
+                
+                                
+                                    {/* <Field name="name">
                                         {({ input, meta }) => (
                                         <div className="form__form-group">
                                             <span className="form__form-group-label">CSV File</span>
@@ -116,16 +126,9 @@ const UploadGiftCodesModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
                                             </div>
                                         </div>
                                         )}
-                                    </Field>
+                                    </Field> */}
 
-                                
-
-                                    </form>
-        )}
-                                </Form>
-                            </div>
-                        </Col>
-                    </Row>
+                        
 
                 <ReactTableBase
                     columns={GIFT_CODES_COLUMNS}
@@ -135,7 +138,7 @@ const UploadGiftCodesModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
                     tableConfig={tableConfig}
                 />
             </ModalBody>
-        </form>
+            </form>
         )}
         </Form>
     </Modal>

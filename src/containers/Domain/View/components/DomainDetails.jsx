@@ -5,7 +5,7 @@ import {answerYesNo} from '@/shared/helpers'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import axios from 'axios'
 import { Link } from 'react-router-dom'
-import formValidation from "@/shared/validation/addEvent";
+import formValidation from "@/shared/validation/domain";
 
 const DomainDetails = ( {data} ) => {
     const dispatch = useDispatch()
@@ -120,7 +120,7 @@ const DomainDetails = ( {data} ) => {
                                 
                                 <Row>
                                 <Col md="6" lg="4" xl="4">
-                                    <Field name="name">
+                                    <Field name="address">
                                     {({ input, meta }) => (
                                         <div className="form__form-group">
                                         
