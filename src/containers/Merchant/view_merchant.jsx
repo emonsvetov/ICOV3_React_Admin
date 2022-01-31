@@ -1,6 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import { Col, Container, Row, Card, CardBody, ListGroup, ListGroupItem } from 'reactstrap';
 import { Link, useParams } from 'react-router-dom'
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import {useDispatch} from 'react-redux';
+import {setMerchant} from '@/redux/actions/merchantActions';
+import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import axios from 'axios'
 import MerchantDetails from './View/components/MerchantDetails';
 import AvailableGiftCodes from './View/components/AvailableGiftCodes';
@@ -43,8 +49,9 @@ const MERCHANT_MENU_LINKS = [
 
 const fetchMerchant = async ( id ) => {
     try {
-        console.log('fetching merchant')
+        // console.log('fetching merchant')
         const response = await axios.get(`/merchant/${id}`);
+        // console.log(response);
         return response.data;
     } catch (e) {
         throw new Error(`API error:${e?.message}`);
@@ -52,19 +59,20 @@ const fetchMerchant = async ( id ) => {
 };
 
 
-const ViewMerchant = () => {
+const ViewMerchant = ( {merchant} ) => {
 
     let { id } = useParams();
+    const dispatch = useDispatch();
 
     const [isLoading, setIsLoading] = useState(true) //first page load!
     
-    let [merchant, setMerchant] = useState(null)
+    // let [merchant, setMerchant] = useState(null)
     const [selected, setSelected] = useState('details')
 
     useEffect( ()=>{
         fetchMerchant( id )
         .then( response => {
-            setMerchant(response)
+            dispatch(setMerchant(response))
             setIsLoading(false)
         })
     }, [id])
@@ -81,7 +89,7 @@ const ViewMerchant = () => {
     //     fetchMerchant( id );
     // }, [fetchMerchant, id]);
 
-    if (isLoading) {
+    if (isLoading || !merchant) {
         return <p>Loading...</p>;
     }
 
@@ -128,13 +136,12 @@ const ViewMerchant = () => {
                         <Card>
                             <CardBody className='infoview'>
                                 {selected === 'details' && <MerchantDetails data={merchant}/>}
-                                {selected === 'available_gift_codes' && <AvailableGiftCodes /> }
+                                {selected === 'available_gift_codes' && <AvailableGiftCodes  /> }
                                 {selected === 'redeemed_gift_codes' && <RedeemedGiftCodes /> }
                                 {selected === 'transferred_gift_codes' && <TransferedGiftCodes /> }
                                 {selected === 'optimal_amount' && <OptimalAmount /> }
                                 {selected === 'sub_merchants' && <SubMerchants /> }
                                 {selected === 'callbacks' && <Callbacks /> }
-                                
                             </CardBody>
                         </Card>
                     </Col>
@@ -144,6 +151,17 @@ const ViewMerchant = () => {
     }
 }
 
-export default ViewMerchant;
+ViewMerchant.propTypes = {
+    theme: ThemeProps.isRequired,
+    rtl: RTLProps.isRequired
+};
+  
+export default withRouter(connect((state) => ({
+    theme: state.theme,
+    rtl: state.rtl,
+    merchant: state.merchant
+}))(ViewMerchant));
+
+// export default ViewMerchant;
 
 

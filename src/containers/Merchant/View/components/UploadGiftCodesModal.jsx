@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useMemo} from "react";
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import { Form, Field } from "react-final-form";
 import ReactTableBase from "@/shared/components/table/ReactTableBase";
@@ -17,7 +18,7 @@ import {
 import COLUMNS from './columns/upload_gift_codes_columns'
 
 const UploadGiftCodesModal = ({
-    isOpen, toggle, data, theme, rtl
+    isOpen, toggle, data, theme, rtl, merchant
 }) => {
     const [csvRows, setCsvData] = useState([]);
     const [csvFile, setCsvFile] = useState(null);
@@ -54,14 +55,14 @@ const UploadGiftCodesModal = ({
     }
 
     const onSubmit = values => {
-        // alert(JSON.stringify(values))
+        alert(JSON.stringify(values))
         if( values.name )   submit( values.name.file )
     }
 
     const validate = values => {
         let errors = {};
-        // alert(JSON.stringify(values))
-        if (!values.name) {
+        console.log(JSON.stringify(values))
+        if ( !values.name ) {
             errors.name = "Csv file is required";
         }
         // console.log(csvFile);
@@ -72,9 +73,9 @@ const UploadGiftCodesModal = ({
 
     return(
         <Modal
-        className={`modal-merchant-upload-giftcodes modal-lg ${theme.className} ${rtl.direction}-support`}
-        isOpen={isOpen}
-        toggle={toggle}
+            className={`modal-merchant-upload-giftcodes modal-lg ${theme.className} ${rtl.direction}-support`}
+            isOpen={isOpen}
+            toggle={toggle}
         >
             <Form 
                 onSubmit={onSubmit}
@@ -86,7 +87,7 @@ const UploadGiftCodesModal = ({
                     <Row className='w100'>
                         <Col md="6" lg="6" xl="6">
                             <h3>Upload Gift Codes to a Merchant</h3>
-                            <h5 className="colorgrey">{data.name}</h5>
+                            <h5 className="colorgrey">{merchant.name}</h5>
                         </Col>
                         <Col md="6" lg="6" xl="6" className='text-right'>
                             <ButtonToolbar className="modal__footer flex justify-content-right w100">
@@ -101,8 +102,16 @@ const UploadGiftCodesModal = ({
                         <Col md="6" lg="4" xl="4">
                             <div className="form__form-group">
                                     <Field
+                                        label="Choose CSV" 
+                                        accept=".csv"
                                         name="name"
                                         component={renderFileInputField}
+                                        parse={ value => {
+                                            // alert(JSON.stringify(value))
+                                            setCsvFile(value)
+                                            return value
+                                        }}
+                                        value={csvFile}
                                     />
                                     {/* <Field name="name">
                                         {({ input, meta }) => (
@@ -150,10 +159,12 @@ const UploadGiftCodesModal = ({
 }
 UploadGiftCodesModal.propTypes = {
     theme: ThemeProps.isRequired,
-    rtl: RTLProps.isRequired
+    rtl: RTLProps.isRequired,
+    merchant: PropTypes.isRequired
 };
   
 export default withRouter(connect((state) => ({
     theme: state.theme,
-    rtl: state.rtl
+    rtl: state.rtl,
+    merchant: state.merchant
 }))(UploadGiftCodesModal));
