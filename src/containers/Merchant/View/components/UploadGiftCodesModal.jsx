@@ -56,6 +56,7 @@ const UploadGiftCodesModal = ({
 
     const onSubmit = values => {
         alert(JSON.stringify(values))
+        // alert(JSON.stringify(values.name))
         if( values.name )   submit( values.name.file )
     }
 
