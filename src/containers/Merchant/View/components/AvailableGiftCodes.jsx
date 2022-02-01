@@ -65,7 +65,7 @@ const reducer = (state, { type, payload }) => {
   }
 };
 const fetchMockData = () => {
-    alert("Fetch mock data")
+    // alert("Fetch mock data")
     const data = {
         results: renameChildrenToSubrows(MOCK_DATA),
         count: 15
