@@ -1,11 +1,11 @@
 import React, {useState, useEffect, useMemo} from "react";
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import { Form, Field } from "react-final-form";
 import ReactTableBase from "@/shared/components/table/ReactTableBase";
-import renderFileInputField from '@/shared/components/form/FileInput';
+import axios from 'axios'
+
 import {
     Modal,
     ModalBody,
@@ -28,42 +28,68 @@ const UploadGiftCodesModal = ({
         isResizable: true
     }
 
-    const processCSV = (str, delim=',') => {
-        const headers = str.slice(0,str.indexOf('\n')).split(delim);
-        const rows = str.slice(str.indexOf('\n')+1).split('\n');
-        rows.pop();
-        const newArray = rows.map( row => {
-            const values = row.split(delim);
-            const eachObject = headers.reduce((obj, header, i) => {
-                obj[header] = values[i];
-                return obj;
-            }, {})
-            return eachObject;
-        })
-        setCsvData(newArray)
-    }
-    const submit = (file) => {
-        // const file = csvFile;
-        const reader = new FileReader();
-
-        reader.onload = function(e) {
-            const text = e.target.result;
-            console.log(text);
-            processCSV(text) // plugged in here
+    // const processCSV = (str, delim=',') => {
+    //     const headers = str.slice(0,str.indexOf('\n')).split(delim);
+    //     const rows = str.slice(str.indexOf('\n')+1).split('\n');
+    //     rows.pop();
+    //     const newArray = rows.map( row => {
+    //         const values = row.split(delim);
+    //         const eachObject = headers.reduce((obj, header, i) => {
+    //             obj[header] = values[i];
+    //             return obj;
+    //         }, {})
+    //         return eachObject;
+    //     })
+    //     setCsvData(newArray)
+    // }
+    function handleUpload() {
+        let data = new FormData();
+        if( !csvFile ){
+          return;
         }
-        reader.readAsText(file);
+        data.append('csv_import', csvFile)
+        axios
+        .post(`/giftcode/${merchant.id}/import`, data, {
+                headers: {
+                    "Content-type": "multipart/form-data",
+                },       
+            }
+        )
+        .then((res) => {
+            console.log(res);
+            if (res.status == 200) {
+                alert('success')
+            }
+        })
+        .catch((error) => {
+            console.log(error.response.data);
+            // setError(error.response.data.errors);
+        });  
+    }
+    const submit = () => {
+        handleUpload()
+        // const file = csvFile;
+        // const reader = new FileReader();
+
+        // reader.onload = function(e) {
+        //     const text = e.target.result;
+        //     console.log(text);
+        //     handleUpload( text )
+        //     // processCSV(text) // plugged in here
+        // }
+        // reader.readAsText(file);
     }
 
-    const onSubmit = values => {
-        alert(JSON.stringify(values))
+    const onSubmit = (values) => {
+        // alert(JSON.stringify(csvFile))
         // alert(JSON.stringify(values.name))
-        if( values.name )   submit( values.name.file )
+        if( csvFile )   submit( csvFile )
     }
 
-    const validate = values => {
+    const validateMe = (values) => {
         let errors = {};
-        console.log(JSON.stringify(values))
-        if ( !values.name ) {
+        // alert(JSON.stringify(csvFile))
+        if ( !csvFile ) {
             errors.name = "Csv file is required";
         }
         // console.log(csvFile);
@@ -80,7 +106,7 @@ const UploadGiftCodesModal = ({
         >
             <Form 
                 onSubmit={onSubmit}
-                validate={validate}
+                validate={validateMe}
             >
             {({ handleSubmit, form, submitting, pristine, values }) => (
             <form className="form" onSubmit={handleSubmit}>
@@ -102,7 +128,7 @@ const UploadGiftCodesModal = ({
                     <Row>
                         <Col md="6" lg="4" xl="4">
                             <div className="form__form-group">
-                                    <Field
+                                    {/* <Field
                                         label="Choose CSV" 
                                         accept=".csv"
                                         name="name"
@@ -112,9 +138,9 @@ const UploadGiftCodesModal = ({
                                             setCsvFile(value)
                                             return value
                                         }}
-                                        value={csvFile}
-                                    />
-                                    {/* <Field name="name">
+                                        value={csvFile?.name.file}
+                                    /> */}
+                                    <Field name="name">
                                         {({ input, meta }) => (
                                         <div className="form__form-group">
                                             <span className="form__form-group-label">CSV File</span>
@@ -127,12 +153,11 @@ const UploadGiftCodesModal = ({
                                                         {...input}
                                                         onChange={(e) => {
                                                             setCsvFile(e.target.files[0])
-                                                            // submit(e.target.files[0])
                                                         }}
-                                                        value={csvFile}
+                                                        value={csvFile?.name.file}
                                                     >
                                                     </input>
-                                                    {meta.touched && meta.error && (
+                                                    {meta.touched && !csvFile && (
                                                     <span className="form__form-group-error">
                                                         {meta.error}
                                                     </span>
@@ -141,27 +166,28 @@ const UploadGiftCodesModal = ({
                                             </div>
                                         </div>
                                         )}
-                                    </Field> */}
+                                    </Field>
                             </div>
                         </Col>
                     </Row>
-                    <ReactTableBase
-                        columns={columns}
-                        data={csvRows}
-                        key={'modified'}
-                        tableConfig={tableConfig}
-                    />
                 </ModalBody>
             </form>
             )}
             </Form>
+            <ReactTableBase
+                columns={columns}
+                data={csvRows}
+                key={'modified'}
+                tableConfig={tableConfig}
+            />
         </Modal>
     )
 }
+
 UploadGiftCodesModal.propTypes = {
     theme: ThemeProps.isRequired,
     rtl: RTLProps.isRequired,
-    merchant: PropTypes.isRequired
+    // merchant: PropTypes.is
 };
   
 export default withRouter(connect((state) => ({

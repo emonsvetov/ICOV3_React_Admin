@@ -65,6 +65,7 @@ const reducer = (state, { type, payload }) => {
   }
 };
 const fetchMockData = () => {
+    alert("Fetch mock data")
     const data = {
         results: renameChildrenToSubrows(MOCK_DATA),
         count: 15
@@ -138,8 +139,6 @@ const DataTable = () => {
 
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
-    // console.log(data)
-
     const {
         getTableProps,
         getTableBodyProps,
@@ -208,6 +207,7 @@ const DataTable = () => {
             });
         }
     }, [data?.count]);
+
 
     if (error) {
         return <p>Error: {JSON.stringify(error)}</p>;
