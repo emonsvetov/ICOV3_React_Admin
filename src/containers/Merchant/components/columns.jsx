@@ -4,7 +4,6 @@ export const COLUMNS = [
     {
         Header: "#",
         accessor: "id",
-        Footer:"#",
         disableFilters:true,
         disableGlobalFilters:true,
         // sticky:'left'

@@ -11,12 +11,12 @@ const FlashMessage = () => {
 
     useEffect(
         () => {
-          let timer1 = setTimeout(() => dispatch(sendFlashMessage(null, null)), 3000);
+          let timer1 = setTimeout(() => dispatch(sendFlashMessage(null, null)), 4000);
           return () => {
             clearTimeout(timer1);
           };
         },
-        [flashMessage]
+        [flashMessage, dispatch]
     );
 
     if( !message )    {
@@ -36,7 +36,7 @@ const FlashMessage = () => {
     return (
       <div className="w100" style={style}>
         <div 
-        className={'col-md-12 alert justify-content-center text-white ' + className} 
+        className={'flex-column align-items-center col-md-12 alert justify-content-center text-white ' + className} 
         role="alert">
           {message}
         </div>

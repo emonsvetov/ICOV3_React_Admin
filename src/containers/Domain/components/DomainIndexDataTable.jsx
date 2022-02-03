@@ -1,28 +1,27 @@
 import React, {useState, useEffect, useMemo} from "react";
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
-import MOCK_DATA from "./MOCK_DATA.json";
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import { COLUMNS } from "./columns";
 import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
-// import { GlobalFilter } from "./GlobalFilter";
-// import { StatusFilter } from "./StatusFilter";
 import DomainFilter  from "./DomainFilter";
 import { Link } from 'react-router-dom';
 import axios from 'axios'
-import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
-import ContentCopyIcon from 'mdi-react/ContentCopyIcon';
+import { getOrganization } from '../../App/auth';
 
-import {renameChildrenToSubrows} from '@/shared/helpers'
+const organization = getOrganization();
 
 const queryClient = new QueryClient()
 
 const initialState = {
     queryPageIndex: 0,
     queryPageSize: 10,
-    totalCount: null,
+    totalCount: 0,
     queryPageFilter:{},
     queryPageSortBy: [],
 };
@@ -65,7 +64,7 @@ const reducer = (state, { type, payload }) => {
   }
 };
 
-const fetchMerchantData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
+const fetchDomainsData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
     // const offset = page * pageSize;
     const params = []
     let paramStr = ''
@@ -80,12 +79,12 @@ const fetchMerchantData = async (page, pageSize, pageFilterO = null, pageSortBy)
     }
     try {
         const response = await axios.get(
-        `/merchant?page=${page}&limit=${pageSize}&${paramStr}`
+        `/organization/${organization.id}/domain?page=${page}&limit=${pageSize}&${paramStr}`
         );
         // console.log(response)
         if( response.data.length === 0) return {results:[],count:0}
         const data = {
-            results: renameChildrenToSubrows(response.data.data),
+            results: response.data.data,
             count: response.data.total
         };
         // console.log(data)
@@ -96,9 +95,11 @@ const fetchMerchantData = async (page, pageSize, pageFilterO = null, pageSortBy)
 };
 
 const DataTable = () => {
+    const dispatcher = useDispatch()
+
+    const [loading, setLoading] = useState(false)
 
     const [filter, setFilter] = useState({ keyword:''});
-
     const onClickFilterCallback = (keyword) => {
         
         if(filter.keyword === keyword)    {
@@ -108,13 +109,30 @@ const DataTable = () => {
         setFilter({keyword})
         
     }
+    const onClickDelete = (e, id) => {
+        e.preventDefault()
+        setLoading( true )
+        axios.delete(`/organization/${organization.id}/domain/${id}`)
+        .then( (res) => {
+            // console.log(res)
+            if(res.status == 200)  {
+                window.location = `/domains?message=domain deleted successfully!`
+            }
+        })
+        .catch( error => {
+            console.log(error)
+            setLoading( false )
+            dispatcher(sendFlashMessage(JSON.stringify(error.response.data), 'alert-danger'))
+            // throw new Error(`API error:${e?.message}`);
+        })
+    }
     const RenderActions = ({row}) => {
         return (
             <>
                 <span>
-                    <Link to={`/domains/view/${row.original.access_key}`}>View </Link>
+                    <Link to={`/domains/view/${row.original.id}`}>View </Link>
                     <span style={{width:'15px', display: 'inline-block'}}></span>
-                    <Link onClick={() => {alert(`Are you sure to delete?`)}}>Delete </Link>
+                    <Link disabled={loading} to={'#delete-domain'} className="text-danger" onClick={(e) => {if(window.confirm('Are you sure to delete this domain?')){onClickDelete(e, row.original.id)}}}>Delete</Link>
                 </span>
             </>
         )
@@ -129,23 +147,19 @@ const DataTable = () => {
     ]
     let columns = useMemo( () => domain_columns, [])
 
-    //mock data
-    const [data, setData] = useState( useMemo( () => MOCK_DATA, []) );
-    const [isLoading, setLoading] = useState(false);
-    const [isSuccess, setSuccess] = useState(true);
-    const [error, setError] = useState(null);
-
     const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
     React.useReducer(reducer, initialState);
 
-    // const { isLoading, error, data, isSuccess } = useQuery(
-    //     ['domains', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
-    //     () => fetchMerchantData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
-    //     {
-    //         keepPreviousData: true,
-    //         staleTime: Infinity,
-    //     }
-    // );
+    const { isLoading, error, data, isSuccess } = useQuery(
+        ['domains', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
+        () => fetchDomainsData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
+        {
+            keepPreviousData: true,
+            staleTime: Infinity,
+        }
+    );
+
+    // console.log(totalCount);
 
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
@@ -169,8 +183,7 @@ const DataTable = () => {
         state: { pageIndex, pageSize, sortBy }
     } = useTable({
         columns,
-        // data: data ? data.results : [],
-        data,
+        data: data ? data.results : [],
         initialState: {
             pageIndex: queryPageIndex,
             pageSize: queryPageSize,
@@ -228,10 +241,13 @@ const DataTable = () => {
     if (isLoading) {
         return <p>Loading...</p>;
     }
+
+
+
     if(isSuccess)
     return (
             <>
-                <div className='table react-table'>
+                <div className='table react-table domains-table'>
                     <form className="form form--horizontal">
                         <div className="form__form-group pb-4">
                             <div className="col-md-9 col-lg-9">

@@ -1,4 +1,3 @@
-// import { isExpired, decodeToken } from "react-jwt";
 
 export const AUTH_TOKEN_KEY = 'authToken';
 export const AUTH_USER_KEY = 'authUser';
@@ -47,7 +46,7 @@ export const getToken = () => {
 export const getBearer = () => {
     // console.log(getAuthUser())
     const AuthToken = getToken();
-    console.log(AuthToken)
+    // console.log(AuthToken)
     return AuthToken ? 'Bearer ' + AuthToken : null
  }
 
@@ -57,6 +56,14 @@ export const getAuthUser = () => {
         return authUser
     } catch (e) {
         return null;
+    }
+}
+
+export const getOrganization = () => {
+    //get from AuthUser TODO
+    return {
+        id: 1,
+        name: 'First Organization'
     }
 }
 

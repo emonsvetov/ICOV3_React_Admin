@@ -1,20 +1,26 @@
 import React, {useState} from 'react';
 import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import { useParams, useHistory } from "react-router-dom";
 import formValidation from "@/shared/validation/domain";
+import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
+import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import axios from 'axios';
 
-const AddDomainForm = ( ) => {
+const AddDomainForm = ( {organization} ) => {
+
+    const dispatch = useDispatch()
 
     const [errors, setErrors] = useState(null);
     const [loading, setLoading] = useState(false);
     const history = useHistory();
     const onClickCancel = () => {
         history.goBack();
-    } 
+    }
     const onSubmitAddDomain = values => {
-        
+        // alert(JSON.stringify(values))
         // values = {...values, 
         //     ...{
         //         setup_fee: 100,
@@ -25,21 +31,19 @@ const AddDomainForm = ( ) => {
         //     }
         // }
 
-
-        // setLoading(true)
-        // axios.post('/organization/1/program', values)
-        // .then( (res) => {
-        
-        //     if(res.status == 200)  {
-        
-        //         window.location = '/program?message=New program added successfully!'
-        //     }
-        // })
-        // .catch( error => {
-        //     console.log(error.response.data);
-        //     setErrors(error.response.data);
-        //     setLoading(false)
-        // })
+        setLoading(true)
+        axios.post(`/organization/${organization.id}/domain`, values)
+        .then( (res) => {
+            if(res.status == 200)  {
+                window.location = '/domains?message=New domain added successfully!'
+            }
+        })
+        .catch( error => {
+            dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))
+            console.log(error.response.data);
+            setErrors(error.response.data);
+            setLoading(false)
+        })
     }
 
     return (
@@ -50,20 +54,6 @@ const AddDomainForm = ( ) => {
     >
     {({ handleSubmit, form, submitting, pristine, values }) => (
         <form className="form" onSubmit={handleSubmit}>
-        {errors && 
-            <div className="alert alert-danger fade show w100" role="alert">
-                <div className="alert__content">
-                    <p>{errors.message}</p>
-                    <ul>
-                    {
-                        Object.keys(errors.errors).map(function(k){
-                            return <li key={k}>{errors.errors[k]}</li>
-                        })
-                    }
-                    </ul>
-                </div>
-            </div>
-        }
         <Row className='w100'>
             <Col md="6" lg="6" xl="6">
                 <h3 className="mb-4">Add Domain</h3>
@@ -92,10 +82,13 @@ const AddDomainForm = ( ) => {
                 </Field>
             </Col>
         </Row>
-        
       </form>
     )}
   </Form>
 )}
 
-export default AddDomainForm;
+export default withRouter(connect((state) => ({
+    organization: state.organization
+}))(AddDomainForm));
+
+// export default AddDomainForm;
