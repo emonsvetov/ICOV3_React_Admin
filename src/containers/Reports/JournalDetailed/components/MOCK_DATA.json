@@ -1,0 +1,6 @@
+[
+    {"name" : "employee YES!" , "setup_fee" : 0 , "fixed_fee" : 0.1 , "admin_fee" : 0.3 },
+    {"name" : "employee YES!" , "setup_fee" : 0 , "fixed_fee" : 0.1 , "admin_fee" : 0.3 },
+    {"name" : "employee YES!" , "setup_fee" : 1 , "fixed_fee" : 0.1 , "admin_fee" : 10.3 },
+    {"name" : "employee YES!" , "setup_fee" : 2 , "fixed_fee" : 10.1 , "admin_fee" : 0.3 }
+]

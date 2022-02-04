@@ -21,7 +21,18 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
         </SidebarCategory>
         <SidebarLink title="Merchants"  icon="store" route="/merchants" />
         <SidebarLink title="Import"  icon="download" route="/import" />
-        <SidebarLink title="Reports"  icon="book" route="/reports" />
+        <SidebarCategory title="Reports" icon="book">
+          <SidebarLink title="Inventory" route="/inventory" onClick={handleHideSidebar} />
+          <SidebarLink title="Inventory Order" route="/inventory-order" onClick={handleHideSidebar} />
+          <SidebarLink title="Journal Detailed" route="/journal-detailed" onClick={handleHideSidebar} />
+          <SidebarLink title="Points Purchase Summary" route="/points-purchase-summary" onClick={handleHideSidebar} />
+          <SidebarLink title="Points Reserve" route="/points-reserve" onClick={handleHideSidebar} />
+          <SidebarLink title="Program Status" route="/program-staus" onClick={handleHideSidebar} />
+          <SidebarLink title="Supplier Redemption" route="/supplier-redemption" onClick={handleHideSidebar} />
+          <SidebarLink title="Trial Balance" route="/trial-balance" onClick={handleHideSidebar} />
+          <SidebarLink title="Deposit" route="/deposit" onClick={handleHideSidebar} />
+          <SidebarLink title="Unassigned Program Domains" route="/unassigned-program-domains" onClick={handleHideSidebar} />
+        </SidebarCategory>
         <SidebarLink title="Roles"  icon="user" route="/roles" />
         <SidebarLink title="Users"  icon="users" route="/users" />
         <SidebarLink title="Physical Orders"  icon="file-empty" route="/physical-orders" />
