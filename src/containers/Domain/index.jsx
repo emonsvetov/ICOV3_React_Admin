@@ -24,4 +24,8 @@ const DomainIndex = () => {
     </Container>
 )}
 
+// export default withRouter(connect((state) => ({
+//   organization: state.organization
+// }))(DomainIndex)); //if you need it ever!
+
 export default DomainIndex;

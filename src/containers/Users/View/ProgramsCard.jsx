@@ -1,10 +1,9 @@
 import React, {useState, useCallback, useEffect} from 'react'
-import { Col, Row, Card, CardBody } from 'reactstrap'
+import { Col, Row, Card, CardBody, Spinner } from 'reactstrap'
 // import Select from 'react-select'
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import axios from 'axios'
 import useDebounce from "@/useDebounce"
-import {Spinner} from 'reactstrap'
 
 const queryClient = new QueryClient()
 

@@ -1,9 +1,11 @@
 import React from 'react';
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 import { Col, Container, Row, Card, CardBody } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import EditDomainForm from './components/EditDomainForm';
 
-const EditDomain = () => (
+const EditDomain = ( {organization} ) => (
   <Container className="dashboard">
     <Row>
       <Col md={12}>
@@ -15,12 +17,14 @@ const EditDomain = () => (
       <Col md={12}>
         <Card>
           <CardBody style={{display:'flex'}}>
-            <EditDomainForm />
+            <EditDomainForm organization={organization} />
           </CardBody>
         </Card>
       </Col>
     </Row>
   </Container>
 );
-
-export default EditDomain;
+export default withRouter(connect((state) => ({
+    organization: state.organization
+}))(EditDomain));
+// export default EditDomain;

@@ -23,7 +23,7 @@ const queryClient = new QueryClient()
 const initialState = {
     queryPageIndex: 0,
     queryPageSize: 10,
-    totalCount: null,
+    totalCount: 0,
     queryPageFilter:{},
     queryPageSortBy: [],
 };

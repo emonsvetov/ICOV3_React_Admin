@@ -60,8 +60,8 @@ const MerchantDetails = ( {data} ) => {
             <Col md="6" lg="6" xl="6" className="text-right">
                 <ButtonToolbar className="flex justify-content-right w100">
                     <Link className='text-blue' to={`/merchants/edit/${merchant.id}`}>Edit</Link>
-                    <Link disabled={loading} className="text-danger" onClick={(e) => {if(window.confirm('Are you sure to delete this merchant?')){onClickDelete(e)}}}>Delete</Link>
-                    <Link disabled={loading} className="text-grey" onClick={onClickChangeStatus}>{merchant.status ? 'Active' : 'Inactive'}</Link>
+                    <Link to={'#'} disabled={loading} className="text-danger" onClick={(e) => {if(window.confirm('Are you sure to delete this merchant?')){onClickDelete(e)}}}>Delete</Link>
+                    <Link to={'#'} disabled={loading} className="text-grey" onClick={onClickChangeStatus}>{merchant.status ? 'Active' : 'Inactive'}</Link>
                 </ButtonToolbar>
             </Col>
         </Row>

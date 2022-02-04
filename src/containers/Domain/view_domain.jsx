@@ -1,9 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import { Col, Container, Row, Card, CardBody, ListGroup, ListGroupItem } from 'reactstrap';
 import { Link, useParams } from 'react-router-dom'
+// import { connect } from 'react-redux'
+// import { withRouter } from 'react-router-dom'
 import axios from 'axios'
 import DomainDetails from './View/components/DomainDetails';
 import DomainPrograms from './View/components/DomainPrograms';
+import {isEmpty} from '@/shared/helpers'
+import { getOrganization } from '../App/auth';
 
 const DOMAIN_MENU_LINKS = [
     {
@@ -17,48 +21,45 @@ const DOMAIN_MENU_LINKS = [
  
 ]
 
-const fetchDomain = async ( id ) => {
-    try {
-        console.log('fetching domain')
-        const response = await axios.get(`/domain/${id}`);
-        return response.data;
-    } catch (e) {
-        throw new Error(`API error:${e?.message}`);
-    }
-};
-
-
 const ViewDomain = () => {
 
-    let { id } = useParams();
+    const organization = getOrganization(); //probably this needs to be get from the state, not working for first page load somehow. TODO
 
+    const fetchDomain = async ( id, organization ) => {
+
+        // console.log(domain);
+
+        if( domain ) return domain
+        if( isEmpty(organization) ) return;
+
+        try {
+            console.log('fetching domain')
+            const response = await axios.get(`/organization/${organization.id}/domain/${id}`);
+            return response.data;
+        } catch (e) {
+            throw new Error(`API error:${e?.message}`);
+        }
+    };
+
+    let { id } = useParams();
     const [isLoading, setIsLoading] = useState(true) //first page load!
-    
-    let [domain, setDomain] = useState({name: 'residentyesrewards.incentco.com', 'access_key': 5})
+    let [domain, setDomain] = useState(null)
     const [selected, setSelected] = useState('details')
 
-    // useEffect( ()=>{
-    //     fetchDomain( id )
-    //     .then( response => {
-    //         setDomain(response)
-    //         setIsLoading(false)
-    //     })
-    // }, [id])
+    useEffect( ()=>{
+        fetchDomain( id, organization )
+        .then( response => {
+            setDomain(response)
+            setIsLoading(false)
+        })
+    }, [id, organization])
 
     const onClickMenuItem = (item) => {
         setSelected(item.value)
     }
 
-    // const refresh = () => {
-    //     remove()
-    // }
-
-    // React.useEffect(() => {
-    //     fetchDomain( id );
-    // }, [fetchDomain, id]);
-
     if (isLoading) {
-        // return <p>Loading...</p>;
+        return <p>Loading...</p>;
     }
 
     const RenderItem = ({item, key}) => {
@@ -80,7 +81,6 @@ const ViewDomain = () => {
         )
     }
 
-    // if( !isLoading && domain )   {
     if( domain )   {
         return (
             <Container className="dashboard">
@@ -100,16 +100,16 @@ const ViewDomain = () => {
                         </Card>
                     </Col>
                 </Row>
-                {selected === 'details' && <DomainDetails data={domain}/>}
-                                
-                {selected === 'domain_programs' && <DomainPrograms /> }
-
-                
+                {selected === 'details' && (<DomainDetails organization={organization} data={domain}/>)}
+                {selected === 'domain_programs' && <DomainPrograms organization={organization} domain={domain} /> }
             </Container>
         )
     }
 }
+// export default withRouter(connect((state) => ({
+//     organization: state.organization
+// }))(ViewDomain));
 
-export default ViewDomain;
+export default ViewDomain
 
 
