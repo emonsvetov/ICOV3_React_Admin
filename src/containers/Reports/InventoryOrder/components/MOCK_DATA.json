@@ -1,0 +1,14 @@
+[
+    {
+        "merchant": "1-800-Flowers",
+        "denomination": [10, 25, 50, 4, 100, 150, 200],
+        "num_in_inventory": [26, 19, 34, 15, 12, 11, 10],
+        "two_week_target": [2, 3, 12, 0, 0, 0, 0 ]
+    },
+    {
+        "merchant": "American Airlines",
+        "denomination": [10, 25, 50, 4, 100, 150, 200, 250],
+        "num_in_inventory": [26, 19, 34, 15, 12, 11, 10, 22],
+        "two_week_target": [2, 3, 12, 0, 0, 0, 0, 0 ]
+    }
+]

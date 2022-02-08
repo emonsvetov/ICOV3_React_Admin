@@ -62,6 +62,7 @@ const reducer = (state, { type, payload }) => {
       throw new Error(`Unhandled action type: ${type}`);
   }
 };
+
 const fetchMockData = () => {
     const data = {
         results: renameChildrenToSubrows(MOCK_DATA),
