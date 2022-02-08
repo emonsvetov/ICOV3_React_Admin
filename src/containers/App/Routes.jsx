@@ -48,6 +48,17 @@ import OrdersIndex from '../PhysicalOrders/index';
 import EditOrder from '../PhysicalOrders/edit_order';
 import TangoOrder from '../PhysicalOrders/tango_order';
 
+import {Inventory, 
+  InventoryOrder, 
+  JournalDetailed,
+  PointsPurchaseSummary,
+  PointsReserve,
+  ProgramStatus,
+  SupplierRedemption,
+  TrialBalance,
+  Deposit,
+  UnassignedProgramDomains } from '../Reports';
+
 import TreeView from '../TreeViewBasic';
 
 
@@ -111,6 +122,21 @@ const TangoOrders = () => (
   </Switch>
 );
 
+const Reports = () => (
+  <Switch>
+    <Route exact path="/inventory" component={Inventory} />
+    <Route exact path="/inventory-order" component={InventoryOrder} />
+    <Route exact path="/journal-detailed" component={JournalDetailed} />
+    <Route exact path="/points-purchase-summary" component={PointsPurchaseSummary} />
+    <Route exact path="/points-reserve" component={PointsReserve} />
+    <Route exact path="/program-staus" component={ProgramStatus} />
+    <Route exact path="/supplier-redemption" component={SupplierRedemption} />
+    <Route exact path="/trial-balance" component={TrialBalance} />
+    <Route exact path="/deposit" component={Deposit} />
+    <Route exact path="/unassigned-program-domains" component={UnassignedProgramDomains} />
+  </Switch>
+);
+
 
 const Events = () => (
   <Switch>
@@ -143,6 +169,7 @@ const privateRoutes = () => {
         <PrivateRoute path="/domains" component={Domains} />
         <PrivateRoute path="/physical-orders" component={PhysicalOrders} />
         <PrivateRoute path="/tango-orders" component={TangoOrders} />
+        <PrivateRoute path="/" component={Reports} />
         <PrivateRoute path="/treeview" component={TreeView} />
         <PrivateRoute path="/pokemon" component={Pokemon} />
         <PrivateRoute path="/example" component={Example} />

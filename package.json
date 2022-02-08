@@ -32,6 +32,7 @@
     "react-beautiful-dnd": "^13.1.0",
     "react-big-calendar": "^0.38.1",
     "react-datepicker": "^4.5.0",
+    "react-device-detect": "^2.1.2",
     "react-dom": "^17.0.1",
     "react-draft-wysiwyg": "^1.14.7",
     "react-dropzone": "^11.4.2",
