@@ -4,8 +4,7 @@ import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 import DomainIPs from './DomainIps'
-
-
+// 
 const DomainDetails = ( {data, organization} ) => {
     const dispatch = useDispatch()
 

@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import { Card, CardBody, Col, Row, Button} from 'reactstrap';
+import { Card, CardBody, Col, Row, Button, Spinner} from 'reactstrap';
 import { Form, Field } from "react-final-form";
 import { Link } from 'react-router-dom'
 import {isValidIPAddress} from '@/shared/helpers';
@@ -10,38 +10,42 @@ import axios from 'axios';
 const DomainIps = ({ organization, domain}) => {
     const dispatch = useDispatch()
 
-    const [loading, setLoading] = useState(false)
+    const [deleting, setDeleting] = useState(false)
+    const [adding, setAdding] = useState(false)
     const [domainIps, setDomainIps] = useState(domain.domain_ips)
 
     console.log(domainIps);
 
     const onSubmitAddIP = (values) => {
         // alert(JSON.stringify(values))
+        setAdding(true)
         axios.post(`/organization/${organization.id}/domain/${domain.id}/addip`, values)
         .then( (res) => {
             if(res.status == 200)  {
                 const newDomainIps = [...domainIps, ...[res.data.domain_ip]]
                 // console.log(newDomainIps);
                 setDomainIps(newDomainIps)
+                setAdding(false)
                 dispatch(sendFlashMessage('Domain IP added successfully!', 'alert-success'))
             }
         })
         .catch( error => {
             dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))
             console.log(error.response.data);
-            setLoading(false)
+            setAdding(false)
         })
     }
 
     const onClickDeleteIp = (e, id) => {
         e.preventDefault()
-        // setLoading( true )
+        setDeleting( true )
         axios.delete(`/organization/${organization.id}/domain/${domain.id}/domain_ip/${id}`)
         .then( (res) => {
             if(res.status == 200)  {
                 const newDomainIps = domainIps.filter(function( obj ) {
                     return obj.id !== id;
                 });
+                setDeleting( false )
                 setDomainIps(newDomainIps)
                 dispatch(sendFlashMessage('Domain IP deleted successfully!', 'alert-success'))
             }
@@ -49,15 +53,15 @@ const DomainIps = ({ organization, domain}) => {
         .catch( error => {
             dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))
             // console.log(error.response.data);
-            setLoading(false)
+            // setLoading(false)
         })
     }
 
     const RenderDomainIp = ({domain_ip}) => {
         return (
             <Row>
-                <Col>{domain_ip.ip_address}</Col>
-                <Col><Link to={'#delete-ip-address'} onClick={(e) => {if(window.confirm('Are you sure to delete this domain?')){onClickDeleteIp(e, domain_ip.id)}}}>Delete</Link> </Col>
+                <Col md="4" lg="4" xl="4">{domain_ip.ip_address}</Col>
+                <Col md="4" lg="4" xl="4"><Link to={'#delete-ip-address'} disabled={deleting} onClick={(e) => {if(window.confirm('Are you sure to delete this domain?')){onClickDeleteIp(e, domain_ip.id)}}}>Delete</Link> </Col>
             </Row>
         )
     }
@@ -101,6 +105,7 @@ const DomainIps = ({ organization, domain}) => {
                                                         {...input}
                                                         placeholder="New Address"
                                                     />
+                                                    {adding && <Spinner animation="border" size="sm" className='input-spinner' variant="warning" />}
                                                     {meta.touched && meta.error && (
                                                         <span className="form__form-group-error">
                                                         {meta.error}
@@ -108,7 +113,7 @@ const DomainIps = ({ organization, domain}) => {
                                                     )}
                                                 </Col>
                                                 <Col md="4" lg="4" xl="4" className='pl-0'>
-                                                    <Button type="submit" disabled={loading} className="btn btn-primary btn-sm" color="#ffffff">Add IP</Button>
+                                                    <Button type="submit" disabled={adding} className="btn btn-primary btn-sm" color="#ffffff">Add IP</Button>
                                                 </Col>
                                             </Row>
                                         )}

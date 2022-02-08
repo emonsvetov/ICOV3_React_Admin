@@ -15,7 +15,7 @@ const DOMAIN_MENU_LINKS = [
         label: 'Details'
     },
     {
-        value: 'domain_programs',
+        value: 'domain-programs',
         label: 'Domain\'s Programs'
     },
  
@@ -54,7 +54,8 @@ const ViewDomain = () => {
         })
     }, [id, organization])
 
-    const onClickMenuItem = (item) => {
+    const onClickMenuItem = (e, item) => {
+        e.preventDefault()
         setSelected(item.value)
     }
 
@@ -65,10 +66,10 @@ const ViewDomain = () => {
     const RenderItem = ({item, key}) => {
         return (<ListGroupItem
             className={selected === item.value ? 'selected' : ''}
-            href="#" 
+            href={`#${item.value}`}
             tag="a" 
             key={key} 
-            onClick={()=>onClickMenuItem(item)}>{item.label}</ListGroupItem>)
+            onClick={(e)=>onClickMenuItem(e, item)}>{item.label}</ListGroupItem>)
     }
 
     const RenderMenu = () => {
@@ -101,7 +102,7 @@ const ViewDomain = () => {
                     </Col>
                 </Row>
                 {selected === 'details' && (<DomainDetails organization={organization} data={domain}/>)}
-                {selected === 'domain_programs' && <DomainPrograms organization={organization} domain={domain} /> }
+                {selected === 'domain-programs' && <DomainPrograms organization={organization} domain={domain} /> }
             </Container>
         )
     }
