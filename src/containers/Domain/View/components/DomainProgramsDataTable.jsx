@@ -18,7 +18,7 @@ const queryClient = new QueryClient()
 
 const initialState = {
     queryPageIndex: 0,
-    queryPageSize: 10,
+    queryPageSize: 5,
     totalCount: null,
     queryPageFilter:{},
     queryPageSortBy: [],
@@ -33,6 +33,7 @@ const TOTAL_COUNT_CHANGED = 'TOTAL_COUNT_CHANGED';
 const reducer = (state, { type, payload }) => {
   switch (type) {
     case PAGE_CHANGED:
+        // alert('Page changed')
         return {
             ...state,
             queryPageIndex: payload,
@@ -62,40 +63,43 @@ const reducer = (state, { type, payload }) => {
   }
 };
 
-const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
-    // const offset = page * pageSize;
-    const params = []
-    let paramStr = ''
-    if( pageFilterO ) {
-        if(pageFilterO.status !== 'undefined' && pageFilterO.status) params.push(`status=${pageFilterO.status}`)
-        if(pageFilterO.keyword !== 'undefined' && pageFilterO.keyword) params.push(`keyword=${pageFilterO.keyword}`)
-        // console.log(params)
-        paramStr = params.join('&')
-    }
-    if( pageSortBy.length > 0 ) {
-        const sortParams = pageSortBy[0];
-        const sortyByDir = sortParams.desc ? 'desc' : 'asc'
-        paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
-    }
-    try {
-        return;
-        const response = await axios.get(
-        `/organization/1/program?page=${page}&limit=${pageSize}&${paramStr}`
-        );
-        // console.log(response)
-        if( response.data.length === 0) return {results:[],count:0}
-        const data = {
-            results: renameChildrenToSubrows(response.data.data),
-            count: response.data.total
-        };
-        // console.log(data)
-        return data;
-    } catch (e) {
-        throw new Error(`API error:${e?.message}`);
-    }
-};
+const DomainProgramsDataTable = ( {domain, organization} ) => {
 
-const DomainProgramsDataTable = (  ) => {
+    const dispatcher = useDispatch()
+
+    const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
+        // alert("Here")
+        // const offset = page * pageSize;
+        const params = []
+        let paramStr = ''
+        if( pageFilterO ) {
+            if(pageFilterO.status !== 'undefined' && pageFilterO.status) params.push(`status=${pageFilterO.status}`)
+            if(pageFilterO.keyword !== 'undefined' && pageFilterO.keyword) params.push(`keyword=${pageFilterO.keyword}`)
+            // console.log(params)
+            paramStr = params.join('&')
+        }
+        if( pageSortBy.length > 0 ) {
+            const sortParams = pageSortBy[0];
+            const sortyByDir = sortParams.desc ? 'desc' : 'asc'
+            paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
+        }
+        try {
+            const response = await axios.get(
+            `/organization/${organization.id}/domain/${domain.id}/program?page=${page}&limit=${pageSize}&${paramStr}`
+            );
+            console.log(response)
+            if( response.data.length === 0) return {results:[],count:0}
+            const data = {
+                results: renameChildrenToSubrows(response.data.data),
+                count: response.data.total
+            };
+            // console.log(data)
+            return data;
+        } catch (e) {
+            console.log(e);
+            throw new Error(`API error:${e?.message}`);
+        }
+    };
 
     const [loading, setLoading] = useState(false)
     const [filter, setFilter] = useState({status:'', keyword:''});
@@ -111,28 +115,30 @@ const DomainProgramsDataTable = (  ) => {
         // alert(status, keyword)
     }
 
-    const onClickDelete = (id) => {
+    const onClickRemove = (id) => {
         setLoading( true );
-        
-        // axios.delete(`/program/${id}`)
-        // .then( (res) => { 
-        //     // console.log(res)
-        //     if(res.status == 200)  {
-        //         window.location = `/domains?message=domain deleted successfully!`
-        //     }
-        // })
-        // .catch( error => {
-        //     console.log(error)
-        //     setLoading( false )
-        //     dispatch(sendFlashMessage(JSON.stringify(error.response.data), 'alert-danger'))
-        //     // throw new Error(`API error:${e?.message}`);
-        // })
+        axios.delete(`/organization/${organization.id}/domain/${domain.id}/program/${id}`)
+        .then( (res) => {
+            console.log(res)
+            if(res.status === 200)  {
+                // dispatch({ type: PAGE_CHANGED, payload: 1 });
+                // gotoPage(0);
+                // dispatcher(sendFlashMessage('Program removed successfully', 'alert-success'));
+                window.location = `/domains/view/${domain.id}?message=domain deleted successfully!`
+            }
+        })
+        .catch( error => {
+            console.log(error)
+            setLoading( false )
+            dispatcher(sendFlashMessage(JSON.stringify(error.response.data), 'alert-danger'))
+            // throw new Error(`API error:${e?.message}`);
+        })
     }    
     const RenderActions = ({row}) => {
         return (
             <>
                 <span>
-                    <Link onClick={() => onClickDelete(row.original.programId)}>Remove </Link>
+                    <Link onClick={() => onClickRemove(row.original.id)} disabled={loading}>Remove </Link>
                     <span style={{width:'15px', display: 'inline-block'}}></span>
                     <Link onClick={() => {alert(`Generating...`)}}>Generate Configration </Link>
                     <span style={{width:'15px', display: 'inline-block'}}></span>
@@ -168,8 +174,9 @@ const DomainProgramsDataTable = (  ) => {
         ['programs', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
         () => fetchProgramData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
         {
-            keepPreviousData: true,
+            keepPreviousData: false,
             staleTime: Infinity,
+            force:true
         }
     );
 
@@ -262,18 +269,11 @@ const DomainProgramsDataTable = (  ) => {
                 <Card>
                     <CardBody className='infoview'>
                         <h3 className="mb-4">Domain's Programs</h3>
-                        <div className='table react-table'>
+                        <div className='table react-table table-domain-programs'>
                             <form className="form form--horizontal">
                                 <div className="form__form-group pb-4">
                                     <div className="col-md-9 col-lg-9">
                                         <ProgramFilter onClickFilterCallback={onClickFilterCallback} />
-                                    </div>
-                                    <div className="col-md-3 col-lg-3 text-right pr-0">
-                                        <Link style={{maxWidth:'200px'}}
-                                        className="btn btn-primary account__btn account__btn--small"
-                                        onClick={() =>{alert('Added Successfully!')}}
-                                        >Add program
-                                        </Link>
                                     </div>
                                 </div>
                             </form>
@@ -281,8 +281,8 @@ const DomainProgramsDataTable = (  ) => {
                                 <thead>
                                     {headerGroups.map( (headerGroup) => (
                                         <tr {...headerGroup.getHeaderGroupProps()}>
-                                            {headerGroup.headers.map( column => (
-                                                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                            {headerGroup.headers.map( (column, i) => (
+                                                <th className={`cell-column-${i}`} {...column.getHeaderProps(column.getSortByToggleProps())}>
                                                     {column.render('Header')}
                                                     {column.isSorted ? <Sorting column={column} /> : ''}
                                                     <div
@@ -306,10 +306,10 @@ const DomainProgramsDataTable = (  ) => {
                                         return (
                                             <tr {...row.getRowProps()}>
                                                 {
-                                                    row.cells.map( cell => {
+                                                    row.cells.map( (cell, i) => {
                                                         // console.log(cell)
                                                         const paddingLeft = subCount * 20
-                                                        return <td {...cell.getCellProps()}><span style={cell.column.Header==='#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span></td>
+                                                        return <td className={`cell-column-${i}`} {...cell.getCellProps()}><span style={cell.column.Header==='#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span></td>
                                                     })
                                                 }
                                             </tr>
@@ -397,10 +397,10 @@ const Sorting = ({ column }) => (
     </span>
   );
 
-const TableWrapper = () => {
+const TableWrapper = ({ organization, domain}) => {
     return (
         <QueryClientProvider client={queryClient}>
-            <DomainProgramsDataTable />
+            <DomainProgramsDataTable organization={organization} domain={domain} />
         </QueryClientProvider>
     )
 }

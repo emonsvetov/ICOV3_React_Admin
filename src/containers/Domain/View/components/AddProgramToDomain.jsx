@@ -60,11 +60,13 @@ const AddProgramToDomain = ( {organization, domain}) => {
             program_id
         }
         setAdding(true)
-        axios.post(`/organization/${organization.id}/domain/${domain.id}/program/add`, data)
+        axios.post(`/organization/${organization.id}/domain/${domain.id}/program`, data)
         .then( (res) => {
             if(res.status == 200)  {
                 setAdding(false)
                 dispatch(sendFlashMessage('Program added successfully!', 'alert-success'))
+                toggleResults()
+                setKeyword('')
             }
         })
         .catch( error => {

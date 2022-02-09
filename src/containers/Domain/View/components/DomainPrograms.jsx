@@ -9,7 +9,8 @@ import DomainProgramsDataTable from './DomainProgramsDataTable';
 import AddProgramToDomain from './AddProgramToDomain';
 
 const DomainPrograms = ( {domain, organization} ) => {
-    // alert(JSON.stringify(organization))
+    if( !organization?.id ) return null
+    if( !domain?.id ) return null
     return (
         <>
             <AddProgramToDomain organization={organization} domain={domain} />
