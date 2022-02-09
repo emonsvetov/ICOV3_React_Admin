@@ -48,7 +48,7 @@ export const getBearer = () => {
     const AuthToken = getToken();
     // console.log(AuthToken)
     return AuthToken ? 'Bearer ' + AuthToken : null
- }
+}
 
 export const getAuthUser = () => {
     try {
