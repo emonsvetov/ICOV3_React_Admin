@@ -22,16 +22,16 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
         <SidebarLink title="Merchants"  icon="store" route="/merchants" />
         <SidebarLink title="Import"  icon="download" route="/import" />
         <SidebarCategory title="Reports" icon="book">
-          <SidebarLink title="Inventory" route="/inventory" onClick={handleHideSidebar} />
-          <SidebarLink title="Inventory Order" route="/inventory-order" onClick={handleHideSidebar} />
-          <SidebarLink title="Journal Detailed" route="/journal-detailed" onClick={handleHideSidebar} />
-          <SidebarLink title="Points Purchase Summary" route="/points-purchase-summary" onClick={handleHideSidebar} />
-          <SidebarLink title="Points Reserve" route="/points-reserve" onClick={handleHideSidebar} />
-          <SidebarLink title="Program Status" route="/program-staus" onClick={handleHideSidebar} />
+          <SidebarLink title="Inventory" route="/reports/inventory" onClick={handleHideSidebar} />
+          <SidebarLink title="Inventory Order" route="/reports/inventory-order" onClick={handleHideSidebar} />
+          <SidebarLink title="Journal Detailed" route="/reports/journal-detailed" onClick={handleHideSidebar} />
+          <SidebarLink title="Points Purchase Summary" route="/reports/points-purchase-summary" onClick={handleHideSidebar} />
+          <SidebarLink title="Points Reserve" route="/reports/points-reserve" onClick={handleHideSidebar} />
+          <SidebarLink title="Program Status" route="/reports/program-staus" onClick={handleHideSidebar} />
           <SidebarLink title="Supplier Redemption" route="/supplier-redemption" onClick={handleHideSidebar} />
-          <SidebarLink title="Trial Balance" route="/trial-balance" onClick={handleHideSidebar} />
-          <SidebarLink title="Deposit" route="/deposit" onClick={handleHideSidebar} />
-          <SidebarLink title="Unassigned Program Domains" route="/unassigned-program-domains" onClick={handleHideSidebar} />
+          <SidebarLink title="Trial Balance" route="/reports/trial-balance" onClick={handleHideSidebar} />
+          <SidebarLink title="Deposit" route="/reports/deposit" onClick={handleHideSidebar} />
+          <SidebarLink title="Unassigned Program Domains" route="/reports/unassigned-program-domains" onClick={handleHideSidebar} />
         </SidebarCategory>
         <SidebarLink title="Roles"  icon="user" route="/roles" />
         <SidebarLink title="Users"  icon="users" route="/users" />
