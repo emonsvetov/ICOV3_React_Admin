@@ -51,7 +51,7 @@ const fetchMerchant = async ( id ) => {
     try {
         // console.log('fetching merchant')
         const response = await axios.get(`/merchant/${id}`);
-        // console.log(response);
+        console.log(response);
         return response.data;
     } catch (e) {
         throw new Error(`API error:${e?.message}`);
@@ -93,12 +93,11 @@ const ViewMerchant = ( {merchant} ) => {
         return <p>Loading...</p>;
     }
 
-    const RenderItem = ({item, key}) => {
+    const RenderItem = ({item}) => {
         return (<ListGroupItem
             className={selected === item.value ? 'selected' : ''}
             href="#" 
             tag="a" 
-            key={key} 
             onClick={()=>onClickMenuItem(item)}>{item.label}</ListGroupItem>)
     }
 
@@ -140,7 +139,7 @@ const ViewMerchant = ( {merchant} ) => {
                                 {selected === 'redeemed_gift_codes' && <RedeemedGiftCodes /> }
                                 {selected === 'transferred_gift_codes' && <TransferedGiftCodes /> }
                                 {selected === 'optimal_amount' && <OptimalAmount /> }
-                                {selected === 'sub_merchants' && <SubMerchants /> }
+                                {selected === 'sub_merchants' && <SubMerchants merchant={merchant} /> }
                                 {selected === 'callbacks' && <Callbacks /> }
                             </CardBody>
                         </Card>

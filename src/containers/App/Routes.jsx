@@ -116,6 +116,7 @@ const PhysicalOrders = () => (
     <Route exact path="/physical-orders/edit/:id" component={EditOrder} />
   </Switch>
 );
+
 const TangoOrders = () => (
   <Switch>
     <Route exact path="/tango-orders/details/:id" component={TangoOrder} />
@@ -124,16 +125,16 @@ const TangoOrders = () => (
 
 const Reports = () => (
   <Switch>
-    <Route exact path="/inventory" component={Inventory} />
-    <Route exact path="/inventory-order" component={InventoryOrder} />
-    <Route exact path="/journal-detailed" component={JournalDetailed} />
-    <Route exact path="/points-purchase-summary" component={PointsPurchaseSummary} />
-    <Route exact path="/points-reserve" component={PointsReserve} />
-    <Route exact path="/program-staus" component={ProgramStatus} />
-    <Route exact path="/supplier-redemption" component={SupplierRedemption} />
-    <Route exact path="/trial-balance" component={TrialBalance} />
-    <Route exact path="/deposit" component={Deposit} />
-    <Route exact path="/unassigned-program-domains" component={UnassignedProgramDomains} />
+    <Route exact path="/reports/inventory" component={Inventory} />
+    <Route exact path="/reports/inventory-order" component={InventoryOrder} />
+    <Route exact path="/reports/journal-detailed" component={JournalDetailed} />
+    <Route exact path="/reports/points-purchase-summary" component={PointsPurchaseSummary} />
+    <Route exact path="/reports/points-reserve" component={PointsReserve} />
+    <Route exact path="/reports/program-staus" component={ProgramStatus} />
+    <Route exact path="/reports/supplier-redemption" component={SupplierRedemption} />
+    <Route exact path="/reports/trial-balance" component={TrialBalance} />
+    <Route exact path="/reports/deposit" component={Deposit} />
+    <Route exact path="/reports/unassigned-program-domains" component={UnassignedProgramDomains} />
   </Switch>
 );
 
