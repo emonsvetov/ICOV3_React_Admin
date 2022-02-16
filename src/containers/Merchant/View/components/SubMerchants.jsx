@@ -18,12 +18,13 @@ const queryClient = new QueryClient()
 
 const initialState = {
     queryPageIndex: 0,
-    queryPageSize: 10,
+    queryPageSize: 100,
     totalCount: null,
     queryPageFilter:{},
     queryPageSortBy: [],
+    queryTrigger:0,
 };
-
+const QUERY_TRIGGER = 'QUERY_TRIGGER';
 const PAGE_CHANGED = 'PAGE_CHANGED';
 const PAGE_SIZE_CHANGED = 'PAGE_SIZE_CHANGED';
 const PAGE_SORT_CHANGED = 'PAGE_SORT_CHANGED'
@@ -57,68 +58,105 @@ const reducer = (state, { type, payload }) => {
             ...state,
             totalCount: payload,
         };
+    case QUERY_TRIGGER:
+        return {
+            ...state,
+            queryTrigger: payload,
+        };
     default:
       throw new Error(`Unhandled action type: ${type}`);
   }
 };
-const fetchMockData = () => {
-    const data = {
-        results: renameChildrenToSubrows(MOCK_DATA),
-        count: 15
-    };
-    return data;
-};
 
-const fetchMerchantData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
-    // const offset = page * pageSize;
-    const params = []
-    let paramStr = ''
-    if( pageFilterO ) {
-        if(pageFilterO.keyword !== 'undefined' && pageFilterO.keyword) params.push(`keyword=${pageFilterO.keyword}`)
-        paramStr = params.join('&')
-    }
-    if( pageSortBy.length > 0 ) {
-        const sortParams = pageSortBy[0];
-        const sortyByDir = sortParams.desc ? 'desc' : 'asc'
-        paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
-    }
-    try {
-        const response = await axios.get(
-        `/merchant?page=${page}&limit=${pageSize}&${paramStr}`
-        );
-        // console.log(response)
-        if( response.data.length === 0) return {results:[],count:0}
-        const data = {
-            results: renameChildrenToSubrows(response.data.data),
-            count: response.data.total
-        };
-        // console.log(data)
-        return data;
-    } catch (e) {
-        throw new Error(`API error:${e?.message}`);
-    }
-};
-
-const DataTable = () => {
+const DataTable = ({merchant}) => {
     
     const [filter, setFilter] = useState({ keyword:''});
-    // var [data, setData] = useState([]);
+    const [trigger, setTrigger] = useState(0);
+
+    const [loading, setLoading] = useState(false);
     
     const [isOpen, setOpen] = useState(false)
 
     const toggle = () => {
         setOpen(prevState => !prevState)
     }
-    
-    
-    let columns = useMemo( () => SUB_MERCHANTS_COLUMNS, [])
 
-    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
+    const onDeleteSubMerchant = (e, submerchant_id, dt = false) => {
+        setLoading(true)
+        e.preventDefault();
+        axios.delete(`/merchant/${merchant.id}/submerchant/${submerchant_id}/?dt=${dt}`)
+        .then( (res) => {
+            // console.log(res)
+            if(res.status == 200)  {
+                setTrigger( Math.floor(Date.now() / 1000) )
+                // window.location = '/program?message=New program added successfully!'
+            }
+        })
+        .catch( error => {
+            console.log(error.response.data);
+            // setErrors(error.response.data);
+            setLoading(false)
+        })
+    }
+
+    let submerchant_columns = [
+        ...SUB_MERCHANTS_COLUMNS, 
+        ...[{
+            Header: "Action",
+            accessor: "action",
+            Footer: "Action",
+            Cell: ({ row }) => <RenderActions row={row} />,
+        }]
+    ]
+
+    const RenderActions = ({row}) => {
+        return (
+            <>
+               <Link to={{}} disabled={loading} onClick={(e) => {if(window.confirm('Are you sure to delete this sub merchant with all its sub merchants?')){onDeleteSubMerchant(e, row.original.id, true)}}}>Delete sub merchant and sub tree</Link> | 
+                <Link to={{}} disabled={loading} onClick={(e) => {if(window.confirm('Are you sure to delete this sub merchant?')){onDeleteSubMerchant(e, row.original.id)}}}>Delete node</Link>
+            </>
+        )
+    }
+
+    const fetchMerchantData = async (page, pageSize, pageFilterO = null, pageSortBy, queryTrigger) => {
+        // const offset = page * pageSize;
+        console.log('first')
+        const params = [`trigger=${queryTrigger}`]
+        let paramStr = ``
+        if( pageFilterO ) {
+            if(pageFilterO.keyword !== 'undefined' && pageFilterO.keyword) params.push(`keyword=${pageFilterO.keyword}`)
+            paramStr = params.join('&')
+        }
+        if( pageSortBy.length > 0 ) {
+            const sortParams = pageSortBy[0];
+            const sortyByDir = sortParams.desc ? 'desc' : 'asc'
+            paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
+        }
+        try {
+            const response = await axios.get(
+            `/merchant/${merchant.id}/submerchant?page=${page}&limit=${pageSize}&${paramStr}`
+            );
+            // console.log(response)
+            if( response.data.length === 0) return {results:[],count:0}
+            const data = {
+                results: renameChildrenToSubrows(response.data.data),
+                count: response.data.total
+            };
+            // console.log(data)
+            return data;
+        } catch (e) {
+            throw new Error(`API error:${e?.message}`);
+        }
+    };
+
+    let columns = useMemo( () => submerchant_columns, [])
+
+    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] = 
     React.useReducer(reducer, initialState);
 
     const { isLoading, error, data, isSuccess } = useQuery(
-        ['merchants', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
-        () => fetchMockData(),
+        ['submerchants', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+        () => fetchMerchantData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger),
         {
             keepPreviousData: true,
             staleTime: Infinity,
@@ -173,7 +211,6 @@ const DataTable = () => {
     }, [pageIndex]);
 
     React.useEffect(() => {
-        // alert(PAGE_SIZE_CHANGED)
         dispatch({ type: PAGE_SIZE_CHANGED, payload: pageSize });
         gotoPage(0);
     }, [pageSize, gotoPage]);
@@ -184,7 +221,6 @@ const DataTable = () => {
     }, [sortBy, gotoPage]);
 
     React.useEffect(() => {
-        // alert(PAGE_FILTER_CHANGED)
         dispatch({ type: PAGE_FILTER_CHANGED, payload: filter });
         gotoPage(0);
     }, [filter, gotoPage]);
@@ -198,6 +234,11 @@ const DataTable = () => {
         }
     }, [data?.count]);
 
+    React.useEffect(() => {
+        dispatch({ type: QUERY_TRIGGER, payload: trigger });
+        gotoPage(0);
+    }, [trigger, gotoPage]);
+
     if (error) {
         return <p>Error: {JSON.stringify(error)}</p>;
     }
@@ -208,7 +249,7 @@ const DataTable = () => {
     if(isSuccess)
     return (
             <>
-                <div className='table react-table available-table'>
+                <div className='table react-table table-submerchants'>
                     <form className="form form--horizontal">
                         <div className="form__form-group pb-4">
                             <div className="col-md-9 col-lg-9">
@@ -272,7 +313,7 @@ const DataTable = () => {
                         </tfoot> */}
                     </table>
                 </div>
-                <AddSubmerchantModal isOpen={isOpen} setOpen={setOpen} toggle={toggle}  />
+                <AddSubmerchantModal isOpen={isOpen} setOpen={setOpen} toggle={toggle} merchant={merchant} setTrigger={setTrigger}  />
                 {(rows.length > 0) && (
                     <>
                         <ReactTablePagination
@@ -336,10 +377,10 @@ const Sorting = ({ column }) => (
     </span>
   );
 
-const TableWrapper = () => {
+const TableWrapper = ({merchant}) => {
     return (
         <QueryClientProvider client={queryClient}>
-            <DataTable />
+            <DataTable merchant={merchant} />
         </QueryClientProvider>
     )
 }

@@ -94,6 +94,18 @@ export const renameChildrenToSubrows = data => {
     return newData;
 }
 
+export const flatten = (array, prop = 'children') => {
+    var result = [];
+    array.forEach(function (a) {
+        result.push(a);
+        if (Array.isArray(a[prop])) {
+            result = result.concat(flatten(a[prop], prop));
+        }
+    });
+    return result;
+}
+
+
 export const mapFormDataUploads = (values, multiple = false) => {
     let data = new FormData()
     for (const [key, value] of Object.entries(values)) {
