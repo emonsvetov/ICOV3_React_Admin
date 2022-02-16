@@ -27,7 +27,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
           <SidebarLink title="Journal Detailed" route="/journal-detailed" onClick={handleHideSidebar} />
           <SidebarLink title="Points Purchase Summary" route="/points-purchase-summary" onClick={handleHideSidebar} />
           <SidebarLink title="Points Reserve" route="/points-reserve" onClick={handleHideSidebar} />
-          <SidebarLink title="Program Status" route="/program-staus" onClick={handleHideSidebar} />
+          <SidebarLink title="Program Status" route="/program-status" onClick={handleHideSidebar} />
           <SidebarLink title="Supplier Redemption" route="/supplier-redemption" onClick={handleHideSidebar} />
           <SidebarLink title="Trial Balance" route="/trial-balance" onClick={handleHideSidebar} />
           <SidebarLink title="Deposit" route="/deposit" onClick={handleHideSidebar} />

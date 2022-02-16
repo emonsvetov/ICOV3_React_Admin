@@ -129,7 +129,7 @@ const Reports = () => (
     <Route exact path="/journal-detailed" component={JournalDetailed} />
     <Route exact path="/points-purchase-summary" component={PointsPurchaseSummary} />
     <Route exact path="/points-reserve" component={PointsReserve} />
-    <Route exact path="/program-staus" component={ProgramStatus} />
+    <Route exact path="/program-status" component={ProgramStatus} />
     <Route exact path="/supplier-redemption" component={SupplierRedemption} />
     <Route exact path="/trial-balance" component={TrialBalance} />
     <Route exact path="/deposit" component={Deposit} />
