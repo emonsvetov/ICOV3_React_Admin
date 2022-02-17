@@ -13,7 +13,6 @@ import ReactTablePagination from '@/shared/components/table/components/ReactTabl
 // import { StatusFilter } from "./StatusFilter";
 import AvailableGiftCodesFilter  from "./Filters/AvailableGiftCodesFilter";
 import UploadGiftCodesModal  from "./UploadGiftCodesModal";
-import { Link } from 'react-router-dom';
 import axios from 'axios'
 
 import {renameChildrenToSubrows} from '@/shared/helpers'
@@ -66,6 +65,7 @@ const reducer = (state, { type, payload }) => {
   }
 };
 const fetchMockData = () => {
+    // alert("Fetch mock data")
     const data = {
         results: renameChildrenToSubrows(MOCK_DATA),
         count: 15
@@ -139,8 +139,6 @@ const DataTable = () => {
 
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
-    // console.log(data)
-
     const {
         getTableProps,
         getTableBodyProps,
@@ -210,6 +208,7 @@ const DataTable = () => {
         }
     }, [data?.count]);
 
+
     if (error) {
         return <p>Error: {JSON.stringify(error)}</p>;
     }
@@ -227,11 +226,12 @@ const DataTable = () => {
                                 <AvailableGiftCodesFilter onClickFilterCallback={onClickFilterCallback} />
                             </div>
                             <div className="col-md-3 col-lg-3 text-right pr-0">
-                                <Link style={{maxWidth:'200px'}}
+                                <div 
+                                style={{maxWidth:'200px'}}
                                 className="btn btn-primary account__btn account__btn--small"
                                 onClick={()=>toggle()}
                                 >Upload Gift Codes
-                                </Link>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -284,7 +284,7 @@ const DataTable = () => {
                         </tfoot> */}
                     </table>
                 </div>
-                <UploadGiftCodesModal isOpen={isOpen} setOpen={setOpen} toggle={toggle}  />
+                <UploadGiftCodesModal isOpen={isOpen} setOpen={setOpen} toggle={toggle} data={data}  />
                 {(rows.length > 0) && (
                     <>
                         <ReactTablePagination

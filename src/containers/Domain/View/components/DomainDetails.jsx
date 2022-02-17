@@ -1,24 +1,26 @@
 import React, {useState} from 'react';
-import { Form, Field } from "react-final-form";
 import { Card, CardBody, Col, Row, ButtonToolbar} from 'reactstrap';
-import {answerYesNo} from '@/shared/helpers'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import axios from 'axios'
 import { Link } from 'react-router-dom'
-import formValidation from "@/shared/validation/domain";
-
-const DomainDetails = ( {data} ) => {
+import DomainIPs from './DomainIps'
+// 
+const DomainDetails = ( {data, organization} ) => {
     const dispatch = useDispatch()
 
     const [loading, setLoading] = useState(false)
-    const [error, setError] = useState(false)
     let [domain, setDomain] = useState(data)
+
+    const checkAWSRouteStatus = (e) => {
+        e.preventDefault()
+        alert('checking status...')
+    }
 
     const onClickDelete = (e) => {
         e.preventDefault()
         setLoading( true )
-        axios.delete(`/domain/${domain.id}`)
-        .then( (res) => { 
+        axios.delete(`/organization/${organization.id}/domain/${domain.id}`)
+        .then( (res) => {
             // console.log(res)
             if(res.status == 200)  {
                 window.location = `/domains?message=domain deleted successfully!`
@@ -44,7 +46,7 @@ const DomainDetails = ( {data} ) => {
                             </Col>
                             <Col md="6" lg="6" xl="6" className="text-right">
                                 <ButtonToolbar className="flex justify-content-right w100">
-                                    <Link className='text-blue' to={`/domains/edit/${domain.access_key}`}>Edit</Link>
+                                    <Link className='text-blue' to={`/domains/edit/${domain.id}`}>Edit</Link>
                                     <Link disabled={loading} className="text-danger" onClick={(e) => {if(window.confirm('Are you sure to delete this domain?')){onClickDelete(e)}}}>Delete</Link>
                                     
                                 </ButtonToolbar>
@@ -63,7 +65,7 @@ const DomainDetails = ( {data} ) => {
                                 AWS Route53:
                             </Col>
                             <Col md="8" lg="8" xl="8" sm="8">
-                                {'Check Status'}
+                                <Link to={'#/'} onClick={checkAWSRouteStatus}>Check Status</Link>
                             </Col>
                         </Row>
                         <Row>
@@ -71,7 +73,7 @@ const DomainDetails = ( {data} ) => {
                                 Secret Key:
                             </Col>
                             <Col md="8" lg="8" xl="8" sm="8">
-                                6898ba6dc032575a043ec651332ff653612ea2d9
+                                {domain.secret_key}
                             </Col>
                         </Row>
                         <Row>
@@ -79,7 +81,7 @@ const DomainDetails = ( {data} ) => {
                             Access Key:
                             </Col>
                             <Col md="8" lg="8" xl="8" sm="8">
-                                {domain.access_key}
+                                {domain.id}
                             </Col>
                         </Row>
                         
@@ -87,70 +89,7 @@ const DomainDetails = ( {data} ) => {
                 </Card>
             </Col>
         </Row>
-        <Row>
-            <Col md={12}>
-                <Card>
-                    <CardBody className='infoview'>
-                        <Form
-                            onSubmit={() =>{}}
-                            validate={(values) => formValidation.validateForm(values)}
-                            initialValues={{}}
-                        >
-                            {({ handleSubmit, form, submitting, pristine, values }) => (
-                            <form className="form" onSubmit={handleSubmit}>
-                                <Row>
-                                    <Col md="6" lg="6" xl="6">
-                                        <h3 className="mb-4">Additional IP Addresses</h3>
-                                    </Col>
-                                    <Col md="6" lg="6" xl="6" className="text-right">
-                                        <ButtonToolbar className="flex justify-content-right w100">
-                                            <Link className='text-blue' onClick={()=>{}}>Add</Link>
-                                            
-                                        </ButtonToolbar>
-                                    </Col>
-                                </Row>
-                                {error && (
-                                <div
-                                    className="alert alert-danger fade show w100 mb-4"
-                                    role="alert"
-                                >
-                                    <div className="alert__content">{error}</div>
-                                </div>
-                                )}
-                                
-                                <Row>
-                                <Col md="6" lg="4" xl="4">
-                                    <Field name="address">
-                                    {({ input, meta }) => (
-                                        <div className="form__form-group">
-                                        
-                                        <div className="form__form-group-field">
-                                            <div className="form__form-group-row">
-                                            <input
-                                                type="text"
-                                                {...input}
-                                                placeholder="New Address"
-                                            />
-                                            {meta.touched && meta.error && (
-                                                <span className="form__form-group-error">
-                                                {meta.error}
-                                                </span>
-                                            )}
-                                            </div>
-                                        </div>
-                                        </div>
-                                    )}
-                                    </Field>
-                                </Col>
-                                </Row>
-                            </form>
-                            )}
-                        </Form>
-                    
-                    </CardBody>
-                </Card>
-            </Col>
-        </Row>
+        <DomainIPs domain={domain} organization={organization} />
         </>
     )
 }

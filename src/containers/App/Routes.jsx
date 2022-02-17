@@ -116,6 +116,7 @@ const PhysicalOrders = () => (
     <Route exact path="/physical-orders/edit/:id" component={EditOrder} />
   </Switch>
 );
+
 const TangoOrders = () => (
   <Switch>
     <Route exact path="/tango-orders/details/:id" component={TangoOrder} />

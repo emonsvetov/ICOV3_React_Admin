@@ -1,9 +1,11 @@
-import React, {useState, useCallback, useEffect} from 'react'
+import React, {useState} from 'react'
 import { Col, Row, Card, CardBody, Spinner } from 'reactstrap'
 // import Select from 'react-select'
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import axios from 'axios'
 import useDebounce from "@/useDebounce"
+import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
+import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 
 const queryClient = new QueryClient()
 
@@ -25,21 +27,17 @@ const search = async( queryKeyword, cbShow ) => {
     }
 }
 
-const PROGRAMS = [
-    {id: "001", name: 'Program 1'},
-    {id: "002", name: 'Program 2'},
-    {id: "003", name: 'Program 3'},
-]
-
-const ProgramsCard = ( {user}) => {
+const AddProgramToDomain = ( {organization, domain}) => {
+    const dispatch = useDispatch()
 
     const [keyword, setKeyword] = useState('')
     const [show, setShow] = useState(false)
+    const [adding, setAdding] = useState(false)
 
     const debouncedKeyword = useDebounce(keyword, 500);
 
     const { isLoading, error, data, isSuccess } = useQuery(
-        ['users', debouncedKeyword, setShow],
+        ['programs', debouncedKeyword, setShow],
         () => search(debouncedKeyword, setShow),
         {
             keepPreviousData: false,
@@ -56,13 +54,42 @@ const ProgramsCard = ( {user}) => {
         setShow( ! show )
     }
 
+    const onClickAddProgram = (program_id) => {
+        // alert(JSON.stringify(values))
+        const data = {
+            program_id
+        }
+        setAdding(true)
+        axios.post(`/organization/${organization.id}/domain/${domain.id}/program`, data)
+        .then( (res) => {
+            if(res.status == 200)  {
+                setAdding(false)
+                dispatch(sendFlashMessage('Program added successfully!', 'alert-success'))
+                toggleResults()
+                setKeyword('')
+            }
+        })
+        .catch( error => {
+            dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))
+            console.log(error.response.data);
+            setAdding(false)
+        })
+    }
+
     // console.log(data)
     // console.log(show)
+
+    const RenderResultItem = ({ program }) => (
+        <Row className='pt-4 pb-1 row-item-program pr-0 ml-0'>
+            <Col md="6" lg="6" xl="6">{program.id} - {program.name}</Col>
+            <Col md="6" lg="6" xl="6" className='pr-3 text-right'><span className='a' disabled={adding} onClick={()=>onClickAddProgram(program.id)}>Add</span></Col>
+        </Row>
+    )
 
     return(
         <Card>
             <CardBody className='infoview'>
-                <h3 className="mb-4">Programs</h3>
+                <h3 className="mb-4">Add a Program to Domain</h3>
                 <Row>
                     <Col md="6" lg="6" xl="6">
                         <form className='form'>
@@ -88,13 +115,6 @@ const ProgramsCard = ( {user}) => {
                                     </>
                                 }
                                 </div>
-                            {
-                                <div className='program-existing_results'>
-                                {
-                                    PROGRAMS.map( (program, i) => <RenderItem program={program} key={`item-program-{${i}}`} /> )
-                                }
-                                </div>
-                            }
                             </div>
                         </form>
                     </Col>
@@ -104,25 +124,12 @@ const ProgramsCard = ( {user}) => {
     )
 }
 
-const RenderItem = ({ program }) => (
-    <Row className='pt-4 pb-1 row-item-program pr-0 ml-0'>
-        <Col md="6" lg="6" xl="6">{program.id} - {program.name}</Col>
-        <Col md="6" lg="6" xl="6" className='pr-3 text-right'><span className='a' onClick={()=>alert(program.id)}>Remove</span></Col>
-    </Row>
-)
-const RenderResultItem = ({ program }) => (
-    <Row className='pt-4 pb-1 row-item-program pr-0 ml-0'>
-        <Col md="6" lg="6" xl="6">{program.id} - {program.name}</Col>
-        <Col md="6" lg="6" xl="6" className='pr-3 text-right'><span className='a' onClick={()=>alert(program.id)}>Add</span></Col>
-    </Row>
-)
-
-const ProgramsCardWrapper = () => {
+const AddProgramToDomainWrapper = ({organization, domain}) => {
     return (
         <QueryClientProvider client={queryClient}>
-            <ProgramsCard />
+            <AddProgramToDomain organization={organization} domain={domain} />
         </QueryClientProvider>
     )
 }
 
-export default ProgramsCardWrapper;
+export default AddProgramToDomainWrapper;

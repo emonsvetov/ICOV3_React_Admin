@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import ChevronUpIcon from 'mdi-react/ChevronUpIcon';
+import ChevronRightIcon from 'mdi-react/ChevronRightIcon';
 
 export const AVAILABLE_GIFT_CODES_COLUMNS = [
     {
@@ -121,7 +123,6 @@ export const OPTIMAL_AMOUNT_COLUMNS = [
         accessor: "denomination",
         width: 165,
     },
-    
     {
         Header: "Optimal Amount",
         accessor: "optimal_amount"
@@ -189,19 +190,29 @@ export const REDEEMED_GIFT_CODES_COULMNS = [
 
 export const SUB_MERCHANTS_COLUMNS = [
     {
+        id: 'expander',
+        Header: ({ getToggleAllRowsExpandedProps, isAllRowsExpanded }) => (
+          <span {...getToggleAllRowsExpandedProps()}>
+            {isAllRowsExpanded ? 'Collpase All' : 'Expand All'}
+          </span>
+        ),
+        Cell: ({ row }) =>
+          row.canExpand ? (
+            <span
+              {...row.getToggleRowExpandedProps({
+                style: {
+                  paddingLeft: `${row.depth * 2}rem`,
+                },
+              })}
+            >
+              {row.isExpanded ? <ChevronUpIcon className="chevron-expand" /> : <ChevronRightIcon className="chevron-expand" />}
+            </span>
+        ) : null,
+    },
+    {
         Header: "Name",
         accessor: "name",
         width: 165,
-    },
-    {
-        Header: "Action",
-        accessor: "action",
-        Cell: ({ row }) => { return <>
-          <Link to={{}}>move</Link> |
-          <Link to={{}}>delete sub merchant and sub tree</Link> |
-          <Link to={{}}>delete node</Link>
-        </>
-         },
     }
 ]
 

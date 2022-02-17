@@ -25,7 +25,8 @@ const AddMerchantForm = () => {
     const onSubmit = values => {
         // alert(JSON.stringify(values))
         const data = mapFormDataUploads( values )
-        console.log(data)
+        // console.log(data)
+        setLoading(true)
         axios.post(`/merchant`, data, {
             "Content-Type": "multipart/form-data",
             "Access-Control-Allow-Origin": "*"

@@ -6,10 +6,10 @@ import '../../scss/app.scss';
 import Routes from './Routes';
 import store from './store';
 import ScrollToTop from './ScrollToTop';
-import {getBearer} from './auth';
+import {getBearer, getOrganization} from './auth';
 import axios from 'axios'
-import {useDispatch, sendFlashMessage, FlashMessage} from "@/shared/components/flash";
-
+import {setOrganization} from '@/redux/actions/organizationActions';
+import {sendFlashMessage, FlashMessage} from "@/shared/components/flash";
 
 require('dotenv').config()
 axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL + '/api/v1';  
@@ -36,24 +36,27 @@ axios.interceptors.response.use(response => {
 
 const App = () => {
 
-  const dispatch = useDispatch();
-
   const [isLoading, setIsLoading] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     window.addEventListener('load', () => {
       setIsLoading(false);
-      setTimeout(() => setIsLoaded(true), 500);
+      setTimeout(() => setIsLoaded(true), 500)
+      setAuthOrganization()
       checkFlashMessage()
     });
   }, []);
+
+  const setAuthOrganization = () => {
+    store.dispatch(setOrganization(getOrganization()))
+  }
 
   const checkFlashMessage = () => {
     const params = new URLSearchParams(window.location.search)
     let message = params.get('message')
     if( message ) {
-      dispatch(sendFlashMessage(message, 'alert-success'))
+      store.dispatch(sendFlashMessage(message, 'alert-success'))
     }
   }
 
