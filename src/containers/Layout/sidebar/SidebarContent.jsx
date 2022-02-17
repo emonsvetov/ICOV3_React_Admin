@@ -27,11 +27,11 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
           <SidebarLink title="Journal Detailed" route="/reports/journal-detailed" onClick={handleHideSidebar} />
           <SidebarLink title="Points Purchase Summary" route="/reports/points-purchase-summary" onClick={handleHideSidebar} />
           <SidebarLink title="Points Reserve" route="/reports/points-reserve" onClick={handleHideSidebar} />
-          <SidebarLink title="Program Status" route="/reports/program-staus" onClick={handleHideSidebar} />
-          <SidebarLink title="Supplier Redemption" route="/supplier-redemption" onClick={handleHideSidebar} />
-          <SidebarLink title="Trial Balance" route="/reports/trial-balance" onClick={handleHideSidebar} />
-          <SidebarLink title="Deposit" route="/reports/deposit" onClick={handleHideSidebar} />
-          <SidebarLink title="Unassigned Program Domains" route="/reports/unassigned-program-domains" onClick={handleHideSidebar} />
+          <SidebarLink title="Program Status" route="/reports/program-status" onClick={handleHideSidebar} />
+          <SidebarLink title="Supplier Redemption" route="/reports/supplier-redemption" onClick={handleHideSidebar} />
+          <SidebarLink title="Trial Balance" route="/reports/reports/trial-balance" onClick={handleHideSidebar} />
+          <SidebarLink title="Deposit" route="/reports/reports/deposit" onClick={handleHideSidebar} />
+          <SidebarLink title="Unassigned Program Domains" route="/reports/reports/unassigned-program-domains" onClick={handleHideSidebar} />
         </SidebarCategory>
         <SidebarLink title="Roles"  icon="user" route="/roles" />
         <SidebarLink title="Users"  icon="users" route="/users" />
