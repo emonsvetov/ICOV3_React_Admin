@@ -3,14 +3,14 @@ import Select from 'react-select'
 import renderDatePickerField from '@/shared/components/form/DatePicker';
 import { Field, Form } from 'react-final-form';
 import { Row, Col } from 'reactstrap';
-import ProgramTreeView from "./ProgramTreeView";
+// import MerchantTreeView from "./MerchantTreeView__legacy";
+import MerchantTreeView from "./MerchantTreeView";
 import axios from 'axios'
-
   
-const fetchProgramData = async () => {
+const fetchMerchants = async () => {
     try {
         const response = await axios.get(
-        `/organization/1/program?minimal=true&sortby=name`
+        `/merchant?minimal=true&sortby=name`
         );
         // console.log(response)
         return response.data;
@@ -38,8 +38,7 @@ const InventoryFilter = ({onClickFilterCallback}) => {
     }
 
     useEffect( () => {
-        
-        fetchProgramData()
+        fetchMerchants()
         .then( response => {
             setData(response)
         })
@@ -50,18 +49,15 @@ const InventoryFilter = ({onClickFilterCallback}) => {
     return (
         <Form onSubmit={onClickFilter}>
             {({ handleSubmit }) => (
-              <form className="form" onSubmit={handleSubmit}>
-              <Row>
-                
+            <form className="form" onSubmit={handleSubmit}>
+            <Row>
                 <div className="col-md-4">
-                    
-                        <span
-                        className="form__form-group-label"
-                        >
-                        View for Merchant
-                        </span>
-                        <ProgramTreeView data={data} handleSelect={handleSelect} selected={selected} />
-                    
+                    <span
+                    className="form__form-group-label"
+                    >
+                    View for Merchant
+                    </span>
+                    {data && data.length > 0 && <div className="merchant-treeview px-2"><MerchantTreeView merchants={data} /></div>}
                 </div>
                 <div className="col-md-4">
                     <div className="form__form-group">
@@ -76,41 +72,12 @@ const InventoryFilter = ({onClickFilterCallback}) => {
                 </div>
                 
                 <div className="col-md-4 d-flex align-items-center max-height-32px pl-1">
-                     <span className="text-blue pointer" onClick={onClickFilter}>Filter</span>
-                 </div>
+                    <span className="text-blue pointer" onClick={onClickFilter}>Filter</span>
+                </div>
                 </Row>
-                
-              
-              </form>
+            </form>
             )}
-          </Form>
-
-        // <div className="form__form-group">
-        //     <div className="col-md-4 px-0">
-        //         <Select
-        //             value={status}
-        //             onChange={onStatusChange}
-        //             options={statusOptions}
-        //             clearable={false}
-        //             className="react-select"
-        //             placeholder={statusPlaceholder}
-        //             classNamePrefix="react-select"
-        //         />
-        //     </div>
-        //     <div className="col-md-4">
-        //         <div className="">
-        //             <input 
-        //                 value={keyword}
-        //                 onChange={onProgramPhaseChange}
-        //                 type="text"
-        //                 placeholder="Program phrase"
-        //             />
-        //         </div>
-        //     </div>
-        //     <div className="col-md-4 d-flex align-items-center max-height-32px pl-1">
-        //         <span className="text-blue pointer" onClick={onClickFilter}>Filter</span>
-        //     </div>
-        // </div>
+        </Form>
     )
 }
 

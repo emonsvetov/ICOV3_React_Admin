@@ -241,3 +241,26 @@
 .table-domain-programs .cell-column-0{max-width: 150px !important;}
 .table-domain-programs .cell-column-1{max-width: 100px !important;}
 .table-submerchants .cell-column-0{max-width: 200px !important;}
+.action-panel{padding: 0.5rem;background: #fff;margin-bottom: 2.5rem;border: 2px solid #b1c3c8;}
+.merchant-treeview{
+    position: absolute;
+    width:auto;
+    top:20px;
+    background-color: #ffffff;
+    z-index: 999;
+    border: 1px solid #b1c3c8;
+}
+.merchant-treeview .MuiTreeItem-label{white-space: nowrap;}
+.merchant-treeview label{
+    margin-bottom: 0 !important;
+}
+.merchant-treeview .MuiTreeItem-root.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label{    background-color: transparent;}
+.merchant-treeview .MuiTreeItem-root.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label:hover, .merchant-treeview .MuiTreeItem-root.Mui-selected:focus > .MuiTreeItem-content .MuiTreeItem-label {
+    background-color: transparent;
+}
+.merchant-treeview .PrivateSwitchBase-root-1 {
+    padding: 5px;
+}
+.merchant-treeview .MuiTypography-body1 {
+    font-size: 0.85rem;
+}

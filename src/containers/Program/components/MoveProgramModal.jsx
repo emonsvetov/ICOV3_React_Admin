@@ -11,7 +11,7 @@ const fetchProgramData = async () => {
         const response = await axios.get(
         `/organization/1/program?minimal=true&sortby=name`
         );
-        // console.log(response)
+        console.log(response)
         return response.data;
     } catch (e) {
         throw new Error(`API error:${e?.message}`);
