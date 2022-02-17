@@ -245,7 +245,7 @@
 .merchant-treeview{
     position: absolute;
     width:auto;
-    top:20px;
+    top:23px;
     background-color: #ffffff;
     z-index: 999;
     border: 1px solid #b1c3c8;
@@ -264,3 +264,4 @@
 .merchant-treeview .MuiTypography-body1 {
     font-size: 0.85rem;
 }
+.react-datepicker-popper{top:32px !important;}
