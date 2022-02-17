@@ -6,10 +6,11 @@ import {PROGRAM_COLUMNS} from "./columns";
 import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
+import { Col, Row} from 'reactstrap';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 // import { GlobalFilter } from "./GlobalFilter";
 // import { StatusFilter } from "./StatusFilter";
-import ProgramFilter  from "./InventoryFilter";
+import InventoryFilter  from "./InventoryFilter";
 import { Link } from 'react-router-dom';
 import axios from 'axios'
 import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
@@ -245,20 +246,19 @@ const DataTable = () => {
     return (
             <>
                 <div className='table react-table'>
-                    <form className="form form--horizontal">
-                        <div className="form__form-group pb-4">
-                            <div className="col-md-9 col-lg-9">
-                                <ProgramFilter onClickFilterCallback={onClickFilterCallback} />
-                            </div>
-                            <div className="col-md-3 col-lg-3 text-right pr-0">
+                    <div className="action-panel">
+                        <Row className="mx-0">
+                            <Col lg={9} md={9} sm={8}>
+                                <InventoryFilter onClickFilterCallback={onClickFilterCallback} />
+                            </Col>
+                            <Col lg={3} md={3} sm={4} className="text-right pr-0">
                                 <Link style={{maxWidth:'200px'}}
                                 className="btn btn-primary account__btn account__btn--small"
                                 onClick={handleDownload}
-                                >Export CSV
-                                </Link>
-                            </div>
-                        </div>
-                    </form>
+                                >Export CSV</Link>
+                            </Col>
+                        </Row>
+                    </div>
                     <table {...getTableProps()} className="table">
                         <thead>
                             {headerGroups.map( (headerGroup) => (
@@ -371,7 +371,7 @@ const Sorting = ({ column }) => (
         </span>
       )}
     </span>
-  );
+);
 
 const TableWrapper = () => {
     return (

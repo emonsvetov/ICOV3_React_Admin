@@ -62,15 +62,6 @@ const ProgramTreeView = ({data, handleSelect, selected}) => {
                     <TreeItem nodeId="allprograms" label="All Programs" disableSelection={true}>
                         <RenderBuildTree data={data} />
                     </TreeItem>
-                    {/* <TreeItem nodeId="1" label="Applications">
-                        <TreeItem nodeId="2" label="Calendar" />
-                    </TreeItem>
-                    <TreeItem nodeId="5" label="Documents">
-                        <TreeItem nodeId="10" label="OSS" />
-                        <TreeItem nodeId="6" label="MUI">
-                            <TreeItem nodeId="8" label="index.js" />
-                        </TreeItem>
-                    </TreeItem> */}
                 </TreeView>
             </div>
         </List>

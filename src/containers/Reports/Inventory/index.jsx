@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Col, Container, Row } from 'reactstrap';
-import InventoryCard from './components/InventoryIndex.jsx';
+import { Col, Container, Row, Card, CardBody } from 'reactstrap';
+import InventoryIndexDataTable from './components/InventoryIndexDataTable';
 
 const Inventory = () => {
   return (
@@ -13,7 +13,13 @@ const Inventory = () => {
         </Col>
       </Row>
       <Row>
-        <InventoryCard />
+        <Col md={12}>
+          <Card>
+            <CardBody>
+              <InventoryIndexDataTable />
+            </CardBody>
+          </Card>
+        </Col>
       </Row>
     </Container>
 )}
