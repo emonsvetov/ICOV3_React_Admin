@@ -32,6 +32,7 @@ export const PROGRAM_COLUMNS = [
     {
         Header: "Promotional Codes On Hand",
         columns: header_columns1,
+        textAlign:'center'
         
     },
     {

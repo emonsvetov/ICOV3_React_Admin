@@ -16,6 +16,15 @@ const TEMPLATES = [
   { label: "Custom Template", value: 3 },
 ];
 
+const EVENT_TYPES = [
+  { label: "Standard", value: 1 },
+  { label: "Activation", value: 2 },
+  { label: "Peer to Peer", value: 3 },
+  { label: "Badge", value: 4 },
+  { label: "Peer to Peer Badge", value: 5 },
+  { label: "Auto Award", value: 6 }
+];
+
 const EMAIL_TEMPLATES = [
   { label: "Happy Birthday", value: 1 },
   { label: "Good Job", value: 2 },
@@ -26,12 +35,16 @@ const AddEventForm = (props) => {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [template, setTemplate] = useState(null);
+  const [eventType, setEventType] = useState({ label: "Standard", value: 1 });
   let [icon, setIcon] = useState(null);
   const [isOpen, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("2");
 
   const handleTemplateChange = (selectedTemplate) => {
     setTemplate(selectedTemplate.value);
+  };
+  const handleTypeChange = (type) => {
+    // setEventType(type);
   };
   const set_path = (pickedIcon) => {
     const path = process.env.REACT_APP_API_STORAGE_URL + "/" + pickedIcon.path;
@@ -67,6 +80,7 @@ const AddEventForm = (props) => {
     eventData.message = message;
     eventData.email_template_id = template ? template : 3;
     eventData.event_icon_id = icon.id;
+    eventData.include_in_budget = 1;
 
     //static
     eventData.type_id = 1;
@@ -106,7 +120,10 @@ const AddEventForm = (props) => {
       <Form
         onSubmit={onSubmit}
         validate={(values) => formValidation.validateForm(values)}
-        initialValues={{}}
+        initialValues={{
+          enable : true,
+          event_type : eventType
+        }}
       >
         {({ handleSubmit, form, submitting, pristine, values }) => (
           <form className="form" onSubmit={handleSubmit}>
@@ -170,51 +187,10 @@ const AddEventForm = (props) => {
             </Row>
             <Row>
               <Col md="6" lg="4" xl="4">
-                <div className="form__form-group">
-                  <div className="form__form-group-field">
-                    <span
-                      className="form__form-group-label"
-                      style={{ width: "200%" }}
-                    >
-                      Enable This Event
-                    </span>
-                    <Field
-                      name="enable"
-                      component={renderToggleButtonField}
-                    />
-                  </div>
-                </div>
-              </Col>
-            </Row>
-            <Row>
-              <Col md="6" lg="4" xl="4">
-                <div className="form__form-group">
-                  <span className="form__form-group-label">
-                    Select a Template
-                  </span>
-                  <div className="form__form-group-field">
-                    <div className="form__form-group-row">
-                        <Field 
-                              name="email_template_id"
-                              options={TEMPLATES}
-                              placeholder={templatePlaceholder}
-                              component={renderSelectField}
-                              parse={value => {
-                                handleTemplateChange(value)
-                                  return value;
-                              }}
-                          />
-                    </div>
-                  </div>
-                </div>
-              </Col>
-            </Row>
-            <Row>
-              <Col md="6" lg="4" xl="4">
                 <Field name="amount">
                   {({ input, meta }) => (
                     <div className="form__form-group">
-                      <span className="form__form-group-label">Amount</span>
+                      <span className="form__form-group-label">Max Awardable Amount</span>
                       <div className="form__form-group-field">
                         <div className="form__form-group-row">
                           <input type="text" {...input} placeholder="Amount" />
@@ -256,6 +232,71 @@ const AddEventForm = (props) => {
                 </Field>
               </Col>
             </Row>
+            <Row>
+              <Col md="6" lg="4" xl="4">
+                <div className="form__form-group">
+                  <div className="form__form-group-field">
+                    <span
+                      className="form__form-group-label"
+                      style={{ width: "200%" }}
+                    >
+                      Enable This Event
+                    </span>
+                    <Field
+                      name="enable"
+                      component={renderToggleButtonField}
+                    />
+                  </div>
+                </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col md="6" lg="4" xl="4">
+                <div className="form__form-group">
+                  <span className="form__form-group-label">
+                    Select Event Type
+                  </span>
+                  <div className="form__form-group-field">
+                    <div className="form__form-group-row">
+                        <Field 
+                              name="event_type"
+                              options={EVENT_TYPES}
+                              placeholder={eventType}
+                              component={renderSelectField}
+                              parse={value => {
+                                handleTypeChange(value)
+                                  return value;
+                              }}
+                          />
+                    </div>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col md="6" lg="4" xl="4">
+                <div className="form__form-group">
+                  <span className="form__form-group-label">
+                    Select a Template
+                  </span>
+                  <div className="form__form-group-field">
+                    <div className="form__form-group-row">
+                        <Field 
+                              name="email_template_id"
+                              options={TEMPLATES}
+                              placeholder={templatePlaceholder}
+                              component={renderSelectField}
+                              parse={value => {
+                                handleTemplateChange(value)
+                                  return value;
+                              }}
+                          />
+                    </div>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+            
             {template ? (
               <>
                 <Row>
@@ -340,24 +381,6 @@ const AddEventForm = (props) => {
                       className="form__form-group-label"
                       style={{ width: "200%" }}
                     >
-                      Included in Budget
-                    </span>
-                    <Field
-                      name="include_in_budget"
-                      component={renderToggleButtonField}
-                    />
-                  </div>
-                </div>
-              </Col>
-            </Row>
-            <Row>
-              <Col md="6" lg="4" xl="4">
-                <div className="form__form-group">
-                  <div className="form__form-group-field">
-                    <span
-                      className="form__form-group-label"
-                      style={{ width: "200%" }}
-                    >
                       Allow amount to be overridden
                     </span>
                     <Field
@@ -419,6 +442,31 @@ const AddEventForm = (props) => {
                   )}
                 </Field>
               </Col>
+              <Col md="6" lg="4" xl="4">
+                <Field name="point_amount">
+                  {({ input, meta }) => (
+                    <div className="form__form-group">
+                      <span className="form__form-group-label">
+                        Awarding Points
+                      </span>
+                      <div className="form__form-group-field">
+                        <div className="form__form-group-row">
+                          <input
+                            type="text"
+                            {...input}
+                            placeholder="Awarding Points"
+                          />
+                          {meta.touched && meta.error && (
+                            <span className="form__form-group-error">
+                              {meta.error}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </Field>
+              </Col>
             </Row>
             <Row>
               <Col md="6" lg="4" xl="4">
@@ -444,14 +492,14 @@ const AddEventForm = (props) => {
                   {({ input, meta }) => (
                     <div className="form__form-group">
                       <span className="form__form-group-label">
-                        Event Message
+                        Award Message
                       </span>
                       <div className="form__form-group-field">
                         <div className="form__form-group-row">
                           <input
                             type="text"
                             {...input}
-                            placeholder="Event Message"
+                            placeholder="Award Message"
                           />
                           {meta.touched && meta.error && (
                             <span className="form__form-group-error">
