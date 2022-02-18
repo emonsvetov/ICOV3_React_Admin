@@ -245,10 +245,10 @@
 .merchant-treeview{
     position: absolute;
     width:auto;
-    top:20px;
+    top:23px;
     background-color: #ffffff;
     z-index: 999;
-    border: 1px solid #b1c3c8;
+    border: 1px solid #f1f1f1;
 }
 .merchant-treeview .MuiTreeItem-label{white-space: nowrap;}
 .merchant-treeview label{
@@ -264,3 +264,4 @@
 .merchant-treeview .MuiTypography-body1 {
     font-size: 0.85rem;
 }
+.react-datepicker-popper{top:32px !important;}

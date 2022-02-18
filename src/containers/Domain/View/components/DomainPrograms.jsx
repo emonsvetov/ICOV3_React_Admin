@@ -1,10 +1,6 @@
 import React, {useState, useEffect, useMemo} from "react";
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Card, CardBody, Col, Row, ButtonToolbar} from 'reactstrap';
-import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
-import axios from 'axios'
-import { Link } from 'react-router-dom'
 import DomainProgramsDataTable from './DomainProgramsDataTable';
 import AddProgramToDomain from './AddProgramToDomain';
 

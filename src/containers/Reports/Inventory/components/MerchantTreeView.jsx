@@ -6,17 +6,19 @@ import TreeItem from "@material-ui/lab/TreeItem";
 import { Checkbox, FormControlLabel } from "@material-ui/core";
 // import {data} from './sampleData'
 
-export default function MerchantTreeView({merchants}) {
+export default function MerchantTreeView({merchants, selected, setSelected}) {
 
   const data = {
-    id: "0",
-    name: "Merchants",
+    id: "",
+    name: "Select All",
     children: merchants
   }
 
-  const [selected, setSelected] = React.useState([]);
-  const [traverse, setTraverse] = React.useState(false);
-  console.log(selected);
+  // const [selected, setSelected] = React.useState([]);
+  const [traverse, setTraverse] = React.useState(true);
+  // console.log(selected);
+
+  // form.change("merchant_id", selected);
 
   const selectedSet = React.useMemo(() => new Set(selected), [selected]);
 
