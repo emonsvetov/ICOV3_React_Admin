@@ -20,7 +20,7 @@ import ProgramIndex from '../Program/index';
 import AddProgram from '../Program/add_program';
 import ProgramView from '../Program/view';
 import Pokemon from '../Program/components/pokemon';
-import Merchant from '../Program/ProgramView/components/Merchant';
+// import Merchant from '../Program/ProgramView/components/Merchant';
 import SubProgram from '../Program/ProgramView/components/subprogram';
 import ProgramUsers from '../Program/ProgramView/components/programUsers';
 
@@ -76,7 +76,7 @@ const Programs = () => (
     <Route exact path="/program/add" component={AddProgram} />
     <Route exact path="/program/view/:id" component={ProgramView} />
     <Route exact path="/program/:programId/event/:eventId/edit" component={EditEvent} />
-    <Route exact path="/program/:programId/merchants" component={Merchant} />
+    {/* <Route exact path="/program/:programId/merchants" component={Merchant} /> */}
     <Route exact path="/program/:programId/subprograms" component={SubProgram} />
     <Route exact path="/program/:programId/users" component={ProgramUsers} />
     {/* <Route path="/program/dashboard" component={ProgramDashboard} /> */}

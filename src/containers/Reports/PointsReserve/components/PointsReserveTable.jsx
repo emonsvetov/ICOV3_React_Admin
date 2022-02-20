@@ -108,18 +108,18 @@ const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) 
 const DataTable = () => {
 
 
-    const [filter, setFilter] = useState({status:'', keyword:''});
+    const [filter, setFilter] = useState({from:'', to:''});
     // var [data, setData] = useState([]);
 
-    const onClickFilterCallback = (status, keyword) => {
-        // alert(JSON.stringify({status, keyword}))
-        // alert(JSON.stringify(filter))
-        if(filter.status === status && filter.keyword === keyword)    {
+    const onClickFilterCallback = (from, to) => {
+        
+        
+        if(filter.from === from && filter.to === to)    {
             alert('No change in filters')
             return
         }
-        setFilter({status, keyword})
-        // alert(status, keyword)
+        setFilter({from, to})
+        alert(from, to)
     }
 
     const handleDownload = ( ) => {
