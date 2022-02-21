@@ -135,7 +135,7 @@ const DataTable = ({ toggle }) => {
   const LOGO_PUBLIC_URL = `${process.env.PUBLIC_URL}/img/logo`;
   // console.log(LOGO_PUBLIC_URL)
 
-  const [relationData, setRelationData] = useState(null);
+  const [relationData, setRelationData] = useState([]);
   const [filter, setFilter] = useState({ keyword: "" });
 
   const [programId, setProgramId] = useState(null);
@@ -162,7 +162,9 @@ const DataTable = ({ toggle }) => {
       let result = response.data;
       let temp_relation = [];
       result.map((item, index) => {
-        temp_relation.push(item.id);
+        let {id}= item;
+        let {featured, cost_to_program}= item.pivot;
+        temp_relation.push({id, featured, cost_to_program});
       });
 
       setRelationData(temp_relation);
@@ -193,8 +195,28 @@ const DataTable = ({ toggle }) => {
         
       switch (type) {
         case "featured":
+          if(value){
+            response = await axios.post(
+              `/organization/1/program/${programId}/merchant`,{ program_id: programId, merchant_id: id, featured: 1}
+            );
+          }
+          else{
+            response = await axios.post(
+              `/organization/1/program/${programId}/merchant`,{ program_id: programId, merchant_id: id, featured: 0}
+            );
+          }
           break;
         case "cost":
+          if(value){
+            response = await axios.post(
+              `/organization/1/program/${programId}/merchant`,{ program_id: programId, merchant_id: id, cost_to_program: 1}
+            );
+          }
+          else{
+            response = await axios.post(
+              `/organization/1/program/${programId}/merchant`,{ program_id: programId, merchant_id: id, cost_to_program: 0}
+            );
+          }
           break;
         default:
           if (value) {
@@ -229,10 +251,22 @@ const DataTable = ({ toggle }) => {
   };
 
   const addRelation = (data) =>{
-      
+      let isActive, cost_to_program, featured;
       data.map((item, index) => {
-        item.isActive = relationData?.includes(item.id);
+        isActive = cost_to_program = featured = false;  
+
+        relationData.forEach((relation) => {
+          if(relation.id == item.id){
+            isActive = true;
+            cost_to_program = relation.cost_to_program;
+            featured = relation.featured;
+          } 
+        });
+        item.cost_to_program = cost_to_program;
+        item.isActive = isActive;
+        item.featured= featured;
       })
+      
       return data;
   }
 
@@ -256,7 +290,7 @@ const DataTable = ({ toggle }) => {
       Cell: ({ row }) => (<Form
         onSubmit={onSubmit}
         initialValues={{
-            featured: row.original.isActive,
+            featured: row.original.featured,
           }}
       >
         {({ handleSubmit }) => (
@@ -279,7 +313,7 @@ const DataTable = ({ toggle }) => {
       Cell: ({ row }) => (<Form
         onSubmit={onSubmit}
         initialValues={{
-            cost: row.original.isActive,
+            cost: row.original.cost_to_program,
           }}
       >
         {({ handleSubmit }) => (
