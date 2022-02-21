@@ -31,28 +31,24 @@ const fetchProgramData = async () => {
 };
 
 const Filter = ({onClickFilterCallback}) => {
-    const [status, setStatus] = React.useState('')
-    const [keyword, setKeyword] = React.useState('')
-    const [targetYear, setTargetYear] = React.useState('')
+    
     const YEAR_LIST = prepareList();
+    const [targetYear, setTargetYear] = React.useState({label: new Date().getFullYear(), value: new Date().getFullYear()})
+    const [participant, setParticipant] = React.useState(null);
+    
     const [data, setData] = React.useState([])
     const [selected, setSelected] = useState([]);
     const handleSelect = (event, nodeIds) => {
         setSelected(nodeIds)
     };
 
-    const onStatusChange = (selectedOption) => {
-        setStatus(selectedOption.value)
-    };
-    const onProgramPhaseChange = (e) => {
-        setKeyword( e.target.value)
-    }
+
     const onClickFilter = () => {
-        onClickFilterCallback(status, keyword)
+        onClickFilterCallback(targetYear, participant)
     }
     const handleChange = (selected) => {
         setTargetYear(selected.value);
-      };
+    };
     
       useEffect( () => {
         
@@ -63,10 +59,12 @@ const Filter = ({onClickFilterCallback}) => {
         
     }, [])
 
-    const statusPlaceholder = status ? status : 'All'
+    
     return (
         <Form onSubmit={onClickFilter}
-            
+            initialValues={{
+                year: targetYear
+            }}
         >
             {({ handleSubmit }) => (
               <form className="form" onSubmit={handleSubmit}>
@@ -102,7 +100,7 @@ const Filter = ({onClickFilterCallback}) => {
                         <div className="form__form-group-field">
                             <div className="form__form-group-row">
                                 <Field 
-                                    name="email_template_id"
+                                    name="year"
                                     options={YEAR_LIST}
                                     component={renderSelectField}
                                     parse={value => {

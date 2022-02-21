@@ -93,8 +93,8 @@ const AddEventForm = (props) => {
       .then((res) => {
         //   console.log(res)
         if (res.status == 200) {
-          props.onStep(0);
-          // window.location = `/program/view/${programId}`;
+          // props.onStep(0);
+          window.location = `/program/view/${programId.id}/?message=New event added successfully!`
         }
       })
       .catch((error) => {

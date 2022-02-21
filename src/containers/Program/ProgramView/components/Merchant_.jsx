@@ -13,6 +13,8 @@ import axios from 'axios'
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import {renameChildrenToSubrows} from '@/shared/helpers'
 import { Form, Field } from "react-final-form";
+import ToggleButtonField from '@/shared/components/form/ToggleButton__old'
+import { CheckBoxField } from './../../../../shared/components/form/CheckBox';
 
 const queryClient = new QueryClient();
 const initialState = {
@@ -107,6 +109,11 @@ const Merchant = (props) => {
     const { programId } = useParams();
     const [programData, setProgramData] = useState(null);
     const [merchantsData, setMerchantsData] = useState(null);
+
+    const [featured, setFeatured] = useState(false);
+    const [cost, setCost] = useState(false);
+    const [active, setActive] = useState(true);
+
     // const [isLoading, setIsLoading] = useState(true) //first page load!
     const fetchProgramData = async() => {
         try {
@@ -134,6 +141,23 @@ const Merchant = (props) => {
         alert(`Deleting merchant ${merchantId}`)
     }
     
+    const handleToggle= (type, id) => {
+        debugger;
+        switch(type){
+            case "featured":
+                setFeatured(!featured);
+            break;
+            case "cost":
+                setCost(!cost);
+            break;
+            default:
+                setActive(!active);
+
+        }
+    }
+
+
+
     const RenderActions = ({row}) => {
         return (
             <>
@@ -143,20 +167,21 @@ const Merchant = (props) => {
             </>
         )
     }
-    const RenderToggle = ({row}) => {
+    const RenderToggle = ({type, row}) => {
         return (
             <>
             <div className="toggle-btn-row">
                 <input
-                className="toggle-btn__input"
-                type="checkbox"
-                name='xxx'
-                onChange={()=>{alert('clcick')}}
+                    className="toggle-btn__input"
+                    type="checkbox"
+                    name='xxx'
+                    onChange={onChange}
+                    checked={active}
                 />
                 <button
-                type="button"
-                className="toggle-btn__input-label"
-                onClick={() => {alert('fsdfds')}}
+                    type="button"
+                    className="toggle-btn__input-label"
+                    onClick={() => onChange(!active)}
                 >Toggle
                 </button>
             </div>
@@ -176,6 +201,12 @@ const Merchant = (props) => {
     
     }
 
+    const onChange = (value) =>{
+        setActive(value);
+        console.log(value, 'value')
+        console.log(active, 'active')
+    }
+
     const MERCHANT_COLUMNS = [
         {
             Header: "Logo",
@@ -189,19 +220,20 @@ const Merchant = (props) => {
         {
             Header: "Featured",
             accessor: "featured",
-            Cell: ({ row }) => <RenderToggle row={row} />
+            Cell: ({ row }) => <RenderToggle type="featured" row={row} />
         },
         {
             Header: "Cost to Program",
             accessor: "cost_to_program",
-            Cell: ({ row }) => <RenderToggle row={row} />
+            Cell: ({ row }) => <RenderToggle type = "cost" row={row} />
         },
         {
             Header: "Active",
             accessor: "active",
             // Footer: "Action",
-            Cell: ({ row }) => <RenderToggle row={row} />
+            Cell: ({ row }) => <RenderToggle type = "cost" row={row} />
         }
+        // onChange, defaultChecked, name, disabled, value,
     ]
     let columns = useMemo( () => MERCHANT_COLUMNS, [])
     const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
@@ -295,7 +327,6 @@ const Merchant = (props) => {
         return <p>Loading...</p>;
     }
    
-    
 
     // let columns = useMemo( () => MERCHANT_COLUMNS, [])
     // const [loadingData, setLoadingData] = useState(true);
@@ -400,7 +431,8 @@ const Merchant = (props) => {
             </CardBody>
             </Card>
         </Container>
-)}
+    )
+}
 const Sorting = ({ column }) => (
     <span className="react-table__column-header sortable">
         {column.isSortedDesc === undefined ? (
