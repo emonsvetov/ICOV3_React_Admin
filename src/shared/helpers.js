@@ -175,6 +175,7 @@ function arrayCompare(a1, a2) {
 }
 
 export const inArray = (needle, haystack) => {
+    if(!haystack || typeof haystack === 'undefined') return;
     var length = haystack.length;
     for(var i = 0; i < length; i++) {
         if(typeof haystack[i] == 'object') {
@@ -216,6 +217,14 @@ export function jsdate2ymd(date) {
     if (day.length < 2) 
         day = '0' + day;
     return [year, month, day].join('-');
+}
+
+export function buildIdArray( object )    {
+    let idArray = []
+    for(var i in object)    {
+        idArray.push( object[i].id );
+    }
+    return idArray
 }
 
   
