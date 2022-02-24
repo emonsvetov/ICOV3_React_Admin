@@ -7,31 +7,29 @@ import useDebounce from "@/useDebounce"
 
 const queryClient = new QueryClient()
 
-const search = async( queryKeyword, cbShow ) => {
-    if( queryKeyword.trim().length < 2) return []
-
-    // console.log("searching..")
-
-    try {
-        const response = await axios.get(
-        `/organization/1/program?minimal=true&findById=true&keyword=${queryKeyword}`
-        );
-        // console.log(response)
-        const results = response.data;
-        cbShow(true)
-        return results;
-    } catch (e) {
-        throw new Error(`API error:${e?.message}`)
-    }
-}
-
 const PROGRAMS = [
     {id: "001", name: 'Program 1'},
     {id: "002", name: 'Program 2'},
     {id: "003", name: 'Program 3'},
 ]
 
-const ProgramsCard = ( {user}) => {
+const ProgramsCard = ( {user, organization}) => {
+
+    const search = async( queryKeyword, cbShow ) => {
+        if( queryKeyword.trim().length < 2) return []
+        // console.log("searching..")
+        try {
+            const response = await axios.get(
+            `/organization/${organization.id}/program?minimal=true&keyword=${queryKeyword}`
+            );
+            console.log(response)
+            const results = response.data;
+            cbShow(true)
+            return results;
+        } catch (e) {
+            throw new Error(`API error:${e?.message}`)
+        }
+    }
 
     const [keyword, setKeyword] = useState('')
     const [show, setShow] = useState(false)
@@ -89,11 +87,11 @@ const ProgramsCard = ( {user}) => {
                                 }
                                 </div>
                             {
-                                <div className='program-existing_results'>
-                                {
-                                    PROGRAMS.map( (program, i) => <RenderItem program={program} key={`item-program-{${i}}`} /> )
-                                }
-                                </div>
+                                // <div className='program-existing_results'>
+                                // {
+                                //     PROGRAMS.map( (program, i) => <RenderItem program={program} key={`item-program-{${i}}`} /> )
+                                // }
+                                // </div>
                             }
                             </div>
                         </form>

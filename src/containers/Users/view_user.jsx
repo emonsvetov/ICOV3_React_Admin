@@ -4,21 +4,26 @@ import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import ProgramsCard from './View/ProgramsCard'
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
+import {isEmpty} from '@/shared/helpers'
 
 const queryClient = new QueryClient()
 
-const fetchUser = async ( id ) => {
-    try {
-        const response = await axios.get(`/organization/1/user/${id}`);
-        return response.data;
-    } catch (e) {
-        throw new Error(`API error:${e?.message}`);
-    }
-};
+const ViewUser = ({organization}) => {
 
-const ViewUser = () => {
+    const fetchUser = async ( id ) => {
+        try {
+            const response = await axios.get(`/organization/${organization.id}/user/${id}`);
+            return response.data;
+        } catch (e) {
+            throw new Error(`API error:${e?.message}`);
+        }
+    };
 
     let { id } = useParams();
+
+    // console.log(organization)
 
     const { isLoading, error, data, isSuccess, remove } = useQuery(
         ['user', id],
@@ -162,7 +167,7 @@ const ViewUser = () => {
                 </Row>
                 <Row>
                     <Col md={12}>
-                        <ProgramsCard user={data} />
+                        <ProgramsCard user={data} organization={organization} />
                     </Col>
                 </Row>
             </Container>
@@ -170,14 +175,18 @@ const ViewUser = () => {
     }
 }
 
-const Wrapper = () => {
+const Wrapper = ({organization}) => {
     return (
         <QueryClientProvider client={queryClient}>
-            <ViewUser />
+            {!isEmpty(organization) && <ViewUser organization={organization} />}
         </QueryClientProvider>
     )
 }
 
-export default Wrapper;
+export default withRouter(connect((state) => ({
+    organization: state.organization
+}))(Wrapper));
+
+// export default Wrapper;
 
 
