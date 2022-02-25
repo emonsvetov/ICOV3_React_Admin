@@ -24,7 +24,9 @@ const DataTable = ( {organization} ) => {
 
     const [loading, setLoading] = useState(false)
 
+    const [keyword, setKeyword] = useState('');
     const [filter, setFilter] = useState({ keyword:''});
+    
     const onClickFilterCallback = (keyword) => {
         
         if(filter.keyword === keyword)    {

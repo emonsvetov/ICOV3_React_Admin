@@ -178,6 +178,7 @@
     top:0;
     background-color: #ffffff;
     z-index: 999;
+    border: 1px solid #f2f4f7;
 }
 .input-spinner{
     position: absolute;
@@ -266,3 +267,11 @@
 }
 .react-datepicker-popper{top:32px !important;}
 .roleview .badge, .permission-view .badge{font-size: 14px;text-decoration:underline;}
+.user-program-card .is-sub{padding-left:15px;}
+.user-program-card .row-item-program.is-sub{border-bottom:0;}
+.program-search_results > .row-item-program:last-child{margin-bottom:20px;}
+.program-search_results > .row-item-program{padding-bottom:8px !important}
+.ucfirst:first-letter {
+    text-transform:capitalize;
+    display:inline-block;
+}

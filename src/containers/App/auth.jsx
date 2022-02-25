@@ -24,6 +24,7 @@ export const flushUserSession = () => {
 }
 
 export const isAuthenticated = () => {
+    // flushUserSession();
     if (localStorage.getItem(AUTH_TOKEN_KEY)) {
         // console.log(getAuthUser())
         return true;

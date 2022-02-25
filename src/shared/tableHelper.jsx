@@ -125,10 +125,15 @@ export const fetchApiData = async( queryParams )  => {
 export const TableFilter = ({onClickFilterCallback, label=''}) => {
     const [keyword, setKeyword] = React.useState('')
     const onKeywordChange = (e) => {
-        setKeyword( e.target.value)
+        setKeyword( e.target.value )
     }
-    const onClickFilter = () => {
-        onClickFilterCallback(keyword)
+    const onClickFilter = (reset = false) => {
+        if( reset ) {
+            setKeyword('')
+            onClickFilterCallback( '' )
+        }   else {
+            onClickFilterCallback( keyword )
+        }
     }
     return (
         <div className="form__form-group">
@@ -143,7 +148,8 @@ export const TableFilter = ({onClickFilterCallback, label=''}) => {
                 </div>
             </div>
             <div className="col-md-4 d-flex align-items-center max-height-32px pl-1">
-                <span className="text-blue pointer" onClick={onClickFilter}>Filter</span>
+                <span className="text-blue pointer mr-2" onClick={()=>onClickFilter()}>Filter</span> | 
+                <span className="text-blue pointer ml-2" onClick={()=>onClickFilter(true)}>Reset</span>
             </div>
         </div>
     )

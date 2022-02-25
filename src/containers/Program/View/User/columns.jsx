@@ -22,9 +22,5 @@ export const USERS_COLUMNS = [
         Header: "Default Contract",
         accessor: "default_contract",
         Cell: ({ row, value }) => { return 'No'},
-    },
-    {
-        Header: "Action",
-        Cell: ({ row, value }) => { return <Link to={`/users/view/${row.original.id}`} >view</Link>},
-    },
+    }
 ]
