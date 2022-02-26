@@ -13,10 +13,8 @@ const prepareList = () =>{
     let list = [];
     for (var i = y; i > y -7; i --){
         list.push({label: i, value: i})
-    }
-    
+    }    
     return list;
-
 }
 const fetchProgramData = async () => {
     try {
@@ -35,6 +33,7 @@ const Filter = ({onClickFilterCallback}) => {
     const YEAR_LIST = prepareList();
     const [targetYear, setTargetYear] = React.useState({label: new Date().getFullYear(), value: new Date().getFullYear()})
     const [participant, setParticipant] = React.useState(null);
+    const [programId, setProgramId] = React.useState([]);
     
     const [data, setData] = React.useState([])
     const [selected, setSelected] = useState([]);
@@ -42,15 +41,17 @@ const Filter = ({onClickFilterCallback}) => {
         setSelected(nodeIds)
     };
 
-
     const onClickFilter = () => {
-        onClickFilterCallback(targetYear, participant)
+        onClickFilterCallback(programId, targetYear.value, participant)
     }
-    const handleChange = (selected) => {
-        setTargetYear(selected.value);
+    const handleChange = (field, selected) => {
+        if(field == "year")
+            setTargetYear(selected);
+        else
+            setParticipant(selected);
     };
     
-      useEffect( () => {
+    useEffect( () => {
         
         fetchProgramData()
         .then( response => {
@@ -70,24 +71,20 @@ const Filter = ({onClickFilterCallback}) => {
               <form className="form" onSubmit={handleSubmit}>
               <Row>
                 <div className="col-md-4">
-                        
-                        <span
-                        className="form__form-group-label"
-                        >
+                    <span className="form__form-group-label">
                         View for Merchant
-                        </span>
-                        <ProgramTreeView data={data} handleSelect={handleSelect} selected={selected} />
-                    
+                    </span>
+                    <ProgramTreeView data={data} handleSelect={handleSelect} selected={selected} />
                 </div>
                 <div className="col-md-4">
                     <div className="form__form-group">
                     <div className="form__form-group-field">
                         <Field
-                        name="view_all"
-                        type="checkbox"
-                        component={renderCheckBoxField}
-                        label={'view all'}
-                        initialValue={false}
+                            name="view_all"
+                            type="checkbox"
+                            component={renderCheckBoxField}
+                            label={'view all'}
+                            initialValue={false}
                         />
                     </div>
                     </div>
@@ -95,7 +92,7 @@ const Filter = ({onClickFilterCallback}) => {
                 <div className='col-md-4'>
                     <div className="form__form-group">
                         <span className="form__form-group-label">
-                            To
+                            Target Year
                         </span>
                         <div className="form__form-group-field">
                             <div className="form__form-group-row">
@@ -104,7 +101,7 @@ const Filter = ({onClickFilterCallback}) => {
                                     options={YEAR_LIST}
                                     component={renderSelectField}
                                     parse={value => {
-                                        handleChange(value)
+                                        handleChange('year', value)
                                         return value;
                                     }}
                                 />
@@ -114,14 +111,19 @@ const Filter = ({onClickFilterCallback}) => {
                 </div>
                 
                 <div className="col-md-4">
-                    <Field name="name">
+                    <Field 
+                        name="participant"
+                        parse={value => {
+                            handleChange('participant', value)
+                            return value;
+                        }}
+                    >
                     {({ input, meta }) => (
                         <div className="form__form-group">
                             <span className="form__form-group-label">Target Per Eligible Participant:</span>
                             <div className="form__form-group-field">
                                 <div className="form__form-group-row">
                                     <input type="text" {...input} placeholder="" />
-                                    
                                 </div>
                             </div>
                         </div>
@@ -129,7 +131,6 @@ const Filter = ({onClickFilterCallback}) => {
                     </Field>
                 </div>   
         
-                
                 <div className="col-md-4 d-flex align-items-center max-height-32px pl-1">
                      <span className="text-blue pointer" onClick={onClickFilter}>Filter</span>
                  </div>

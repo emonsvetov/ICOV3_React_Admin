@@ -7,14 +7,9 @@ import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
-// import { GlobalFilter } from "./GlobalFilter";
-// import { StatusFilter } from "./StatusFilter";
-import ProgramFilter  from "./ProgramStatusFilter";
+import JournalDetailedFilter  from "./JournalDetailedFilter";
 import { Link } from 'react-router-dom';
 import axios from 'axios'
-import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
-import ContentCopyIcon from 'mdi-react/ContentCopyIcon';
-
 import {renameChildrenToSubrows} from '@/shared/helpers'
 
 const queryClient = new QueryClient()
@@ -106,19 +101,18 @@ const fetchMockData = () => {
 };
 const DataTable = () => {
 
-    const [filter, setFilter] = useState({status:'', keyword:''});
-    // var [data, setData] = useState([]);
+    const [filter, setFilter] = useState({from:'', to:''});
 
-    const onClickFilterCallback = (status, keyword) => {
-        // alert(JSON.stringify({status, keyword}))
-        // alert(JSON.stringify(filter))
-        if(filter.status === status && filter.keyword === keyword)    {
+    const onClickFilterCallback = (from, to) => {
+        
+        if(filter.from === from && filter.to === to)    {
             alert('No change in filters')
             return
         }
-        setFilter({status, keyword})
-        // alert(status, keyword)
+        setFilter({from, to})
+        alert(to)
     }
+
     const handleDownload = () =>{
         alert('Downloading...')
     }
@@ -240,7 +234,7 @@ const DataTable = () => {
                     <form className="form form--horizontal">
                         <div className="form__form-group pb-4">
                             <div className="col-md-9 col-lg-9">
-                                <ProgramFilter onClickFilterCallback={onClickFilterCallback} />
+                                <JournalDetailedFilter onClickFilterCallback={onClickFilterCallback} />
                             </div>
                             <div className="col-md-3 col-lg-3 text-right pr-0">
                                 <Link style={{maxWidth:'200px'}}

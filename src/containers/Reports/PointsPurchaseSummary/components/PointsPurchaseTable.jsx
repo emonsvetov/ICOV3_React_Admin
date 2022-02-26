@@ -9,7 +9,7 @@ import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 // import { GlobalFilter } from "./GlobalFilter";
 // import { StatusFilter } from "./StatusFilter";
-import ProgramFilter  from "./PointsPurchaseFilter";
+import PointsPurchaseFilter  from "./PointsPurchaseFilter";
 import { Link } from 'react-router-dom';
 import axios from 'axios'
 
@@ -106,17 +106,17 @@ const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) 
 const DataTable = () => {
 
     
-    const [filter, setFilter] = useState({status:'', keyword:''});
+    const [filter, setFilter] = useState({programId:[], year:'', participant:''});
     // var [data, setData] = useState([]);
 
-    const onClickFilterCallback = (status, keyword) => {
+    const onClickFilterCallback = (programId, year, participant) => {
         // alert(JSON.stringify({status, keyword}))
         // alert(JSON.stringify(filter))
-        if(filter.status === status && filter.keyword === keyword)    {
+        if(filter.programId === programId && filter.year === year && filter.participant === participant)    {
             alert('No change in filters')
             return
         }
-        setFilter({status, keyword})
+        setFilter({programId, year, participant});
         // alert(status, keyword)
     }
     const handleDownload = ( ) => {
@@ -240,7 +240,7 @@ const DataTable = () => {
                     <form className="form form--horizontal">
                         <div className="form__form-group pb-4">
                             <div className="col-md-9 col-lg-9">
-                                <ProgramFilter onClickFilterCallback={onClickFilterCallback} />
+                                <PointsPurchaseFilter onClickFilterCallback={onClickFilterCallback} />
                             </div>
                             <div className="col-md-3 col-lg-3 text-right pr-0">
                                 <Link style={{maxWidth:'200px'}}

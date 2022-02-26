@@ -11,7 +11,6 @@ import ProgramFilter  from "./ProgramsFilter";
 import { Link } from 'react-router-dom';
 import axios from 'axios'
 
-
 import {renameChildrenToSubrows} from '@/shared/helpers'
 
 const queryClient = new QueryClient()
@@ -96,11 +95,7 @@ const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) 
 
 const DataTable = () => {
 
-    const [movingProgramId, setMovingProgramId] = useState(null)
-    const [copyingProgram, setCopyingProgram] = useState(null)
-
-    const [isMoveOpen, setMoveOpen] = useState(false)
-    const [isCopyOpen, setCopyOpen] = useState(false)
+    
     const [filter, setFilter] = useState({keyword:''});
     // var [data, setData] = useState([]);
 

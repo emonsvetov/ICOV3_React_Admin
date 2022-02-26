@@ -1,50 +1,61 @@
-import React from 'react'
-import Select from 'react-select'
-import renderDatePickerField from '@/shared/components/form/DatePicker';
+import React, {useState} from 'react'
 import { Field, Form } from 'react-final-form';
 import { Row, Col } from 'reactstrap';
-import renderSelectField from '@/shared/components/form/Select'
-const TEMPLATES = [
-    { label: "Birthday", value: 1 },
-    { label: "Work Anniversary", value: 2 },
-    { label: "Custom Template", value: 3 },
-  ];
-  
+import DatePicker from 'react-datepicker';
 
+const RenderDatePicker = ({ dueDate, onChange }) => {
+    const [startDate, setStartDate] = useState(dueDate);
+    const handleChange = (date) => {
+        setStartDate(date);
+        onChange(date);
+    };
+  return(
+    <div className="date-picker">
+    <DatePicker
+      dateFormat="MM/dd/yyyy"
+      selected={startDate}
+      onChange={handleChange}
+      className="form__form-group-datepicker"
+    />
+    </div>
+  )
+}
+
+const getFirstDay = () =>{
+  let date = new Date();
+  return new Date(date.getFullYear(), date.getMonth(), 1)
+}
 
 const TrialBalanceFilter = ({onClickFilterCallback}) => {
-    const [status, setStatus] = React.useState('')
-    const [keyword, setKeyword] = React.useState('')
-    const [programName, setProgramName] = React.useState('')
-
-    const onStatusChange = (selectedOption) => {
-        setStatus(selectedOption.value)
-    };
-    const onProgramPhaseChange = (e) => {
-        setKeyword( e.target.value)
-    }
+    
+    const [date, setDate] = useState({from: getFirstDay(), to: new Date()});
+  
     const onClickFilter = () => {
-        onClickFilterCallback(status, keyword)
+      onClickFilterCallback(date.from.toISOString().slice(0, 10), date.to.toISOString().slice(0, 10))
     }
-    const handleChange = (selected) => {
-        setProgramName(selected.value);
-      };
-
-    const statusPlaceholder = status ? status : 'All'
+    const handleChange = (selected, type) => {
+        let temp = date;
+        temp[type] = selected;
+        setDate(temp);
+    };
+    
     return (
-        <Form onSubmit={onClickFilter}>
+        <Form onSubmit={onClickFilter}
+        >
             {({ handleSubmit }) => (
               <form className="form" onSubmit={handleSubmit}>
               <Row>
                 <div className="col-md-4 px-0">
                     <div className="form__form-group">
-                    <span className="form__form-group-label">From</span>
-                    <div className="form__form-group-field">
+                      <span className="form__form-group-label">From</span>
+                      <div className="form__form-group-field">
                         <Field
-                        name="from"
-                        component={renderDatePickerField}
+                            name="from"
+                            dueDate={getFirstDay}
+                            onChange={(e) => handleChange(e, 'from')}
+                            component={RenderDatePicker}    
                         />
-                    </div>
+                      </div>
                     </div>
                 </div>
                 <div className="col-md-4">
@@ -52,8 +63,10 @@ const TrialBalanceFilter = ({onClickFilterCallback}) => {
                     <span className="form__form-group-label">To</span>
                     <div className="form__form-group-field">
                         <Field
-                        name="to"
-                        component={renderDatePickerField}
+                            name="from"
+                            dueDate={new Date()}
+                            onChange={(e) => handleChange(e, 'to')}
+                            component={RenderDatePicker}    
                         />
                     </div>
                     </div>
@@ -63,38 +76,11 @@ const TrialBalanceFilter = ({onClickFilterCallback}) => {
                      <span className="text-blue pointer" onClick={onClickFilter}>Filter</span>
                  </div>
                 </Row>
-                
-              
+
               </form>
             )}
           </Form>
 
-        // <div className="form__form-group">
-        //     <div className="col-md-4 px-0">
-        //         <Select
-        //             value={status}
-        //             onChange={onStatusChange}
-        //             options={statusOptions}
-        //             clearable={false}
-        //             className="react-select"
-        //             placeholder={statusPlaceholder}
-        //             classNamePrefix="react-select"
-        //         />
-        //     </div>
-        //     <div className="col-md-4">
-        //         <div className="">
-        //             <input 
-        //                 value={keyword}
-        //                 onChange={onProgramPhaseChange}
-        //                 type="text"
-        //                 placeholder="Program phrase"
-        //             />
-        //         </div>
-        //     </div>
-        //     <div className="col-md-4 d-flex align-items-center max-height-32px pl-1">
-        //         <span className="text-blue pointer" onClick={onClickFilter}>Filter</span>
-        //     </div>
-        // </div>
     )
 }
 

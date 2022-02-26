@@ -9,11 +9,9 @@ import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 // import { GlobalFilter } from "./GlobalFilter";
 // import { StatusFilter } from "./StatusFilter";
-import ProgramFilter  from "./InventoryFilter";
+import InventoryFilter  from "./InventoryFilter";
 import { Link } from 'react-router-dom';
 import axios from 'axios'
-import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
-import ContentCopyIcon from 'mdi-react/ContentCopyIcon';
 
 import {renameChildrenToSubrows} from '@/shared/helpers'
 
@@ -107,22 +105,15 @@ const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) 
 
 const DataTable = () => {
 
-    const [movingProgramId, setMovingProgramId] = useState(null)
-    const [copyingProgram, setCopyingProgram] = useState(null)
+    const [filter, setFilter] = useState({merchantId:[], endDate:''});
 
-    const [isMoveOpen, setMoveOpen] = useState(false)
-    const [isCopyOpen, setCopyOpen] = useState(false)
-    const [filter, setFilter] = useState({status:'', keyword:''});
-    // var [data, setData] = useState([]);
-
-    const onClickFilterCallback = (status, keyword) => {
-        // alert(JSON.stringify({status, keyword}))
-        // alert(JSON.stringify(filter))
-        if(filter.status === status && filter.keyword === keyword)    {
+    const onClickFilterCallback = (merchantId, endDate) => {
+        
+        if(filter.merchantId === merchantId && filter.endDate === endDate)    {
             alert('No change in filters')
             return
         }
-        setFilter({status, keyword})
+        setFilter({merchantId, endDate})
         // alert(status, keyword)
     }
     const handleDownload = ( ) => {
@@ -248,7 +239,7 @@ const DataTable = () => {
                     <form className="form form--horizontal">
                         <div className="form__form-group pb-4">
                             <div className="col-md-9 col-lg-9">
-                                <ProgramFilter onClickFilterCallback={onClickFilterCallback} />
+                                <InventoryFilter onClickFilterCallback={onClickFilterCallback} />
                             </div>
                             <div className="col-md-3 col-lg-3 text-right pr-0">
                                 <Link style={{maxWidth:'200px'}}
