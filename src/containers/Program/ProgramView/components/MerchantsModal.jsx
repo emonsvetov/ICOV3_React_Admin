@@ -189,48 +189,25 @@ const DataTable = ({ toggle }) => {
   }, [programId]);
 
   const handleToggle = async (type, value, id) => {
+    let response;
+    let programId = getLastItem(window.location.pathname);
+    let postData = {program_id: programId, merchant_id: id};
+    
     try {
-      let response;
-      let programId = getLastItem(window.location.pathname);
-        
-      switch (type) {
-        case "featured":
-          if(value){
-            response = await axios.post(
-              `/organization/1/program/${programId}/merchant`,{ program_id: programId, merchant_id: id, featured: 1}
-            );
-          }
-          else{
-            response = await axios.post(
-              `/organization/1/program/${programId}/merchant`,{ program_id: programId, merchant_id: id, featured: 0}
-            );
-          }
-          break;
-        case "cost":
-          if(value){
-            response = await axios.post(
-              `/organization/1/program/${programId}/merchant`,{ program_id: programId, merchant_id: id, cost_to_program: 1}
-            );
-          }
-          else{
-            response = await axios.post(
-              `/organization/1/program/${programId}/merchant`,{ program_id: programId, merchant_id: id, cost_to_program: 0}
-            );
-          }
-          break;
-        default:
-          if (value) {
-            response = await axios.post(
-              `/organization/1/program/${programId}/merchant`,{ program_id: programId, merchant_id: id}
-            );
-            
-          } else {
-            response = await axios.delete(
-                `/organization/1/program/${programId}/merchant/${id}`);
-
-          }
+      if(type == "featured" || type == "cost_to_program"){
+        postData[type] = value;
+        response = await axios.post(
+          `/organization/1/program/${programId}/merchant`,postData );
       }
-
+      else{
+        if (value) {
+          response = await axios.post(
+            `/organization/1/program/${programId}/merchant`,postData );
+        } else {
+          response = await axios.delete(
+              `/organization/1/program/${programId}/merchant/${id}`);
+        }
+      }
       console.log(response, 'response')
 
     } catch (e) {
@@ -319,10 +296,10 @@ const DataTable = ({ toggle }) => {
         {({ handleSubmit }) => (
           <form style={{ width: "25%" }} onSubmit={handleSubmit}>
             <Field
-              name="cost"
+              name="cost_to_program"
               component={renderToggleButtonField}
               parse={(value) => {
-                handleToggle("cost", value, row.original.id);
+                handleToggle("cost_to_program", value, row.original.id);
                 return value;
               }}
             />
