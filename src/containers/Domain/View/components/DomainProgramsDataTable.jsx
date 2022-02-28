@@ -22,6 +22,7 @@ const initialState = {
     totalCount: null,
     queryPageFilter:{},
     queryPageSortBy: [],
+    queryTrigger:Math.floor(Date.now() / 1000)
 };
 
 const PAGE_CHANGED = 'PAGE_CHANGED';
@@ -29,6 +30,8 @@ const PAGE_SIZE_CHANGED = 'PAGE_SIZE_CHANGED';
 const PAGE_SORT_CHANGED = 'PAGE_SORT_CHANGED'
 const PAGE_FILTER_CHANGED = 'PAGE_FILTER_CHANGED';
 const TOTAL_COUNT_CHANGED = 'TOTAL_COUNT_CHANGED';
+const QUERY_TRIGGER = 'QUERY_TRIGGER';
+
 
 const reducer = (state, { type, payload }) => {
   switch (type) {
@@ -58,19 +61,25 @@ const reducer = (state, { type, payload }) => {
             ...state,
             totalCount: payload,
         };
+    case QUERY_TRIGGER:
+        return {
+            ...state,
+            queryTrigger: payload,
+        };
     default:
       throw new Error(`Unhandled action type: ${type}`);
   }
 };
 
-const DomainProgramsDataTable = ( {domain, organization} ) => {
+const DomainProgramsDataTable = ( {domain, organization, trigger, setTrigger} ) => {
 
+    // const [trigger, setTrigger] = useState(0);
     const dispatcher = useDispatch()
 
-    const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
+    const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy, queryTrigger) => {
         // alert("Here")
         // const offset = page * pageSize;
-        const params = []
+        const params = [`trigger=${queryTrigger}`]
         let paramStr = ''
         if( pageFilterO ) {
             if(pageFilterO.status !== 'undefined' && pageFilterO.status) params.push(`status=${pageFilterO.status}`)
@@ -123,8 +132,9 @@ const DomainProgramsDataTable = ( {domain, organization} ) => {
             if(res.status === 200)  {
                 // dispatch({ type: PAGE_CHANGED, payload: 1 });
                 // gotoPage(0);
-                // dispatcher(sendFlashMessage('Program removed successfully', 'alert-success'));
-                window.location = `/domains/view/${domain.id}?message=domain deleted successfully!`
+                dispatcher(sendFlashMessage('Program removed from Domain!', 'alert-success'));
+                // window.location = `/domains/view/${domain.id}?message=domain deleted successfully!`
+                setTrigger( Math.floor(Date.now() / 1000) )
             }
         })
         .catch( error => {
@@ -167,16 +177,16 @@ const DomainProgramsDataTable = ( {domain, organization} ) => {
         []
     )
 
-    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
+    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] =
     React.useReducer(reducer, initialState);
 
     const { isLoading, error, data, isSuccess } = useQuery(
-        ['programs', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
-        () => fetchProgramData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
+        ['programs', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+        () => fetchProgramData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger),
         {
-            keepPreviousData: false,
+            keepPreviousData: true,
             staleTime: Infinity,
-            force:true
+            // force:true
         }
     );
 
@@ -254,6 +264,11 @@ const DomainProgramsDataTable = ( {domain, organization} ) => {
             });
         }
     }, [data?.count]);
+
+    React.useEffect(() => {
+        dispatch({ type: QUERY_TRIGGER, payload: trigger });
+        gotoPage(0);
+    }, [trigger, gotoPage]);
 
     if (error) {
         return <p>Error: {JSON.stringify(error)}</p>;
@@ -397,10 +412,10 @@ const Sorting = ({ column }) => (
     </span>
   );
 
-const TableWrapper = ({ organization, domain}) => {
+const TableWrapper = ({ organization, domain, trigger, setTrigger}) => {
     return (
         <QueryClientProvider client={queryClient}>
-            <DomainProgramsDataTable organization={organization} domain={domain} />
+            <DomainProgramsDataTable organization={organization} domain={domain} trigger={trigger} setTrigger={setTrigger} />
         </QueryClientProvider>
     )
 }

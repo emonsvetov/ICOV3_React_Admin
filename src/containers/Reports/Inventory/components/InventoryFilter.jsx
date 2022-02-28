@@ -1,37 +1,16 @@
 import React, {useState, useEffect} from "react";
-import Select from 'react-select'
 import renderDatePickerField from '@/shared/components/form/DatePicker';
+import { Button } from 'reactstrap';
 import { Field, Form } from 'react-final-form';
 import { Row, Col } from 'reactstrap';
-import ProgramTreeView from "./ProgramTreeView";
+// import MerchantTreeView from "./MerchantTreeView__legacy";
+import MerchantTreeView from "./MerchantTreeView";
 import axios from 'axios'
-
-import DatePicker from 'react-datepicker';
-
-
-const RenderDatePicker = ({ dueDate, onChange }) => {
-    const [startDate, setStartDate] = useState(dueDate);
-    const handleChange = (date) => {
-        setStartDate(date);
-        onChange(date);
-    };
-  return(
-    <div className="date-picker">
-    <DatePicker
-      dateFormat="MM/dd/yyyy"
-      selected={startDate}
-      onChange={handleChange}
-      className="form__form-group-datepicker"
-    />
-    </div>
-  )
-}
-
   
-const fetchProgramData = async () => {
+const fetchMerchants = async () => {
     try {
         const response = await axios.get(
-        `/organization/1/program?minimal=true&sortby=name`
+        `/merchant?minimal=true&sortby=name`
         );
         // console.log(response)
         return response.data;
@@ -39,71 +18,76 @@ const fetchProgramData = async () => {
         throw new Error(`API error:${e?.message}`);
     }
 };
-const InventoryFilter = ({onClickFilterCallback}) => {
-    const [merchantId, setMerchantId] = React.useState([])
-    const [endDate, setEndDate] = React.useState(new Date())
-
+const InventoryFilter = ({onSubmitFilterCb}) => {
+    const [loading, setLoading] = React.useState(false)
     const [data, setData] = React.useState([])
-    const [selected, setSelected] = useState([]);
-    const handleSelect = (event, nodeIds) => {
-        setSelected(nodeIds)
-    };
+    const [selected, setSelected] = React.useState([]);
 
-    const handleChange = (selected) => {
-        setEndDate(selected)    
-    };
 
-    const onClickFilter = () => {
-        onClickFilterCallback(merchantId, endDate.toISOString().slice(0, 10))
+    const onSubmitFilter = (values) => {
+        values.merchant_id = values.merchant_id.filter(n => n) //remove empty elements
+        // alert( JSON.stringify(values) )
+        onSubmitFilterCb( values )
     }
 
-    useEffect( () => {        
-        fetchProgramData()
+    useEffect( () => {
+        fetchMerchants()
         .then( response => {
             setData(response)
         })
-        
     }, [])
 
-    
     return (
-        <Form onSubmit={onClickFilter}>
-            {({ handleSubmit }) => (
-              <form className="form" onSubmit={handleSubmit}>
-              <Row>
-                
+        <Form onSubmit={(e)=>onSubmitFilter(e)}>
+            {({ handleSubmit, form, submitting, pristine, values }) => (
+            <form className="form" onSubmit={handleSubmit}>
+            <Row>
                 <div className="col-md-4">
-                    
-                    <span className="form__form-group-label">
-                        View for Merchant
+                    <span
+                    className="form__form-group-label"
+                    >
+                    View for Merchant
                     </span>
-                    <ProgramTreeView data={data} handleSelect={handleSelect} selected={selected} />
-                    
+                    {data && data.length > 0 && <div className="merchant-treeview px-2"><MerchantTreeView merchants={data} form={form} selected={selected} setSelected={(v) => {
+                        form.change('merchant_id', v)
+                        setSelected(v)
+                    }} /></div>}
                 </div>
                 <div className="col-md-4">
                     <div className="form__form-group">
-                        <span className="form__form-group-label">Through Date</span>
-                        <div className="form__form-group-field">
-                            <Field
-                                name="end_date"
-                                dueDate={new Date()}
-                                onChange={handleChange}
-                                component={RenderDatePicker}    
-                            />
-                 
-                        </div>
+                    <span className="form__form-group-label">Through Date</span>
+                    <div className="form__form-group-field">
+                        <Field
+                        name="end_date"
+                        component={renderDatePickerField}
+                        />
+                    </div>
                     </div>
                 </div>
-                
-                <div className="col-md-4 d-flex align-items-center max-height-32px pl-1">
-                     <span className="text-blue pointer" onClick={onClickFilter}>Filter</span>
-                 </div>
+                <div className="col-md-4 d-flex align-items-end pl-1">
+                    <Button 
+                        type="submit"
+                        onClick={() => {
+                            form.change("action", "submit");
+                        }}
+                        disabled={submitting} 
+                        className="btn btn-sm btn-primary" 
+                        color="#ffffff"
+                    >Filter</Button>
+                    <Button
+                        type="submit"
+                        onClick={() => {
+                            form.change("action", "export");
+                        }}
+                        disabled={submitting} 
+                        className="btn btn-sm btn-primary" 
+                        color="#ffffff"
+                    >Export CSV</Button>
+                </div>
                 </Row>
-                
-              
-              </form>
+            </form>
             )}
-          </Form>
+        </Form>
     )
 }
 

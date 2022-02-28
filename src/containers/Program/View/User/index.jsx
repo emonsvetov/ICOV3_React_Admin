@@ -7,6 +7,8 @@ import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
+import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter} from "@/shared/tableHelper"
+
 import axios from "axios";
 import {
     Button,
@@ -20,95 +22,15 @@ import {
 import UsersFilter from './UsersFilter'
 
 import { USERS_COLUMNS } from "./columns";
-
-import {renameChildrenToSubrows} from '@/shared/helpers'
 import AddProgramUserModal from './AddProgramUserModal'
 
 const queryClient = new QueryClient()
 
-const initialState = {
-    queryPageIndex: 0,
-    queryPageSize: 10,
-    totalCount: 0,
-    queryPageFilter:"",
-    queryPageSortBy: [],
-};
-
-const PAGE_CHANGED = 'PAGE_CHANGED';
-const PAGE_SIZE_CHANGED = 'PAGE_SIZE_CHANGED';
-const PAGE_SORT_CHANGED = 'PAGE_SORT_CHANGED'
-const PAGE_FILTER_CHANGED = 'PAGE_FILTER_CHANGED';
-const TOTAL_COUNT_CHANGED = 'TOTAL_COUNT_CHANGED';
-
-const reducer = (state, { type, payload }) => {
-switch (type) {
-  case PAGE_CHANGED:
-      return {
-          ...state,
-          queryPageIndex: payload,
-      };
-  case PAGE_SIZE_CHANGED:
-      return {
-          ...state,
-          queryPageSize: payload,
-      };
-  case PAGE_SORT_CHANGED:
-      return {
-          ...state,
-          queryPageSortBy: payload,
-      };
-  case PAGE_FILTER_CHANGED:
-      return {
-          ...state,
-          queryPageFilter: payload,
-      };
-  case TOTAL_COUNT_CHANGED:
-      return {
-          ...state,
-          totalCount: payload,
-      };
-  default:
-    throw new Error(`Unhandled action type: ${type}`);
-}
-};
-
-const fetchUsersData = async (page, pageSize, pageFilter, pageSortBy) => {
-    let paramStr = ''
-    if( pageFilter.trim().length > 1 ) {
-        paramStr = `&keyword=${pageFilter}`
-    }
-    if( pageSortBy.length > 0 ) {
-        const sortParams = pageSortBy[0];
-        const sortyByDir = sortParams.desc ? 'desc' : 'asc'
-        paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
-    }
-    try {
-        const response = await axios.get(
-        `/organization/1/user?page=${page+1}&limit=${pageSize}${paramStr}`
-        );
-        const results = response.data.data;
-        var finalResults = results;
-        if( results )  {
-            finalResults = results.map(item => ({
-                ...item,
-                name: `${item.first_name} ${item.last_name}` || "",
-            }))
-        }
-        const data = {
-            results: finalResults,
-            count: response.data.total
-        };
-        return data;
-    } catch (e) {
-        throw new Error(`API error:${e?.message}`)
-    }
-}
-
-const DataTable = () => {
+const DataTable = ({program}) => {
   
     const [keyword, setKeyword] = useState('');
-  const [useFilter, setUseFilter] = useState(false);
-  
+    const [filter, setFilter] = useState({ keyword:''});
+
   // var [data, setData] = useState([]);
   const [isOpen, setOpen] = useState(false)
 
@@ -116,21 +38,32 @@ const DataTable = () => {
         setOpen(prevState => !prevState)
     }
 
-    const onClickFilterCallback = ( filter ) => {
-        if(filter.trim() === "") {
-            alert('Please enter a keyword to search!')
+    const onClickFilterCallback = (keyword) => {
+        if(filter.keyword === keyword)    {
+            alert('No change in filters')
             return
         }
-        if(filter === keyword)   {
-            alert('No change in search')
-            return
-        }
-        setUseFilter(true)
-        setKeyword(filter)
+        setFilter({keyword})
     }
 
-
-  let columns = useMemo( () => USERS_COLUMNS, [])
+    const RenderActions = ({row}) => {
+        return (
+            <>
+                <Link to={`/program/5/user/${row.original.id}`} >View</Link>{' | '}
+                <Link to={`/program/5/user/${row.original.id}`} >Delete</Link>
+            </>
+        )
+    }
+    
+    let user_columns = [
+        ...USERS_COLUMNS, 
+        ...[{
+            Header: "",
+            accessor: "action",
+            Cell: ({ row }) => <RenderActions row={row} />,
+        }]
+    ]
+    let columns = useMemo( () => user_columns, [])
 
 
   const defaultColumn = React.useMemo(
@@ -144,10 +77,19 @@ const DataTable = () => {
 
   const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
   React.useReducer(reducer, initialState);
+
+  const apiUrl = `/organization/1/program/${program.id}/user`
       
   const { isLoading, error, data, isSuccess } = useQuery(
       ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
-      () => fetchUsersData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
+      () => fetchApiData(
+        {
+            url: apiUrl,
+            page: queryPageIndex,
+            size: queryPageSize,
+            filter: queryPageFilter,
+            sortby: queryPageSortBy
+        }),
       {
           keepPreviousData: true,
           staleTime: Infinity,
@@ -199,37 +141,7 @@ const DataTable = () => {
   // const [statusFilterValue, setStatusFilterValue] = useState("");
   const manualPageSize = []
   
-  React.useEffect(() => {
-      dispatch({ type: PAGE_CHANGED, payload: pageIndex });
-  }, [pageIndex]);
-
-  React.useEffect(() => {
-      // alert(PAGE_SIZE_CHANGED)
-      dispatch({ type: PAGE_SIZE_CHANGED, payload: pageSize });
-      gotoPage(0);
-  }, [pageSize, gotoPage]);
-
-  useEffect(() => {
-      dispatch({ type: PAGE_SORT_CHANGED, payload: sortBy });
-      gotoPage(0);
-  }, [sortBy, gotoPage]);
-
-  useEffect(() => {
-    if ( useFilter ) {
-        dispatch({ type: PAGE_FILTER_CHANGED, payload: keyword });
-        gotoPage(0);
-    }
-}, [keyword, gotoPage, useFilter]);
-
-
-  React.useEffect(() => {
-      if (data?.count) {
-          dispatch({
-          type: TOTAL_COUNT_CHANGED,
-          payload: data.count,
-          });
-      }
-  }, [data?.count]);
+  useEffectToDispatch( dispatch, pageIndex, pageSize, gotoPage, sortBy, filter, data );
 
   if (error) {
       return <p>Error: {JSON.stringify(error)}</p>;
@@ -238,6 +150,7 @@ const DataTable = () => {
   if (isLoading) {
       return <p>Loading...</p>;
   }
+
   if(isSuccess)
   return (
           <>
@@ -245,7 +158,7 @@ const DataTable = () => {
                 <form className="form form--horizontal">
                     <div className="form__form-group pb-4">
                         <div className="col-md-9 col-lg-9">
-                            <UsersFilter onClickFilterCallback={onClickFilterCallback} />
+                            <TableFilter onClickFilterCallback={onClickFilterCallback} label={'users'} />
                         </div>
                         <div className="col-md-3 col-lg-3 text-right pr-0">
                             <Link style={{maxWidth:'200px'}}
@@ -364,22 +277,22 @@ const Sorting = ({ column }) => (
   </span>
 );
 
-const TableWrapper = () => {
+const TableWrapper = ({program}) => {
   return (
       <QueryClientProvider client={queryClient}>
-          <DataTable />
+          <DataTable program={program} />
       </QueryClientProvider>
   )
 }
 
 const ProgramUsers = () => {
 const { programId } = useParams();
-const [programData, setProgramData] = useState(null);
+const [program, setProgram] = useState(null);
 const fetchProgramData = async() => {
     try {
         const response = await axios.get(`/organization/1/program/${programId}`);
         // console.log(response)
-        setProgramData(response.data)
+        setProgram(response.data)
     } catch (e) {
         throw new Error(`API error:${e?.message}`);
     }
@@ -388,24 +301,30 @@ useEffect(() => {
     fetchProgramData()
 },[])
 
-  return (
-    <Container className="dashboard">
-      <Row>
-        <Col md={12}>
-          <h3 className="page-title">Program Users</h3>
-          <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/program">Programs</Link> / <Link className="" to = {`/program/view/${programId}`}>{programData?.name}</Link>/ Users </h3>
-        </Col>
-      </Row>
-      <Row>
-        <Col md={12}>
-            <Card>
-                <CardBody>
-                    <TableWrapper />
-                </CardBody>
-            </Card>
-        </Col>
-      </Row>
-    </Container>
-)}
+    if( !program )  {
+        return 'Loading...'
+    }
+
+    return (
+        <Container className="dashboard">
+            <Row>
+                <Col md={12}>
+                <h3 className="page-title">Program Users</h3>
+                <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/program">Programs</Link> / <Link className="" to = {`/program/view/${program.id}`}>{program?.name}</Link>/ Users </h3>
+                </Col>
+            </Row>
+            <Row>
+                <Col md={12}>
+                    <Card>
+                        <CardBody>
+                            
+                            {program && <TableWrapper program={program} />}
+                        </CardBody>
+                    </Card>
+                </Col>
+            </Row>
+        </Container>
+    )
+}
 
 export default ProgramUsers;

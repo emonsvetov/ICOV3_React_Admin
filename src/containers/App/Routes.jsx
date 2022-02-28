@@ -20,24 +20,34 @@ import ProgramIndex from '../Program/index';
 import AddProgram from '../Program/add_program';
 import ProgramView from '../Program/view';
 import Pokemon from '../Program/components/pokemon';
-// import Merchant from '../Program/ProgramView/components/Merchant';
-import SubProgram from '../Program/ProgramView/components/subprogram';
-import ProgramUsers from '../Program/ProgramView/components/programUsers';
+// import Merchant from '../Program/View/components/Merchant';
+import SubProgram from '../Program/View/components/subprogram';
+import ProgramUsers from '../Program/View/User';
+import ProgramUser from '../Program/View/User/view';
 
 import UsersIndex from '../Users/index';
 import AddUser from '../Users/add_user';
 import ViewUser from '../Users/view_user';
 import EditUser from '../Users/edit_user';
 
+import RoleIndex from '../Role/index';
+import RoleAdd from '../Role/add_role';
+import RoleView from '../Role/view_role';
+import RoleEdit from '../Role/edit_role';
+
+import PermissionIndex from '../Permission/index';
+import PermissionAdd from '../Permission/add_permission';
+import PermissionView from '../Permission/view_permission';
+import PermissionEdit from '../Permission/edit_permission';
+
 // import EventsIndex from '../Events/index';
 // import AddEvent from '../Events/add_event';
-import EditEvent from '../Program/ProgramView/components/event/edit';
+import EditEvent from '../Program/View/components/event/edit';
 
 import MerchantsIndex from '../Merchant/index';
 import AddMerchant from '../Merchant/add_merchant';
 import ViewMerchant from '../Merchant/view_merchant';
 import EditMerchant from '../Merchant/edit_merchant';
-
 
 import DomainsIndex from '../Domain/index';
 import AddDomain from '../Domain/add_domain';
@@ -79,6 +89,7 @@ const Programs = () => (
     {/* <Route exact path="/program/:programId/merchants" component={Merchant} /> */}
     <Route exact path="/program/:programId/subprograms" component={SubProgram} />
     <Route exact path="/program/:programId/users" component={ProgramUsers} />
+    <Route exact path="/program/:programId/user/:userId" component={ProgramUser} />
     {/* <Route path="/program/dashboard" component={ProgramDashboard} /> */}
   </Switch>
 );
@@ -98,6 +109,24 @@ const Users = () => (
     <Route exact path="/users/add" component={AddUser} />
     <Route exact path="/users/view/:id" component={ViewUser} />
     <Route exact path="/users/edit/:id" component={EditUser} />
+  </Switch>
+);
+
+const Roles = () => (
+  <Switch>
+    <Route exact path="/roles" component={RoleIndex} />
+    <Route exact path="/roles/add" component={RoleAdd} />
+    <Route exact path="/roles/view/:id" component={RoleView} />
+    <Route exact path="/roles/edit/:id" component={RoleEdit} />
+  </Switch>
+);
+
+const Permissions = () => (
+  <Switch>
+    <Route exact path="/permissions" component={PermissionIndex} />
+    <Route exact path="/permissions/add" component={PermissionAdd} />
+    <Route exact path="/permissions/view/:id" component={PermissionView} />
+    <Route exact path="/permissions/edit/:id" component={PermissionEdit} />
   </Switch>
 );
 
@@ -166,6 +195,8 @@ const privateRoutes = () => {
         <PrivateRoute path="/program" component={Programs} />
         <PrivateRoute path="/merchants" component={Merchants} />
         <PrivateRoute path="/users" component={Users} />
+        <PrivateRoute path="/roles" component={Roles} />
+        <PrivateRoute path="/permissions" component={Permissions} />
         <PrivateRoute path="/events" component={Events} />
         <PrivateRoute path="/domains" component={Domains} />
         <PrivateRoute path="/physical-orders" component={PhysicalOrders} />

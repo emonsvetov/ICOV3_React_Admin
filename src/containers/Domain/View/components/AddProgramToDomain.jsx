@@ -27,7 +27,7 @@ const search = async( queryKeyword, cbShow ) => {
     }
 }
 
-const AddProgramToDomain = ( {organization, domain}) => {
+const AddProgramToDomain = ( {organization, domain, setTrigger}) => {
     const dispatch = useDispatch()
 
     const [keyword, setKeyword] = useState('')
@@ -67,6 +67,7 @@ const AddProgramToDomain = ( {organization, domain}) => {
                 dispatch(sendFlashMessage('Program added successfully!', 'alert-success'))
                 toggleResults()
                 setKeyword('')
+                setTrigger( Math.floor(Date.now() / 1000) )
             }
         })
         .catch( error => {
@@ -124,10 +125,10 @@ const AddProgramToDomain = ( {organization, domain}) => {
     )
 }
 
-const AddProgramToDomainWrapper = ({organization, domain}) => {
+const AddProgramToDomainWrapper = ({organization, domain, setTrigger}) => {
     return (
         <QueryClientProvider client={queryClient}>
-            <AddProgramToDomain organization={organization} domain={domain} />
+            <AddProgramToDomain organization={organization} domain={domain} setTrigger={setTrigger} />
         </QueryClientProvider>
     )
 }

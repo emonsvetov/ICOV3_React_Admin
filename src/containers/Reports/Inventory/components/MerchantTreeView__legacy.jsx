@@ -3,18 +3,18 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import { TreeView } from '@material-ui/lab';
-import ArrowDownIcon from '@material-ui/icons/ArrowDropDown';
-import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import TreeItem from '@material-ui/lab/TreeItem';
 // import ListItem from '@material-ui/core/ListItem';
 // import ListItemText from '@material-ui/core/ListItemText';
 
 const RenderBuildTree = ({data}) => {
     return data.map( row => {
-        if(typeof row.subRows !== 'undefined' && row.subRows.length > 0)    {
+        if(typeof row.children !== 'undefined' && row.children.length > 0)    {
             return (
                 <TreeItem nodeId={row.id} label={row.name}>
-                    <RenderBuildTree data={row.subRows} />
+                    <RenderBuildTree data={row.children} />
                 </TreeItem>
             )
         }   else {
@@ -23,7 +23,7 @@ const RenderBuildTree = ({data}) => {
     })
 }
 
-const ProgramTreeView = ({data, handleSelect, selected}) => {
+const MerchantTreeView = ({data, handleSelect, selected}) => {
     // const [expanded, setExpanded] = React.useState([]);
 
     // const handleToggle = (event, nodeIds) => {
@@ -49,32 +49,22 @@ const ProgramTreeView = ({data, handleSelect, selected}) => {
             </Box> */}
                 <TreeView
                     aria-label="controlled"
-                    defaultCollapseIcon={<ArrowDownIcon className="arrowIcon" />}
-                    defaultExpandIcon={<ArrowRightIcon className="arrowIcon" />}
-                    sx={{ height: 240, flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}
-                    defaultEndIcon={<ArrowRightIcon className="arrowIcon" />}
-                    defaultExpanded={['allprograms']} //all is the ID of the parent node
+                    defaultCollapseIcon={<ExpandMoreIcon />}
+                    defaultExpandIcon={<ChevronRightIcon />}
+                    defaultExpanded={['all']} //all is the ID of the parent node
                     // expanded={expanded}
                     // onNodeToggle={handleToggle}
                     onNodeSelect={handleSelect}
                     defaultSelected={selected ? selected : null}
+                    multiSelect
                 >
-                    <TreeItem nodeId="allprograms" label="All Programs" disableSelection={true}>
+                    <TreeItem nodeId="allprograms" label="Merchants" disableSelection={true}>
                         <RenderBuildTree data={data} />
                     </TreeItem>
-                    {/* <TreeItem nodeId="1" label="Applications">
-                        <TreeItem nodeId="2" label="Calendar" />
-                    </TreeItem>
-                    <TreeItem nodeId="5" label="Documents">
-                        <TreeItem nodeId="10" label="OSS" />
-                        <TreeItem nodeId="6" label="MUI">
-                            <TreeItem nodeId="8" label="index.js" />
-                        </TreeItem>
-                    </TreeItem> */}
                 </TreeView>
             </div>
         </List>
     )
 }
 
-export default ProgramTreeView;
+export default MerchantTreeView;

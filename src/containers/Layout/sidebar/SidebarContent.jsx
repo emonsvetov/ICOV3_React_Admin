@@ -34,6 +34,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
           <SidebarLink title="Unassigned Program Domains" route="/reports/unassigned-program-domains" onClick={handleHideSidebar} />
         </SidebarCategory>
         <SidebarLink title="Roles"  icon="user" route="/roles" />
+        <SidebarLink title="Permissions"  icon="user" route="/permissions" />
         <SidebarLink title="Users"  icon="users" route="/users" />
         <SidebarLink title="Physical Orders"  icon="file-empty" route="/physical-orders" />
         <SidebarLink title="Domains"  icon="layers" route="/domains" />

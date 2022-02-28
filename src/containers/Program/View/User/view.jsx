@@ -3,7 +3,6 @@ import { Col, Container, Row, Card, CardBody } from 'reactstrap';
 import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
-import ProgramsCard from './View/ProgramsCard'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import {isEmpty} from '@/shared/helpers'
@@ -165,11 +164,6 @@ const ViewUser = ({organization}) => {
                                 
                             </CardBody>
                         </Card>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col md={12}>
-                        <ProgramsCard user={data} organization={organization} />
                     </Col>
                 </Row>
             </Container>

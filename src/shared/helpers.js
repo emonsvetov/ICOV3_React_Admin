@@ -175,6 +175,7 @@ function arrayCompare(a1, a2) {
 }
 
 export const inArray = (needle, haystack) => {
+    if(!haystack || typeof haystack === 'undefined') return;
     var length = haystack.length;
     for(var i = 0; i < length; i++) {
         if(typeof haystack[i] == 'object') {
@@ -193,4 +194,40 @@ export const isValidIPAddress = (ipAddress) => {
     return expression.test(ipAddress);
 }
 
+export const removeItemAll = (arr, value) => {
+    var i = 0;
+    while (i < arr.length) {
+        if (arr[i] === value) {
+            arr.splice(i, 1);
+        } else {
+            ++i;
+        }
+    }
+    return arr;
+}
+
+export function jsdate2ymd(date) {
+    let d = new Date(date)
+    let month = '' + (d.getMonth() + 1)
+    let day = '' + d.getDate()
+    let year = d.getFullYear()
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+    return [year, month, day].join('-');
+}
+
+export function buildIdArray( object )    {
+    let idArray = []
+    for(var i in object)    {
+        idArray.push( object[i].id );
+    }
+    return idArray
+}
+
+export function ucfirst(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
   
