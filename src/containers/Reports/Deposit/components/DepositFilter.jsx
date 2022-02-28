@@ -1,23 +1,27 @@
 import React, {useState, useEffect} from "react";
-import Select from 'react-select'
-import renderDatePickerField from '@/shared/components/form/DatePicker';
 import { Field, Form } from 'react-final-form';
 import { Row, Col } from 'reactstrap';
 import renderSelectField from '@/shared/components/form/Select'
 import axios from 'axios'
+import DatePicker from 'react-datepicker';
 
-const TEMPLATES = [
-    { label: "Birthday", value: 1 },
-    { label: "Work Anniversary", value: 2 },
-    { label: "Custom Template", value: 3 },
-  ];
-  
-const statusOptions = [
-    {'value':'', 'label':'All'},
-    {'value':'Active', 'label':'Active'},
-    {'value':'Inactive', 'label':'Inactive'},
-    {'value':'Pending', 'label':'Pending'},
-]
+const RenderDatePicker = ({ dueDate, onChange }) => {
+    const [startDate, setStartDate] = useState(dueDate);
+    const handleChange = (date) => {
+        setStartDate(date);
+        onChange(date);
+    };
+  return(
+    <div className="date-picker">
+        <DatePicker
+            dateFormat="MM/dd/yyyy"
+            selected={startDate}
+            onChange={handleChange}
+            className="form__form-group-datepicker"
+        />
+    </div>
+  )
+}
 
 const fetchProgramData = async () => {
     try {
@@ -31,29 +35,55 @@ const fetchProgramData = async () => {
     }
 };
 
+
+const getFirstDay = () =>{
+    let date = new Date();
+    return new Date(date.getFullYear(), date.getMonth(), 1)
+}
+
 const DepositFilter = ({onClickFilterCallback}) => {
-    const [status, setStatus] = React.useState('')
-    const [keyword, setKeyword] = React.useState('')
-    const [programName, setProgramName] = React.useState('')
+    const [date, setDate] = useState({from: getFirstDay(), to: new Date()});
+    
+    const [invoiceNumber, setInvoiceNumber] = React.useState('');
+    const [programName, setProgramName] = React.useState('');
+    const [programId, setProgramId] = React.useState('');
     
     const [data, setData] = React.useState([])
 
-    const onStatusChange = (selectedOption) => {
-        setStatus(selectedOption.value)
-    };
-    const onProgramPhaseChange = (e) => {
-        setKeyword( e.target.value)
-    }
     const onClickFilter = values => {
-        debugger;
-        onClickFilterCallback(status, keyword)
+        onClickFilterCallback(
+            date.from.toISOString().slice(0, 10), 
+            date.to.toISOString().slice(0, 10), 
+            invoiceNumber, 
+            programName.value, 
+            programId
+        );
     }
-    const handleChange = (selected) => {
-        setProgramName(selected.value);
-      };
 
-      useEffect( () => {
+    const handleDateChange = (selected, type) => {
+        let temp = date;
+        temp[type] = selected;
+        setDate(temp);
+    };
+    const handleChange = (field, selected) => {
+        switch (field) {
+            case 'invoice_number':
+                setInvoiceNumber(selected);
+                break;
+            case 'program_name':
+                setProgramName(selected);
+                break;
+            case 'program_id':
+                setProgramId(selected);
+                break;
+            default:
+                console.log('default case...');
+        }
         
+    };
+
+    useEffect( () => {
+    
         fetchProgramData()
         .then( response => {
             let temp = [];
@@ -77,28 +107,38 @@ const DepositFilter = ({onClickFilterCallback}) => {
               <Row>
                 <div className="col-md-4 px-0">
                     <div className="form__form-group">
-                    <span className="form__form-group-label">From</span>
-                    <div className="form__form-group-field">
-                        <Field
-                        name="from"
-                        component={renderDatePickerField}
-                        />
-                    </div>
+                        <span className="form__form-group-label">From</span>
+                        <div className="form__form-group-field">
+                            <Field
+                                name="from"
+                                dueDate={getFirstDay}
+                                onChange={(e) => handleDateChange(e, 'from')}
+                                component={RenderDatePicker}    
+                            />
+                        </div>
                     </div>
                 </div>
                 <div className="col-md-4">
                     <div className="form__form-group">
-                    <span className="form__form-group-label">To</span>
-                    <div className="form__form-group-field">
-                        <Field
-                        name="to"
-                        component={renderDatePickerField}
-                        />
-                    </div>
+                        <span className="form__form-group-label">To</span>
+                        <div className="form__form-group-field">
+                            <Field
+                                name="to"
+                                dueDate={new Date()}
+                                onChange={(e) => handleDateChange(e, 'to')}
+                                component={RenderDatePicker}    
+                            />
+                        </div>
                     </div>
                 </div>
                 <div className="col-md-4">
-                    <Field name="invoice_number">
+                    <Field 
+                        name="invoice_number"
+                        parse={value => {
+                            handleChange('invoice_number', value)
+                            return value;
+                        }}
+                    >
                     {({ input, meta }) => (
                         <div className="form__form-group">
                             <span className="form__form-group-label">Invoice Number</span>
@@ -123,11 +163,11 @@ const DepositFilter = ({onClickFilterCallback}) => {
                         <div className="form__form-group-field">
                             <div className="form__form-group-row">
                                 <Field 
-                                    name="email_template_id"
+                                    name="program_name"
                                     options={data}
                                     component={renderSelectField}
                                     parse={value => {
-                                        handleChange(value)
+                                        handleChange('program_name', value)
                                         return value;
                                     }}
                                 />
@@ -137,7 +177,13 @@ const DepositFilter = ({onClickFilterCallback}) => {
                 </div>
 
                 <div className="col-md-4">
-                    <Field name="program_id">
+                    <Field 
+                        name="program_id"
+                        parse={value => {
+                            handleChange('program_id', value)
+                            return value;
+                        }}
+                    >
                     {({ input, meta }) => (
                         <div className="form__form-group">
                             <span className="form__form-group-label">Program ID</span>

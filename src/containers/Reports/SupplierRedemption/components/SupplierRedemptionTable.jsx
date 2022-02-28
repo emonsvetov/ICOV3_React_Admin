@@ -7,9 +7,8 @@ import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
-// import { GlobalFilter } from "./GlobalFilter";
-// import { StatusFilter } from "./StatusFilter";
-import MerchantFilter  from "./SupplierRedemptionFilter";
+
+import SupplierRedemptionFilter  from "./SupplierRedemptionFilter";
 import { Link } from 'react-router-dom';
 import axios from 'axios'
 
@@ -106,27 +105,22 @@ const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) 
 };
 
 const DataTable = () => {
-
   
-    const [filter, setFilter] = useState({status:'', keyword:''});
-    // var [data, setData] = useState([]);
+    const [filter, setFilter] = useState({from:'', to:''});
 
-    const onClickFilterCallback = (status, keyword) => {
-        // alert(JSON.stringify({status, keyword}))
-        // alert(JSON.stringify(filter))
-        if(filter.status === status && filter.keyword === keyword)    {
+    const onClickFilterCallback = (from, to) => {
+        
+        if(filter.from === from && filter.to === to)    {
             alert('No change in filters')
             return
         }
-        setFilter({status, keyword})
-        // alert(status, keyword)
+        setFilter({from, to})
+        
     }
 
     const handleDownload = ( ) => {
         alert('download csv')
     }
-
-  
 
     let program_columns = [
         ...PROGRAM_COLUMNS, 
@@ -246,7 +240,7 @@ const DataTable = () => {
                     <form className="form form--horizontal">
                         <div className="form__form-group pb-4">
                             <div className="col-md-9 col-lg-9">
-                                <MerchantFilter onClickFilterCallback={onClickFilterCallback} />
+                                <SupplierRedemptionFilter onClickFilterCallback={onClickFilterCallback} />
                             </div>
                             <div className="col-md-3 col-lg-3 text-right pr-0">
                                 <Link style={{maxWidth:'200px'}}

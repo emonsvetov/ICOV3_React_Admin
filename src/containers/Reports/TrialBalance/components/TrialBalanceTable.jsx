@@ -11,8 +11,6 @@ import ReactTablePagination from '@/shared/components/table/components/ReactTabl
 import TrialBalanceFilter  from "./TrialBalanceFilter";
 import { Link } from 'react-router-dom';
 import axios from 'axios'
-import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
-import ContentCopyIcon from 'mdi-react/ContentCopyIcon';
 
 import {renameChildrenToSubrows} from '@/shared/helpers'
 
@@ -106,18 +104,14 @@ const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) 
 
 const DataTable = () => {
 
-    const [filter, setFilter] = useState({status:'', keyword:''});
-    // var [data, setData] = useState([]);
+    const [filter, setFilter] = useState({from:'', to:''});
 
-    const onClickFilterCallback = (status, keyword) => {
-        // alert(JSON.stringify({status, keyword}))
-        // alert(JSON.stringify(filter))
-        if(filter.status === status && filter.keyword === keyword)    {
+    const onClickFilterCallback = (from, to) => {
+        if(filter.from === from && filter.to === to)    {
             alert('No change in filters')
             return
         }
-        setFilter({status, keyword})
-        // alert(status, keyword)
+        setFilter({from, to})
     }
 
  

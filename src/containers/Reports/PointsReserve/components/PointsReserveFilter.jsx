@@ -1,6 +1,4 @@
 import React, {useState} from 'react'
-import Select from 'react-select'
-import renderDatePickerField from '@/shared/components/form/DatePicker';
 import { Field, Form } from 'react-final-form';
 import { Row, Col } from 'reactstrap';
 import DatePicker from 'react-datepicker';
@@ -23,27 +21,25 @@ const RenderDatePicker = ({ dueDate, onChange }) => {
   )
 }
 
+const getFirstDay = () =>{
+  let date = new Date();
+  return new Date(date.getFullYear(), date.getMonth(), 1)
+}
 
-
-const TrialBalanceFilter = ({onClickFilterCallback}) => {
+const PointsReserveFilter = ({onClickFilterCallback}) => {
     
-    const [date, setDate] = useState({from:'', to:''});
-    
+    const [date, setDate] = useState({from: getFirstDay(), to: new Date()});
+  
+    const onClickFilter = () => {
 
-    const onClickFilter = (values) => {
-
-        onClickFilterCallback(date.from, date.to)
+      onClickFilterCallback(date.from.toISOString().slice(0, 10), date.to.toISOString().slice(0, 10))
     }
     const handleChange = (selected, type) => {
         let temp = date;
         temp[type] = selected;
         setDate(temp);
-        debugger
-      };
-    const getFirstDay = () =>{
-        let date = new Date();
-        return new Date(date.getFullYear(), date.getMonth(), 1)
-    }
+    };
+    
     return (
         <Form onSubmit={onClickFilter}
         >
@@ -52,15 +48,15 @@ const TrialBalanceFilter = ({onClickFilterCallback}) => {
               <Row>
                 <div className="col-md-4 px-0">
                     <div className="form__form-group">
-                    <span className="form__form-group-label">From</span>
-                    <div className="form__form-group-field">
-                    <Field
-                        name="from"
-                        dueDate={getFirstDay}
-                        onChange={(e) => handleChange(e, 'from')}
-                        component={RenderDatePicker}    
+                      <span className="form__form-group-label">From</span>
+                      <div className="form__form-group-field">
+                        <Field
+                            name="from"
+                            dueDate={getFirstDay}
+                            onChange={(e) => handleChange(e, 'from')}
+                            component={RenderDatePicker}    
                         />
-                    </div>
+                      </div>
                     </div>
                 </div>
                 <div className="col-md-4">
@@ -81,8 +77,7 @@ const TrialBalanceFilter = ({onClickFilterCallback}) => {
                      <span className="text-blue pointer" onClick={onClickFilter}>Filter</span>
                  </div>
                 </Row>
-                
-              
+
               </form>
             )}
           </Form>
@@ -90,4 +85,4 @@ const TrialBalanceFilter = ({onClickFilterCallback}) => {
     )
 }
 
-export default TrialBalanceFilter;
+export default PointsReserveFilter;

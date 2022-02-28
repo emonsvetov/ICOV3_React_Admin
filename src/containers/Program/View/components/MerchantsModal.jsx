@@ -135,7 +135,7 @@ const DataTable = ({ toggle }) => {
   const LOGO_PUBLIC_URL = `${process.env.PUBLIC_URL}/img/logo`;
   // console.log(LOGO_PUBLIC_URL)
 
-  const [relationData, setRelationData] = useState(null);
+  const [relationData, setRelationData] = useState([]);
   const [filter, setFilter] = useState({ keyword: "" });
 
   const [programId, setProgramId] = useState(null);
@@ -162,7 +162,9 @@ const DataTable = ({ toggle }) => {
       let result = response.data;
       let temp_relation = [];
       result.map((item, index) => {
-        temp_relation.push(item.id);
+        let {id}= item;
+        let {featured, cost_to_program}= item.pivot;
+        temp_relation.push({id, featured, cost_to_program});
       });
 
       setRelationData(temp_relation);
@@ -187,28 +189,25 @@ const DataTable = ({ toggle }) => {
   }, [programId]);
 
   const handleToggle = async (type, value, id) => {
+    let response;
+    let programId = getLastItem(window.location.pathname);
+    let postData = {program_id: programId, merchant_id: id};
+    
     try {
-      let response;
-      let programId = getLastItem(window.location.pathname);
-        
-      switch (type) {
-        case "featured":
-          break;
-        case "cost":
-          break;
-        default:
-          if (value) {
-            response = await axios.post(
-              `/organization/1/program/${programId}/merchant`,{ program_id: programId, merchant_id: id}
-            );
-            
-          } else {
-            response = await axios.delete(
-                `/organization/1/program/${programId}/merchant/${id}`);
-
-          }
+      if(type == "featured" || type == "cost_to_program"){
+        postData[type] = value;
+        response = await axios.post(
+          `/organization/1/program/${programId}/merchant`,postData );
       }
-
+      else{
+        if (value) {
+          response = await axios.post(
+            `/organization/1/program/${programId}/merchant`,postData );
+        } else {
+          response = await axios.delete(
+              `/organization/1/program/${programId}/merchant/${id}`);
+        }
+      }
       console.log(response, 'response')
 
     } catch (e) {
@@ -229,10 +228,22 @@ const DataTable = ({ toggle }) => {
   };
 
   const addRelation = (data) =>{
-      
+      let isActive, cost_to_program, featured;
       data.map((item, index) => {
-        item.isActive = relationData?.includes(item.id);
+        isActive = cost_to_program = featured = false;  
+
+        relationData.forEach((relation) => {
+          if(relation.id == item.id){
+            isActive = true;
+            cost_to_program = relation.cost_to_program;
+            featured = relation.featured;
+          } 
+        });
+        item.cost_to_program = cost_to_program;
+        item.isActive = isActive;
+        item.featured= featured;
       })
+      
       return data;
   }
 
@@ -256,7 +267,7 @@ const DataTable = ({ toggle }) => {
       Cell: ({ row }) => (<Form
         onSubmit={onSubmit}
         initialValues={{
-            featured: row.original.isActive,
+            featured: row.original.featured,
           }}
       >
         {({ handleSubmit }) => (
@@ -279,16 +290,16 @@ const DataTable = ({ toggle }) => {
       Cell: ({ row }) => (<Form
         onSubmit={onSubmit}
         initialValues={{
-            cost: row.original.isActive,
+            cost: row.original.cost_to_program,
           }}
       >
         {({ handleSubmit }) => (
           <form style={{ width: "25%" }} onSubmit={handleSubmit}>
             <Field
-              name="cost"
+              name="cost_to_program"
               component={renderToggleButtonField}
               parse={(value) => {
-                handleToggle("cost", value, row.original.id);
+                handleToggle("cost_to_program", value, row.original.id);
                 return value;
               }}
             />
