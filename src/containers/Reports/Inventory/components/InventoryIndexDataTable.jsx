@@ -13,8 +13,6 @@ import ReactTablePagination from '@/shared/components/table/components/ReactTabl
 import InventoryFilter  from "./InventoryFilter";
 import { Link } from 'react-router-dom';
 import axios from 'axios'
-import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
-import ContentCopyIcon from 'mdi-react/ContentCopyIcon';
 
 import { jsdate2ymd } from '@/shared/helpers'
 

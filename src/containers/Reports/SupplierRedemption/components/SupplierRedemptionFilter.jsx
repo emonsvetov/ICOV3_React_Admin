@@ -1,14 +1,38 @@
 import React, {useState, useEffect} from "react";
-import Select from 'react-select'
+
 import renderDatePickerField from '@/shared/components/form/DatePicker';
 import { Field, Form } from 'react-final-form';
 import { Row, Col } from 'reactstrap';
-import renderSelectField from '@/shared/components/form/Select'
+
 import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import renderCheckBoxField from '@/shared/components/form/CheckBox';
 import ProgramTreeView from "./ProgramTreeView";
 import axios from 'axios'
 
+import DatePicker from 'react-datepicker';
+
+const RenderDatePicker = ({ dueDate, onChange }) => {
+    const [startDate, setStartDate] = useState(dueDate);
+    const handleChange = (date) => {
+        setStartDate(date);
+        onChange(date);
+    };
+  return(
+    <div className="date-picker">
+        <DatePicker
+            dateFormat="MM/dd/yyyy"
+            selected={startDate}
+            onChange={handleChange}
+            className="form__form-group-datepicker"
+        />
+    </div>
+  )
+}
+
+const getFirstDay = () =>{
+    let date = new Date();
+    return new Date(date.getFullYear(), date.getMonth(), 1)
+}
 
 const fetchProgramData = async () => {
     try {
@@ -23,28 +47,23 @@ const fetchProgramData = async () => {
 };
 
 const DepositFilter = ({onClickFilterCallback}) => {
-    const [status, setStatus] = React.useState('')
-    const [keyword, setKeyword] = React.useState('')
-    const [programName, setProgramName] = React.useState('')
+    const [date, setDate] = useState({from: getFirstDay(), to: new Date()});
     const [data, setData] = React.useState([])
     const [selected, setSelected] = useState([]);
+    
     const handleSelect = (event, nodeIds) => {
         setSelected(nodeIds)
     };
 
-    const onStatusChange = (selectedOption) => {
-        setStatus(selectedOption.value)
-    };
-    const onProgramPhaseChange = (e) => {
-        setKeyword( e.target.value)
+    
+    const onClickFilter = values => {
+        onClickFilterCallback(
+            date.from.toISOString().slice(0, 10), 
+            date.to.toISOString().slice(0, 10), 
+     
+        );
     }
-    const onClickFilter = () => {
-        onClickFilterCallback(status, keyword)
-    }
-    const handleChange = (selected) => {
-        setProgramName(selected.value);
-      };
-
+    
     useEffect( () => {
         
         fetchProgramData()
@@ -54,7 +73,12 @@ const DepositFilter = ({onClickFilterCallback}) => {
         
     }, [])
 
-    const statusPlaceholder = status ? status : 'All'
+    const handleDateChange = (selected, type) => {
+        let temp = date;
+        temp[type] = selected;
+        setDate(temp);
+    };
+
     return (
         <Form onSubmit={onClickFilter}>
             {({ handleSubmit }) => (
@@ -125,8 +149,10 @@ const DepositFilter = ({onClickFilterCallback}) => {
                     <span className="form__form-group-label">From</span>
                     <div className="form__form-group-field">
                         <Field
-                        name="from"
-                        component={renderDatePickerField}
+                            name="from"
+                            dueDate={getFirstDay}
+                            onChange={(e) => handleDateChange(e, 'from')}
+                            component={RenderDatePicker}    
                         />
                     </div>
                     </div>
@@ -136,13 +162,14 @@ const DepositFilter = ({onClickFilterCallback}) => {
                     <span className="form__form-group-label">To</span>
                     <div className="form__form-group-field">
                         <Field
-                        name="to"
-                        component={renderDatePickerField}
+                            name="to"
+                            dueDate={new Date()}
+                            onChange={(e) => handleDateChange(e, 'to')}
+                            component={RenderDatePicker}    
                         />
                     </div>
                     </div>
                 </div>
-                
                 
                 <div className="col-md-4 d-flex align-items-center max-height-32px pl-1">
                      <span className="text-blue pointer" onClick={onClickFilter}>Filter</span>

@@ -103,31 +103,29 @@ const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) 
 };
 
 const DataTable = () => {
-
-    const [movingProgramId, setMovingProgramId] = useState(null)
-    const [copyingProgram, setCopyingProgram] = useState(null)
-
-    const [isMoveOpen, setMoveOpen] = useState(false)
-    const [isCopyOpen, setCopyOpen] = useState(false)
-    const [filter, setFilter] = useState({status:'', keyword:''});
+    
+    const [filter, setFilter] = useState({from:'', to:'', invoiceNumber:'', programName:'', programId:''});
     // var [data, setData] = useState([]);
 
-    const onClickFilterCallback = (status, keyword) => {
-        // alert(JSON.stringify({status, keyword}))
-        // alert(JSON.stringify(filter))
-        if(filter.status === status && filter.keyword === keyword)    {
+    const onClickFilterCallback = (from, to, invoiceNumber, programName, programId) => {
+        
+        if( filter.from === from && 
+            filter.to === to &&  
+            filter.invoiceNumber === invoiceNumber && 
+            filter.programName === programName && 
+            filter.programId === programId )
+        {
             alert('No change in filters')
             return
         }
-        setFilter({status, keyword})
+        debugger;
+        setFilter({from, to, invoiceNumber, programName, programId})
         // alert(status, keyword)
     }
 
     const handleDownload = ( ) => {
         alert("Download CSV")
     }
-    
-    
 
     let program_columns = [
         ...PROGRAM_COLUMNS, 
