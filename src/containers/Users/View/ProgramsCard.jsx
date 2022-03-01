@@ -33,6 +33,7 @@ const ProgramsCard = ( {user, organization}) => {
     const [adding, setAdding] = useState(false)
     const [removing, setRemoving] = useState(false)
     const [roles, setRoles] = useState(null)
+    const [programRoles, setProgramRoles] = useState(null)
 
     const toggle = () => {
         setOpen(prevState => !prevState)
@@ -128,9 +129,24 @@ const ProgramsCard = ( {user, organization}) => {
         setShow( ! show )
     }
 
-    const onClickAddProgram = ( program ) => {
+    const onClickAddProgram = async( program, updating = false ) => {
         setOpen(true)
         setProgram(program)
+        if( updating )  {
+            try {
+                const response = await axios.get(
+                `/organization/${organization.id}/user/${user.id}/program/${program.id}/permission`
+                );
+                // console.log(response)
+                let results = response.data;
+                results = results.map(function(item) { return parseInt(item.replace(`program.${program.id}.role.`, ``)) });
+                // console.log(results);
+                setProgramRoles(results)
+                return results;
+            } catch (e) {
+                throw new Error(`API error:${e?.message}`)
+            }
+        }
     }
 
     const addProgram = values => {
@@ -213,7 +229,7 @@ const ProgramsCard = ( {user, organization}) => {
     const RenderItem = ({ program }) => (
         <Row className='pt-4 pb-1 row-item-program pr-0 ml-0'>
             <Col md="6" lg="6" xl="6">{program.id} - {program.name}</Col>
-            <Col md="6" lg="6" xl="6" className='pr-3 text-right'><span className='a' onClick={(e)=>onClickRemoveProgram( program )}>Remove</span></Col>
+            <Col md="6" lg="6" xl="6" className='pr-3 text-right'><span className='a' onClick={(e)=>onClickRemoveProgram( program )}>Remove</span> | <span className='a' onClick={(e)=>onClickAddProgram( program, true )}>Manage Role</span></Col>
         </Row>
     )
 
@@ -247,7 +263,7 @@ const ProgramsCard = ( {user, organization}) => {
                                 </div>
                             }
                             </div>
-                            {program && roles && <ProgramFormModal program={program} roles={roles} isOpen={isOpen} setOpen={setOpen} toggle={toggle} cbAddProgram={addProgram} />}
+                            {program && roles && <ProgramFormModal program={program} roles={roles} programRoles={programRoles} isOpen={isOpen} setOpen={setOpen} toggle={toggle} cbAddProgram={addProgram} />}
                         </form>
                     </Col>
                 </Row>

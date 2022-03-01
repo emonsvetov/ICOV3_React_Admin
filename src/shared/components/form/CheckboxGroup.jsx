@@ -1,12 +1,17 @@
 import {inArray} from '@/shared/helpers';
 
 const CheckboxGroup = ({fields, options}) => {
-    console.log(fields)
+    // console.log(fields)
+    // console.log(options)
+    // console.log(fields.value)
     const toggle = (event, option) => {
         if (event.target.checked) {
             fields.push(option);
         } else {
+            console.log(option)
+            console.log(fields.value)
             const index = fields.value.indexOf(option)
+            console.log(index)
             fields.remove( index );
         }
     };

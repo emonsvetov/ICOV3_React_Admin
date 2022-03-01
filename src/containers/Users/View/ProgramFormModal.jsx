@@ -8,8 +8,9 @@ import { FieldArray } from "react-final-form-arrays"
 import arrayMutators from "final-form-arrays"
 import CheckboxGroup from "@/shared/components/form/CheckboxGroup"
 
-const ProgramFormModal = ({program, roles, isOpen, setOpen, toggle, theme, rtl, cbAddProgram}) => {
-    var [roles, setRoles] = useState(roles)
+const ProgramFormModal = ({program, roles, programRoles, isOpen, setOpen, toggle, theme, rtl, cbAddProgram}) => {
+    // console.log(programRoles)
+    // var [roles, setRoles] = useState(roles)
     return (
     <Modal className={`modal-program model-content-center modal-md ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
         <ModalBody className='modal-md'>
@@ -17,7 +18,7 @@ const ProgramFormModal = ({program, roles, isOpen, setOpen, toggle, theme, rtl, 
                 onSubmit={cbAddProgram}
                 validate={validate}
                 initialValues={{
-                    roles: []
+                    roles: programRoles
                 }}
                 mutators={{
                     ...arrayMutators
