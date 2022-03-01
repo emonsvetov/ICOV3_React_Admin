@@ -6,16 +6,11 @@ import axios from 'axios'
 import useDebounce from "@/useDebounce"
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
-import {inArray, ucfirst} from "@/shared/helpers"
+import {inArray, extractRolesFromProgramPermissions} from "@/shared/helpers"
+import { fetchRoles, fetchUserPrograms, fetchUserProgramPermissions } from "@/shared/apiHelper"
 import ProgramFormModal from './ProgramFormModal'
 
 const queryClient = new QueryClient()
-
-const ROLES = [
-    {id: "001", name: 'Program 1'},
-    {id: "002", name: 'Program 2'},
-    {id: "003", name: 'Program 3'},
-]
 
 const ProgramsCard = ( {user, organization}) => {
     const dispatch = useDispatch()
@@ -34,35 +29,11 @@ const ProgramsCard = ( {user, organization}) => {
     const [removing, setRemoving] = useState(false)
     const [roles, setRoles] = useState(null)
     const [programRoles, setProgramRoles] = useState(null)
+    const [pristine, setPristine] = useState(true)
+    const [updating, setUpdating] = useState(false)
 
     const toggle = () => {
         setOpen(prevState => !prevState)
-    }
-
-    const fetchRoles = async() => {
-        try {
-            const response = await axios.get(
-            `/organization/${organization.id}/role?minimal=true`
-            );
-            // console.log(response)
-            const results = response.data;
-            return results;
-        } catch (e) {
-            throw new Error(`API error:${e?.message}`)
-        }
-    }
-
-    const fetchUserPrograms = async() => {
-        try {
-            const response = await axios.get(
-            `/organization/${organization.id}/user/${user.id}/program?minimal=true`
-            );
-            // console.log(response)
-            const results = response.data;
-            return results;
-        } catch (e) {
-            throw new Error(`API error:${e?.message}`)
-        }
     }
 
     const search = async( queryKeyword, cbShow ) => {
@@ -72,10 +43,7 @@ const ProgramsCard = ( {user, organization}) => {
             const response = await axios.get(
             `/organization/${organization.id}/program?minimal=true&keyword=${queryKeyword}`
             );
-            console.log(response)
-            const results = response.data;
-            cbShow(true)
-            return results;
+            return response.data;
         } catch (e) {
             throw new Error(`API error:${e?.message}`)
         }
@@ -85,7 +53,11 @@ const ProgramsCard = ( {user, organization}) => {
 
     const { isLoading, error, data, isSuccess } = useQuery(
         ['users', debouncedKeyword, setShow],
-        () => search(debouncedKeyword, setShow),
+        () => search( debouncedKeyword ).then( results => {
+            setShow(true)
+            setPristine(false)
+            return results
+        }),
         {
             keepPreviousData: false,
             staleTime: Infinity,
@@ -94,7 +66,7 @@ const ProgramsCard = ( {user, organization}) => {
 
     const getRoles = () => {
         setLoading(true)
-        fetchRoles()
+        fetchRoles( organization.id )
         .then( data => {
             setRoles(data);
             setLoading(false)
@@ -103,15 +75,13 @@ const ProgramsCard = ( {user, organization}) => {
 
     const getUserPrograms = () => {
         setLoading(true)
-        fetchUserPrograms()
+        fetchUserPrograms( organization.id, user.id )
         .then( data => {
             setUserPrograms(data);
             setUserProgramIds(data.map(a => a.id));
             setLoading(false)
         })
     }
-
-
 
     useEffect( () => {
         if( organization?.id)   {
@@ -132,20 +102,14 @@ const ProgramsCard = ( {user, organization}) => {
     const onClickAddProgram = async( program, updating = false ) => {
         setOpen(true)
         setProgram(program)
+        setProgramRoles(null)
         if( updating )  {
-            try {
-                const response = await axios.get(
-                `/organization/${organization.id}/user/${user.id}/program/${program.id}/permission`
-                );
-                // console.log(response)
-                let results = response.data;
-                results = results.map(function(item) { return parseInt(item.replace(`program.${program.id}.role.`, ``)) });
-                // console.log(results);
-                setProgramRoles(results)
-                return results;
-            } catch (e) {
-                throw new Error(`API error:${e?.message}`)
-            }
+            setUpdating(true)
+            fetchUserProgramPermissions(organization.id, user.id, program.id)
+            .then( _permissions => {
+                const _roles = extractRolesFromProgramPermissions(_permissions, program.id);
+                setProgramRoles(_roles)
+            })
         }
     }
 
@@ -166,9 +130,11 @@ const ProgramsCard = ( {user, organization}) => {
                 setAdding(false)
                 setShow( false )
                 dispatch(sendFlashMessage('Program added successfully!', 'alert-success'))
-                // toggleResults()
-                // setKeyword('')
-                getUserPrograms()
+                toggleResults()
+                setKeyword('')
+                setOpen(false)
+                if( !updating ) getUserPrograms()
+                setUpdating( false )
             }
         })
         .catch( error => {
@@ -189,6 +155,8 @@ const ProgramsCard = ( {user, organization}) => {
             if(res.status == 200)  {
                 setRemoving(false)
                 dispatch(sendFlashMessage('Program removed successfully!', 'alert-success'))
+                toggleResults()
+                setKeyword('')
                 getUserPrograms()
             }
         })
@@ -219,7 +187,7 @@ const ProgramsCard = ( {user, organization}) => {
 
     const RenderResultPrograms = ({programs, isSub = false}) => {
         // console.log(programs)
-        if( programs.length == 0) return 'No program found'
+        if( !pristine && keyword.length > 1 && programs.length == 0) return 'No program found'
     
         return (
             programs.map( (program, i) => <RenderResultItem isSub={isSub} program={program} key={`item-program-{${i}}`} /> )

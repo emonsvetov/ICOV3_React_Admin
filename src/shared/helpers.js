@@ -230,4 +230,8 @@ export function buildIdArray( object )    {
 export function ucfirst(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+export const extractRolesFromProgramPermissions = (permissionArr, programId) => {
+    return permissionArr.map(function(item) { return parseInt(item.replace(`program.${programId}.role.`, ``)) })
+}
   
