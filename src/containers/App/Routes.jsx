@@ -67,7 +67,9 @@ import {Inventory,
   SupplierRedemption,
   TrialBalance,
   Deposit,
-  UnassignedProgramDomains } from '../Reports';
+  UnassignedProgramDomains,
+  MoniesPendingAmount
+ } from '../Reports';
 
 import TreeView from '../TreeViewBasic';
 
@@ -164,6 +166,7 @@ const Reports = () => (
     <Route exact path="/reports/trial-balance" component={TrialBalance} />
     <Route exact path="/reports/deposit" component={Deposit} />
     <Route exact path="/reports/unassigned-program-domains" component={UnassignedProgramDomains} />
+    <Route exact path="/reports/monies-pending-amount" component={MoniesPendingAmount} />
   </Switch>
 );
 

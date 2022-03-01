@@ -38,7 +38,7 @@ const fetchProgramData = async () => {
 
 const getFirstDay = () =>{
     let date = new Date();
-    return new Date(date.getFullYear(), date.getMonth(), 1)
+    return new Date(date.getFullYear(), 0, 1)
 }
 
 const DepositFilter = ({onClickFilterCallback}) => {
