@@ -1,13 +1,16 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
-import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
 import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter} from "@/shared/tableHelper"
+import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
+import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 
 import axios from "axios";
 import {
@@ -19,23 +22,46 @@ import {
     Row,
     Col,
   } from "reactstrap";
-import UsersFilter from './UsersFilter'
 
 import { USERS_COLUMNS } from "./columns";
 import AddProgramUserModal from './AddProgramUserModal'
 
 const queryClient = new QueryClient()
 
-const DataTable = ({program}) => {
+const DataTable = ({program, organization}) => {
+
+    // alert(JSON.stringify(organization))
+
+    const flashDispatcher = useDispatch()
   
     const [keyword, setKeyword] = useState('');
     const [filter, setFilter] = useState({ keyword:''});
+    const [trigger, setTrigger] = useState(0);
 
-  // var [data, setData] = useState([]);
-  const [isOpen, setOpen] = useState(false)
+    // var [data, setData] = useState([]);
+    const [isOpenAdd, setOpenAdd] = useState(false)
 
-    const toggle = () => {
-        setOpen(prevState => !prevState)
+    const toggleAdd = () => {
+        setOpenAdd(prevState => !prevState)
+    }
+    const onClickViewUser = ( user_id ) => {
+
+    }
+    const onClickRemoveUser = ( user_id ) => {
+        if( !window.confirm( 'Are you sure to remove this user from this program?') )    {
+            return;
+        }
+        axios.delete(`/organization/${organization.id}/user/${user_id}/program/${program.id}`)
+        .then( (res) => {
+            if(res.status == 200)  {
+                flashDispatcher(sendFlashMessage('User removed successfully!', 'alert-success'))
+                setTrigger( Math.floor(Date.now() / 1000) )
+            }
+        })
+        .catch( error => {
+            flashDispatcher(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))
+            console.log(error.response.data);
+        })
     }
 
     const onClickFilterCallback = (keyword) => {
@@ -49,8 +75,8 @@ const DataTable = ({program}) => {
     const RenderActions = ({row}) => {
         return (
             <>
-                <Link to={`/program/5/user/${row.original.id}`} >View</Link>{' | '}
-                <Link to={`/program/5/user/${row.original.id}`} >Delete</Link>
+                <span onClick={()=>onClickViewUser(row.original.id)} className="link a" >View</span>{' | '}
+                <span onClick={()=>onClickRemoveUser(row.original.id)} className="link a" >Delete</span>
             </>
         )
     }
@@ -75,20 +101,23 @@ const DataTable = ({program}) => {
       []
   )
 
-  const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
+  const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] =
   React.useReducer(reducer, initialState);
 
-  const apiUrl = `/organization/1/program/${program.id}/user`
+  const apiUrl = `/organization/${organization.id}/program/${program.id}/user`
+
+//   alert(apiUrl)
       
   const { isLoading, error, data, isSuccess } = useQuery(
-      ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
+      ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
       () => fetchApiData(
         {
             url: apiUrl,
             page: queryPageIndex,
             size: queryPageSize,
             filter: queryPageFilter,
-            sortby: queryPageSortBy
+            sortby: queryPageSortBy,
+            trigger: queryTrigger
         }),
       {
           keepPreviousData: true,
@@ -98,7 +127,7 @@ const DataTable = ({program}) => {
 
   const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
-  console.log(data)
+//   console.log(data)
 
   const {
       getTableProps,
@@ -141,7 +170,7 @@ const DataTable = ({program}) => {
   // const [statusFilterValue, setStatusFilterValue] = useState("");
   const manualPageSize = []
   
-  useEffectToDispatch( dispatch, pageIndex, pageSize, gotoPage, sortBy, filter, data );
+  useEffectToDispatch( dispatch, pageIndex, pageSize, gotoPage, sortBy, filter, data, trigger );
 
   if (error) {
       return <p>Error: {JSON.stringify(error)}</p>;
@@ -161,16 +190,16 @@ const DataTable = ({program}) => {
                             <TableFilter onClickFilterCallback={onClickFilterCallback} label={'users'} />
                         </div>
                         <div className="col-md-3 col-lg-3 text-right pr-0">
-                            <Link style={{maxWidth:'200px'}}
+                            <span to={`/`} style={{maxWidth:'200px'}}
                             className="btn btn-primary account__btn account__btn--small"
-                            onClick={()=>toggle()}
+                            onClick={()=>toggleAdd()}
                             >Add Program User
-                            </Link>
-                            
+                            </span>
                         </div>
                     </div>
                 </form>
-                <AddProgramUserModal isOpen={isOpen} setOpen={setOpen} toggle={toggle} />
+                <AddProgramUserModal isOpen={isOpenAdd} setOpen={setOpenAdd} toggle={toggleAdd} />
+
                   <table {...getTableProps()} className="table">
                       <thead>
                           {headerGroups.map( (headerGroup) => (
@@ -277,34 +306,34 @@ const Sorting = ({ column }) => (
   </span>
 );
 
-const TableWrapper = ({program}) => {
+const TableWrapper = ({program, organization}) => {
   return (
       <QueryClientProvider client={queryClient}>
-          <DataTable program={program} />
+          <DataTable program={program} organization={organization} />
       </QueryClientProvider>
   )
 }
 
-const ProgramUsers = () => {
-const { programId } = useParams();
-const [program, setProgram] = useState(null);
-const fetchProgramData = async() => {
-    try {
-        const response = await axios.get(`/organization/1/program/${programId}`);
-        // console.log(response)
-        setProgram(response.data)
-    } catch (e) {
-        throw new Error(`API error:${e?.message}`);
-    }
-};
-useEffect(() => {
-    fetchProgramData()
-},[])
+const ProgramUsers = ({organization}) => {
+    const { programId } = useParams();
+    const [program, setProgram] = useState(null);
+    const fetchProgramData = async() => {
+        try {
+            const response = await axios.get(`/organization/1/program/${programId}`);
+            // console.log(response)
+            setProgram(response.data)
+        } catch (e) {
+            throw new Error(`API error:${e?.message}`);
+        }
+    };
+    useEffect(() => {
+        fetchProgramData()
+    },[])
 
-    if( !program )  {
+    if( !program?.id || !organization?.id )  {
         return 'Loading...'
     }
-
+    // console.log(organization)
     return (
         <Container className="dashboard">
             <Row>
@@ -317,8 +346,7 @@ useEffect(() => {
                 <Col md={12}>
                     <Card>
                         <CardBody>
-                            
-                            {program && <TableWrapper program={program} />}
+                            {program && organization && <TableWrapper program={program} organization={organization} />}
                         </CardBody>
                     </Card>
                 </Col>
@@ -326,5 +354,6 @@ useEffect(() => {
         </Container>
     )
 }
-
-export default ProgramUsers;
+export default withRouter(connect((state) => ({
+    organization: state.organization
+}))(ProgramUsers));

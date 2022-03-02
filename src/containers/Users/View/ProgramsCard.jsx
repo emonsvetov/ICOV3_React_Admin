@@ -6,15 +6,11 @@ import axios from 'axios'
 import useDebounce from "@/useDebounce"
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
-import {inArray, ucfirst} from "@/shared/helpers"
+import {inArray, extractRolesFromProgramPermissions} from "@/shared/helpers"
+import { fetchRoles, fetchUserPrograms, fetchUserProgramPermissions } from "@/shared/apiHelper"
+import ProgramFormModal from './ProgramFormModal'
 
 const queryClient = new QueryClient()
-
-const PROGRAMS = [
-    {id: "001", name: 'Program 1'},
-    {id: "002", name: 'Program 2'},
-    {id: "003", name: 'Program 3'},
-]
 
 const ProgramsCard = ( {user, organization}) => {
     const dispatch = useDispatch()
@@ -23,20 +19,21 @@ const ProgramsCard = ( {user, organization}) => {
     // console.log(organization)
 
     const [loading, setLoading] = useState(false)
+    const [program, setProgram] = useState(null)
     const [userPrograms, setUserPrograms] = useState(null)
     const [userProgramIds, setUserProgramIds] = useState(null)
+    const [isOpen, setOpen] = useState(false);
+    const [keyword, setKeyword] = useState('')
+    const [show, setShow] = useState(false)
+    const [adding, setAdding] = useState(false)
+    const [removing, setRemoving] = useState(false)
+    const [roles, setRoles] = useState(null)
+    const [programRoles, setProgramRoles] = useState(null)
+    const [pristine, setPristine] = useState(true)
+    const [updating, setUpdating] = useState(false)
 
-    const fetchUserPrograms = async() => {
-        try {
-            const response = await axios.get(
-            `/organization/${organization.id}/user/${user.id}/program?minimal=true`
-            );
-            // console.log(response)
-            const results = response.data;
-            return results;
-        } catch (e) {
-            throw new Error(`API error:${e?.message}`)
-        }
+    const toggle = () => {
+        setOpen(prevState => !prevState)
     }
 
     const search = async( queryKeyword, cbShow ) => {
@@ -46,35 +43,39 @@ const ProgramsCard = ( {user, organization}) => {
             const response = await axios.get(
             `/organization/${organization.id}/program?minimal=true&keyword=${queryKeyword}`
             );
-            console.log(response)
-            const results = response.data;
-            cbShow(true)
-            return results;
+            return response.data;
         } catch (e) {
             throw new Error(`API error:${e?.message}`)
         }
     }
 
-    const [keyword, setKeyword] = useState('')
-    const [show, setShow] = useState(false)
-    const [adding, setAdding] = useState(false)
-    const [removing, setRemoving] = useState(false)
-
-
     const debouncedKeyword = useDebounce(keyword, 500);
 
     const { isLoading, error, data, isSuccess } = useQuery(
         ['users', debouncedKeyword, setShow],
-        () => search(debouncedKeyword, setShow),
+        () => search( debouncedKeyword ).then( results => {
+            setShow(true)
+            setPristine(false)
+            return results
+        }),
         {
             keepPreviousData: false,
             staleTime: Infinity,
         }
     )
 
+    const getRoles = () => {
+        setLoading(true)
+        fetchRoles( organization.id )
+        .then( data => {
+            setRoles(data);
+            setLoading(false)
+        })
+    }
+
     const getUserPrograms = () => {
         setLoading(true)
-        fetchUserPrograms()
+        fetchUserPrograms( organization.id, user.id )
         .then( data => {
             setUserPrograms(data);
             setUserProgramIds(data.map(a => a.id));
@@ -85,6 +86,7 @@ const ProgramsCard = ( {user, organization}) => {
     useEffect( () => {
         if( organization?.id)   {
             getUserPrograms()
+            getRoles()
         }
     }, [])
 
@@ -97,53 +99,76 @@ const ProgramsCard = ( {user, organization}) => {
         setShow( ! show )
     }
 
-    const onClickProgramItem = (event, program_id, action = 'add') => {
-        // alert(JSON.stringify({program_id, action}))
-        event.preventDefault();
+    const onClickAddProgram = async( program, updating = false ) => {
+        setOpen(true)
+        setProgram(program)
+        setProgramRoles(null)
+        if( updating )  {
+            setUpdating(true)
+            fetchUserProgramPermissions(organization.id, user.id, program.id)
+            .then( _permissions => {
+                const _roles = extractRolesFromProgramPermissions(_permissions, program.id);
+                setProgramRoles(_roles)
+            })
+        }
+    }
 
+    const addProgram = values => {
+        // console.log(JSON.stringify({values, program}))
+        // return
+        if( !program || !values.roles ) return
         const data = {
-            program_id
+            program_id: program.id,
+            roles: values.roles
         }
-        if(action === 'add')    {
-            setAdding(true)
-            axios.post(`/organization/${organization.id}/user/${user.id}/program`, data)
-            .then( (res) => {
-                if(res.status == 200)  {
-                    setAdding(false)
-                    dispatch(sendFlashMessage('Program added successfully!', 'alert-success'))
-                    // toggleResults()
-                    // setKeyword('')
-                    getUserPrograms()
-                }
-            })
-            .catch( error => {
-                dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))
-                console.log(error.response.data);
+        // alert(JSON.stringify(data))
+        // return
+        setAdding(true)
+        axios.post(`/organization/${organization.id}/user/${user.id}/program`, data)
+        .then( (res) => {
+            if(res.status == 200)  {
                 setAdding(false)
-            })
-        }
+                setShow( false )
+                dispatch(sendFlashMessage('Program added successfully!', 'alert-success'))
+                toggleResults()
+                setKeyword('')
+                setOpen(false)
+                if( !updating ) getUserPrograms()
+                setUpdating( false )
+            }
+        })
+        .catch( error => {
+            setShow( false )
+            dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))
+            console.log(error.response.data);
+            setAdding(false)
+        })
+    }
 
-        if(action === 'remove')    {
-            setRemoving(true)
-            axios.delete(`/organization/${organization.id}/user/${user.id}/program/${program_id}`)
-            .then( (res) => {
-                if(res.status == 200)  {
-                    setRemoving(false)
-                    dispatch(sendFlashMessage('Program removed successfully!', 'alert-success'))
-                    getUserPrograms()
-                }
-            })
-            .catch( error => {
-                dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))
-                console.log(error.response.data);
-                setRemoving(false)
-            })
+    const onClickRemoveProgram = ( program ) => {
+        if( !window.confirm( 'Are you sure to remove this program from the user?') )    {
+            return;
         }
-        
+        setRemoving(true)
+        axios.delete(`/organization/${organization.id}/user/${user.id}/program/${program.id}`)
+        .then( (res) => {
+            if(res.status == 200)  {
+                setRemoving(false)
+                dispatch(sendFlashMessage('Program removed successfully!', 'alert-success'))
+                toggleResults()
+                setKeyword('')
+                getUserPrograms()
+            }
+        })
+        .catch( error => {
+            dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))
+            console.log(error.response.data);
+            setRemoving(false)
+        })
     }
 
     // console.log(data)
-    console.log(userProgramIds)
+    // console.log(userProgramIds)
 
     if( loading ) return '<p>Loading...</p>';
 
@@ -155,14 +180,14 @@ const ProgramsCard = ( {user, organization}) => {
         return (
         <Row className={[`pt-2 pb-0 row-item-program pr-0 ml-0`, isSub ? 'is-sub' : '']}>
             <Col md="6" lg="6" xl="6">{program.id} - {program.name}</Col>
-            <Col md="6" lg="6" xl="6" className='pr-3 text-right'><div className='a ucfirst' disabled={adding || removing} onClick={(e)=>onClickProgramItem(e, program.id, action )}>{action}</div></Col>
+            <Col md="6" lg="6" xl="6" className='pr-3 text-right'><div className='a ucfirst' disabled={adding || removing} onClick={(e)=> exists ? onClickRemoveProgram(program) : onClickAddProgram(program)}>{action}</div></Col>
             {program.children && program.children.length > 0 && <RenderResultPrograms programs={program.children} isSub={true} />}
         </Row>
     )}
 
     const RenderResultPrograms = ({programs, isSub = false}) => {
         // console.log(programs)
-        if( programs.length == 0) return 'No program found'
+        if( !pristine && keyword.length > 1 && programs.length == 0) return 'No program found'
     
         return (
             programs.map( (program, i) => <RenderResultItem isSub={isSub} program={program} key={`item-program-{${i}}`} /> )
@@ -172,7 +197,7 @@ const ProgramsCard = ( {user, organization}) => {
     const RenderItem = ({ program }) => (
         <Row className='pt-4 pb-1 row-item-program pr-0 ml-0'>
             <Col md="6" lg="6" xl="6">{program.id} - {program.name}</Col>
-            <Col md="6" lg="6" xl="6" className='pr-3 text-right'><span className='a' onClick={(e)=>onClickProgramItem(e, program.id, 'remove' )}>Remove</span></Col>
+            <Col md="6" lg="6" xl="6" className='pr-3 text-right'><span className='a' onClick={(e)=>onClickRemoveProgram( program )}>Remove</span> | <span className='a' onClick={(e)=>onClickAddProgram( program, true )}>Manage Role</span></Col>
         </Row>
     )
 
@@ -206,6 +231,7 @@ const ProgramsCard = ( {user, organization}) => {
                                 </div>
                             }
                             </div>
+                            {program && roles && <ProgramFormModal program={program} roles={roles} programRoles={programRoles} isOpen={isOpen} setOpen={setOpen} toggle={toggle} cbAddProgram={addProgram} />}
                         </form>
                     </Col>
                 </Row>
