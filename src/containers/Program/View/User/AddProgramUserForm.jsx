@@ -4,12 +4,12 @@ import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
 import formValidation from "@/shared/validation/adduser";
 import axios from 'axios';
 import { fetchRoles } from "@/shared/apiHelper"
-import FormFields from '../../components/FormFields'
 import {unpatchSelect, labelizeNamedData} from '@/shared/helpers'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
+import ProgramUserFormFields from './ProgramUserFormFields'
 
-const AddUserForm = ({organization}) => {
+const AddProgramUserForm = ({organization, toggle}) => {
     const dispatch = useDispatch()
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -74,10 +74,10 @@ const AddUserForm = ({organization}) => {
                 </ButtonToolbar>
             </Col>
         </Row>
-        <FormFields roles={roles}/>
+        <ProgramUserFormFields roles={roles}/>
     </form>
     )}
   </Form>
 )}
 
-export default AddUserForm;
+export default AddProgramUserForm;

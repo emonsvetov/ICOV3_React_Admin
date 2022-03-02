@@ -234,4 +234,12 @@ export function ucfirst(string) {
 export const extractRolesFromProgramPermissions = (permissionArr, programId) => {
     return permissionArr.map(function(item) { return parseInt(item.replace(`program.${programId}.role.`, ``)) })
 }
+
+export const labelizeNamedData = (data, fields = ["id", "name"]) => {
+    let newData = []
+    for( var i in data) {
+        newData.push({label: data[i][fields[1]], value: data[i][fields[0]]})
+    }
+    return newData;
+}
   

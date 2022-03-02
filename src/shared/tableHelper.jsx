@@ -1,6 +1,7 @@
 import React from "react"
 import axios from 'axios'
 
+const QUERY_TRIGGER = 'QUERY_TRIGGER';
 const PAGE_CHANGED = 'PAGE_CHANGED';
 const PAGE_SIZE_CHANGED = 'PAGE_SIZE_CHANGED';
 const PAGE_SORT_CHANGED = 'PAGE_SORT_CHANGED'
@@ -34,12 +35,17 @@ export const reducer = (state, { type, payload }) => {
             ...state,
             totalCount: payload,
         };
+    case QUERY_TRIGGER:
+        return {
+            ...state,
+            queryTrigger: payload,
+        };
     default:
       throw new Error(`Unhandled action type: ${type}`);
   }
 };
 
-export const useEffectToDispatch = (dispatch, pageIndex, pageSize, gotoPage, sortBy, filter, data) => {
+export const useEffectToDispatch = (dispatch, pageIndex, pageSize, gotoPage, sortBy, filter, data, trigger = 0) => {
     React.useEffect(() => {
         dispatch({ type: PAGE_CHANGED, payload: pageIndex });
     }, [pageIndex]);
@@ -69,6 +75,11 @@ export const useEffectToDispatch = (dispatch, pageIndex, pageSize, gotoPage, sor
             });
         }
     }, [data?.count]);
+
+    React.useEffect(() => {
+        dispatch({ type: QUERY_TRIGGER, payload: trigger });
+        gotoPage(0);
+    }, [trigger, gotoPage]);
 }
 
 export const initialState = {
@@ -77,6 +88,7 @@ export const initialState = {
     totalCount: 0,
     queryPageFilter:{},
     queryPageSortBy: [],
+    queryTrigger:0,
 };
 
 // export const fetchApiData = async (apiUrl, page, pageSize, pageFilterO = null, pageSortBy) => {
@@ -87,7 +99,8 @@ export const fetchApiData = async( queryParams )  => {
         page: initialState.queryPageIndex,
         size: initialState.queryPageSize,
         filter: initialState.queryPageFilter,
-        sortby: initialState.queryPageSortBy
+        sortby: initialState.queryPageSortBy,
+        trigger: initialState.queryTrigger
     }
 
     const options = { ...queryDefaults, ...queryParams }
@@ -96,8 +109,13 @@ export const fetchApiData = async( queryParams )  => {
 
     const params = []
     let paramStr = ''
+    if( options.trigger > 0) {
+        params.push(`t=${options.trigger}`)
+    }
     if( options.filter ) {
         if(options.filter.keyword !== 'undefined' && options.filter.keyword) params.push(`keyword=${options.filter.keyword}`)
+    }
+    if( params.length > 0 ) {
         paramStr = params.join('&')
     }
     if( options.sortby.length > 0 ) {

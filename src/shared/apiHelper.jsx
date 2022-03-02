@@ -1,5 +1,15 @@
 import axios from 'axios'
 
+export const fetchUser = async (organization_id, id ) => {
+    try {
+        const response = await axios.get(`/organization/${organization_id}/user/${id}`);
+        // console.log(response)
+        return response.data;
+    } catch (e) {
+        throw new Error(`API error:${e?.message}`);
+    }
+};
+
 export const fetchRoles = async(organization_id) => {
     try {
         const response = await axios.get(

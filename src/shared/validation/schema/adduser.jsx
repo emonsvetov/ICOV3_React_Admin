@@ -4,7 +4,7 @@ const validationSchema = {
     field: {
         first_name: [Validators.required.validator],
         last_name: [Validators.required.validator],
-        role: [Validators.required.validator],        
+        role_id: [Validators.required.validator],
         email: [Validators.required.validator],
         phone: [Validators.required.validator],
         // award_level: [Validators.required.validator],

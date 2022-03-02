@@ -1,0 +1,231 @@
+import React from 'react';
+import { Field } from 'react-final-form';
+import { Row, Col } from 'reactstrap';
+import Select from 'react-select';
+
+const FormFields = ({roles}) => {
+
+    const rolePlaceholder = 'Select Role'
+
+    return (
+        <div className="user-form-fields w100">
+            <Row>
+                <Col md="6" lg="4" xl="4">
+                    <Field name="first_name">
+                    {({ input, meta }) => (
+                        <div className="form__form-group">
+                            <span className="form__form-group-label">First Name</span>
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <input type="text" {...input} placeholder="First Name" />
+                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    </Field>
+                </Col>
+                <Col md="6" lg="4" xl="4">
+                    <Field name="last_name">
+                    {({ input, meta }) => (
+                        <div className="form__form-group">
+                            <span className="form__form-group-label">Last Name</span>
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <input type="text" {...input} placeholder="Last Name" />
+                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    </Field>
+                </Col>
+            </Row>
+            <Row>
+                <Col md="6" lg="4" xl="4">
+                    <Field name="role_id" component="select">
+                    {({ input, meta }) => (
+                        <div className="form__form-group">
+                            <span className="form__form-group-label">Role</span>
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <Select
+                                        options={roles}
+                                        clearable={false}
+                                        className="react-select"
+                                        placeholder={rolePlaceholder}
+                                        classNamePrefix="react-select"
+                                        {...input}
+                                    />
+                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    </Field>
+                </Col>
+            </Row>
+            <Row>
+                <Col md="6" lg="4" xl="4">
+                    <Field name="email">
+                    {({ input, meta }) => (
+                        <div className="form__form-group">
+                            <span className="form__form-group-label">Email</span>
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <input type="text" {...input} placeholder="Email" />
+                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    </Field>
+                </Col>
+                <Col md="6" lg="4" xl="4">
+                    <Field name="phone">
+                    {({ input, meta }) => (
+                        <div className="form__form-group">
+                            <span className="form__form-group-label">Phone Number</span>
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <input type="text" {...input} placeholder="Phone Number" />
+                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    </Field>
+                </Col>
+            </Row>
+            <Row>
+                <Col md="6" lg="4" xl="4">
+                    <Field name="award_level">
+                    {({ input, meta }) => (
+                        <div className="form__form-group">
+                            <span className="form__form-group-label">Award Level</span>
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <input type="text" {...input} placeholder="Award Level" />
+                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    </Field>
+                </Col>
+                <Col md="6" lg="4" xl="4">
+                    <Field name="work_anniversary">
+                    {({ input, meta }) => (
+                        <div className="form__form-group">
+                            <span className="form__form-group-label">Work Anniversary</span>
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <input type="date" {...input} placeholder="Work Anniversary" />
+                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    </Field>
+                </Col>
+                <Col md="6" lg="4" xl="4">
+                    <Field name="dob">
+                    {({ input, meta }) => (
+                        <div className="form__form-group">
+                            <span className="form__form-group-label">Birthday</span>
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <input type="date" {...input} placeholder="Birthday" />
+                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    </Field>
+                </Col>
+            </Row>
+            <Row>
+                <Col md="6" lg="4" xl="4">
+                    <Field name="division">
+                    {({ input, meta }) => (
+                        <div className="form__form-group">
+                            <span className="form__form-group-label">Department / Team</span>
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <input type="text" {...input} placeholder="Department / Team" />
+                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    </Field>
+                </Col>
+                <Col md="6" lg="4" xl="4">
+                    <Field name="employee_number">
+                    {({ input, meta }) => (
+                        <div className="form__form-group">
+                            <span className="form__form-group-label">Employee Number</span>
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <input type="text" {...input} placeholder="Employee Number" />
+                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    </Field>
+                </Col>
+                <Col md="6" lg="4" xl="4">
+                    <Field name="supervisor_employee_number">
+                    {({ input, meta }) => (
+                        <div className="form__form-group">
+                            <span className="form__form-group-label">Supervisor ID</span>
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <input type="text" {...input} placeholder="Supervisor ID" />
+                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    </Field>
+                </Col>
+            </Row>
+            <h4 className='mb-2'>Password Settings:</h4>
+            <Row>
+                <Col md="6" lg="4" xl="4">
+                    <Field name="password">
+                    {({ input, meta }) => (
+                        <div className="form__form-group">
+                            <span className="form__form-group-label">Password</span>
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <input type="text" {...input} placeholder="password" />
+                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    </Field>
+                </Col>
+                <Col md="6" lg="4" xl="4">
+                    <Field name="confirm_password">
+                    {({ input, meta }) => (
+                        <div className="form__form-group">
+                            <span className="form__form-group-label">Confirm Password</span>
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <input type="text" {...input} placeholder="confirm password" />
+                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    </Field>
+                </Col>
+            </Row>
+        </div>
+    )
+}
+
+export default FormFields
