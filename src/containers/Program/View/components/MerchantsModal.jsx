@@ -132,7 +132,7 @@ const MerchantsModal = ({ isOpen, setOpen, toggle, theme, rtl }) => {
   );
 };
 const DataTable = ({ toggle }) => {
-  const LOGO_PUBLIC_URL = `${process.env.PUBLIC_URL}/img/logo`;
+  const LOGO_PUBLIC_URL = `${process.env.REACT_APP_API_STORAGE_URL}`;
   // console.log(LOGO_PUBLIC_URL)
 
   const [relationData, setRelationData] = useState([]);
@@ -156,9 +156,8 @@ const DataTable = ({ toggle }) => {
   const fetchProgramMerchantData = async () => {
     try {
       const response = await axios.get(
-        `/organization/1/program/${programId}/merchant`
+        `/organization/1/program/${programId}/merchant?minimal=true&sortby=name`
       );
-
       let result = response.data;
       let temp_relation = [];
       result.map((item, index) => {
