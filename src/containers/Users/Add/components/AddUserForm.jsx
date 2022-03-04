@@ -38,10 +38,10 @@ const AddUserForm = ({organization}) => {
         // setLoading(true)
         axios.put('/organization/1/users/create', values)
         .then( (res) => {
-        //   console.log(res)
-          if(res.status == 200)  {
-            window.location = `/users/?message=User saved successfully`
-          }
+            // console.log(res)
+            if(res.status == 200)  {
+                window.location = `/users/?message=User saved successfully`
+            }
         })
         .catch( error => {
           //console.log(error.response.data);

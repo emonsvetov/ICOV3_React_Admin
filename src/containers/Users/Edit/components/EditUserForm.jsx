@@ -1,6 +1,4 @@
 import React, {useState, useEffect} from 'react';
-import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
 import { Form } from 'react-final-form';
 import { useParams } from 'react-router-dom'
 import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
@@ -49,6 +47,7 @@ const EditUserForm = ({organization}) => {
     const onSubmit = values => {
         // values["organization_id"] = 1
         // setLoading(true)
+        // console.log(values)
         values = unpatchSelect(values, ["role_id"])
         // console.log(values)
         // return
@@ -103,6 +102,4 @@ const EditUserForm = ({organization}) => {
     )}
   </Form>
 )}
-export default withRouter(connect((state) => ({
-    organization: state.organization
-}))(EditUserForm));
+export default EditUserForm;
