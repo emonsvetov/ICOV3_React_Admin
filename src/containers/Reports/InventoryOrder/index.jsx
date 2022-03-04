@@ -9,7 +9,7 @@ const InventoryOrder = () => {
       <Row>
         <Col md={12}>
           <h3 className="page-title">Inventory Order</h3>
-          <h3 class="page-subhead subhead"><Link className="" to="/">Home</Link> / Inventory Order</h3>
+          <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / Inventory Order</h3>
         </Col>
       </Row>
       <Row>

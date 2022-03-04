@@ -119,12 +119,12 @@ const InsertIconModal = ({isOpen, theme, rtl}) => {
                             <Col md={12} lg={12}>
                             <Row className='w100'>
                                 <Col md="12" lg="12" xl="12">
-                                    <ul class="img_wrap">
+                                    <ul className="img_wrap">
                                     {
                                         icons.map(function(data, key){
                                         return <li key={key} onClick={(e)=> {selectItem(data.path, data.id )}} className={activePath === data.path ? 'active' : ''}>
                                             <div className='preview'>
-                                                <i class="fa fa-check"></i>
+                                                <i className="fa fa-check"></i>
                                                 <img src={`${process.env.REACT_APP_API_STORAGE_URL}/${data.path}`} title={data.name} />
                                             </div>
                                             </li>

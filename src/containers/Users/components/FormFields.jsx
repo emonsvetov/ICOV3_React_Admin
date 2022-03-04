@@ -2,11 +2,19 @@ import React from 'react';
 import { Field } from 'react-final-form';
 import { Row, Col } from 'reactstrap';
 import Select from 'react-select';
+import { FieldArray } from "react-final-form-arrays"
+import CheckboxGroup from "@/shared/components/form/CheckboxGroup"
 
-const FormFields = ({roles}) => {
+const FormFields = ({form, values, submitting, pristine, config = {
+    roles:[],
+    roleInput: 'select',
+    roleField: 'role_id',
+    rolePlaceholder: 'Select Role'
+}}) => {
 
-    const rolePlaceholder = 'Select Role'
-
+    // console.log(pristine)
+    // console.log(values)
+    
     return (
         <div className="user-form-fields w100">
             <Row>
@@ -43,20 +51,29 @@ const FormFields = ({roles}) => {
             </Row>
             <Row>
                 <Col md="6" lg="4" xl="4">
-                    <Field name="role_id" component="select">
+                    <Field name={config.roleField}>
                     {({ input, meta }) => (
                         <div className="form__form-group">
                             <span className="form__form-group-label">Role</span>
                             <div className="form__form-group-field">
                                 <div className="form__form-group-row">
-                                    <Select
-                                        options={roles}
-                                        clearable={false}
-                                        className="react-select"
-                                        placeholder={rolePlaceholder}
-                                        classNamePrefix="react-select"
-                                        {...input}
-                                    />
+                                    {config.roleInput === 'checkbox' && 
+                                        <FieldArray
+                                            component={CheckboxGroup}
+                                            options={config.roles}
+                                            {...input}
+                                        />
+                                    }
+                                    {config.roleInput === 'select' && 
+                                        <Select
+                                            options={config.roles}
+                                            clearable={false}
+                                            className="react-select"
+                                            placeholder={config.rolePlaceholder}
+                                            classNamePrefix="react-select"
+                                            {...input}
+                                        />
+                                    }
                                     {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                                 </div>
                             </div>
@@ -209,7 +226,7 @@ const FormFields = ({roles}) => {
                     </Field>
                 </Col>
                 <Col md="6" lg="4" xl="4">
-                    <Field name="confirm_password">
+                    <Field name="password_confirmation">
                     {({ input, meta }) => (
                         <div className="form__form-group">
                             <span className="form__form-group-label">Confirm Password</span>

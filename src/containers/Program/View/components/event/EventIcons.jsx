@@ -52,12 +52,12 @@ const EventIcons = ({icon, setIcon, onCancel, onSelectIconOK, icons, setIcons, a
     <Col md={12} lg={12}>
        <Row className='w100'>
             <Col md="12" lg="12" xl="12">
-                <ul class="img_wrap">
+                <ul className="img_wrap">
                     {
                     icons.map(function(item, key){
                         return <li key={key} onClick={ (e)=> selectItem( item  ) } className={icon?.id === item.id ? 'active' : ''}>
                             <div className='preview'>
-                                <i class="fa fa-check"></i>
+                                <i className="fa fa-check"></i>
                                 <img src={`${process.env.REACT_APP_API_STORAGE_URL}/${item.path}`} title={item.name} />
                                 <div className="mt-2 delete-icon-icon" onClick={(e) => {if(window.confirm('Are you sure to delete this icon?')){onClickDeleteIcon(item)}}}><TrashIcon color='#bdbdbd' /></div>
                             </div>

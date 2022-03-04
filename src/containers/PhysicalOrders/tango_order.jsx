@@ -8,7 +8,7 @@ const EditOrder = () => (
     <Row>
       <Col md={12}>
         <h3 className="page-title">Tango Order's Details</h3>
-        <h3 class="page-subhead subhead"><Link className="" to="/">Home</Link> / Tango Orders Detail</h3>
+        <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / Tango Orders Detail</h3>
       </Col>
     </Row>
     <Row>

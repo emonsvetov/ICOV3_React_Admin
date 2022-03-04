@@ -16,7 +16,7 @@ export const USERS_COLUMNS = [
     {
         Header: "Role",
         accessor: "role",
-        Cell: ({ row, value }) => { return 'Employee'},
+        Cell: ({ row, value }) => { return row.original.role ? row.original.role.name : '' },
     },
     {
         Header: "Employee Number",

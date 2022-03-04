@@ -9,7 +9,7 @@ const MerchantsIndex = () => {
       <Row>
         <Col md={12}>
           <h3 className="page-title">All Merchants</h3>
-          <h3 class="page-subhead subhead"><Link className="" to="/">Home</Link> / Merchants</h3>
+          <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / Merchants</h3>
         </Col>
       </Row>
       <Row>

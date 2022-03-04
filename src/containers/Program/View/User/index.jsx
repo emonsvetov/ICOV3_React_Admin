@@ -198,7 +198,7 @@ const DataTable = ({program, organization}) => {
                         </div>
                     </div>
                 </form>
-                <AddProgramUserModal isOpen={isOpenAdd} setOpen={setOpenAdd} toggle={toggleAdd} />
+                <AddProgramUserModal organization={organization} program={program} isOpen={isOpenAdd} setOpen={setOpenAdd} toggle={toggleAdd} setTrigger={setTrigger} />
 
                   <table {...getTableProps()} className="table">
                       <thead>
