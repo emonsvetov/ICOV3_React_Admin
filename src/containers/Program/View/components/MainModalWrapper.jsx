@@ -13,11 +13,12 @@ import AddProgramModal from './AddProgramModal';
 import EventsModal from '../components/event/EventsDataModal';
 // import SubProgramsModal from './subprogram/SubProgramsModal'
 
-const MainModalWrapper = ({data, name, isOpen, setOpen, toggle, theme, rtl}) => {
+const MainModalWrapper = ({organization, data, name, isOpen, setOpen, toggle, theme, rtl}) => {
     const props = {
-        data, isOpen, setOpen, toggle, theme, rtl
+        data, isOpen, setOpen, toggle, theme, rtl, organization
     }
     // console.log(name)
+    if( !organization?.id ) return 'Loading...'
     return (
         <>
         {
@@ -59,5 +60,6 @@ MainModalWrapper.propTypes = {
   
 export default withRouter(connect((state) => ({
     theme: state.theme,
-    rtl: state.rtl
+    rtl: state.rtl,
+    organization: state.organization
 }))(MainModalWrapper));

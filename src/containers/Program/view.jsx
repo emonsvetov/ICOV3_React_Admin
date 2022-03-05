@@ -1,9 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { Link, useParams, useHistory } from 'react-router-dom';
 import { Col, Container, Row, Card, CardBody, } from 'reactstrap';
-import Alert from '@/shared/components/Alert';
 import MainModalWrapper from './View/components/MainModalWrapper';
-import AddProgramModal from './View/components/AddProgramModal';
 import axios from 'axios'
 
 const PUBLIC_URL = `${process.env.PUBLIC_URL}`;

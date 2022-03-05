@@ -2,18 +2,13 @@ import React, { useMemo, useState, useEffect } from "react";
 import {
   Modal,
   ModalBody,
-  ModalHeader,
   Button,
   ButtonToolbar,
   Container,
-  Card,
-  CardBody,
   Row,
   Col,
 } from "reactstrap";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
-import { useParams, useLocation } from "react-router-dom";
-import MERCHANTS from "@/shared/json/merchants.json";
 import {
   useTable,
   usePagination,
@@ -22,7 +17,6 @@ import {
   useResizeColumns,
   useFlexLayout,
 } from "react-table";
-import DeleteOutlineIcon from "mdi-react/DeleteOutlineIcon";
 import ReactTablePagination from "@/shared/components/table/components/ReactTablePagination";
 import SortIcon from "mdi-react/SortIcon";
 import SortAscendingIcon from "mdi-react/SortAscendingIcon";
@@ -116,7 +110,8 @@ const fetchMerchantData = async (
   }
 };
 
-const MerchantsModal = ({ isOpen, setOpen, toggle, theme, rtl }) => {
+const MerchantsModal = ({ isOpen, setOpen, toggle, theme, rtl, organization }) => {
+
   const [loading, setLoading] = useState(false);
 
   return (
@@ -126,12 +121,12 @@ const MerchantsModal = ({ isOpen, setOpen, toggle, theme, rtl }) => {
       toggle={() => setOpen(true)}
     >
       <ModalBody className="modal-lg">
-        <TableWrapper toggle={toggle} />
+        <TableWrapper toggle={toggle} organization={organization} />
       </ModalBody>
     </Modal>
   );
 };
-const DataTable = ({ toggle }) => {
+const DataTable = ({ toggle, organization }) => {
   const LOGO_PUBLIC_URL = `${process.env.REACT_APP_API_STORAGE_URL}`;
   // console.log(LOGO_PUBLIC_URL)
 
@@ -144,7 +139,7 @@ const DataTable = ({ toggle }) => {
   // const [isLoading, setIsLoading] = useState(true) //first page load!
   const fetchProgramData = async () => {
     try {
-      const response = await axios.get(`/organization/1/program/${programId}`);
+      const response = await axios.get(`/organization/${organization.id}/program/${programId}`);
       // console.log(response)
 
       setProgramData(response.data);
@@ -156,7 +151,7 @@ const DataTable = ({ toggle }) => {
   const fetchProgramMerchantData = async () => {
     try {
       const response = await axios.get(
-        `/organization/1/program/${programId}/merchant?minimal=true&sortby=name`
+        `/organization/${organization.id}/program/${programId}/merchant?minimal=true&sortby=name`
       );
       let result = response.data;
       let temp_relation = [];
@@ -196,15 +191,15 @@ const DataTable = ({ toggle }) => {
       if(type == "featured" || type == "cost_to_program"){
         postData[type] = value;
         response = await axios.post(
-          `/organization/1/program/${programId}/merchant`,postData );
+          `/organization/${organization.id}/program/${programId}/merchant`,postData );
       }
       else{
         if (value) {
           response = await axios.post(
-            `/organization/1/program/${programId}/merchant`,postData );
+            `/organization/${organization.id}/program/${programId}/merchant`,postData );
         } else {
           response = await axios.delete(
-              `/organization/1/program/${programId}/merchant/${id}`);
+              `/organization/${organization.id}/program/${programId}/merchant/${id}`);
         }
       }
       console.log(response, 'response')
@@ -549,10 +544,10 @@ const Sorting = ({ column }) => (
   </span>
 );
 
-const TableWrapper = ({ toggle }) => {
+const TableWrapper = ({ toggle, organization }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <DataTable toggle={toggle} />
+      <DataTable toggle={toggle} organization={organization} />
     </QueryClientProvider>
   );
 };
