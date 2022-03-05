@@ -25,6 +25,7 @@ import {
 
 import { USERS_COLUMNS } from "./columns";
 import AddProgramUserModal from './AddProgramUserModal'
+import EditProgramUserModal from './EditProgramUserModal'
 
 const queryClient = new QueryClient()
 
@@ -40,11 +41,18 @@ const DataTable = ({program, organization}) => {
 
     // var [data, setData] = useState([]);
     const [isOpenAdd, setOpenAdd] = useState(false)
+    const [isOpenEdit, setOpenEdit] = useState(false)
+    const [selectedUser, selectUser] = useState(false)
 
     const toggleAdd = () => {
         setOpenAdd(prevState => !prevState)
     }
+    const toggleEdit = () => {
+        setOpenEdit(prevState => !prevState)
+    }
     const onClickViewUser = ( user_id ) => {
+        toggleEdit();
+        selectUser(user_id);
 
     }
     const onClickRemoveUser = ( user_id ) => {
@@ -199,6 +207,7 @@ const DataTable = ({program, organization}) => {
                     </div>
                 </form>
                 <AddProgramUserModal organization={organization} program={program} isOpen={isOpenAdd} setOpen={setOpenAdd} toggle={toggleAdd} setTrigger={setTrigger} />
+                <EditProgramUserModal organization={organization} program={program} userid={selectedUser} isOpen={isOpenEdit} setOpen={setOpenEdit} toggle={toggleEdit} setTrigger={setTrigger} />
 
                   <table {...getTableProps()} className="table">
                       <thead>

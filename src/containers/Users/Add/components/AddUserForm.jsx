@@ -9,6 +9,10 @@ import {unpatchSelect, labelizeNamedData} from '@/shared/helpers'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 
+let config = {
+    roleInput: 'select',
+    roleField: 'role_id'
+}
 const AddUserForm = ({organization}) => {
     const dispatch = useDispatch()
     const [error, setError] = useState(false)
@@ -53,6 +57,7 @@ const AddUserForm = ({organization}) => {
     const onClickCancel = () => {
         window.location = '/users'
     }
+    config = {...config, ...{roles}}
 
     return (
     <Form
@@ -74,7 +79,7 @@ const AddUserForm = ({organization}) => {
                 </ButtonToolbar>
             </Col>
         </Row>
-        <FormFields roles={roles}/>
+        <FormFields config={config}/>
     </form>
     )}
   </Form>
