@@ -32,6 +32,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
           <SidebarLink title="Trial Balance" route="/reports/trial-balance" onClick={handleHideSidebar} />
           <SidebarLink title="Deposit" route="/reports/deposit" onClick={handleHideSidebar} />
           <SidebarLink title="Unassigned Program Domains" route="/reports/unassigned-program-domains" onClick={handleHideSidebar} />
+          <SidebarLink title="Monies Pending Amount" route="/reports/monies-pending-amount" onClick={handleHideSidebar} />
         </SidebarCategory>
         <SidebarLink title="Roles"  icon="user" route="/roles" />
         <SidebarLink title="Permissions"  icon="user" route="/permissions" />

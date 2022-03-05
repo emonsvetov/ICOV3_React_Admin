@@ -8,3 +8,4 @@ export { default as ProgramStatus } from './ProgramStatus';
 export { default as SupplierRedemption } from './SupplierRedemption';
 export { default as TrialBalance } from './TrialBalance';
 export { default as UnassignedProgramDomains } from './UnassignedProgramDomains';
+export { default as MoniesPendingAmount } from './MoniesPendingAmount';
