@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { Form } from 'react-final-form';
 import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
-import formValidation from "@/shared/validation/addprogramuser";
+import formValidation from "@/shared/validation/editprogramuser";
 import axios from 'axios';
 import { fetchUser, fetchRoles, fetchUserProgramPermissions } from "@/shared/apiHelper"
 import {unpatchSelect, labelizeNamedData,extractRolesFromProgramPermissions} from '@/shared/helpers'
@@ -95,7 +95,7 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
         //     v1.password_confirmation = 'Confrim Password is required'
         // } else 
         
-        if( values.password && values.password !== values.password_confirmation )  {
+        if( ( values.password || values.password_confirmation ) && values.password !== values.password_confirmation )  {
             v1.password_confirmation = 'Passwords do not match'
         }
         // console.log(v1)
