@@ -2,8 +2,7 @@ import React, {useState, useEffect} from "react";
 import renderDatePickerField from '@/shared/components/form/DatePicker';
 import { Field, Form } from 'react-final-form';
 import { Button, Row, Col } from 'reactstrap';
-// import MerchantTreeView from "./MerchantTreeView__legacy";
-import MerchantTreeView from "./ProgramTreeView";
+import ProgramTreeView from "../../components/MerchantTreeView";
 import axios from 'axios'
 import RenderDatePicker from '@/shared/components/form/DatePickerWithInitial';
 
@@ -61,7 +60,7 @@ const MoniesFilter = ({onClickFilterCallback}) => {
                     </span>
                     {data && data.length > 0 && 
                         <div className="merchant-treeview px-2">
-                            <MerchantTreeView merchants={data} form={form} selected={selected} 
+                            <ProgramTreeView merchants={data} form={form} selected={selected} 
                                 setSelected={(v) => {
                                     form.change('merchant_id', v)
                                     setSelected(v)}} />

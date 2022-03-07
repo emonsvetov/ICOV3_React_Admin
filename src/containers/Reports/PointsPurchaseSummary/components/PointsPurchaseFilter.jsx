@@ -5,7 +5,7 @@ import { Field, Form } from 'react-final-form';
 import { Button, Row, Col } from 'reactstrap';
 import renderSelectField from '@/shared/components/form/Select'
 import renderCheckBoxField from '@/shared/components/form/CheckBox';
-import ProgramTreeView from "./ProgramTreeView";
+import MerchantTreeView from "../../components/MerchantTreeView";
 import axios from 'axios'
 
 const prepareList = () =>{
@@ -74,7 +74,7 @@ const Filter = ({onClickFilterCallback}) => {
                         <span className="form__form-group-label">
                             View for Merchant
                         </span>
-                        {data && data.length > 0 && <div className="merchant-treeview px-2"><ProgramTreeView merchants={data} form={form} selected={selected} setSelected={(v) => {
+                        {data && data.length > 0 && <div className="merchant-treeview px-2"><MerchantTreeView merchants={data} form={form} selected={selected} setSelected={(v) => {
                             form.change('merchant_id', v)
                             setSelected(v)
                         }} /></div>}
