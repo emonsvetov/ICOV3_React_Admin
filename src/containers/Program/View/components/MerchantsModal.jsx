@@ -257,7 +257,7 @@ const DataTable = ({ toggle, organization, program }) => {
       Cell: ({ row }) => (<Form
         onSubmit={onSubmit}
         initialValues={{
-            cost: row.original.cost_to_program,
+          cost_to_program: row.original.cost_to_program,
           }}
       >
         {({ handleSubmit }) => (
