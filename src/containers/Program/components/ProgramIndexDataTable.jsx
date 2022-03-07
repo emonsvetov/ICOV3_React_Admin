@@ -22,7 +22,7 @@ const queryClient = new QueryClient()
 
 const initialState = {
     queryPageIndex: 0,
-    queryPageSize: 10,
+    queryPageSize: 20,
     totalCount: null,
     queryPageFilter:{},
     queryPageSortBy: [],
@@ -83,7 +83,7 @@ const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) 
     }
     try {
         const response = await axios.get(
-        `/organization/1/program?page=${page}&limit=${pageSize}&${paramStr}`
+        `/organization/1/program?page=${page+1}&limit=${pageSize}&${paramStr}`
         );
         // console.log(response)
         if( response.data.length === 0) return {results:[],count:0}

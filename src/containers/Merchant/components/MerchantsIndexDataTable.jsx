@@ -22,7 +22,7 @@ const queryClient = new QueryClient()
 
 const initialState = {
     queryPageIndex: 0,
-    queryPageSize: 50,
+    queryPageSize: 2,
     totalCount: 0,
     queryPageFilter:{},
     queryPageSortBy: [],
@@ -81,7 +81,7 @@ const fetchMerchantData = async (page, pageSize, pageFilterO = null, pageSortBy)
     }
     try {
         const response = await axios.get(
-        `/merchant?page=${page}&limit=${pageSize}&${paramStr}`
+        `/merchant?page=${page+1}&limit=${pageSize}&${paramStr}`
         );
         // console.log(response)
         if( response.data.length === 0) return {results:[],count:0}

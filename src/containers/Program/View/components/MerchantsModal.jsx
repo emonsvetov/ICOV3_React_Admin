@@ -95,7 +95,7 @@ const fetchMerchantData = async (
   }
   try {
     const response = await axios.get(
-      `/merchant?page=${page}&limit=${pageSize}&${paramStr}`
+      `/merchant?page=${page+1}&limit=${pageSize}&${paramStr}`
     );
     // console.log(response)
     if (response.data.length === 0) return { results: [], count: 0 };
@@ -110,10 +110,7 @@ const fetchMerchantData = async (
   }
 };
 
-const MerchantsModal = ({ isOpen, setOpen, toggle, theme, rtl, organization }) => {
-
-  const [loading, setLoading] = useState(false);
-
+const MerchantsModal = ({ isOpen, setOpen, toggle, theme, rtl, organization, data }) => {
   return (
     <Modal
       className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`}
@@ -121,85 +118,62 @@ const MerchantsModal = ({ isOpen, setOpen, toggle, theme, rtl, organization }) =
       toggle={() => setOpen(true)}
     >
       <ModalBody className="modal-lg">
-        <TableWrapper toggle={toggle} organization={organization} />
+        <TableWrapper toggle={toggle} organization={organization} program={data} />
       </ModalBody>
     </Modal>
   );
 };
-const DataTable = ({ toggle, organization }) => {
+const DataTable = ({ toggle, organization, program }) => {
   const LOGO_PUBLIC_URL = `${process.env.REACT_APP_API_STORAGE_URL}`;
-  // console.log(LOGO_PUBLIC_URL)
 
+  // console.log(program)
+
+  const [loading, setLoading] = useState(false);
   const [relationData, setRelationData] = useState([]);
   const [filter, setFilter] = useState({ keyword: "" });
-
-  const [programId, setProgramId] = useState(null);
-
-  const [programData, setProgramData] = useState(null);
-  // const [isLoading, setIsLoading] = useState(true) //first page load!
-  const fetchProgramData = async () => {
-    try {
-      const response = await axios.get(`/organization/${organization.id}/program/${programId}`);
-      // console.log(response)
-
-      setProgramData(response.data);
-    } catch (e) {
-      throw new Error(`API error:${e?.message}`);
-    }
-  };
 
   const fetchProgramMerchantData = async () => {
     try {
       const response = await axios.get(
-        `/organization/${organization.id}/program/${programId}/merchant?minimal=true&sortby=name`
+        `/organization/${organization.id}/program/${program.id}/merchant?minimal=true&sortby=name`
       );
       let result = response.data;
-      let temp_relation = [];
-      result.map((item, index) => {
-        let {id}= item;
-        let {featured, cost_to_program}= item.pivot;
-        temp_relation.push({id, featured, cost_to_program});
-      });
-
-      setRelationData(temp_relation);
+      // let temp_relation = [];
+      // console.log(result)
+      // result.map((item, index) => {
+      //   let {id}= item;
+      //   let {featured, cost_to_program}= item.pivot;
+      //   temp_relation.push({id, featured, cost_to_program});
+      // });
+      setRelationData(result);
     } catch (e) {
       console.log(e);
     }
   };
-  const getLastItem = (thePath) =>
-    thePath.substring(thePath.lastIndexOf("/") + 1);
 
   useEffect(() => {
-      
-    let programId = getLastItem(window.location.pathname);
-
-    setProgramId(Number(programId));
-  }, []);
-  useEffect(() => {
-    if (programId) {
-      fetchProgramData();
+    if (program.id) {
       fetchProgramMerchantData();
     }
-  }, [programId]);
+  }, [program]);
 
   const handleToggle = async (type, value, id) => {
     let response;
-    let programId = getLastItem(window.location.pathname);
-    let postData = {program_id: programId, merchant_id: id};
+    let postData = {program_id: program.id, merchant_id: id};
     
     try {
       if(type == "featured" || type == "cost_to_program"){
         postData[type] = value;
         response = await axios.post(
-          `/organization/${organization.id}/program/${programId}/merchant`,postData );
+          `/organization/${organization.id}/program/${program.id}/merchant`,postData );
       }
       else{
         if (value) {
           response = await axios.post(
-            `/organization/${organization.id}/program/${programId}/merchant`,postData );
+            `/organization/${organization.id}/program/${program.id}/merchant`,postData );
         } else {
           response = await axios.delete(
-              `/organization/${organization.id}/program/${programId}/merchant/${id}`);
+              `/organization/${organization.id}/program/${program.id}/merchant/${id}`);
         }
       }
       console.log(response, 'response')
@@ -221,13 +195,12 @@ const DataTable = ({ toggle, organization }) => {
     alert(values);
   };
 
-  const addRelation = (data) =>{
+  const mapRelationData = (results) =>{
       let isActive, cost_to_program, featured;
-      data.map((item, index) => {
+      results.map((item, index) => {
         isActive = cost_to_program = featured = false;  
-
         relationData.forEach((relation) => {
-          if(relation.id == item.id){
+          if(relation.merchant_id === item.id){
             isActive = true;
             cost_to_program = relation.cost_to_program;
             featured = relation.featured;
@@ -238,7 +211,7 @@ const DataTable = ({ toggle, organization }) => {
         item.featured= featured;
       })
       
-      return data;
+      return results;
   }
 
   const MERCHANT_COLUMNS = [
@@ -384,7 +357,7 @@ const DataTable = ({ toggle, organization }) => {
   } = useTable(
     {
       columns,
-      data: data ? addRelation(data.results) : [],
+      data: data ? mapRelationData(data.results) : [],
       initialState: {
         pageIndex: queryPageIndex,
         pageSize: queryPageSize,
@@ -448,7 +421,7 @@ const DataTable = ({ toggle, organization }) => {
         <Row className="w100">
           <Col md="6" lg="6" xl="6">
             <h3>Merchants</h3>
-            <h5 className="colorgrey">Programs / {programData?.name}</h5>
+            <h5 className="colorgrey">Programs / {program?.name}</h5>
           </Col>
         </Row>
 
@@ -469,7 +442,7 @@ const DataTable = ({ toggle, organization }) => {
                     disabled={isLoading}
                     className="btn btn-primary"
                     color="#ffffff"
-                    onClick={{}}
+                    onClick={() => alert('add default merchant')}
                   >
                     Add Default Merchant
                   </Button>
@@ -544,10 +517,10 @@ const Sorting = ({ column }) => (
   </span>
 );
 
-const TableWrapper = ({ toggle, organization }) => {
+const TableWrapper = ({ toggle, organization, program }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <DataTable toggle={toggle} organization={organization} />
+      <DataTable toggle={toggle} organization={organization} program={program} />
     </QueryClientProvider>
   );
 };
