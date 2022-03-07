@@ -116,7 +116,6 @@ const DataTable = () => {
             alert('No change in filters')
             return
         }
-        debugger;
         setFilter({from, to, invoiceNumber, programName, programId})
         // alert(status, keyword)
     }

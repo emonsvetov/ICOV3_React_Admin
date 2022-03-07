@@ -1,80 +1,175 @@
 import React from "react";
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import List from '@material-ui/core/List';
-import { TreeView } from '@material-ui/lab';
-import ArrowDownIcon from '@material-ui/icons/ArrowDropDown';
-import ArrowRightIcon from '@material-ui/icons/ArrowRight';
-import TreeItem from '@material-ui/lab/TreeItem';
-// import ListItem from '@material-ui/core/ListItem';
-// import ListItemText from '@material-ui/core/ListItemText';
+import TreeView from "@material-ui/lab/TreeView";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import TreeItem from "@material-ui/lab/TreeItem";
+import { Checkbox, FormControlLabel } from "@material-ui/core";
+// import {data} from './sampleData'
 
-const RenderBuildTree = ({data}) => {
-    return data.map( row => {
-        if(typeof row.subRows !== 'undefined' && row.subRows.length > 0)    {
-            return (
-                <TreeItem nodeId={row.id} label={row.name}>
-                    <RenderBuildTree data={row.subRows} />
-                </TreeItem>
-            )
-        }   else {
-            return <TreeItem nodeId={row.id} label={row.name} />
+export default function ProgramTreeView({merchants, selected, setSelected}) {
+
+  const data = {
+    id: "",
+    name: "Select All",
+    children: merchants
+  }
+
+  // const [selected, setSelected] = React.useState([]);
+  const [traverse, setTraverse] = React.useState(true);
+  // console.log(selected);
+
+  // form.change("merchant_id", selected);
+
+  const selectedSet = React.useMemo(() => new Set(selected), [selected]);
+
+  const parentMap = React.useMemo(() => {
+    return goThroughAllNodes(data);
+  }, []);
+
+  // console.log("parentMAp", parentMap);
+
+  function goThroughAllNodes(nodes, map = {}) {
+    if (!nodes.children || nodes.children.length <=0 ) {
+      return null;
+    }
+
+    // console.log(nodes.children)
+
+    map[nodes.id] = getAllChild(nodes).splice(1);
+
+    for (let childNode of nodes.children) {
+      goThroughAllNodes(childNode, map);
+    }
+
+    return map;
+  }
+
+  // Get all children from the current node.
+  function getAllChild(
+    childNode = null,
+    collectedNodes = []
+  ) {
+    if (childNode === null) return collectedNodes;
+
+    collectedNodes.push(childNode.id);
+
+    if (Array.isArray(childNode.children)) {
+      for (const node of childNode.children) {
+        getAllChild(node, collectedNodes);
+      }
+    }
+
+    return collectedNodes;
+  }
+
+  const getChildById = (nodes, id) => {
+    let array = [];
+    let path = [];
+
+    // recursive DFS
+    function getNodeById(node, id, parentsPath) {
+      let result = null;
+
+      if (node.id === id) {
+        return node;
+      } else if (Array.isArray(node.children)) {
+        for (let childNode of node.children) {
+          result = getNodeById(childNode, id, parentsPath);
+
+          if (!!result) {
+            parentsPath.push(node.id);
+            return result;
+          }
         }
-    })
-}
 
-const ProgramTreeView = ({data, handleSelect, selected}) => {
-    // const [expanded, setExpanded] = React.useState([]);
+        return result;
+      }
 
-    // const handleToggle = (event, nodeIds) => {
-    //     setExpanded(nodeIds);
-    // };
-    // const handleExpandClick = () => {
-    //     setExpanded((oldExpanded) =>
-    //       oldExpanded.length === 0 ? ['allprograms', '1', '2', '3', '4', '5', '6', '7'] : [],
-    //     );
-    //   };
-    // const handleSelect = (event, nodeIds) => {
-    //     alert(nodeIds)
-    //     setSelected(nodeIds);
-    // };
+      return result;
+    }
+
+    const nodeToToggle = getNodeById(nodes, id, path);
+    // console.log(path);
+
+    return { childNodesToToggle: getAllChild(nodeToToggle, array), path };
+  };
+
+  function getOnChange(checked, nodes) {
+    const { childNodesToToggle, path } = getChildById(data, nodes.id);
+
+    if( traverse )  {
+      let array = checked
+        ? [...selected, ...childNodesToToggle]
+        : selected
+            .filter((value) => !childNodesToToggle.includes(value))
+            .filter((value) => !path.includes(value));
+      array = array.filter((v, i) => array.indexOf(v) === i);
+      setSelected(array);
+    } else  {
+      let array = checked ? [...selected, ...[nodes.id]] : selected.filter( (v, i) => v !== nodes.id );
+      setSelected(array);
+    }
+  }
+
+  const renderTree = (nodes) => {
+
+    let indeterminate = null;
+    let checked = selectedSet.has(nodes.id)
+    
+    if( traverse )  {
+      const allSelectedChildren = parentMap[
+        nodes.id
+      ]?.every((childNodeId) => selectedSet.has(childNodeId));
+      checked = selectedSet.has(nodes.id) || allSelectedChildren || false;
+
+      indeterminate = 
+        parentMap[nodes.id]?.some((childNodeId) =>
+          selectedSet.has(childNodeId)
+        ) || false;
+
+      if (allSelectedChildren && !selectedSet.has(nodes.id)) {
+        // console.log("if allSelectedChildren");
+        setSelected([...selected, nodes.id]);
+      }
+    }
+
     return (
-        <List>
-            <div className="text-left">
-            {/* Tree Structure */}
-            {/* <Box sx={{ mb: 1 }}>
-                <Button onClick={handleExpandClick}>
-                    {expanded.length === 0 ? 'Expand all' : 'Collapse all'}
-                </Button>
-            </Box> */}
-                <TreeView
-                    aria-label="controlled"
-                    defaultCollapseIcon={<ArrowDownIcon className="arrowIcon" />}
-                    defaultExpandIcon={<ArrowRightIcon className="arrowIcon" />}
-                    sx={{ height: 240, flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}
-                    defaultEndIcon={<ArrowRightIcon className="arrowIcon" />}
-                    defaultExpanded={['allprograms']} //all is the ID of the parent node
-                    // expanded={expanded}
-                    // onNodeToggle={handleToggle}
-                    onNodeSelect={handleSelect}
-                    defaultSelected={selected ? selected : null}
-                >
-                    <TreeItem nodeId="allprograms" label="All Programs" disableSelection={true}>
-                        <RenderBuildTree data={data} />
-                    </TreeItem>
-                    {/* <TreeItem nodeId="1" label="Applications">
-                        <TreeItem nodeId="2" label="Calendar" />
-                    </TreeItem>
-                    <TreeItem nodeId="5" label="Documents">
-                        <TreeItem nodeId="10" label="OSS" />
-                        <TreeItem nodeId="6" label="MUI">
-                            <TreeItem nodeId="8" label="index.js" />
-                        </TreeItem>
-                    </TreeItem> */}
-                </TreeView>
-            </div>
-        </List>
-    )
-}
+      <TreeItem
+        key={nodes.id}
+        nodeId={nodes.id}
+        label={
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={checked}
+                indeterminate={!checked && indeterminate}
+                onChange={(event) =>
+                  getOnChange(event.currentTarget.checked, nodes)
+                }
+                onClick={(e) => e.stopPropagation()}
+              />
+            }
+            label={<>{nodes.name}</>}
+            key={nodes.id}
+          />
+        }
+      >
+        {Array.isArray(nodes.children)
+          ? nodes.children.map((node) => renderTree(node))
+          : null}
+      </TreeItem>
+    );
+  };
 
-export default ProgramTreeView;
+  return (
+    <>
+      <TreeView
+        defaultCollapseIcon={<ExpandMoreIcon />}
+        defaultExpanded={[]}
+        defaultExpandIcon={<ChevronRightIcon />}
+      >
+        {renderTree(data)}
+      </TreeView>
+    </>
+  );
+}

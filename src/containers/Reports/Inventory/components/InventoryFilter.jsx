@@ -25,7 +25,7 @@ const InventoryFilter = ({onSubmitFilterCb}) => {
 
 
     const onSubmitFilter = (values) => {
-        values.merchant_id = values.merchant_id.filter(n => n) //remove empty elements
+        values.merchant_id = values.merchant_id?.filter(n => n) //remove empty elements
         // alert( JSON.stringify(values) )
         onSubmitFilterCb( values )
     }
