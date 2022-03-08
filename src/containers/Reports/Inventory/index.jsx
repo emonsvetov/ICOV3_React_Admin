@@ -18,7 +18,7 @@ const Inventory = ({organization}) => {
         <Col md={12}>
           <Card>
             <CardBody>
-              <InventoryIndexDataTable organization={organization} />
+              {organization?.id && <InventoryIndexDataTable organization={organization} />}
             </CardBody>
           </Card>
         </Col>
