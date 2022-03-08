@@ -1,30 +1,10 @@
 import React, {useState, useEffect} from "react";
 import renderDatePickerField from '@/shared/components/form/DatePicker';
-import { Button } from 'reactstrap';
 import { Field, Form } from 'react-final-form';
-import { Row, Col } from 'reactstrap';
-// import MerchantTreeView from "./MerchantTreeView__legacy";
-import MerchantTreeView from "./ProgramTreeView";
+import { Button, Row, Col } from 'reactstrap';
+import ProgramTreeView from "../../components/MerchantTreeView";
 import axios from 'axios'
-import DatePicker from 'react-datepicker';
-
-const RenderDatePicker = ({ dueDate, onChange }) => {
-    const [startDate, setStartDate] = useState(dueDate);
-    const handleChange = (date) => {
-        setStartDate(date);
-        onChange(date);
-    };
-  return(
-    <div className="date-picker">
-        <DatePicker
-            dateFormat="MM/dd/yyyy"
-            selected={startDate}
-            onChange={handleChange}
-            className="form__form-group-datepicker"
-        />
-    </div>
-  )
-}
+import RenderDatePicker from '@/shared/components/form/DatePickerWithInitial';
 
 const getFirstDay = () =>{
     let date = new Date();
@@ -41,18 +21,19 @@ const fetchPrograms = async () => {
         throw new Error(`API error:${e?.message}`);
     }
 };
-const MoniesFilter = ({onSubmitFilterCb}) => {
+const MoniesFilter = ({onClickFilterCallback}) => {
     const [loading, setLoading] = React.useState(false)
     const [data, setData] = React.useState([])
     const [selected, setSelected] = React.useState([]);
 
 
     const onSubmitFilter = (values) => {
+
         values.merchant_id = values.merchant_id?.filter(n => n) //remove empty elements
         values.from = values.from.toISOString().slice(0, 10);
         values.to = values.to.toISOString().slice(0, 10);
-        // alert( JSON.stringify(values) )
-        onSubmitFilterCb( values )
+        // alert( JSON.stringify(values) )        
+        onClickFilterCallback( values )
     }
 
     useEffect( () => {
@@ -77,10 +58,14 @@ const MoniesFilter = ({onSubmitFilterCb}) => {
                     >
                     View for Program
                     </span>
-                    {data && data.length > 0 && <div className="merchant-treeview px-2"><MerchantTreeView merchants={data} form={form} selected={selected} setSelected={(v) => {
-                        form.change('merchant_id', v)
-                        setSelected(v)
-                    }} /></div>}
+                    {data && data.length > 0 && 
+                        <div className="merchant-treeview px-2">
+                            <ProgramTreeView merchants={data} form={form} selected={selected} 
+                                setSelected={(v) => {
+                                    form.change('merchant_id', v)
+                                    setSelected(v)}} />
+                        </div>
+                    }
                 </div>
                 <div className="col-md-2">
                     <div className="form__form-group">
