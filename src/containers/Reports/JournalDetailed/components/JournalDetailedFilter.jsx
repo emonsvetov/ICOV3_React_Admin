@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import { Field, Form } from 'react-final-form';
-import { Row, Col } from 'reactstrap';
+import { Button, Row, Col } from 'reactstrap';
 import RenderDatePicker from '@/shared/components/form/DatePickerWithInitial';
 
 const getFirstDay = () =>{
@@ -11,7 +11,7 @@ const JournalDetailedFilter = ({onClickFilterCallback}) => {
     
     const [date, setDate] = useState({from: getFirstDay(), to: new Date()});
 
-    const onClickFilter = () => {
+    const onClickFilter = (values) => {
         onClickFilterCallback(date.from.toISOString().slice(0, 10), date.to.toISOString().slice(0, 10))
     }
 
@@ -23,7 +23,7 @@ const JournalDetailedFilter = ({onClickFilterCallback}) => {
     
     return (
         <Form onSubmit={onClickFilter}>
-            {({ handleSubmit }) => (
+            {({ handleSubmit, form, submitting, pristine, values }) => (
               <form className="form" onSubmit={handleSubmit}>
               <Row>
                 <div className="col-md-4 px-0">
@@ -53,9 +53,26 @@ const JournalDetailedFilter = ({onClickFilterCallback}) => {
                     </div>
                 </div>
                 
-                <div className="col-md-4 d-flex align-items-center max-height-32px pl-1">
-                     <span className="text-blue pointer" onClick={onClickFilter}>Filter</span>
-                 </div>
+                <div className="col-md-4 d-flex align-items-end pl-1">
+                    <Button 
+                        type="submit"
+                        onClick={() => {
+                            form.change("action", "submit");
+                        }}
+                        disabled={submitting} 
+                        className="btn btn-sm btn-primary" 
+                        color="#ffffff"
+                    >Filter</Button>
+                    <Button
+                        type="submit"
+                        onClick={() => {
+                            form.change("action", "export");
+                        }}
+                        disabled={submitting} 
+                        className="btn btn-sm btn-primary" 
+                        color="#ffffff"
+                    >Export CSV</Button>
+                </div>
                 </Row>
               </form>
             )}
