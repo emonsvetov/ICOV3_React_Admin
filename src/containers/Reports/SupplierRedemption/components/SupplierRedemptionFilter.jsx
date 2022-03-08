@@ -16,7 +16,7 @@ const getFirstDay = () =>{
 const fetchProgramData = async () => {
     try {
         const response = await axios.get(
-        `/organization/1/program?minimal=true&sortby=name`
+        `/merchant?minimal=true&sortby=name`
         );
         // console.log(response)
         return response.data;
@@ -78,14 +78,27 @@ const DepositFilter = ({onClickFilterCallback}) => {
                     </div>
                 }
                 </div>
-                <div className="col-md-4 ">
-                    <div className="form__form-group label-mb-0">
+                <div className="col-md-4">
+                    <div className="form__form-group">
+                        <Row className='w100'>
+                            <Col md="6" lg="6" xl="6">
+                            <span className="form__form-group-label">
+                                SKU value
+                            </span>
+                            </Col>
+                            <Col md="6" lg="6" xl="6" className='hide-error'>
+                            <span className="form__form-group-label">
+                                Redemption Value
+                            </span>
+                            </Col>
+                        </Row>
+                        
+                    <div className="form__form-group-field">    
                         <Row className='w100'>
                             <Col md="6" lg="6" xl="6">
                                 <Field
                                     name="type"
                                     component={renderRadioButtonField}
-                                    label="SKU value"
                                     radioValue="sku"
                                 />
                             </Col>
@@ -93,22 +106,23 @@ const DepositFilter = ({onClickFilterCallback}) => {
                                 <Field
                                     name="type"
                                     component={renderRadioButtonField}
-                                    label="Redemption Value"
                                     radioValue="redemtion"
                                 />
                             </Col>
                         </Row>
                     </div>
+                    </div>
                 </div>   
                 <div className="col-md-2">
                     <div className="form__form-group">
+                        <span className="form__form-group-label">
+                            Active Merchants
+                        </span>
                     <div className="form__form-group-field">
-                        
                         <Field
                             name="active_merchants"
                             type="checkbox"
                             component={renderCheckBoxField}
-                            label={'Active Merchants'}
                             initialValue={false}
                         />
                     </div>
@@ -116,12 +130,14 @@ const DepositFilter = ({onClickFilterCallback}) => {
                 </div>
                 <div className="col-md-2">
                     <div className="form__form-group">
+                        <span className="form__form-group-label">
+                            View All
+                        </span>
                     <div className="form__form-group-field">
                         <Field
                             name="view_all"
                             type="checkbox"
                             component={renderCheckBoxField}
-                            label={'view all'}
                             initialValue={false}
                         />
                     </div>

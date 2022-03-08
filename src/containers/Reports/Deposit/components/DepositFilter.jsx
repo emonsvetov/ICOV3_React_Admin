@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { Field, Form } from 'react-final-form';
-import { Row, Col } from 'reactstrap';
+import { Button, Row, Col } from 'reactstrap';
 import renderSelectField from '@/shared/components/form/Select'
 import axios from 'axios'
 import RenderDatePicker from '@/shared/components/form/DatePickerWithInitial';
@@ -84,7 +84,7 @@ const DepositFilter = ({onClickFilterCallback}) => {
             }}
             
         >
-            {({ handleSubmit }) => (
+            {({ handleSubmit, form, submitting, pristine, values }) => (
               <form className="form" onSubmit={handleSubmit}>
               <Row>
                 <div className="col-md-4 px-0">
@@ -180,9 +180,26 @@ const DepositFilter = ({onClickFilterCallback}) => {
                     </Field>
                 </div>   
 
-                <div className="col-md-4 d-flex align-items-center max-height-32px pl-1">
-                     <span className="text-blue pointer" onClick={onClickFilter}>Filter</span>
-                 </div>
+                <div className="col-md-4 d-flex align-items-end pl-1">
+                    <Button 
+                        type="submit"
+                        onClick={() => {
+                            form.change("action", "submit");
+                        }}
+                        disabled={submitting} 
+                        className="btn btn-sm btn-primary" 
+                        color="#ffffff"
+                    >Filter</Button>
+                    <Button
+                        type="submit"
+                        onClick={() => {
+                            form.change("action", "export");
+                        }}
+                        disabled={submitting} 
+                        className="btn btn-sm btn-primary" 
+                        color="#ffffff"
+                    >Export CSV</Button>
+                </div>
                 </Row>
                 
               
@@ -190,32 +207,6 @@ const DepositFilter = ({onClickFilterCallback}) => {
             )}
           </Form>
 
-        // <div className="form__form-group">
-        //     <div className="col-md-4 px-0">
-        //         <Select
-        //             value={status}
-        //             onChange={onStatusChange}
-        //             options={statusOptions}
-        //             clearable={false}
-        //             className="react-select"
-        //             placeholder={statusPlaceholder}
-        //             classNamePrefix="react-select"
-        //         />
-        //     </div>
-        //     <div className="col-md-4">
-        //         <div className="">
-        //             <input 
-        //                 value={keyword}
-        //                 onChange={onProgramPhaseChange}
-        //                 type="text"
-        //                 placeholder="Program phrase"
-        //             />
-        //         </div>
-        //     </div>
-        //     <div className="col-md-4 d-flex align-items-center max-height-32px pl-1">
-        //         <span className="text-blue pointer" onClick={onClickFilter}>Filter</span>
-        //     </div>
-        // </div>
     )
 }
 

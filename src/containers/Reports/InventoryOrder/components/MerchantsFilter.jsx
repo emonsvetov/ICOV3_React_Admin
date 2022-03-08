@@ -2,11 +2,11 @@ import React from 'react'
 import { Field, Form } from 'react-final-form';
 import { Button, Row, Col } from 'reactstrap';
 
-const ProgramFilter = ({onClickFilterCallback}) => {
+const MerchantFilter = ({onClickFilterCallback}) => {
     
     const [keyword, setKeyword] = React.useState('')
 
-    const onProgramPhaseChange = (value) => {
+    const onPhaseChange = (value) => {
         setKeyword(value)
     }
     const onClickFilter = () => {
@@ -24,13 +24,13 @@ const ProgramFilter = ({onClickFilterCallback}) => {
                         <Field 
                             name="participant"
                             parse={value => {
-                                onProgramPhaseChange(value)
+                                onPhaseChange(value)
                                 return value;
                             }}
                         >
                         {({ input, meta }) => (
                             <div className="form__form-group">
-                                <span className="form__form-group-label">Program Name:</span>
+                                <span className="form__form-group-label">Merchant Name:</span>
                                 <div className="form__form-group-field">
                                     <div className="form__form-group-row">
                                         <input type="text" {...input} placeholder="" />
@@ -66,24 +66,8 @@ const ProgramFilter = ({onClickFilterCallback}) => {
             )}
           </Form>
 
-        // <div className="form__form-group">
-          
-        //     <div className="col-md-4">
-        //         <div className="">
-        //             <input 
-        //                 value={keyword}
-        //                 onChange={onProgramPhaseChange}
-        //                 type="text"
-        //                 placeholder="Program Name"
-        //             />
-        //         </div>
-        //     </div>
-            
-        //     <div className="col-md-4 d-flex align-items-center max-height-32px pl-1">
-        //         <span className="text-blue pointer" onClick={onClickFilter}>Filter</span>
-        //     </div>
-        // </div>
+        
     )
 }
 
-export default ProgramFilter;
+export default MerchantFilter;

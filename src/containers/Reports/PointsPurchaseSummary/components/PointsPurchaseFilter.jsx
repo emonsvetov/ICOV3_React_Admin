@@ -19,7 +19,7 @@ const prepareList = () =>{
 const fetchProgramData = async () => {
     try {
         const response = await axios.get(
-        `/organization/1/program?minimal=true&sortby=name`
+            `/merchant?minimal=true&sortby=name`
         );
         // console.log(response)
         return response.data;
@@ -81,15 +81,17 @@ const Filter = ({onClickFilterCallback}) => {
                     </div>
                     <div className="col-md-1">
                         <div className="form__form-group">
-                        <div className="form__form-group-field">
-                            <Field
-                                name="view_all"
-                                type="checkbox"
-                                component={renderCheckBoxField}
-                                label={'view all'}
-                                initialValue={false}
-                            />
-                        </div>
+                            <span className="form__form-group-label">
+                                View All
+                            </span>
+                            <div className="form__form-group-field">
+                                <Field
+                                    name="view_all"
+                                    type="checkbox"
+                                    component={renderCheckBoxField}
+                                    initialValue={false}
+                                />
+                            </div>
                         </div>
                     </div>
                     <div className='col-md-2'>

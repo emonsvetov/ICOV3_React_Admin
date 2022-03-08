@@ -8,7 +8,7 @@ import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import ProgramFilter  from "./ProgramsFilter";
-import { Link } from 'react-router-dom';
+import { Col, Row} from 'reactstrap';
 import axios from 'axios'
 
 import {renameChildrenToSubrows} from '@/shared/helpers'
@@ -219,28 +219,21 @@ const DataTable = () => {
     if (error) {
         return <p>Error: {JSON.stringify(error)}</p>;
     }
-
-    if (isLoading) {
-        return <p>Loading...</p>;
-    }
-    if(isSuccess)
     return (
             <>
                 <div className='table react-table'>
-                    <form className="form form--horizontal">
-                        <div className="form__form-group pb-4">
-                            <div className="col-md-9 col-lg-9">
+                    <div className="action-panel">
+                        <Row className="mx-0">
+                            <Col lg={9} md={9} sm={8}>
                                 <ProgramFilter onClickFilterCallback={onClickFilterCallback} />
-                            </div>
-                            <div className="col-md-3 col-lg-3 text-right pr-0">
-                                <Link style={{maxWidth:'200px'}}
-                                className="btn btn-primary account__btn account__btn--small"
-                                onClick={handleExport}
-                                >Export CSV
-                                </Link>
-                            </div>
-                        </div>
-                    </form>
+                            </Col>
+                        </Row>
+                    </div>
+                    {
+                         isLoading && <p>Loading...</p>
+                    }
+                    {
+                    isSuccess && 
                     <table {...getTableProps()} className="table">
                         <thead>
                             {headerGroups.map( (headerGroup) => (
@@ -290,8 +283,8 @@ const DataTable = () => {
                             ))}
                         </tfoot> */}
                     </table>
-                    
-                </div>
+                    }
+                
                 {(rows.length > 0) && (
                     <>
                         <ReactTablePagination
@@ -337,6 +330,7 @@ const DataTable = () => {
                         </div>
                     </>
                 )}
+                </div>
             </>
     )
 }
