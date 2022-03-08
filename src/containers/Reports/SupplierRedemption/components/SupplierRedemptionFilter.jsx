@@ -1,33 +1,12 @@
 import React, {useState, useEffect} from "react";
-
 import renderDatePickerField from '@/shared/components/form/DatePicker';
 import { Field, Form } from 'react-final-form';
-import { Row, Col } from 'reactstrap';
-
+import { Button, Row, Col } from 'reactstrap';
 import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import renderCheckBoxField from '@/shared/components/form/CheckBox';
-import ProgramTreeView from "./ProgramTreeView";
+import MerchantTreeView from "../../components/MerchantTreeView";
 import axios from 'axios'
-
-import DatePicker from 'react-datepicker';
-
-const RenderDatePicker = ({ dueDate, onChange }) => {
-    const [startDate, setStartDate] = useState(dueDate);
-    const handleChange = (date) => {
-        setStartDate(date);
-        onChange(date);
-    };
-  return(
-    <div className="date-picker">
-        <DatePicker
-            dateFormat="MM/dd/yyyy"
-            selected={startDate}
-            onChange={handleChange}
-            className="form__form-group-datepicker"
-        />
-    </div>
-  )
-}
+import RenderDatePicker from '@/shared/components/form/DatePickerWithInitial';
 
 const getFirstDay = () =>{
     let date = new Date();
@@ -81,22 +60,26 @@ const DepositFilter = ({onClickFilterCallback}) => {
 
     return (
         <Form onSubmit={onClickFilter}>
-            {({ handleSubmit }) => (
+            {({ handleSubmit, form, submitting, pristine, values }) => (
               <form className="form" onSubmit={handleSubmit}>
-              <Row>
-              <div className="col-md-4 px-0">
-                        
-                        <span
-                        className="form__form-group-label"
-                        >
-                        View for Merchant
-                        </span>
-                        <ProgramTreeView data={data} handleSelect={handleSelect} selected={selected} />
-                    
+              
+              <div className="col-md-3 px-0">     
+                <span
+                    className="form__form-group-label"
+                >
+                    View for Merchant
+                </span>
+                {data && data.length > 0 && 
+                    <div className="merchant-treeview px-2">
+                        <MerchantTreeView merchants={data} form={form} selected={selected} 
+                            setSelected={(v) => {
+                                form.change('merchant_id', v)
+                                setSelected(v)}} />
+                    </div>
+                }
                 </div>
                 <div className="col-md-4 ">
                     <div className="form__form-group label-mb-0">
-                        
                         <Row className='w100'>
                             <Col md="6" lg="6" xl="6">
                                 <Field
@@ -117,7 +100,7 @@ const DepositFilter = ({onClickFilterCallback}) => {
                         </Row>
                     </div>
                 </div>   
-                <div className="col-md-4">
+                <div className="col-md-2">
                     <div className="form__form-group">
                     <div className="form__form-group-field">
                         
@@ -131,7 +114,7 @@ const DepositFilter = ({onClickFilterCallback}) => {
                     </div>
                     </div>
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-2">
                     <div className="form__form-group">
                     <div className="form__form-group-field">
                         <Field
@@ -144,69 +127,62 @@ const DepositFilter = ({onClickFilterCallback}) => {
                     </div>
                     </div>
                 </div>
-                <div className="col-md-4">
-                    <div className="form__form-group">
-                    <span className="form__form-group-label">From</span>
-                    <div className="form__form-group-field">
-                        <Field
-                            name="from"
-                            dueDate={getFirstDay}
-                            onChange={(e) => handleDateChange(e, 'from')}
-                            component={RenderDatePicker}    
-                        />
+                <Row>
+                    <div className="col-md-2">
+                    
                     </div>
+                    <div className="col-md-3">
+                        <div className="form__form-group">
+                        <span className="form__form-group-label">From</span>
+                        <div className="form__form-group-field">
+                            <Field
+                                name="from"
+                                dueDate={getFirstDay}
+                                onChange={(e) => handleDateChange(e, 'from')}
+                                component={RenderDatePicker}    
+                            />
+                        </div>
+                        </div>
                     </div>
-                </div>
-                <div className="col-md-4">
-                    <div className="form__form-group">
-                    <span className="form__form-group-label">To</span>
-                    <div className="form__form-group-field">
-                        <Field
-                            name="to"
-                            dueDate={new Date()}
-                            onChange={(e) => handleDateChange(e, 'to')}
-                            component={RenderDatePicker}    
-                        />
+                    <div className="col-md-3">
+                        <div className="form__form-group">
+                        <span className="form__form-group-label">To</span>
+                        <div className="form__form-group-field">
+                            <Field
+                                name="to"
+                                dueDate={new Date()}
+                                onChange={(e) => handleDateChange(e, 'to')}
+                                component={RenderDatePicker}    
+                            />
+                        </div>
+                        </div>
                     </div>
+                    
+                    <div className="col-md-4 d-flex align-items-end pl-1">
+                        <Button 
+                            type="submit"
+                            onClick={() => {
+                                form.change("action", "submit");
+                            }}
+                            disabled={submitting} 
+                            className="btn btn-sm btn-primary" 
+                            color="#ffffff"
+                        >Filter</Button>
+                        <Button
+                            type="submit"
+                            onClick={() => {
+                                form.change("action", "export");
+                            }}
+                            disabled={submitting} 
+                            className="btn btn-sm btn-primary" 
+                            color="#ffffff"
+                        >Export CSV</Button>
                     </div>
-                </div>
                 
-                <div className="col-md-4 d-flex align-items-center max-height-32px pl-1">
-                     <span className="text-blue pointer" onClick={onClickFilter}>Filter</span>
-                 </div>
                 </Row>
-                
-              
               </form>
             )}
           </Form>
-
-        // <div className="form__form-group">
-        //     <div className="col-md-4 px-0">
-        //         <Select
-        //             value={status}
-        //             onChange={onStatusChange}
-        //             options={statusOptions}
-        //             clearable={false}
-        //             className="react-select"
-        //             placeholder={statusPlaceholder}
-        //             classNamePrefix="react-select"
-        //         />
-        //     </div>
-        //     <div className="col-md-4">
-        //         <div className="">
-        //             <input 
-        //                 value={keyword}
-        //                 onChange={onProgramPhaseChange}
-        //                 type="text"
-        //                 placeholder="Program phrase"
-        //             />
-        //         </div>
-        //     </div>
-        //     <div className="col-md-4 d-flex align-items-center max-height-32px pl-1">
-        //         <span className="text-blue pointer" onClick={onClickFilter}>Filter</span>
-        //     </div>
-        // </div>
     )
 }
 

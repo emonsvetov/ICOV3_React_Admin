@@ -3,8 +3,8 @@ import renderDatePickerField from '@/shared/components/form/DatePicker';
 import { Button } from 'reactstrap';
 import { Field, Form } from 'react-final-form';
 import { Row, Col } from 'reactstrap';
-// import MerchantTreeView from "./MerchantTreeView__legacy";
-import MerchantTreeView from "./MerchantTreeView";
+// import MerchantTreeView from "../../components/MerchantTreeView__legacy";
+import MerchantTreeView from "../../components/MerchantTreeView";
 import axios from 'axios'
   
 const fetchMerchants = async () => {
@@ -25,7 +25,7 @@ const InventoryFilter = ({onSubmitFilterCb}) => {
 
 
     const onSubmitFilter = (values) => {
-        values.merchant_id = values.merchant_id.filter(n => n) //remove empty elements
+        values.merchant_id = values.merchant_id?.filter(n => n) //remove empty elements
         // alert( JSON.stringify(values) )
         onSubmitFilterCb( values )
     }

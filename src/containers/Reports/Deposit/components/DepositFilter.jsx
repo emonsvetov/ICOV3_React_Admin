@@ -3,25 +3,7 @@ import { Field, Form } from 'react-final-form';
 import { Row, Col } from 'reactstrap';
 import renderSelectField from '@/shared/components/form/Select'
 import axios from 'axios'
-import DatePicker from 'react-datepicker';
-
-const RenderDatePicker = ({ dueDate, onChange }) => {
-    const [startDate, setStartDate] = useState(dueDate);
-    const handleChange = (date) => {
-        setStartDate(date);
-        onChange(date);
-    };
-  return(
-    <div className="date-picker">
-        <DatePicker
-            dateFormat="MM/dd/yyyy"
-            selected={startDate}
-            onChange={handleChange}
-            className="form__form-group-datepicker"
-        />
-    </div>
-  )
-}
+import RenderDatePicker from '@/shared/components/form/DatePickerWithInitial';
 
 const fetchProgramData = async () => {
     try {
