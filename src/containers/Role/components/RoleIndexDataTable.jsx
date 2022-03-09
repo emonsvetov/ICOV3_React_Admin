@@ -3,16 +3,11 @@ import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useF
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import { COLUMNS } from "./columns";
-import SortIcon from 'mdi-react/SortIcon';
-import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
-import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
+
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import { Link } from 'react-router-dom';
 import axios from 'axios'
-import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter} from "@/shared/tableHelper"
-// import { getOrganization } from '../../App/auth';
-
-// const organization = getOrganization();
+import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter, Sorting} from "@/shared/apiTableHelper"
 
 const queryClient = new QueryClient()
 
@@ -24,18 +19,9 @@ const DataTable = ( {organization} ) => {
 
     const [loading, setLoading] = useState(false)
 
-    const [keyword, setKeyword] = useState('');
     const [filter, setFilter] = useState({ keyword:''});
+    const [useFilter, setUseFilter] = useState(false);
     
-    const onClickFilterCallback = (keyword) => {
-        
-        if(filter.keyword === keyword)    {
-            alert('No change in filters')
-            return
-        }
-        setFilter({keyword})
-        
-    }
     const onClickDelete = (e, id) => {
         e.preventDefault()
         setLoading( true )
@@ -116,14 +102,14 @@ const DataTable = ( {organization} ) => {
         nextPage,
         canNextPage,
         setPageSize,
-        state: { pageIndex, pageSize, sortBy }
+        state: { pageIndex, pageSize, sortBy, pageFilter }
     } = useTable({
         columns,
         data: data ? data.results : [],
         initialState: {
             pageIndex: queryPageIndex,
             pageSize: queryPageSize,
-            sortBy: queryPageSortBy,
+            sortBy: queryPageSortBy
         },
         manualPagination: true, // Tell the usePagination
         pageCount: data ? totalPageCount : null,
@@ -140,7 +126,7 @@ const DataTable = ( {organization} ) => {
     // const [statusFilterValue, setStatusFilterValue] = useState("");
     const manualPageSize = []
     
-    useEffectToDispatch( dispatch, pageIndex, pageSize, gotoPage, sortBy, filter, data );
+    useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter} );
 
     if (error) {
         return <p>Error: {JSON.stringify(error)}</p>;
@@ -157,7 +143,7 @@ const DataTable = ( {organization} ) => {
                     <form className="form form--horizontal">
                         <div className="form__form-group pb-4">
                             <div className="col-md-9 col-lg-9">
-                                <TableFilter onClickFilterCallback={onClickFilterCallback} label={'roles'} />
+                                <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter} label={'roles'} />
                             </div>
                             <div className="col-md-3 col-lg-3 text-right pr-0">
                                 <Link style={{maxWidth:'200px'}}
@@ -265,20 +251,6 @@ const DataTable = ( {organization} ) => {
             </>
     )
 }
-
-const Sorting = ({ column }) => (
-    <span className="react-table__column-header sortable">
-      {column.isSortedDesc === undefined ? (
-        <SortIcon />
-      ) : (
-        <span>
-          {column.isSortedDesc
-            ? <SortAscendingIcon />
-            : <SortDescendingIcon />}
-        </span>
-      )}
-    </span>
-  );
 
 const TableWrapper = ({organization}) => {
     return (
