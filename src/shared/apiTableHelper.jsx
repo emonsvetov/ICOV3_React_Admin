@@ -1,5 +1,8 @@
 import React from "react"
 import axios from 'axios'
+import SortIcon from 'mdi-react/SortIcon';
+import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
+import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 
 const QUERY_TRIGGER = 'QUERY_TRIGGER';
 const PAGE_CHANGED = 'PAGE_CHANGED';
@@ -45,7 +48,16 @@ export const reducer = (state, { type, payload }) => {
   }
 };
 
-export const useEffectToDispatch = (dispatch, pageIndex, pageSize, gotoPage, sortBy, filter, data, trigger = 0) => {
+export const useEffectToDispatch = (dispatch, {
+    pageIndex = 0, 
+    pageSize, 
+    gotoPage, 
+    sortBy, 
+    filter, 
+    data, 
+    useFilter,
+    trigger = 0
+}) => {
     React.useEffect(() => {
         dispatch({ type: PAGE_CHANGED, payload: pageIndex });
     }, [pageIndex]);
@@ -62,10 +74,12 @@ export const useEffectToDispatch = (dispatch, pageIndex, pageSize, gotoPage, sor
     }, [sortBy, gotoPage]);
 
     React.useEffect(() => {
-        // alert(PAGE_FILTER_CHANGED)
-        dispatch({ type: PAGE_FILTER_CHANGED, payload: filter });
-        gotoPage(0);
-    }, [filter, gotoPage]);
+        // alert(useFilter)
+        if( useFilter ) {
+            dispatch({ type: PAGE_FILTER_CHANGED, payload: filter });
+            gotoPage(0);
+        }
+    }, [filter, gotoPage, useFilter]);
 
     React.useEffect(() => {
         if (data?.count) {
@@ -93,6 +107,8 @@ export const initialState = {
 
 // export const fetchApiData = async (apiUrl, page, pageSize, pageFilterO = null, pageSortBy) => {
 export const fetchApiData = async( queryParams )  => {
+
+    // console.log(queryParams)
 
     const queryDefaults = {
         url: '/',
@@ -140,7 +156,17 @@ export const fetchApiData = async( queryParams )  => {
     }
 };
 
-export const TableFilter = ({onClickFilterCallback, label=''}) => {
+const onClickFilterCallback = (keyword, filter, setFilter, setUseFilter) => {
+    if(filter.keyword === keyword)    {
+        alert('No change in filters')
+        setUseFilter(false)
+        return
+    }
+    setFilter({keyword})
+    setUseFilter(true)
+}
+
+export const TableFilter = ({label='', filter, setFilter, setUseFilter}) => {
     const [keyword, setKeyword] = React.useState('')
     const onKeywordChange = (e) => {
         setKeyword( e.target.value )
@@ -148,9 +174,9 @@ export const TableFilter = ({onClickFilterCallback, label=''}) => {
     const onClickFilter = (reset = false) => {
         if( reset ) {
             setKeyword('')
-            onClickFilterCallback( '' )
+            onClickFilterCallback( '', filter, setFilter, setUseFilter )
         }   else {
-            onClickFilterCallback( keyword )
+            onClickFilterCallback( keyword, filter, setFilter, setUseFilter )
         }
     }
     return (
@@ -172,3 +198,17 @@ export const TableFilter = ({onClickFilterCallback, label=''}) => {
         </div>
     )
 }
+
+export const Sorting = ({ column }) => (
+    <span className="react-table__column-header sortable">
+      {column.isSortedDesc === undefined ? (
+        <SortIcon />
+      ) : (
+        <span>
+          {column.isSortedDesc
+            ? <SortAscendingIcon />
+            : <SortDescendingIcon />}
+        </span>
+      )}
+    </span>
+);

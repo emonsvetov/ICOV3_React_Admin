@@ -51,7 +51,7 @@ const fetchMerchant = async ( id ) => {
     try {
         // console.log('fetching merchant')
         const response = await axios.get(`/merchant/${id}`);
-        console.log(response);
+        // console.log(response);
         return response.data;
     } catch (e) {
         throw new Error(`API error:${e?.message}`);
@@ -135,7 +135,7 @@ const ViewMerchant = ( {merchant} ) => {
                         <Card>
                             <CardBody className='infoview'>
                                 {selected === 'details' && <MerchantDetails data={merchant}/>}
-                                {selected === 'available_gift_codes' && <AvailableGiftCodes  /> }
+                                {selected === 'available_gift_codes' && <AvailableGiftCodes merchant={merchant}  /> }
                                 {selected === 'redeemed_gift_codes' && <RedeemedGiftCodes /> }
                                 {selected === 'transferred_gift_codes' && <TransferedGiftCodes /> }
                                 {selected === 'optimal_amount' && <OptimalAmount /> }

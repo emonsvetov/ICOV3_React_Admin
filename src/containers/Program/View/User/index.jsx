@@ -8,7 +8,7 @@ import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
-import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter} from "@/shared/tableHelper"
+import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter} from "@/shared/apiTableHelper"
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 
@@ -37,6 +37,7 @@ const DataTable = ({program, organization}) => {
   
     const [keyword, setKeyword] = useState('');
     const [filter, setFilter] = useState({ keyword:''});
+    const [useFilter, setUseFilter] = useState(false);
     const [trigger, setTrigger] = useState(0);
 
     // var [data, setData] = useState([]);
@@ -75,9 +76,11 @@ const DataTable = ({program, organization}) => {
     const onClickFilterCallback = (keyword) => {
         if(filter.keyword === keyword)    {
             alert('No change in filters')
+            setUseFilter(false)
             return
         }
         setFilter({keyword})
+        setUseFilter(true)
     }
 
     const RenderActions = ({row}) => {
@@ -178,7 +181,7 @@ const DataTable = ({program, organization}) => {
   // const [statusFilterValue, setStatusFilterValue] = useState("");
   const manualPageSize = []
   
-  useEffectToDispatch( dispatch, pageIndex, pageSize, gotoPage, sortBy, filter, data, trigger );
+  useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger} );
 
   if (error) {
       return <p>Error: {JSON.stringify(error)}</p>;

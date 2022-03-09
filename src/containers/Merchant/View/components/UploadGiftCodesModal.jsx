@@ -47,9 +47,9 @@ const UploadGiftCodesModal = ({
         if( !csvFile ){
           return;
         }
-        data.append('csv_import', csvFile)
+        data.append('file_medium_info', csvFile)
         axios
-        .post(`/giftcode/${merchant.id}/import`, data, {
+        .post(`/merchant/${merchant.id}/giftcode`, data, {
                 headers: {
                     "Content-type": "multipart/form-data",
                 },       

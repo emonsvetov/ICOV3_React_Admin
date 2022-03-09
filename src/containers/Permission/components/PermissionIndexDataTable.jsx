@@ -9,7 +9,7 @@ import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import { Link } from 'react-router-dom';
 import axios from 'axios'
-import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter} from "@/shared/tableHelper"
+import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter} from "@/shared/apiTableHelper"
 // import { getOrganization } from '../../App/auth';
 
 // const organization = getOrganization();
@@ -25,13 +25,17 @@ const DataTable = ( {organization} ) => {
     const [loading, setLoading] = useState(false)
 
     const [filter, setFilter] = useState({ keyword:''});
+    const [useFilter, setUseFilter] = useState(false);
+
     const onClickFilterCallback = (keyword) => {
         
         if(filter.keyword === keyword)    {
             alert('No change in filters')
+            setUseFilter(false)
             return
         }
         setFilter({keyword})
+        setUseFilter(true)
         
     }
     // const onClickDelete = (e, id) => {
@@ -136,7 +140,9 @@ const DataTable = ( {organization} ) => {
     // const [statusFilterValue, setStatusFilterValue] = useState("");
     const manualPageSize = []
     
-    useEffectToDispatch( dispatch, pageIndex, pageSize, gotoPage, sortBy, filter, data );
+    useEffectToDispatch( dispatch, 
+        { pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter }
+    );
 
     if (error) {
         return <p>Error: {JSON.stringify(error)}</p>;
