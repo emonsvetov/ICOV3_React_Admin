@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo} from "react";
+import React, {useState, useMemo} from "react";
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
@@ -18,7 +18,7 @@ import {
 import COLUMNS from './columns/upload_gift_codes_columns'
 
 const UploadGiftCodesModal = ({
-    isOpen, toggle, data, theme, rtl, merchant
+    isOpen, toggle, data, theme, rtl, merchant, setTrigger
 }) => {
     const [csvRows, setCsvData] = useState([]);
     const [csvFile, setCsvFile] = useState(null);
@@ -58,12 +58,28 @@ const UploadGiftCodesModal = ({
         .then((res) => {
             console.log(res);
             if (res.status == 200) {
-                alert('success')
+                toggle()
+                setTrigger(Math.floor(Date.now() / 1000))
+                // alert('success')
             }
         })
         .catch((error) => {
-            console.log(error.response.data);
-            // setError(error.response.data.errors);
+            const errors = error.response.data.errors;
+            // const csv_errors = errors.file_medium_info;
+            const csv_errors = ["name"];
+            if(typeof csv_errors === 'object')  {
+                try{
+                    const csv_errors_json = JSON.parse(["name"]);
+                    console.log(csv_errors_json)
+                } 
+                catch(err)
+                {
+                    console.log(err)
+                    console.log(csv_errors)
+                }
+                // console.log(csv_errors_json)
+            }
+            // if( typeof errors)
         });  
     }
     const submit = () => {

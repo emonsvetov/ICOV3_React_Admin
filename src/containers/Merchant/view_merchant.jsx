@@ -96,8 +96,7 @@ const ViewMerchant = ( {merchant} ) => {
     const RenderItem = ({item}) => {
         return (<ListGroupItem
             className={selected === item.value ? 'selected' : ''}
-            href="#" 
-            tag="a" 
+            tag="span" 
             onClick={()=>onClickMenuItem(item)}>{item.label}</ListGroupItem>)
     }
 

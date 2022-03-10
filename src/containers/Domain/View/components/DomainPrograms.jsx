@@ -5,7 +5,7 @@ import DomainProgramsDataTable from './DomainProgramsDataTable';
 import AddProgramToDomain from './AddProgramToDomain';
 
 const DomainPrograms = ( {domain, organization} ) => {
-    const [trigger, setTrigger] = useState( Math.floor(Date.now() / 1000) );
+    const [trigger, setTrigger] = useState( 0 );
     if( !organization?.id ) return null
     if( !domain?.id ) return null
     return (

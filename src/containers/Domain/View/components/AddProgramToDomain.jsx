@@ -9,25 +9,26 @@ import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 
 const queryClient = new QueryClient()
 
-const search = async( queryKeyword, cbShow ) => {
-    if( queryKeyword.trim().length < 2) return []
-
-    // console.log("searching..")
-
-    try {
-        const response = await axios.get(
-        `/organization/1/program?minimal=true&findById=true&keyword=${queryKeyword}`
-        );
-        // console.log(response)
-        const results = response.data;
-        cbShow(true)
-        return results;
-    } catch (e) {
-        throw new Error(`API error:${e?.message}`)
-    }
-}
-
 const AddProgramToDomain = ( {organization, domain, setTrigger}) => {
+
+    const search = async( queryKeyword, cbShow ) => {
+        if( queryKeyword.trim().length < 2) return []
+    
+        // console.log("searching..")
+    
+        try {
+            const response = await axios.get(
+            `/organization/${organization.id}/program?minimal=true&findById=true&keyword=${queryKeyword}`
+            );
+            // console.log(response)
+            const results = response.data;
+            cbShow(true)
+            return results;
+        } catch (e) {
+            throw new Error(`API error:${e?.message}`)
+        }
+    }
+
     const dispatch = useDispatch()
 
     const [keyword, setKeyword] = useState('')

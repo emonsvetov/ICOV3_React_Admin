@@ -18,6 +18,7 @@ const DataTable = ({merchant}) => {
     const [filter, setFilter] = useState({ keyword:''});
     const [useFilter, setUseFilter] = useState(false);
     const [isOpen, setOpen] = useState(false)
+    const [trigger, setTrigger] = useState( Math.floor(Date.now() / 1000) );
 
     const toggle = () => {
         setOpen(prevState => !prevState)
@@ -25,20 +26,21 @@ const DataTable = ({merchant}) => {
 
     let columns = useMemo( () => AVAILABLE_GIFT_CODES_COLUMNS, [])
     
-    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
+    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] =
     React.useReducer(reducer, initialState);
 
-    const apiUrl = `/merchant/1/giftcode`
+    const apiUrl = `/merchant/${merchant.id}/giftcode`
 
     const { isLoading, error, data, isSuccess } = useQuery(
-        ['giftcodes', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
+        ['giftcodes', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
         () => fetchApiData(
             {
                 url: apiUrl,
                 page: queryPageIndex,
                 size: queryPageSize,
                 filter,
-                sortby: queryPageSortBy
+                sortby: queryPageSortBy,
+                trigger: queryTrigger
             }
         ),
         {
@@ -88,7 +90,7 @@ const DataTable = ({merchant}) => {
     // const [statusFilterValue, setStatusFilterValue] = useState("");
     const manualPageSize = []
     
-    useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter} );
+    useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger} );
 
     if (error) {
         return <p>Error: {JSON.stringify(error)}</p>;
@@ -212,7 +214,7 @@ const DataTable = ({merchant}) => {
                         </div>
                     </>
                 )}
-                <UploadGiftCodesModal isOpen={isOpen} toggle={toggle} data={data} />
+                <UploadGiftCodesModal isOpen={isOpen} toggle={toggle} data={data} setTrigger={setTrigger} />
             </>
     )
 }
