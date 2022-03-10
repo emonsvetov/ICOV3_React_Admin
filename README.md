@@ -20,21 +20,21 @@ Create .env file and make necessary changes
 
 Flash Helper is used to display flash messages at the top of the page or under the main navigation bar.<br />
 Import at the top<br />
-`import {useDispatch, sendFlashMessage} from "@/shared/components/flash"`<br />
+<pre>import {useDispatch, sendFlashMessage} from "@/shared/components/flash"</pre>
 
 Intialize at the top of default method<br />
-`const dispatch = useDispatch()`
+<pre>const dispatch = useDispatch()</pre>
 
 Trigger<br />
-`dispatch(sendFlashMessage('Permission created successfully', 'alert-success'))`
+<pre>dispatch(sendFlashMessage('Permission created successfully', 'alert-success'))</pre>
 
 Note - Additional component `ApiErrorMessage` can be used to parse Api's validation errors in a listed format. For example:<br />
 
 Import<br />
-`import ApiErrorMessage from "@/shared/components/ApiErrorMessage"`
+<pre>import ApiErrorMessage from "@/shared/components/ApiErrorMessage"</pre>
 
 use<br />
-`dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))`<br />
+<pre>dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))</pre><br />
 
 where `error.response.data` is the response returned from api call<br />
 
@@ -57,3 +57,5 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 ## Learn More
 
 ### Code Splitting
+
+
