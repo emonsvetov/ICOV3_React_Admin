@@ -2,9 +2,9 @@
 
 ### `git clone & yarn install`
 
-`git clone [github path to repository] new_directory (optional)`
-`cd to new_directory`
-`yarn install`
+`git clone [github path to repository] new_directory (optional)`<br />
+`cd to new_directory`<br />
+`yarn install`<br />
 
 ### `.env file`
 
@@ -18,21 +18,25 @@ Create .env file and make necessary changes
 
 ### Using flash helper
 
-Flash Helper is used to display flash messages at the top of the page or under the main navigation bar.
+Flash Helper is used to display flash messages at the top of the page or under the main navigation bar.<br />
+Import at the top<br />
+`import {useDispatch, sendFlashMessage} from "@/shared/components/flash"`<br />
 
-Import at the top
-`import {useDispatch, sendFlashMessage} from "@/shared/components/flash"`
-Intialize at the top of default method
+Intialize at the top of default method<br />
 `const dispatch = useDispatch()`
-Trigger
+
+Trigger<br />
 `dispatch(sendFlashMessage('Permission created successfully', 'alert-success'))`
 
-Note - Additional component `ApiErrorMessage` can be used to parse Api's validation errors in a listed format. For example:
-Import
+Note - Additional component `ApiErrorMessage` can be used to parse Api's validation errors in a listed format. For example:<br />
+
+Import<br />
 `import ApiErrorMessage from "@/shared/components/ApiErrorMessage"`
-use
-`dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))`
-where `error.response.data` is the response returned from api call
+
+use<br />
+`dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))`<br />
+
+where `error.response.data` is the response returned from api call<br />
 
 Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
