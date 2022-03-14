@@ -36,6 +36,9 @@ Import<br />
 use<br />
 <pre>dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))</pre><br />
 
+use 'top' property to show error on the top (absolutely positioned at the top of everything, useful in case of modal dialog in particular)
+<pre>dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger', 'top'))</pre>
+
 where `error.response.data` is the response returned from api call<br />
 
 Runs the app in the development mode.<br />

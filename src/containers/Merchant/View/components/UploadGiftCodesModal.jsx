@@ -1,9 +1,12 @@
-import React, {useState, useMemo} from "react";
+import React, {useState, useMemo, useEffect} from "react";
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import { Form, Field } from "react-final-form";
 import ReactTableBase from "@/shared/components/table/ReactTableBase";
+import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
+import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
+import {makeCsvErrors} from "@/shared/apiTableHelper"
 import axios from 'axios'
 
 import {
@@ -17,15 +20,37 @@ import {
   } from "reactstrap";
 import COLUMNS from './columns/upload_gift_codes_columns'
 
+function myfunc() {
+    return {
+        x:10,
+        y:20
+    }
+}
+
+// const {x:mx, y:my} = myfunc()
+// console.log(mx)
+// console.log(my)
+// console.log(x)
+// console.log(y)
+
 const UploadGiftCodesModal = ({
     isOpen, toggle, data, theme, rtl, merchant, setTrigger
 }) => {
-    const [csvRows, setCsvData] = useState([]);
+    const dispatch = useDispatch()
+
     const [csvFile, setCsvFile] = useState(null);
+    const [errorComponent, setErrorComponent] = useState(null);
+
+    // useEffect( () => {
+    //     setErrorComponent(null)
+    // }, [setErrorComponent])
+
+    // console.log(errorComponent)
 
     // var [data, setData] = useState([]);
     const tableConfig = {
-        isResizable: true
+        isResizable: true,
+        isSortable:false
     }
 
     // const processCSV = (str, delim=',') => {
@@ -44,9 +69,9 @@ const UploadGiftCodesModal = ({
     // }
     function handleUpload() {
         let data = new FormData();
-        if( !csvFile ){
-          return;
-        }
+        // if( !csvFile ){
+        //   return;
+        // }
         data.append('file_medium_info', csvFile)
         axios
         .post(`/merchant/${merchant.id}/giftcode`, data, {
@@ -60,55 +85,55 @@ const UploadGiftCodesModal = ({
             if (res.status == 200) {
                 toggle()
                 setTrigger(Math.floor(Date.now() / 1000))
+                dispatch(sendFlashMessage('Giftcodes saved successfully', 'alert-success'))
                 // alert('success')
             }
         })
         .catch((error) => {
             const errors = error.response.data.errors;
-            // const csv_errors = errors.file_medium_info;
-            const csv_errors = ["name"];
+            const csv_errors = errors.file_medium_info;
+            // console.log(csv_errors)
             if(typeof csv_errors === 'object')  {
                 try{
-                    const csv_errors_json = JSON.parse(["name"]);
-                    console.log(csv_errors_json)
-                } 
+                    const {columns:csvColumns, rows:csvRows} = makeCsvErrors(csv_errors);
+                    setErrorComponent(
+                    <ReactTableBase
+                        columns={csvColumns}
+                        data={csvRows}
+                        tableConfig={tableConfig}
+                    />)
+                    dispatch(sendFlashMessage('Error occurred while validating giftcodes. Please see the errors below', 'alert-danger', 'top'))
+                }
                 catch(err)
                 {
                     console.log(err)
-                    console.log(csv_errors)
+                    // console.log(error.response.data)
+                    dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger', 'top'))
                 }
+
                 // console.log(csv_errors_json)
             }
             // if( typeof errors)
         });  
     }
-    const submit = () => {
-        handleUpload()
-        // const file = csvFile;
-        // const reader = new FileReader();
 
-        // reader.onload = function(e) {
-        //     const text = e.target.result;
-        //     console.log(text);
-        //     handleUpload( text )
-        //     // processCSV(text) // plugged in here
-        // }
-        // reader.readAsText(file);
+    const onSubmit = values => {
+        if( csvFile ) handleUpload( )
     }
 
-    const onSubmit = (values) => {
-        // alert(JSON.stringify(csvFile))
-        // alert(JSON.stringify(values.name))
-        if( csvFile )   submit( csvFile )
+    const onClickCancel = () => {
+        setCsvFile(null)
+        setErrorComponent(null)
+        toggle()
     }
 
     const validateMe = (values) => {
         let errors = {};
-        // alert(JSON.stringify(csvFile))
+        // // alert(JSON.stringify(csvFile))
         if ( !csvFile ) {
             errors.name = "Csv file is required";
         }
-        // console.log(csvFile);
+        // // console.log(csvFile);
         return errors;
     }
 
@@ -134,7 +159,7 @@ const UploadGiftCodesModal = ({
                         </Col>
                         <Col md="6" lg="6" xl="6" className='text-right'>
                             <ButtonToolbar className="modal__footer flex justify-content-right w100">
-                                <Button outline color="primary" className="mr-3" onClick={toggle}>Cancel</Button>{' '}
+                                <Button outline color="primary" className="mr-3" onClick={onClickCancel}>Cancel</Button>{' '}
                                 <Button type="submit"  className="btn btn-primary" color="#ffffff">Upload</Button>
                             </ButtonToolbar>
                         </Col>
@@ -164,7 +189,7 @@ const UploadGiftCodesModal = ({
                                                 <div className="form__form-group-row">
                                                     <input
                                                         type='file'
-                                                        accept='.csv'
+                                                        // accept='.csv'
                                                         id='csvFile'
                                                         {...input}
                                                         onChange={(e) => {
@@ -190,12 +215,7 @@ const UploadGiftCodesModal = ({
             </form>
             )}
             </Form>
-            <ReactTableBase
-                columns={columns}
-                data={csvRows}
-                key={'modified'}
-                tableConfig={tableConfig}
-            />
+            {errorComponent}
         </Modal>
     )
 }

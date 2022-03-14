@@ -199,6 +199,48 @@ export const TableFilter = ({label='', filter, setFilter, setUseFilter}) => {
     )
 }
 
+// The CSV Table Error Building
+
+export const makeCsvErrors = (csv_errors) => {
+    const csv_errors_json = JSON.parse(csv_errors);
+    if( csv_errors_json.errors && csv_errors_json.rows && csv_errors_json.errors.length === csv_errors_json.rows.length && csv_errors_json.rows.length > 0) {
+        const csvErrors = csv_errors_json.errors;
+        const csvHeaderRow = Object.keys(csv_errors_json.rows[0])
+        // console.log(csvErrors)
+        const CSV_COLUMNS = makeCsvColumns(csvHeaderRow)
+        let csvRows = csv_errors_json.rows
+        csvRows.map( (row, i) => {
+            // console.log(csvErrors[i])
+            for (var key in row){
+                // console.log( key + ": " + row[key]);
+                // console.log(csvErrors[i][key])
+                if( csvErrors[i] && typeof csvErrors[i][key] !== 'undefined' )  {
+                    csvRows[i][key] += `<span class="csv-row-error">${csvErrors[i][key]}</span>`;
+                }
+            }
+        })
+        return {
+            columns: CSV_COLUMNS,
+            rows: csvRows
+        }
+    }
+}
+
+const makeCsvColumns = (row) => {
+    const CSV_COLUMNS = []
+    row.map( item => {
+        CSV_COLUMNS.push(
+            {
+                Header: item,
+                accessor: item,
+                Cell: row => (<div dangerouslySetInnerHTML={{__html: row.value}} />)
+            }
+        )
+    })
+    // console.log(CSV_COLUMNS)
+    return CSV_COLUMNS
+}
+
 export const Sorting = ({ column }) => (
     <span className="react-table__column-header sortable">
       {column.isSortedDesc === undefined ? (
