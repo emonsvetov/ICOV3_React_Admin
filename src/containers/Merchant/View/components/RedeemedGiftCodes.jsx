@@ -1,127 +1,48 @@
 import React, {useState, useEffect, useMemo} from "react";
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
-import MOCK_DATA from "./mockData/REDEEMED.json";
-import {REDEEMED_GIFT_CODES_COULMNS}  from "./columns";
-import SortIcon from 'mdi-react/SortIcon';
-import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
-import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
-import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
-import RedeemedGiftCodesFilter  from "./Filters/RedeemedGiftCodesFilter";
-import { Link } from 'react-router-dom';
-import axios from 'axios'
-import {renameChildrenToSubrows} from '@/shared/helpers'
 
+import {REDEEMED_GIFT_CODES_COULMNS}  from "./columns";
+
+import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
+import UploadGiftCodesModal  from "./UploadGiftCodesModal";
+import axios from 'axios'
+import { Row, Col } from 'reactstrap';
+
+import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter, Sorting} from "@/shared/apiTableHelper"
 
 const queryClient = new QueryClient()
 
-const initialState = {
-    queryPageIndex: 0,
-    queryPageSize: 10,
-    totalCount: null,
-    queryPageFilter:{},
-    queryPageSortBy: [],
-};
-
-const PAGE_CHANGED = 'PAGE_CHANGED';
-const PAGE_SIZE_CHANGED = 'PAGE_SIZE_CHANGED';
-const PAGE_SORT_CHANGED = 'PAGE_SORT_CHANGED'
-const PAGE_FILTER_CHANGED = 'PAGE_FILTER_CHANGED';
-const TOTAL_COUNT_CHANGED = 'TOTAL_COUNT_CHANGED';
-
-const reducer = (state, { type, payload }) => {
-  switch (type) {
-    case PAGE_CHANGED:
-        return {
-            ...state,
-            queryPageIndex: payload,
-        };
-    case PAGE_SIZE_CHANGED:
-        return {
-            ...state,
-            queryPageSize: payload,
-        };
-    case PAGE_SORT_CHANGED:
-        return {
-            ...state,
-            queryPageSortBy: payload,
-        };
-    case PAGE_FILTER_CHANGED:
-        return {
-            ...state,
-            queryPageFilter: payload,
-        };
-    case TOTAL_COUNT_CHANGED:
-        return {
-            ...state,
-            totalCount: payload,
-        };
-    default:
-      throw new Error(`Unhandled action type: ${type}`);
-  }
-};
-const fetchMockData = () => {
-    const data = {
-        results: renameChildrenToSubrows(MOCK_DATA),
-        count: 15
-    };
-    return data;
-};
-
-const fetchMerchantData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
-    // const offset = page * pageSize;
-    const params = []
-    let paramStr = ''
-    if( pageFilterO ) {
-        if(pageFilterO.keyword !== 'undefined' && pageFilterO.keyword) params.push(`keyword=${pageFilterO.keyword}`)
-        paramStr = params.join('&')
-    }
-    if( pageSortBy.length > 0 ) {
-        const sortParams = pageSortBy[0];
-        const sortyByDir = sortParams.desc ? 'desc' : 'asc'
-        paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
-    }
-    try {
-        const response = await axios.get(
-        `/merchant?page=${page}&limit=${pageSize}&${paramStr}`
-        );
-        // console.log(response)
-        if( response.data.length === 0) return {results:[],count:0}
-        const data = {
-            results: renameChildrenToSubrows(response.data.data),
-            count: response.data.total
-        };
-        // console.log(data)
-        return data;
-    } catch (e) {
-        throw new Error(`API error:${e?.message}`);
-    }
-};
-
-const DataTable = () => {
+const DataTable = ({merchant}) => {
     
-    const [filter, setFilter] = useState({ keyword:''});
-    // var [data, setData] = useState([]);
+    const [filter, setFilter] = useState({ from:'', to: ''});
+    const [useFilter, setUseFilter] = useState(false);
+    const [isOpen, setOpen] = useState(false)
+    const [trigger, setTrigger] = useState( 0 );
 
-    const onClickFilterCallback = (keyword) => {
-        // alert(JSON.stringify({status, keyword}))
-        // alert(JSON.stringify(filter))
-        if(filter.keyword === keyword)    {
-            alert('No change in filters')
-            return
-        }
-        setFilter({keyword})
-        // alert(status, keyword)
+    const toggle = () => {
+        setOpen(prevState => !prevState)
     }
-    
+
     let columns = useMemo( () => REDEEMED_GIFT_CODES_COULMNS, [])
-
-    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
+    
+    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] =
     React.useReducer(reducer, initialState);
 
+    const apiUrl = `/merchant/${merchant.id}/giftcode`
+
     const { isLoading, error, data, isSuccess } = useQuery(
-        ['merchants', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
-        () => fetchMockData(),
+        ['giftcodes', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+        () => fetchApiData(
+            {
+                url: apiUrl,
+                page: queryPageIndex,
+                size: queryPageSize,
+                filter,
+                sortby: queryPageSortBy,
+                trigger: queryTrigger
+            }
+        ),
         {
             keepPreviousData: true,
             staleTime: Infinity,
@@ -129,8 +50,6 @@ const DataTable = () => {
     );
 
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
-
-    // console.log(data)
 
     const {
         getTableProps,
@@ -154,7 +73,7 @@ const DataTable = () => {
         initialState: {
             pageIndex: queryPageIndex,
             pageSize: queryPageSize,
-            sortBy: queryPageSortBy,
+            sortBy: queryPageSortBy
         },
         manualPagination: true, // Tell the usePagination
         pageCount: data ? totalPageCount : null,
@@ -171,35 +90,7 @@ const DataTable = () => {
     // const [statusFilterValue, setStatusFilterValue] = useState("");
     const manualPageSize = []
     
-    React.useEffect(() => {
-        dispatch({ type: PAGE_CHANGED, payload: pageIndex });
-    }, [pageIndex]);
-
-    React.useEffect(() => {
-        // alert(PAGE_SIZE_CHANGED)
-        dispatch({ type: PAGE_SIZE_CHANGED, payload: pageSize });
-        gotoPage(0);
-    }, [pageSize, gotoPage]);
-
-    useEffect(() => {
-        dispatch({ type: PAGE_SORT_CHANGED, payload: sortBy });
-        gotoPage(0);
-    }, [sortBy, gotoPage]);
-
-    React.useEffect(() => {
-        // alert(PAGE_FILTER_CHANGED)
-        dispatch({ type: PAGE_FILTER_CHANGED, payload: filter });
-        gotoPage(0);
-    }, [filter, gotoPage]);
-
-    React.useEffect(() => {
-        if (data?.count) {
-            dispatch({
-            type: TOTAL_COUNT_CHANGED,
-            payload: data.count,
-            });
-        }
-    }, [data?.count]);
+    useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger} );
 
     if (error) {
         return <p>Error: {JSON.stringify(error)}</p>;
@@ -208,24 +99,24 @@ const DataTable = () => {
     if (isLoading) {
         return <p>Loading...</p>;
     }
+
     if(isSuccess)
     return (
             <>
                 <div className='table react-table available-table'>
-                    <form className="form form--horizontal">
-                        <div className="form__form-group pb-4">
-                            <div className="col-md-9 col-lg-9">
-                                <RedeemedGiftCodesFilter onClickFilterCallback={onClickFilterCallback} />
+                    <Row>
+                        <Col md={10}>
+                            <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter} config={{label:'codes', keyword:false, dateRange: true}} />
+                        </Col>
+                        <Col md={2} className="text-right pr-0">
+                            <div 
+                            style={{maxWidth:'200px'}}
+                            className="btn btn-primary account__btn account__btn--small"
+                            onClick={()=>toggle()}
+                            >Upload Gift Codes
                             </div>
-                            <div className="col-md-3 col-lg-3 text-right pr-0">
-                                <Link style={{maxWidth:'200px'}}
-                                className="btn btn-primary account__btn account__btn--small"
-                                to={{}}
-                                >Upload Gift Codes
-                                </Link>
-                            </div>
-                        </div>
-                    </form>
+                        </Col>
+                    </Row>
                     <table {...getTableProps()} className="table">
                         <thead>
                             {headerGroups.map( (headerGroup) => (
@@ -275,6 +166,7 @@ const DataTable = () => {
                         </tfoot> */}
                     </table>
                 </div>
+                {/* <UploadGiftCodesModal isOpen={isOpen} setOpen={setOpen} toggle={toggle} data={data}  /> */}
                 {(rows.length > 0) && (
                     <>
                         <ReactTablePagination
@@ -320,30 +212,19 @@ const DataTable = () => {
                         </div>
                     </>
                 )}
+                <UploadGiftCodesModal isOpen={isOpen} toggle={toggle} data={data} setTrigger={setTrigger} />
             </>
     )
 }
 
-const Sorting = ({ column }) => (
-    <span className="react-table__column-header sortable">
-      {column.isSortedDesc === undefined ? (
-        <SortIcon />
-      ) : (
-        <span>
-          {column.isSortedDesc
-            ? <SortAscendingIcon />
-            : <SortDescendingIcon />}
-        </span>
-      )}
-    </span>
-  );
-
-const TableWrapper = () => {
+const TableWrapper = ({merchant}) => {
     return (
         <QueryClientProvider client={queryClient}>
-            <DataTable />
+            <DataTable merchant={merchant} />
         </QueryClientProvider>
     )
 }
 
 export default TableWrapper;
+
+

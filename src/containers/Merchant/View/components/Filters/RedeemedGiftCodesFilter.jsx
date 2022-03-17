@@ -1,36 +1,49 @@
 import React from 'react'
+import DatePicker from 'react-datepicker';
+
+const getFirstDay = () =>{
+    let date = new Date();
+    return new Date(date.getFullYear(), date.getMonth(), 1)
+}
 
 const RedeemedFilter = ({onClickFilterCallback}) => {
-    const [from, setFrom] = React.useState('')
-    const [to, setTo] = React.useState('')
-    const onStartChange = (e) => {
-        setFrom( e.target.value)
+    const [from, setFrom] = React.useState( getFirstDay )
+    const [to, setTo] = React.useState( new Date() )
+    const onStartChange = ( value ) => {
+        setFrom( value)
     }
-    const onEndChange = (e) => {
-        setTo( e.target.value)
+    const onEndChange = ( value ) => {
+        setTo(  value )
     }
     const onClickFilter = () => {
-        onClickFilterCallback(from, to)
+        onClickFilterCallback({
+            from,to
+        })
     }
+
     return (
         <div className="form__form-group">
             <div className="col-md-3">
                 <div className="">
-                    <input 
-                        value={from}
+                    <DatePicker
+                        dateFormat="MM/dd/yyyy"
+                        selected={from}
                         onChange={onStartChange}
-                        type="text"
-                        placeholder="From"
+                        popperPlacement="center"
+                        dropDownMode="select"
+                        className="form__form-group-datepicker"
                     />
                 </div>
             </div>
             <div className="col-md-3">
                 <div className="">
-                    <input 
-                        value={to}
+                    <DatePicker
+                        dateFormat="MM/dd/yyyy"
+                        selected={to}
                         onChange={onEndChange}
-                        type="text"
-                        placeholder="To"
+                        popperPlacement="center"
+                        dropDownMode="select"
+                        className="form__form-group-datepicker"
                     />
                 </div>
             </div>
@@ -38,8 +51,6 @@ const RedeemedFilter = ({onClickFilterCallback}) => {
                 <span className="text-blue pointer" onClick={onClickFilter}>Update</span>
                 <span className="text-danger pointer" onClick={{}}>Export</span>    
             </div>
-            
-            
         </div>
     )
 }

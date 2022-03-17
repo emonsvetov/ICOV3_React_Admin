@@ -7,6 +7,8 @@ import {AVAILABLE_GIFT_CODES_COLUMNS}  from "./columns";
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import UploadGiftCodesModal  from "./UploadGiftCodesModal";
 import axios from 'axios'
+import { Row, Col } from 'reactstrap';
+
 
 import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter, Sorting} from "@/shared/apiTableHelper"
 
@@ -18,7 +20,7 @@ const DataTable = ({merchant}) => {
     const [filter, setFilter] = useState({ keyword:''});
     const [useFilter, setUseFilter] = useState(false);
     const [isOpen, setOpen] = useState(false)
-    const [trigger, setTrigger] = useState( Math.floor(Date.now() / 1000) );
+    const [trigger, setTrigger] = useState( 0 );
 
     const toggle = () => {
         setOpen(prevState => !prevState)
@@ -66,7 +68,7 @@ const DataTable = ({merchant}) => {
         nextPage,
         canNextPage,
         setPageSize,
-        state: { pageIndex, pageSize, sortBy, pageFilter }
+        state: { pageIndex, pageSize, sortBy }
     } = useTable({
         columns,
         data: data ? data.results : [],
@@ -104,21 +106,19 @@ const DataTable = ({merchant}) => {
     return (
             <>
                 <div className='table react-table available-table'>
-                    <form className="form form--horizontal">
-                        <div className="form__form-group pb-4">
-                            <div className="col-md-9 col-lg-9">
-                                <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter} label={'codes'} />
+                    <Row>
+                        <Col md={10}>
+                            <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter} config={{label:'codes'}} />
+                        </Col>
+                        <Col md={2} className="text-right pr-0">
+                            <div 
+                            style={{maxWidth:'200px'}}
+                            className="btn btn-primary account__btn account__btn--small"
+                            onClick={()=>toggle()}
+                            >Upload Gift Codes
                             </div>
-                            <div className="col-md-3 col-lg-3 text-right pr-0">
-                                <div 
-                                style={{maxWidth:'200px'}}
-                                className="btn btn-primary account__btn account__btn--small"
-                                onClick={()=>toggle()}
-                                >Upload Gift Codes
-                                </div>
-                            </div>
-                        </div>
-                    </form>
+                        </Col>
+                    </Row>
                     <table {...getTableProps()} className="table">
                         <thead>
                             {headerGroups.map( (headerGroup) => (

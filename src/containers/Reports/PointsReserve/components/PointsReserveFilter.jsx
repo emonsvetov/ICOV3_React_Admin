@@ -47,7 +47,7 @@ const PointsReserveFilter = ({onClickFilterCallback}) => {
                     <span className="form__form-group-label">To</span>
                     <div className="form__form-group-field">
                         <Field
-                            name="from"
+                            name="to"
                             dueDate={new Date()}
                             onChange={(e) => handleChange(e, 'to')}
                             component={RenderDatePicker}    

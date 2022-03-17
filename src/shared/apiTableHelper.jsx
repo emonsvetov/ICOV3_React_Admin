@@ -1,8 +1,13 @@
 import React from "react"
 import axios from 'axios'
 import SortIcon from 'mdi-react/SortIcon';
+import { Row, Col } from 'reactstrap';
+
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
+import DatePicker from 'react-datepicker';
+import {dateStrToYmd} from '@/shared/helpers';
+
 
 const QUERY_TRIGGER = 'QUERY_TRIGGER';
 const PAGE_CHANGED = 'PAGE_CHANGED';
@@ -129,11 +134,21 @@ export const fetchApiData = async( queryParams )  => {
         params.push(`t=${options.trigger}`)
     }
     if( options.filter ) {
-        if(options.filter.keyword !== 'undefined' && options.filter.keyword) params.push(`keyword=${options.filter.keyword}`)
+        // console.log(options.filter)
+        const fields = Object.keys(options.filter);
+        if( fields.length > 0)  {
+            for(var i in fields)    {
+                params.push(`${fields[i]}=${options.filter[fields[i]]}`)
+            }
+        }
+        // if(options.filter.keyword !== 'undefined' && options.filter.keyword) params.push(`keyword=${options.filter.keyword}`)
+        // if(options.filter.from !== 'undefined' && options.filter.from) params.push(`from=${options.filter.from}`)
+        // if(options.filter.to !== 'undefined' && options.filter.to) params.push(`to=${options.filter.to}`)
     }
     if( params.length > 0 ) {
         paramStr = params.join('&')
     }
+    console.log(paramStr)
     if( options.sortby.length > 0 ) {
         const sortParams = options.sortby[0];
         const sortyByDir = sortParams.desc ? 'desc' : 'asc'
@@ -143,7 +158,7 @@ export const fetchApiData = async( queryParams )  => {
         const response = await axios.get(
         `${options.url}?page=${options.page+1}&limit=${options.size}&${paramStr}`
         );
-        // console.log(response)
+        console.log(response)
         if( response.data.length === 0) return {results:[],count:0}
         const data = {
             results: response.data.data,
@@ -156,46 +171,152 @@ export const fetchApiData = async( queryParams )  => {
     }
 };
 
-const onClickFilterCallback = (keyword, filter, setFilter, setUseFilter) => {
-    if(filter.keyword === keyword)    {
-        alert('No change in filters')
-        setUseFilter(false)
-        return
-    }
-    setFilter({keyword})
-    setUseFilter(true)
+const getFirstDayOfMonth = () =>{
+    let date = new Date();
+    return new Date(date.getFullYear(), date.getMonth(), 1)
 }
 
-export const TableFilter = ({label='', filter, setFilter, setUseFilter}) => {
+const defaultFrom = getFirstDayOfMonth()
+const defaultTo = new Date()
+
+export const TableFilter = ({ config, filter, setFilter, setUseFilter}) => {
+
+    const defaultConfig = {
+        label:'term',
+        keyword:true,
+        dateRange: false
+    }
+
+    const options = {...defaultConfig, ...config}
+
+    // console.log(options)
+
     const [keyword, setKeyword] = React.useState('')
+    const [from, setFrom] = React.useState( filter.from ? filter.from : defaultFrom )
+    const [to, setTo] = React.useState( filter.to ? filter.to : defaultTo )
+
     const onKeywordChange = (e) => {
         setKeyword( e.target.value )
     }
+    const onStartChange = ( value ) => {
+        setFrom( value)
+    }
+    const onEndChange = ( value ) => {
+        setTo(  value )
+    }
     const onClickFilter = (reset = false) => {
+        let dataSet = {}
+        if( options.keyword ) {
+            dataSet.keyword = reset ? '' : keyword
+        }
+        if( options.dateRange ) {
+            dataSet.from = dateStrToYmd(reset ? defaultFrom : from)
+            dataSet.to = dateStrToYmd(reset ? defaultTo : to)
+        }
+        onClickFilterCallback( dataSet )
         if( reset ) {
             setKeyword('')
-            onClickFilterCallback( '', filter, setFilter, setUseFilter )
-        }   else {
-            onClickFilterCallback( keyword, filter, setFilter, setUseFilter )
+            setFrom( defaultFrom )
+            setTo( defaultTo )
         }
     }
+    const onClickFilterCallback = (values) => {
+
+        // alert(JSON.stringify(filter))
+        // alert(JSON.stringify(values))
+        var change = false;
+
+        if(options.keyword) {
+            if(filter.keyword !== values.keyword)   {
+                change = true
+            }
+        }
+
+        if(options.dateRange) {
+            if(filter.from !== values.from || filter.to !== values.to )   {
+                change = true
+            }
+        }
+
+        if( !change )    {
+            alert('No change in filters')
+            setUseFilter(false)
+            return
+        }
+        // alert(JSON.stringify(values))
+        let filters = {}
+        if( options.keyword ) filters.keyword = values.keyword
+        if( options.dateRange ) {
+            filters.from = values.from
+            filters.to = values.to
+        }
+        // alert(JSON.stringify(filters))
+        setFilter( filters )
+        setUseFilter(true)
+    }
     return (
-        <div className="form__form-group">
-            <div className="col-md-4">
-                <div className="">
-                    <input 
-                        value={keyword}
-                        onChange={onKeywordChange}
-                        type="text"
-                        placeholder={`Search ${label} here`}
-                    />
+        <Row className="table-filter-form form">
+        {options.keyword && 
+            <Col md={3} lg={3} sm={3}>
+                <div className="form__form-group">
+                    <div className="form__form-group-field">
+                        <div className="form__form-group-row">
+                            <input 
+                                value={keyword}
+                                onChange={onKeywordChange}
+                                type="text"
+                                placeholder={`Search ${options.label} here`}
+                            />
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div className="col-md-4 d-flex align-items-center max-height-32px pl-1">
+            </Col>
+        }
+        {options.dateRange && 
+            <Col md={7} lg={7} sm={7}>
+                <Row>
+                    <Col md={6} lg={6} sm={6}>
+                        <div className="form__form-group">
+                            <span className="form__form-group-label">From</span>
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <DatePicker
+                                        dateFormat="MM/dd/yyyy"
+                                        selected={from}
+                                        onChange={onStartChange}
+                                        popperPlacement="center"
+                                        dropDownMode="select"
+                                        className="form__form-group-datepicker"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </Col>
+                    <Col md={6} lg={6} sm={6}>
+                        <div className="form__form-group">
+                            <span className="form__form-group-label">To</span>
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <DatePicker
+                                        dateFormat="MM/dd/yyyy"
+                                        selected={to}
+                                        onChange={onEndChange}
+                                        popperPlacement="center"
+                                        dropDownMode="select"
+                                        className="form__form-group-datepicker"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </Col>
+                </Row>
+            </Col>
+        }
+            <Col md={2} lg={2} sm={6} className="align-items-center max-height-32px pl-1">
                 <span className="text-blue pointer mr-2" onClick={()=>onClickFilter()}>Filter</span> | 
                 <span className="text-blue pointer ml-2" onClick={()=>onClickFilter(true)}>Reset</span>
-            </div>
-        </div>
+            </Col>
+        </Row>
     )
 }
 

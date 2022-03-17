@@ -282,3 +282,8 @@
     font-size: 11px;
     color: red;
 }
+.table-filter-form.form .form__form-group-label {
+    width: auto !important;
+    padding-right:10px;
+}
+.table-filter-form.form .form__form-group{display:flex;align-items: center;}

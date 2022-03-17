@@ -218,6 +218,10 @@ export function jsdate2ymd(date) {
         day = '0' + day;
     return [year, month, day].join('-');
 }
+export const dateStrToYmd = dateString => {
+    let date = new Date( dateString )
+    return date.toISOString().split('T')[0]
+}
 
 export function buildIdArray( object )    {
     let idArray = []

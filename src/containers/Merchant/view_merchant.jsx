@@ -135,11 +135,11 @@ const ViewMerchant = ( {merchant} ) => {
                             <CardBody className='infoview'>
                                 {selected === 'details' && <MerchantDetails data={merchant}/>}
                                 {selected === 'available_gift_codes' && <AvailableGiftCodes merchant={merchant}  /> }
-                                {selected === 'redeemed_gift_codes' && <RedeemedGiftCodes /> }
-                                {selected === 'transferred_gift_codes' && <TransferedGiftCodes /> }
-                                {selected === 'optimal_amount' && <OptimalAmount /> }
+                                {selected === 'redeemed_gift_codes' && <RedeemedGiftCodes merchant={merchant} /> }
+                                {selected === 'transferred_gift_codes' && <TransferedGiftCodes merchant={merchant} /> }
+                                {selected === 'optimal_amount' && <OptimalAmount merchant={merchant} /> }
                                 {selected === 'sub_merchants' && <SubMerchants merchant={merchant} /> }
-                                {selected === 'callbacks' && <Callbacks /> }
+                                {selected === 'callbacks' && <Callbacks merchant={merchant} /> }
                             </CardBody>
                         </Card>
                     </Col>
