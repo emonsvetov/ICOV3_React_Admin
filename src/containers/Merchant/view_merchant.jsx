@@ -115,7 +115,7 @@ const ViewMerchant = ( {merchant} ) => {
             <Container className="dashboard">
                 <Row>
                     <Col md={6}>
-                        <h3 className="page-title">{merchant.name} -Testx</h3>
+                        <h3 className="page-title">{merchant.name}x</h3>
                         <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/merchants">Merchants</Link> / {merchant.name}</h3>
                         {/* <span onClick={refresh}>Refresh</span> */}
                     </Col>
