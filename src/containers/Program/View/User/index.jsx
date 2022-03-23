@@ -186,7 +186,7 @@ const DataTable = ({program, organization}) => {
                 <form className="form form--horizontal">
                     <div className="form__form-group pb-4">
                         <div className="col-md-9 col-lg-9">
-                            <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter} config={{label:'users', dateRange: true}} />
+                            <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter} config={{label:'users'}} />
                         </div>
                         <div className="col-md-3 col-lg-3 text-right pr-0">
                             <span to={`/`} style={{maxWidth:'200px'}}
