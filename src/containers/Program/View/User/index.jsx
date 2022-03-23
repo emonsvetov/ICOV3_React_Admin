@@ -35,8 +35,7 @@ const DataTable = ({program, organization}) => {
 
     const flashDispatcher = useDispatch()
   
-    const [keyword, setKeyword] = useState('');
-    const [filter, setFilter] = useState({ keyword:''});
+    const [filter, setFilter] = useState({ keyword:'' });
     const [useFilter, setUseFilter] = useState(false);
     const [trigger, setTrigger] = useState(0);
 
@@ -54,7 +53,6 @@ const DataTable = ({program, organization}) => {
     const onClickViewUser = ( user_id ) => {
         toggleEdit();
         selectUser(user_id);
-
     }
     const onClickRemoveUser = ( user_id ) => {
         if( !window.confirm( 'Are you sure to remove this user from this program?') )    {
@@ -71,16 +69,6 @@ const DataTable = ({program, organization}) => {
             flashDispatcher(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))
             console.log(error.response.data);
         })
-    }
-
-    const onClickFilterCallback = (keyword) => {
-        if(filter.keyword === keyword)    {
-            alert('No change in filters')
-            setUseFilter(false)
-            return
-        }
-        setFilter({keyword})
-        setUseFilter(true)
     }
 
     const RenderActions = ({row}) => {
@@ -198,7 +186,7 @@ const DataTable = ({program, organization}) => {
                 <form className="form form--horizontal">
                     <div className="form__form-group pb-4">
                         <div className="col-md-9 col-lg-9">
-                            <TableFilter onClickFilterCallback={onClickFilterCallback} label={'users'} />
+                            <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter} config={{label:'users', dateRange: true}} />
                         </div>
                         <div className="col-md-3 col-lg-3 text-right pr-0">
                             <span to={`/`} style={{maxWidth:'200px'}}
