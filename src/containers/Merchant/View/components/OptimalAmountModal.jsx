@@ -2,68 +2,93 @@ import React, {useState} from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
-import renderSelectField from '@/shared/components/form/Select';
 import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
 import axios from 'axios'
+import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
+import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 
-import formValidation from "@/shared/validation/program-accounting";
 
+const OptimalAmountModal = ({merchant, isOpen, setOpen, toggle, theme, rtl, setTrigger, data}) => {
+    const dispatch = useDispatch()
+    // console.log(merchant)
 
-const SUB_MERCHANTS = [
-    {label: 'Amozon', value: 'amozon'},
-    {label: 'BEST BUY', value: 'best_buy'},
-    {label: 'CVS', value: 'cvs'},
-]
-
-const DIRECT_ANSCESTORS  = [
-    {label: 'NONE', value: 'none'},
-    
-]
-
-const OptimalAmountModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
     const [loading, setLoading] = useState(false)
 
-    
-    const submit = (file) => {
-        // const file = csvFile;
-        const reader = new FileReader();
-
+    const validate = (values) => {
+        let errors = []
+        if( !values.denomination )
+        errors.denomination = 'please enter denomination'
+        if( !values.optimal_value )
+        errors.optimal_value = 'please enter optimal_value'
+        return errors
     }
 
     const onSubmit = values => {
-    
-        // setLoading(true)
-        // axios.post('/organization/1/program', values)
-        // .then( (res) => {
-        
-        //     if(res.status == 200)  {
-        
-        //         window.location = '/program?message=New program added successfully!'
-        //     }
-        // })
-        // .catch( error => {
-        //     console.log(error.response.data);
-        //     setErrors(error.response.data);
-        //     setLoading(false)
-        // })
+        // alert(JSON.stringify(values))
+        setLoading(true)
+        if( !data )  {
+            addValue(values)
+        }   
+        else
+        {
+            updateValue(values)
+        }
+    }
+
+    const addValue = (values) => {
+        const apiUrl = `/merchant/${merchant.id}/optimalvalue`
+        axios.post(apiUrl, values)
+        .then( (res) => {
+            // console.log(res)
+            if(res.status == 200)  {
+                dispatch(sendFlashMessage('Optimal Values saved successfully', 'alert-success', 'top'))
+                setLoading(false)
+                toggle()
+                setTrigger( Math.floor(Date.now() / 1000) )
+            }
+        })
+        .catch( error => {
+            console.log(error);
+            dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger', 'top'))
+            setLoading(false)
+            // toggle()
+        })
+    }
+
+    const updateValue = (values) => {
+        const apiUrl = `/merchant/${merchant.id}/optimalvalue/${data.id}`
+        axios.put(apiUrl, values)
+        .then( (res) => {
+            console.log(res)
+            if(res.status == 200)  {
+                dispatch(sendFlashMessage('Optimal Values updated successfully', 'alert-success', 'top'))
+                setLoading(false)
+                toggle()
+                setTrigger( Math.floor(Date.now() / 1000) )
+            }
+        })
+        .catch( error => {
+            console.log(error);
+            dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger', 'top'))
+            setLoading(false)
+            // toggle()
+        })
     }
 
     return (
     <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
         <Form 
             onSubmit={onSubmit}
-            validate={(values) => formValidation.validateForm(values)}
-            initialValues={{
-                    
-            }}
+            validate={validate}
+            initialValues={data}
         >
         {({ handleSubmit, form, submitting, pristine, values }) => (
         <form className="form " onSubmit={handleSubmit}>
             <ModalHeader className='w100'>
                 <Row className='w100'>
                     <Col md="6" lg="6" xl="6">
-                        <h3>Add Callback</h3>
+                        <h3>{data ? 'Edit' : 'Add'} Optimal Value</h3>
                     </Col>
                     <Col md="6" lg="6" xl="6" className='text-right'>
                         <ButtonToolbar className="modal__footer flex justify-content-right w100">
@@ -93,7 +118,7 @@ const OptimalAmountModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
                         </Field>  
                     </Col>
                     <Col md="6" >
-                        <Field name="optimal_amount">
+                        <Field name="optimal_value">
                         {({ input, meta }) => (
                             <div className="form__form-group">
                                 <span className="form__form-group-label">Optimal Amount</span>

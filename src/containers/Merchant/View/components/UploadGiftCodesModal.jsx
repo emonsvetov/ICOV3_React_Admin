@@ -34,7 +34,7 @@ function myfunc() {
 // console.log(y)
 
 const UploadGiftCodesModal = ({
-    isOpen, toggle, data, theme, rtl, merchant, setTrigger
+    isOpen, toggle, theme, rtl, merchant, setTrigger
 }) => {
     const dispatch = useDispatch()
 
@@ -108,7 +108,7 @@ const UploadGiftCodesModal = ({
                 {
                     console.log(err)
                     // console.log(error.response.data)
-                    dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger', 'top'))
+                    dispatch(sendFlashMessage(<ApiErrorMessage errors={err.response.data} />, 'alert-danger', 'top'))
                 }
 
                 // console.log(csv_errors_json)

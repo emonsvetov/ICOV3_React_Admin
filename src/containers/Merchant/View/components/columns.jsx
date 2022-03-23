@@ -125,12 +125,7 @@ export const OPTIMAL_AMOUNT_COLUMNS = [
     },
     {
         Header: "Optimal Amount",
-        accessor: "optimal_amount"
-    },
-    {
-        Header: "Action",
-        accessor: "action",
-        Cell: ({ row }) => { return <Link to={{}}>View</Link>},
+        accessor: "optimal_value"
     }
 ]
 

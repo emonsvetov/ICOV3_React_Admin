@@ -43,7 +43,8 @@ const DataTable = ({organization}) => {
                 }
             }
         }
-        // console.log(params)
+        console.log(params)
+        return
         try {
             const response = await axios.post(
                 `/organization/${organization.id}/reports/inventory`,

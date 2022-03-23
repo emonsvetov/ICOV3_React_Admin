@@ -103,7 +103,7 @@ export const useEffectToDispatch = (dispatch, {
 
 export const initialState = {
     queryPageIndex: 0,
-    queryPageSize: 10,
+    queryPageSize: 20,
     totalCount: 0,
     queryPageFilter:{},
     queryPageSortBy: [],
@@ -148,7 +148,7 @@ export const fetchApiData = async( queryParams )  => {
     if( params.length > 0 ) {
         paramStr = params.join('&')
     }
-    console.log(paramStr)
+    // console.log(paramStr)
     if( options.sortby.length > 0 ) {
         const sortParams = options.sortby[0];
         const sortyByDir = sortParams.desc ? 'desc' : 'asc'
@@ -158,7 +158,7 @@ export const fetchApiData = async( queryParams )  => {
         const response = await axios.get(
         `${options.url}?page=${options.page+1}&limit=${options.size}&${paramStr}`
         );
-        console.log(response)
+        // console.log(response)
         if( response.data.length === 0) return {results:[],count:0}
         const data = {
             results: response.data.data,
