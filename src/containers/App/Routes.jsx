@@ -5,6 +5,7 @@ import PrivateRoute from './PrivateRoute';
 import Layout from '../Layout/index';
 import MainWrapper from './MainWrapper';
 import Dashboard from '../Dashboard/index';
+import Import from '../Import';
 import LogIn from '../LogIn/index';
 import Signup from '../Signup/index';
 import SignupSuccess from '../Signup/SignupSuccess';
@@ -29,6 +30,7 @@ import UsersIndex from '../Users/index';
 import AddUser from '../Users/add_user';
 import ViewUser from '../Users/view_user';
 import EditUser from '../Users/edit_user';
+import UserImport from '../Users/import_user';
 
 import RoleIndex from '../Role/index';
 import RoleAdd from '../Role/add_role';
@@ -111,6 +113,7 @@ const Users = () => (
     <Route exact path="/users/add" component={AddUser} />
     <Route exact path="/users/view/:id" component={ViewUser} />
     <Route exact path="/users/edit/:id" component={EditUser} />
+    <Route exact path="/users/import" component={UserImport} />
   </Switch>
 );
 
@@ -201,6 +204,7 @@ const privateRoutes = () => {
         <PrivateRoute path="/roles" component={Roles} />
         <PrivateRoute path="/permissions" component={Permissions} />
         <PrivateRoute path="/events" component={Events} />
+        <PrivateRoute path="/import" component={Import} />
         <PrivateRoute path="/domains" component={Domains} />
         <PrivateRoute path="/physical-orders" component={PhysicalOrders} />
         <PrivateRoute path="/tango-orders" component={TangoOrders} />

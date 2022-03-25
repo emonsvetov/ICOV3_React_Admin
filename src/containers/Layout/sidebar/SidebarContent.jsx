@@ -7,7 +7,7 @@ import {logout} from '../../App/auth';
 const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
   const handleHideSidebar = () => {
     onClick();
-  };
+  }
 
   return (
     <div className="sidebar__content">
@@ -16,27 +16,27 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
       </ul>
       <ul className="sidebar__block">
         <SidebarCategory title="Program" icon="diamond">
-          <SidebarLink title="All Programs" route="/program" onClick={handleHideSidebar} />
-          <SidebarLink title="Create Program" route="/program/add" onClick={handleHideSidebar} />
+          <SidebarLink title="All Programs" route="/program" />
+          <SidebarLink title="Create Program" route="/program/add" />
         </SidebarCategory>
         <SidebarLink title="Merchants"  icon="store" route="/merchants" />
         <SidebarLink title="Import"  icon="download" route="/import" />
         <SidebarCategory title="Reports" icon="book">
-          <SidebarLink title="Inventory" route="/reports/inventory" onClick={handleHideSidebar} />
-          <SidebarLink title="Inventory Order" route="/reports/inventory-order" onClick={handleHideSidebar} />
-          <SidebarLink title="Journal Detailed" route="/reports/journal-detailed" onClick={handleHideSidebar} />
-          <SidebarLink title="Points Purchase Summary" route="/reports/points-purchase-summary" onClick={handleHideSidebar} />
-          <SidebarLink title="Points Reserve" route="/reports/points-reserve" onClick={handleHideSidebar} />
-          <SidebarLink title="Program Status" route="/reports/program-status" onClick={handleHideSidebar} />
-          <SidebarLink title="Supplier Redemption" route="/reports/supplier-redemption" onClick={handleHideSidebar} />
-          <SidebarLink title="Trial Balance" route="/reports/trial-balance" onClick={handleHideSidebar} />
-          <SidebarLink title="Deposit" route="/reports/deposit" onClick={handleHideSidebar} />
-          <SidebarLink title="Unassigned Program Domains" route="/reports/unassigned-program-domains" onClick={handleHideSidebar} />
-          <SidebarLink title="Monies Pending Amount" route="/reports/monies-pending-amount" onClick={handleHideSidebar} />
+          <SidebarLink title="Inventory" route="/reports/inventory" />
+          <SidebarLink title="Inventory Order" route="/reports/inventory-order" />
+          <SidebarLink title="Journal Detailed" route="/reports/journal-detailed" />
+          <SidebarLink title="Points Purchase Summary" route="/reports/points-purchase-summary" />
+          <SidebarLink title="Points Reserve" route="/reports/points-reserve" />
+          <SidebarLink title="Program Status" route="/reports/program-status" />
+          <SidebarLink title="Supplier Redemption" route="/reports/supplier-redemption" />
+          <SidebarLink title="Trial Balance" route="/reports/trial-balance" />
+          <SidebarLink title="Deposit" route="/reports/deposit" />
+          <SidebarLink title="Unassigned Program Domains" route="/reports/unassigned-program-domains" />
+          <SidebarLink title="Monies Pending Amount" route="/reports/monies-pending-amount" />
         </SidebarCategory>
-        <SidebarLink title="Roles"  icon="user" route="/roles" />
-        <SidebarLink title="Permissions"  icon="user" route="/permissions" />
-        <SidebarLink title="Users"  icon="users" route="/users" />
+        <SidebarLink title="Roles" icon="user" route="/roles" />
+        <SidebarLink title="Permissions" icon="user" route="/permissions" />
+        <SidebarLink title="Users" icon="users" route="/users" />
         <SidebarLink title="Physical Orders"  icon="file-empty" route="/physical-orders" />
         <SidebarLink title="Domains"  icon="layers" route="/domains" />
       </ul>

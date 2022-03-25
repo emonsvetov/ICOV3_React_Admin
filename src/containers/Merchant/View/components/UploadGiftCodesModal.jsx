@@ -168,47 +168,33 @@ const UploadGiftCodesModal = ({
                 <ModalBody className="modal-lg">
                     <Row>
                         <Col md="6" lg="4" xl="4">
-                            <div className="form__form-group">
-                                    {/* <Field
-                                        label="Choose CSV" 
-                                        accept=".csv"
-                                        name="name"
-                                        component={renderFileInputField}
-                                        parse={ value => {
-                                            // alert(JSON.stringify(value))
-                                            setCsvFile(value)
-                                            return value
-                                        }}
-                                        value={csvFile?.name.file}
-                                    /> */}
-                                    <Field name="name">
-                                        {({ input, meta }) => (
-                                        <div className="form__form-group">
-                                            <span className="form__form-group-label">CSV File</span>
-                                            <div className="form__form-group-field">
-                                                <div className="form__form-group-row">
-                                                    <input
-                                                        type='file'
-                                                        // accept='.csv'
-                                                        id='csvFile'
-                                                        {...input}
-                                                        onChange={(e) => {
-                                                            setCsvFile(e.target.files[0])
-                                                        }}
-                                                        value={csvFile?.name.file}
-                                                    >
-                                                    </input>
-                                                    {meta.touched && !csvFile && (
-                                                    <span className="form__form-group-error">
-                                                        {meta.error}
-                                                    </span>
-                                                    )}
-                                                </div>
-                                            </div>
+                            <Field name="name">
+                                {({ input, meta }) => (
+                                <div className="form__form-group">
+                                    <span className="form__form-group-label">CSV File</span>
+                                    <div className="form__form-group-field">
+                                        <div className="form__form-group-row">
+                                            <input
+                                                type='file'
+                                                // accept='.csv'
+                                                id='csvFile'
+                                                {...input}
+                                                onChange={(e) => {
+                                                    setCsvFile(e.target.files[0])
+                                                }}
+                                                value={csvFile?.name.file}
+                                            >
+                                            </input>
+                                            {meta.touched && !csvFile && (
+                                            <span className="form__form-group-error">
+                                                {meta.error}
+                                            </span>
+                                            )}
                                         </div>
-                                        )}
-                                    </Field>
-                            </div>
+                                    </div>
+                                </div>
+                                )}
+                            </Field>
                         </Col>
                     </Row>
                 </ModalBody>

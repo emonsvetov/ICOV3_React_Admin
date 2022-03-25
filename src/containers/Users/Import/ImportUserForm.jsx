@@ -4,7 +4,6 @@ import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
 import formValidation from "@/shared/validation/adduser";
 import axios from 'axios';
 import { fetchRoles } from "@/shared/apiHelper"
-import FormFields from '../../components/FormFields'
 import {unpatchSelect, labelizeNamedData} from '@/shared/helpers'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
@@ -70,7 +69,7 @@ const AddUserForm = ({organization}) => {
     <form className="form" onSubmit={handleSubmit}>
         <Row className='w100'>
             <Col md="6" lg="6" xl="6">
-                <h3 className="mb-4">Add User</h3>
+                <h3 className="mb-4">Import User</h3>
             </Col>
             <Col md="6" lg="6" xl="6" className='text-right'>
                 <ButtonToolbar className="modal__footer flex justify-content-right w100">
@@ -79,7 +78,6 @@ const AddUserForm = ({organization}) => {
                 </ButtonToolbar>
             </Col>
         </Row>
-        <FormFields config={config} form={form} submitting={submitting} pristine={pristine} values={values} />
     </form>
     )}
   </Form>
