@@ -74,7 +74,7 @@ const reducer = (state, { type, payload }) => {
   }
 };
 
-const fetchMerchantData = async (
+const fetchMerchantData = async(
   page,
   pageSize,
   pageFilterO = null,

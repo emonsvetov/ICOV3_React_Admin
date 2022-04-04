@@ -95,7 +95,7 @@ const fetchEventData = async (programId, page, pageSize, pageFilterO = null, pag
       const response = await axios.get(
       `/organization/1/program/${programId}/event/?page=${page}&limit=${pageSize}&${paramStr}`
       );
-      // console.log(response)
+      console.log(response)
       
       if( response.data.length === 0) return {results:[],count:0}
       // const data = {
@@ -174,8 +174,6 @@ const DataTable = (props) => {
   );
 
   const totalPageCount = Math.ceil(totalCount / queryPageSize)
-
-  // console.log(data)
 
   const {
       getTableProps,
