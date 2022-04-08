@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Field } from "react-final-form";
 import { Row, Col, ButtonToolbar, Button, Modal, ModalBody } from "reactstrap";
-import { useParams } from "react-router-dom";
+import { useParams, withRouter } from "react-router-dom";
+import { connect } from 'react-redux';
 
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
 import renderSelectField from '@/shared/components/form/Select'
+import {fetchEventTypes} from '@/shared/apiHelper'
+import {labelizeNamedData} from '@/shared/helpers'
 import axios from "axios";
 import Tabs from "./Tabs";
 
@@ -16,25 +19,20 @@ const TEMPLATES = [
   { label: "Custom Template", value: 3 },
 ];
 
-const EVENT_TYPES = [
-  { label: "Standard", value: 1 },
-  { label: "Activation", value: 2 },
-  { label: "Peer to Peer", value: 3 },
-  { label: "Badge", value: 4 },
-  { label: "Peer to Peer Badge", value: 5 },
-  { label: "Auto Award", value: 6 }
-];
-
 const EMAIL_TEMPLATES = [
   { label: "Happy Birthday", value: 1 },
   { label: "Good Job", value: 2 },
   { label: "Custom Template Email", value: 3 },
 ];
 
-const AddEventForm = (props) => {
+const AddEventForm = ({onStep, organization}) => {
+
+  console.log(organization)
+
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [template, setTemplate] = useState(null);
+  const [eventTypes, setEventTypes] = useState([]);
   const [eventType, setEventType] = useState({ label: "Standard", value: 1 });
   let [icon, setIcon] = useState(null);
   const [isOpen, setOpen] = useState(false);
@@ -57,12 +55,20 @@ const AddEventForm = (props) => {
 
   const iconToggle = () => {
     // setIconOpen(prevState => !prevState)
-    props.onStep(2);
+    onStep(2);
   };
+
+  useEffect( () => {
+    fetchEventTypes()
+    .then( evtypes => {
+      // console.log(evtypes)
+      setEventTypes(labelizeNamedData(evtypes))
+    })
+  }, [])
 
   const onSubmit = (values) => {
     let eventData = {};
-    eventData["organization_id"] = 1;
+    eventData["organization_id"] = organization.id;
     eventData["program_id"] = programId.id;
 
     let {
@@ -72,6 +78,9 @@ const AddEventForm = (props) => {
       post_to_social_wall,
       message,
     } = values;
+
+    // console.log(eventType)
+    // return
 
     eventData.name = name;
     eventData.amount = amount;
@@ -83,17 +92,17 @@ const AddEventForm = (props) => {
     eventData.include_in_budget = 1;
 
     //static
-    eventData.type_id = 1;
+    eventData.type_id = eventType.value;
 
     // console.log(eventData)
     // return
     
     axios
-      .post(`/organization/1/program/${programId.id}/event`, eventData)
+      .post(`/organization/${organization.id}/program/${programId.id}/event`, eventData)
       .then((res) => {
         //   console.log(res)
         if (res.status == 200) {
-          // props.onStep(0);
+          // onStep(0);
           window.location = `/program/view/${programId.id}/?message=New event added successfully!`
         }
       })
@@ -105,7 +114,7 @@ const AddEventForm = (props) => {
   };
 
   const onClickCancel = () => {
-    props.onStep(0);
+    onStep(0);
   };
 
   function handlePickImage( pickedIcon ) {
@@ -260,8 +269,8 @@ const AddEventForm = (props) => {
                     <div className="form__form-group-row">
                         <Field 
                               name="event_type"
-                              options={EVENT_TYPES}
-                              placeholder={eventType}
+                              options={eventTypes}
+                              // placeholder={eventType}
                               component={renderSelectField}
                               parse={value => {
                                 handleTypeChange(value)
@@ -284,7 +293,7 @@ const AddEventForm = (props) => {
                         <Field 
                               name="email_template_id"
                               options={TEMPLATES}
-                              placeholder={templatePlaceholder}
+                              // placeholder={templatePlaceholder}
                               component={renderSelectField}
                               parse={value => {
                                 handleTemplateChange(value)
@@ -545,4 +554,8 @@ const AddEventForm = (props) => {
   );
 };
 
-export default AddEventForm;
+export default withRouter(connect((state) => ({
+  theme: state.theme,
+  rtl: state.rtl,
+  organization: state.organization
+}))(AddEventForm));

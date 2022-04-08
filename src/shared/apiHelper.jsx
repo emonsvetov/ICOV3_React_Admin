@@ -48,3 +48,16 @@ export const fetchUserProgramPermissions = async(organization_id, user_id, progr
         throw new Error(`API error:${e?.message}`)
     }
 }
+
+export const fetchEventTypes = async() => {
+    try {
+        const response = await axios.get(
+        `/eventtype`
+        );
+        // console.log(response)
+        const results = response.data;
+        return results;
+    } catch (e) {
+        throw new Error(`API error:${e?.message}`)
+    }
+}

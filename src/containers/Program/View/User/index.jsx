@@ -37,7 +37,7 @@ const DataTable = ({program, organization}) => {
   
     const [filter, setFilter] = useState({ keyword:'' });
     const [useFilter, setUseFilter] = useState(false);
-    const [trigger, setTrigger] = useState(0);
+    const [trigger, setTrigger] = useState(Math.floor(Date.now() / 1000));
 
     // var [data, setData] = useState([]);
     const [isOpenAdd, setOpenAdd] = useState(false)
@@ -153,7 +153,7 @@ const DataTable = ({program, organization}) => {
           sortBy: queryPageSortBy,
       },
       manualPagination: true, // Tell the usePagination
-      pageCount: data ? totalPageCount : null,
+      pageCount: data ? totalPageCount : 0,
       autoResetSortBy: false,
       autoResetExpanded: false,
       autoResetPage: false,

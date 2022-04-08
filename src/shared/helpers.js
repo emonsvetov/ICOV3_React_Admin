@@ -242,7 +242,7 @@ export const extractRolesFromProgramPermissions = (permissionArr, programId) => 
 export const labelizeNamedData = (data, fields = ["id", "name"]) => {
     let newData = []
     for( var i in data) {
-        newData.push({label: data[i][fields[1]], value: data[i][fields[0]]})
+        newData.push({label: String(data[i][fields[1]]), value: String(data[i][fields[0]])})
     }
     return newData;
 }

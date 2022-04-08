@@ -21,9 +21,10 @@ const ProgramView = () => {
     const [isOpen, setOpen] = useState(false);
     let history = useHistory();
     useEffect(() => {
+        // alert(id)
         checkFlashMessage()
         fetchProgramData()
-    },[])
+    },[id])
 
     const fetchProgramData = async() => {
         try {
