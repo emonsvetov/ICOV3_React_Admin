@@ -13,37 +13,27 @@ import {labelizeNamedData} from '@/shared/helpers'
 import axios from "axios";
 import Tabs from "./Tabs";
 
-const TEMPLATES = [
-  { label: "Birthday", value: 1 },
-  { label: "Work Anniversary", value: 2 },
-  { label: "Custom Template", value: 3 },
-];
-
-const EMAIL_TEMPLATES = [
-  { label: "Happy Birthday", value: 1 },
-  { label: "Good Job", value: 2 },
-  { label: "Custom Template Email", value: 3 },
-];
-
 const AddEventForm = ({onStep, organization}) => {
 
   console.log(organization)
 
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [template, setTemplate] = useState(null);
   const [eventTypes, setEventTypes] = useState([]);
   const [eventType, setEventType] = useState({ label: "Standard", value: 1 });
   let [icon, setIcon] = useState(null);
   const [isOpen, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("2");
+  const [visibleLedgerCode, setVisibleLedgerCode] = useState(false);
+  const [enableCustomize, setEnableCustomize] = useState(false);
 
-  const handleTemplateChange = (selectedTemplate) => {
-    setTemplate(selectedTemplate.value);
-  };
   const handleTypeChange = (type) => {
     // setEventType(type);
   };
+
+  const handleCustomTemplate = (value) =>{
+      setEnableCustomize(value);
+  }
   const set_path = (pickedIcon) => {
     const path = process.env.REACT_APP_API_STORAGE_URL + "/" + pickedIcon.path;
     return path;
@@ -87,7 +77,7 @@ const AddEventForm = ({onStep, organization}) => {
     eventData.allow_amount_overriding = allow_amount_overriding;
     eventData.post_to_social_wall = post_to_social_wall;
     eventData.message = message;
-    eventData.email_template_id = template ? template : 3;
+    eventData.email_template_id = 3; //should be removed?
     eventData.event_icon_id = icon.id;
     eventData.include_in_budget = 1;
 
@@ -121,8 +111,6 @@ const AddEventForm = ({onStep, organization}) => {
     setOpen(false);
     setIcon(pickedIcon);
   }
-
-  const templatePlaceholder = template ? template : "Select a Template";
 
   return (
     <>
@@ -214,8 +202,33 @@ const AddEventForm = ({onStep, organization}) => {
                   )}
                 </Field>
               </Col>
-
               <Col md="6" lg="4" xl="4">
+                <Field name="point_amount">
+                  {({ input, meta }) => (
+                    <div className="form__form-group">
+                      <span className="form__form-group-label">
+                        Awarding Points
+                      </span>
+                      <div className="form__form-group-field">
+                        <div className="form__form-group-row">
+                          <input
+                            type="text"
+                            {...input}
+                            placeholder="Awarding Points"
+                          />
+                          {meta.touched && meta.error && (
+                            <span className="form__form-group-error">
+                              {meta.error}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </Field>
+              </Col>
+
+              {visibleLedgerCode && <Col md="6" lg="4" xl="4">
                 <Field name="ledger_code">
                   {({ input, meta }) => (
                     <div className="form__form-group">
@@ -239,7 +252,7 @@ const AddEventForm = ({onStep, organization}) => {
                     </div>
                   )}
                 </Field>
-              </Col>
+              </Col>}
             </Row>
             <Row>
               <Col md="6" lg="4" xl="4">
@@ -282,88 +295,77 @@ const AddEventForm = ({onStep, organization}) => {
                 </div>
               </Col>
             </Row>
+            
             <Row>
-              <Col md="6" lg="4" xl="4">
+              <Col md="12" lg="8" xl="8">
                 <div className="form__form-group">
-                  <span className="form__form-group-label">
-                    Select a Template
-                  </span>
+                  <span className="form__form-group-label">Icon</span>
                   <div className="form__form-group-field">
                     <div className="form__form-group-row">
-                        <Field 
-                              name="email_template_id"
-                              options={TEMPLATES}
-                              // placeholder={templatePlaceholder}
-                              component={renderSelectField}
-                              parse={value => {
-                                handleTemplateChange(value)
-                                  return value;
-                              }}
-                          />
+                      <div
+                        className="border_hover_div"
+                        onClick={() => setOpen(true)}
+                      >
+                        <div className="email_icon">
+                          {icon ? (
+                            <img src={set_path(icon)} alt="icons" />
+                          ) : (
+                            ""
+                          )}
+                        </div>
+                        <div className="text">
+                          {icon ? icon.name : "+ Add an Icon"}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </Col>
             </Row>
             
-            {template ? (
-              <>
-                <Row>
-                  <Col md="12" lg="8" xl="8">
-                    <div className="form__form-group">
-                      <span className="form__form-group-label">Icon</span>
-                      <div className="form__form-group-field">
-                        <div className="form__form-group-row">
-                          <div
-                            className="border_hover_div"
-                            onClick={() => setOpen(true)}
-                          >
-                            <div className="email_icon">
-                              {icon ? (
-                                <img src={set_path(icon)} alt="icons" />
-                              ) : (
-                                ""
-                              )}
-                            </div>
-                            <div className="text">
-                              {icon ? icon.name : "+ Add an Icon"}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+            <Row>
+              <Col md="6" lg="4" xl="4">
+                <div className="form__form-group">
+                  <div className="form__form-group-field">
+                    <span
+                      className="form__form-group-label"
+                      style={{ width: "200%" }}
+                    >
+                      Custom Email Template
+                    </span>
+                    <Field
+                      name="custom_email_template"
+                      component={renderToggleButtonField}
+                      parse={value => {
+                          handleCustomTemplate(value)
+                            return value;
+                      }}
+                    />
+                  </div>
+                </div>
+              </Col>
+            </Row>
+            
+            {enableCustomize && 
+            <Row>
+              <Col md="12" lg="8" xl="8">
+                <div className="form__form-group">
+                  <span className="form__form-group-label">
+                    Email Template
+                  </span>
+                  <div className="form__form-group-field">
+                    <div className="form__form-group-row">
+                        <Field
+                          name="email_template"
+                          component="textarea"
+                          type="text"
+                        />
                     </div>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md="12" lg="8" xl="8">
-                    <Field name="email_template">
-                      {({ input, meta }) => (
-                        <div className="form__form-group">
-                          <span className="form__form-group-label">
-                            Email Template
-                          </span>
-                          <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                              <div className="border_div">
-                                <div className="text">
-                                  {template
-                                    ? EMAIL_TEMPLATES.find(
-                                        (obj) => obj.value === template
-                                      ).label
-                                    : ""}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </Field>
-                  </Col>
-                </Row>
-              </>
-            ) : (
-              ""
-            )}
+                  </div>
+                </div>
+              </Col>
+            </Row>}
+            
             <Row>
               <Col md="6" lg="4" xl="4">
                 <div className="form__form-group">
@@ -382,101 +384,7 @@ const AddEventForm = ({onStep, organization}) => {
                 </div>
               </Col>
             </Row>
-            <Row>
-              <Col md="6" lg="4" xl="4">
-                <div className="form__form-group">
-                  <div className="form__form-group-field">
-                    <span
-                      className="form__form-group-label"
-                      style={{ width: "200%" }}
-                    >
-                      Allow amount to be overridden
-                    </span>
-                    <Field
-                      name="allow_amount_overriding"
-                      component={renderToggleButtonField}
-                    />
-                  </div>
-                </div>
-              </Col>
-            </Row>
-            <Row>
-              <Col md="6" lg="4" xl="4">
-                <Field name="min_amount">
-                  {({ input, meta }) => (
-                    <div className="form__form-group">
-                      <span className="form__form-group-label">
-                        Min amount award override
-                      </span>
-                      <div className="form__form-group-field">
-                        <div className="form__form-group-row">
-                          <input
-                            type="text"
-                            {...input}
-                            placeholder="Min amount award override"
-                          />
-                          {meta.touched && meta.error && (
-                            <span className="form__form-group-error">
-                              {meta.error}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </Field>
-              </Col>
-              <Col md="6" lg="4" xl="4">
-                <Field name="max_amount">
-                  {({ input, meta }) => (
-                    <div className="form__form-group">
-                      <span className="form__form-group-label">
-                        Max amount award override
-                      </span>
-                      <div className="form__form-group-field">
-                        <div className="form__form-group-row">
-                          <input
-                            type="text"
-                            {...input}
-                            placeholder="Max amount award override"
-                          />
-                          {meta.touched && meta.error && (
-                            <span className="form__form-group-error">
-                              {meta.error}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </Field>
-              </Col>
-              <Col md="6" lg="4" xl="4">
-                <Field name="point_amount">
-                  {({ input, meta }) => (
-                    <div className="form__form-group">
-                      <span className="form__form-group-label">
-                        Awarding Points
-                      </span>
-                      <div className="form__form-group-field">
-                        <div className="form__form-group-row">
-                          <input
-                            type="text"
-                            {...input}
-                            placeholder="Awarding Points"
-                          />
-                          {meta.touched && meta.error && (
-                            <span className="form__form-group-error">
-                              {meta.error}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </Field>
-              </Col>
-            </Row>
+
             <Row>
               <Col md="6" lg="4" xl="4">
                 <div className="form__form-group">
