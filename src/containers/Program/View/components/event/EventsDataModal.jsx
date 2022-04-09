@@ -115,7 +115,7 @@ const EventsDataModal = ({
       <ModalBody className="modal-lg">
         <Col md={12} lg={12}>
         { step === 0 && <RenderEventsData programId = {data.id} onStep = { handleStep} />}
-        { step === 1 && <AddEventForm onStep = { handleStep} />}
+        { step === 1 && <AddEventForm onStep = { handleStep} program={data} />}
         { step === 2 && <AddIconForm onStep = { handleStep} />}
           
         </Col>

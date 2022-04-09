@@ -76,7 +76,8 @@
     cursor: pointer;
     border: 1px solid #f2f4f7;
     display: flex;
-    
+    flex-direction: column;
+    align-items: center;
     &:hover{
         background-image: linear-gradient(-45deg , #eff1f5 25%, transparent 25%, transparent 50%, #eff1f5 50%, #eff1f5 75%, transparent 75%, transparent);
         background-size: 30px 30px;

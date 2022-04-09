@@ -40,11 +40,12 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
         // alert(JSON.stringify(savedata))
         // return;
         try {
-            const response = await axios.put(`/organization/1/program/${data.id}`, savedata);
+            const response = await axios.put(`/organization/1/program/${savedata.id}`, savedata);
             // console.log(response)
             setLoading(false)
-            setData( values )
+            setData( savedata )
             if( response.status === 200)    {
+                toggle()
                 dispatch(sendFlashMessage('Program has been updated', 'alert-success', 'top'))
             }
         } catch (e) {

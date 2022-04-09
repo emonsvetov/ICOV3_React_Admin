@@ -69,7 +69,7 @@ const EventIcons = ({icon, setIcon, onCancel, onSelectIconOK, icons, setIcons, a
             <Col md="12" lg="12" xl="12" className='text-right'>
                 <ButtonToolbar className="modal__footer flex justify-content-right w100">
                 <Button outline color="primary" className="mr-3" onClick={ onCancel }> Cancel </Button>{' '}
-                <Button color="primary" className="mr-3" onClick = {()=> onSelectIconOK( icon ) } > OK </Button>{' '}
+                <Button color="primary" className="mr-3" onClick = {()=> onSelectIconOK('icon', icon ) } > OK </Button>{' '}
                 </ButtonToolbar>
             </Col>
         </Row>
