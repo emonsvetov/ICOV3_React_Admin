@@ -140,7 +140,7 @@ const AddEventForm = ({onStep, organization, program}) => {
       field.change(  v / program.factor_valuation );
     }
   }
-
+  
   return (
     <>
       <Form
