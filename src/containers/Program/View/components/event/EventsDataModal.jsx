@@ -100,7 +100,7 @@ const EventsDataModal = ({
               columns={columns}
               data={programEvents}
               tableConfig={tableConfig}
-          />)
+          />
       </>
     )
   }
