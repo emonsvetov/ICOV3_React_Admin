@@ -28,10 +28,8 @@ const Edit = () => {
 
   const { programId, eventId } = useParams();
   const [program, setProgram] = useState(null);
-  const [error, setError] = useState(false);    
   const [loading, setLoading] = useState(false);
   const [isOpen, setOpen] = useState(false);
-  const [icon, setIcon] = useState(null);
   const [event, setEvent] = useState(null);
   const [eventTypes, setEventTypes] = useState([]);
   const [visibleLedgerCode, setVisibleLedgerCode] = useState(false);
@@ -97,7 +95,7 @@ const Edit = () => {
       message,
       award_message_editable,
       event_icon_id,
-      type_id
+      event_type_id
     } = values;
 
     // console.log(eventType)
@@ -111,9 +109,8 @@ const Edit = () => {
     if( award_message_editable ) {
       eventData.award_message_editable = award_message_editable;
     }    
-    if( enable ) {
-      eventData.enable = enable;
-    }
+    
+    eventData.enable = enable ? 1 : 0;
     
     eventData.message = message;
     // eventData.event_icon_id = icon.id;
@@ -121,8 +118,9 @@ const Edit = () => {
     eventData.include_in_budget = 1;
 
     //static
-    eventData.type_id = type_id.value;
+    eventData.event_type_id = event_type_id.value;
 
+    // console.log(eventData)
     // return
     
     axios
@@ -363,10 +361,10 @@ const Edit = () => {
                                             <div className="form__form-group-field">
                                             <div className="form__form-group-row">
                                                 <Field 
-                                                        name="type_id"
+                                                        name="event_type_id"
                                                         options={eventTypes}
                                                         component={renderSelectField}
-                                                        initialValue = {eventTypes[event.type_id - 1]}
+                                                        initialValue = {eventTypes[event.event_type_id - 1]}
                                                 />
                                             </div>
                                             </div>

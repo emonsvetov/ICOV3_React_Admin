@@ -67,7 +67,7 @@ const AddEventForm = ({onStep, organization, program}) => {
       message,
       award_message_editable,
       event_icon_id,
-      type_id
+      event_type_id
     } = values;
 
     // console.log(eventType)
@@ -81,9 +81,8 @@ const AddEventForm = ({onStep, organization, program}) => {
     if( award_message_editable ) {
       eventData.award_message_editable = award_message_editable;
     }    
-    if( enable ) {
-      eventData.enable = enable;
-    }
+    
+    eventData.enable = enable ? 1 : 0;
     
     eventData.message = message;
     // eventData.event_icon_id = icon.id;
@@ -91,7 +90,7 @@ const AddEventForm = ({onStep, organization, program}) => {
     eventData.include_in_budget = 1;
 
     //static
-    eventData.type_id = type_id.value;
+    eventData.event_type_id = event_type_id.value;
 
     console.log(eventData)
     // return
@@ -310,7 +309,7 @@ const AddEventForm = ({onStep, organization, program}) => {
                     <div className="form__form-group-field">
                       <div className="form__form-group-row">
                           <Field 
-                                name="type_id"
+                                name="event_type_id"
                                 options={eventTypes}
                                 component={renderSelectField}
                           />

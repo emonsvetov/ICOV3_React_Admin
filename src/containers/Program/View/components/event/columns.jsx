@@ -1,4 +1,10 @@
 import { Link } from 'react-router-dom';
+const getEventType = (event) => {
+    if( event?.event_type)  {
+        return event?.event_type.name
+    }
+    return '---'
+}
 export const COLUMNS = [
     {
         Header: "Event ID",
@@ -13,11 +19,11 @@ export const COLUMNS = [
     {
         Header: "Type",
         accessor: "type",
-        Cell: ({ row, value }) => { return 'Standard'},
+        Cell: ({ row, value }) => { return getEventType(row.original) },
     },
     {
         Header: "Status",
         accessor: "status",
-        Cell: ({ row, value }) => { return 'Enabled'},
+        Cell: ({ row, value }) => { return row.original.enable ? 'Enabled' : 'Disabled'},
     }
 ]

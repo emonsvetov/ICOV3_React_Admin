@@ -8,7 +8,7 @@ const validationSchema = {
         event_icon_id: [Validators.required.validator, isNumber.validator],
         max_awardable_amount: [Validators.required.validator, isNumber.validator],
         awarding_points: [isNumber.validator],
-        type_id: [Validators.required.validator],
+        event_type_id: [Validators.required.validator],
         message: [Validators.required.validator]
     }
 }
