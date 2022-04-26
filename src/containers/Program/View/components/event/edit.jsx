@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Form, Field } from "react-final-form";
 import {   Modal,
     ModalBody, Row, Col, ButtonToolbar, Button, Card, CardBody, Container  } from "reactstrap";
-
-import { useParams, useHistory } from "react-router-dom";
+import { connect } from 'react-redux';
+import { useParams, useHistory, withRouter } from "react-router-dom";
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 import formValidation from "@/shared/validation/addEvent";
@@ -11,20 +11,19 @@ import renderToggleButtonField from "@/shared/components/form/ToggleButton";
 import axios from "axios";
 import renderSelectField from '@/shared/components/form/Select'
 import Tabs from "./Tabs";
-import {ORGANIZATION_ID} from '../../../../App/auth';
 import {fetchEventTypes} from '@/shared/apiHelper'
 import {labelizeNamedData} from '@/shared/helpers'
 
-const fetchEvent = async ( pId, eId ) => {
+const fetchEvent = async (oId, pId, eId ) => {
     try {
-        const response = await axios.get(`/organization/${ORGANIZATION_ID}/program/${pId}/event/${eId}`);
+        const response = await axios.get(`/organization/${oId}/program/${pId}/event/${eId}`);
         return response.data;
     } catch (e) {
         throw new Error(`API error:${e?.message}`);
     }
 };
 
-const Edit = () => {
+const Edit = ({organization}) => {
 
   const { programId, eventId } = useParams();
   const [program, setProgram] = useState(null);
@@ -54,7 +53,7 @@ const Edit = () => {
 
   const fetchProgramData = async(id) => {
     try {
-        const response = await axios.get(`/organization/1/program/${id}`);
+        const response = await axios.get(`/organization/${organization.id}/program/${id}`);
         setProgram(response.data)
     } catch (e) {
         throw new Error(`API error:${e?.message}`);
@@ -74,18 +73,18 @@ const Edit = () => {
 
   useEffect( () => {
     setLoading(true)
-    fetchEvent(programId, eventId)
+    fetchEvent(organization.id, programId, eventId)
     .then( res => {
         setEvent(res)
         setLoading(false)
     })
-  }, [programId, eventId]);
+  }, [organization, programId, eventId]);
 
     let history = useHistory();
 
     const onSubmit = (values) => {
         let eventData = {};
-    eventData["organization_id"] = ORGANIZATION_ID;
+    eventData["organization_id"] = organization.id;
     eventData["program_id"] = program.id;
     let {
       name,
@@ -124,7 +123,7 @@ const Edit = () => {
     // return
     
     axios
-      .put(`/organization/${ORGANIZATION_ID}/program/${programId}/event/${eventId}`, eventData)
+      .put(`/organization/${organization.id}/program/${programId}/event/${eventId}`, eventData)
       .then((res) => {
         //   console.log(res)
         if (res.status == 200) {
@@ -553,4 +552,8 @@ const Edit = () => {
     }
 };
 
-export default Edit;
+export default withRouter(connect((state) => ({
+    theme: state.theme,
+    rtl: state.rtl,
+    organization: state.organization
+  }))(Edit));
