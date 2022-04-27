@@ -7,6 +7,7 @@ import axios from 'axios'
 // import ModalFlashMessage from "@/shared/components/flash/ModalFlashMessage";
 
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
+import {PROGRAM_TYPES, PROGRAM_STATUSES} from "@/shared/options";
 
 import renderCheckBoxField from '@/shared/components/form/CheckBox';
 import renderSelectField from '@/shared/components/form/Select';
@@ -32,10 +33,13 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
         // alert(JSON.stringify(selectedOption))
         setUsState(selectedState)
     }
+    console.log(data)
     const onSubmitForm = async (values) => {
         setLoading(true)
         // alert(values.state.value)
         values.state = values?.state?.value
+        values.type = values?.type?.value
+        values.status = values?.status?.value
         const savedata  = {...data, ...values}
         // alert(JSON.stringify(savedata))
         // return;
@@ -55,7 +59,6 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
         }
         // setTimeout(alert('Allset'), 2000)
     }
-    const statePlaceholder = usState ? usState.label : 'State'
     return (
     <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
         <Form
@@ -63,7 +66,7 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
                 validate={(values) => formValidation.validateForm(prepareForValidation(values))}
                 initialValues={{
                     name: data.name,
-                    type: data.name,
+                    type: {value:data.type, label: PROGRAM_TYPES.find( ptype => ptype.value === data.type)?.label},
                     external_id: data.external_id,
                     corporate_entity: data.corporate_entity,
                     address: data.address,
@@ -79,7 +82,8 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
                     factor_valuation: data.factor_valuation,
                     prefix: data.prefix,
                     public_contact_email: data.public_contact_email,
-                    zip: data.zip
+                    zip: data.zip,
+                    status: {value:data.status, label: PROGRAM_STATUSES.find( stype => stype.value === data.status)?.label},
                 }}
             >
             {({ handleSubmit, form, submitting, pristine, values }) => (
@@ -133,10 +137,14 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
                             <Field name="type">
                             {({ input, meta }) => (
                                 <div className="form__form-group">
-                                    <span className="form__form-group-label">Type</span>
+                                    <span className="form__form-group-label">Program Type</span>
                                     <div className="form__form-group-field">
                                         <div className="form__form-group-row">
-                                            <input type="text" {...input} placeholder="Type" />
+                                            <Field
+                                                name="type"
+                                                component={renderSelectField}
+                                                options={PROGRAM_TYPES}
+                                            />
                                             {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                                         </div>
                                     </div>
@@ -201,13 +209,17 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
                                 </div>
                             )}
                             </Field>
-                            <Field name="spaceholder">
+                            <Field name="status">
                             {({ input, meta }) => (
-                                <div className="form__form-group invisible">
-                                    <span className="form__form-group-label">xxxxxxx</span>
+                                <div className="form__form-group">
+                                    <span className="form__form-group-label">Status</span>
                                     <div className="form__form-group-field">
                                         <div className="form__form-group-row">
-                                            <input type="text" {...input} placeholder="xxxxxxxx" />
+                                            <Field
+                                                name="status"
+                                                component={renderSelectField}
+                                                options={PROGRAM_STATUSES}
+                                            />
                                             {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                                         </div>
                                     </div>
