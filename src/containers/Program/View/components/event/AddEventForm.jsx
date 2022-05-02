@@ -64,13 +64,52 @@ const AddEventForm = ({onStep, organization, program}) => {
 
   const onSubmit = (values) => {
     let eventData = {};
-    Object.assign(eventData, values);
+    // Object.assign(eventData, values);
     
     eventData["organization_id"] = organization.id;
     eventData["program_id"] = program.id;
+
+    let {
+      name,
+      enable,
+      max_awardable_amount,
+      post_to_social_wall,
+      message,
+      award_message_editable,
+      event_icon_id,
+      event_type_id,
+      template_name,
+      email_template
+    } = values;
+
+    // console.log(eventType)
+    // return
+
+    eventData.name = name;
+    eventData.max_awardable_amount = max_awardable_amount;
+    if( post_to_social_wall ) {
+      eventData.post_to_social_wall = post_to_social_wall;
+    }
+    if( award_message_editable ) {
+      eventData.award_message_editable = award_message_editable;
+    }    
+    
+    eventData.enable = enable ? 1 : 0;
+    
+    eventData.message = message;
+    // eventData.event_icon_id = icon.id;
+    eventData.event_icon_id = event_icon_id;
     eventData.include_in_budget = 1;
-    eventData.event_type_id = values.event_type_id.value;
-    eventData.email_template_id = values.email_template_id.value;
+
+    //static
+    eventData.event_type_id = event_type_id.value;
+
+    //template
+    eventData.template_name = template_name;
+    eventData.email_template = email_template;
+    
+    // console.log(eventData)
+    // return
     
     axios
       .post(`/organization/${organization.id}/program/${program.id}/event`, eventData)

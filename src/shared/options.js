@@ -7,3 +7,16 @@ export const TOA_OPTIONS = [
     {label:'Visa Debit Card (Related Group)', value: 6},
     {label:'Sandbox API', value: 7},
 ]
+
+export const PROGRAM_TYPES = [
+    {label:'Default',value:'default'},
+    {label:'Employee',value:'employee'},
+    {label:'Resident',value:'resident'},
+    {label:'Shell',value:'shell'}
+]
+
+export const PROGRAM_STATUSES = [
+    {label:'Active',value:'active'},
+    {label:'Deleted',value:'deleted'},
+    {label:'Locked',value:'locked'}
+]

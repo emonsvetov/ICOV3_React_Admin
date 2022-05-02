@@ -1,4 +1,18 @@
-import { Link } from 'react-router-dom';
+const strUserProgramRoles = (user) => {
+    let pRoles = []
+    if( user?.programRoles )    {
+        for( var i in user.programRoles) {
+            if( user.programRoles[i]?.roles)    {
+                const upRoles = user.programRoles[i]?.roles
+                for( var j in upRoles) {
+                    pRoles.push(upRoles[j].name)
+                }
+            }
+        }
+    }
+    // console.log(pRoles)
+    return pRoles.join(', ') || 'NA'
+}
 export const USERS_COLUMNS = [
     {
         Header: "Name",
@@ -10,12 +24,12 @@ export const USERS_COLUMNS = [
     },
     {
         Header: "Role",
-        accessor: "role",
-        Cell: ({ row, value }) => { return 'Program manager'},
+        accessor: "role_id",
+        Cell: ({ row, value }) => { return strUserProgramRoles(row.original)},
     },
     {
         Header: "Status",
-        accessor: "status",
+        accessor: "user_status_id",
         Cell: ({ row, value }) => { return 'Active'},
     },
     {

@@ -77,7 +77,7 @@ const EditUserForm = ({organization}) => {
 
     user = patch4Select(user, "role_id", roles)
 
-    // console.log(user)
+    console.log(user)
     return (
     <Form
         onSubmit={onSubmit}

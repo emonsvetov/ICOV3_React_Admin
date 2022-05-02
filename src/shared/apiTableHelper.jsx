@@ -8,7 +8,6 @@ import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import DatePicker from 'react-datepicker';
 import {dateStrToYmd} from '@/shared/helpers';
 
-
 const QUERY_TRIGGER = 'QUERY_TRIGGER';
 const PAGE_CHANGED = 'PAGE_CHANGED';
 const PAGE_SIZE_CHANGED = 'PAGE_SIZE_CHANGED';
@@ -159,7 +158,7 @@ export const fetchApiData = async( queryParams )  => {
         `${options.url}?page=${options.page+1}&limit=${options.size}&${paramStr}`
         );
         // console.log(response)
-        if( response.data.length === 0) return {results:[],count:0}
+        if( response.data.length === 0) return {results:[], count:0}
         const data = {
             results: response.data.data,
             count: response.data.total
