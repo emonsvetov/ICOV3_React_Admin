@@ -58,7 +58,6 @@ const fetchMerchant = async ( id ) => {
     }
 };
 
-
 const ViewMerchant = ( {merchant} ) => {
 
     let { id } = useParams();

@@ -9,10 +9,11 @@ const FormFields = ({form, values, submitting, pristine, config = {
     roles:[],
     roleInput: 'select',
     roleField: 'role_id',
-    rolePlaceholder: 'Select Role'
+    rolePlaceholder: 'Select Role',
+    roleDisable: true
 }}) => {
 
-    // console.log(pristine)
+    // console.log(config)
     // console.log(values)
     
     return (
@@ -49,6 +50,7 @@ const FormFields = ({form, values, submitting, pristine, config = {
                     </Field>
                 </Col>
             </Row>
+            {!config.roleDisable &&
             <Row>
                 <Col md="6" lg="4" xl="4">
                     <Field name={config.roleField}>
@@ -81,7 +83,7 @@ const FormFields = ({form, values, submitting, pristine, config = {
                     )}
                     </Field>
                 </Col>
-            </Row>
+            </Row>}
             <Row>
                 <Col md="6" lg="4" xl="4">
                     <Field name="email">

@@ -44,7 +44,7 @@ const AddUserForm = ({organization}) => {
         .then( (res) => {
             // console.log(res)
             if(res.status == 200)  {
-                window.location = `/users/?message=User saved successfully`
+                // window.location = `/users/?message=User saved successfully`
             }
         })
         .catch( error => {

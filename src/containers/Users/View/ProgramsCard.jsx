@@ -6,8 +6,8 @@ import axios from 'axios'
 import useDebounce from "@/useDebounce"
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
-import {inArray, extractRolesFromProgramPermissions} from "@/shared/helpers"
-import { fetchRoles, fetchUserPrograms, fetchUserProgramPermissions } from "@/shared/apiHelper"
+import {inArray, buildIdArray} from "@/shared/helpers"
+import { fetchRoles, fetchUserPrograms, fetchUserProgramRoles } from "@/shared/apiHelper"
 import ProgramFormModal from './ProgramFormModal'
 
 const queryClient = new QueryClient()
@@ -105,10 +105,10 @@ const ProgramsCard = ( {user, organization}) => {
         setProgramRoles(null)
         if( updating )  {
             setUpdating(true)
-            fetchUserProgramPermissions(organization.id, user.id, program.id)
-            .then( _permissions => {
-                const _roles = extractRolesFromProgramPermissions(_permissions, program.id);
-                setProgramRoles(_roles)
+            fetchUserProgramRoles(organization.id, user.id, program.id)
+            .then( _roles => {
+                // const _roles = extractRolesFromProgramPermissions(_permissions, program.id);
+                setProgramRoles(buildIdArray(_roles))
             })
         }
     }

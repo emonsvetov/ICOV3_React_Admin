@@ -1,13 +1,8 @@
 const strUserProgramRoles = (user) => {
     let pRoles = []
-    if( user?.programRoles )    {
-        for( var i in user.programRoles) {
-            if( user.programRoles[i]?.roles)    {
-                const upRoles = user.programRoles[i]?.roles
-                for( var j in upRoles) {
-                    pRoles.push(upRoles[j].name)
-                }
-            }
+    if( user?.roles )    {
+        for( var i in user.roles) {
+            pRoles.push(user.roles[i].name)
         }
     }
     // console.log(pRoles)

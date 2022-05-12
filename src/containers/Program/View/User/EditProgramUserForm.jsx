@@ -3,8 +3,8 @@ import { Form } from 'react-final-form';
 import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
 import formValidation from "@/shared/validation/editprogramuser";
 import axios from 'axios';
-import { fetchUser, fetchRoles, fetchUserProgramPermissions } from "@/shared/apiHelper"
-import {unpatchSelect, labelizeNamedData,extractRolesFromProgramPermissions} from '@/shared/helpers'
+import { fetchUser, fetchRoles, fetchUserProgramRoles } from "@/shared/apiHelper"
+import {unpatchSelect, labelizeNamedData, buildIdArray} from '@/shared/helpers'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 import ProgramUserFormFields from './ProgramUserFormFields'
@@ -23,17 +23,18 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
     let [user, setUser] = useState(null)
 
     React.useEffect( () => {
-        getRoles(organization)
+        getRoles(organization);
         fetchUser(organization.id, userid)
         .then( data => {
             setUser(data);
             setLoading(false)
         })
 
-        fetchUserProgramPermissions(organization.id, userid, program.id)
-        .then( _permissions => {
-            const _roles = extractRolesFromProgramPermissions(_permissions, program.id);
-            setProgramRoles(_roles)
+        fetchUserProgramRoles(organization.id, userid, program.id)
+        .then( _roles => {
+            console.log(_roles)
+            // const _roles = extractRolesFromProgramPermissions(_permissions, program.id);
+            setProgramRoles(buildIdArray(_roles))
         })
     }, [organization])
 

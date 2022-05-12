@@ -13,7 +13,11 @@ import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 
 const EditUserForm = ({organization}) => {
     const dispatch = useDispatch()
-
+    let config = {
+        roleInput: 'select',
+        roleField: 'role_id',
+        roleDisable: true
+    }
     let { id } = useParams();
 
     const [error, setError] = useState(false)
@@ -48,8 +52,14 @@ const EditUserForm = ({organization}) => {
         // values["organization_id"] = 1
         // setLoading(true)
         // console.log(values)
-        values = unpatchSelect(values, ["role_id"])
-        // console.log(values)
+        // values = unpatchSelect(values, ["role_id"], ["roles"])
+        if(!config.roleDisable && values.role_id.value) {
+            values.roles = [values.role_id.value]
+        }   else    {
+            delete(values["roles"]);
+        }
+        delete(values["role_id"]);
+        console.log(values)
         // return
         axios.put(`/organization/${organization.id}/user/${user.id}`, values)
         .then( (res) => {
@@ -76,8 +86,9 @@ const EditUserForm = ({organization}) => {
     // console.log(roles)
 
     user = patch4Select(user, "role_id", roles)
+    config = {...config, ...{roles}}
 
-    console.log(user)
+    // console.log(user)
     return (
     <Form
         onSubmit={onSubmit}
@@ -97,7 +108,7 @@ const EditUserForm = ({organization}) => {
                 </ButtonToolbar>
             </Col>
         </Row>
-        <FormFields roles={roles}/>
+        <FormFields config={config} form={form} submitting={submitting} pristine={pristine} values={values}/>
     </form>
     )}
   </Form>

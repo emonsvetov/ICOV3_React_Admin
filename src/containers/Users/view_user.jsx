@@ -95,7 +95,11 @@ const ViewUser = ({organization}) => {
                                         Role:
                                     </Col>
                                     <Col md="10" lg="10" xl="10" sm="10">
-                                        {data.role?.name}
+                                        {
+                                        data.roles.map( (role, i) => {
+                                            return role.name
+                                        }).join(", ")
+                                        }
                                     </Col>
                                 </Row>
                                 <Row>

@@ -36,10 +36,10 @@ export const fetchUserPrograms = async(organization_id, user_id) => {
     }
 }
 
-export const fetchUserProgramPermissions = async(organization_id, user_id, program_id) => {
+export const fetchUserProgramRoles = async(organization_id, user_id, program_id) => {
     try {
         const response = await axios.get(
-        `/organization/${organization_id}/user/${user_id}/program/${program_id}/permission`
+        `/organization/${organization_id}/user/${user_id}/program/${program_id}/role`
         );
         // console.log(response)
         let results = response.data;
