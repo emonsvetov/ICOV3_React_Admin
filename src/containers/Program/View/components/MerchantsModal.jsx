@@ -138,14 +138,15 @@ const DataTable = ({ toggle, organization, program }) => {
         `/organization/${organization.id}/program/${program.id}/merchant?minimal=true&sortby=name`
       );
       let result = response.data;
-      // let temp_relation = [];
-      // console.log(result)
-      // result.map((item, index) => {
-      //   let {id}= item;
-      //   let {featured, cost_to_program}= item.pivot;
-      //   temp_relation.push({id, featured, cost_to_program});
-      // });
-      setRelationData(result);
+      let temp_relation = [];
+      
+      result.map((item, index) => {
+        let {id}= item;
+        let {featured, cost_to_program}= item.pivot;
+        temp_relation.push({id, featured, cost_to_program});
+      });
+      setRelationData(temp_relation);
+      console.log(temp_relation)
     } catch (e) {
       console.log(e);
     }
@@ -153,6 +154,7 @@ const DataTable = ({ toggle, organization, program }) => {
 
   useEffect(() => {
     if (program.id) {
+
       fetchProgramMerchantData();
     }
   }, [program]);
@@ -200,7 +202,7 @@ const DataTable = ({ toggle, organization, program }) => {
       results.map((item, index) => {
         isActive = cost_to_program = featured = false;  
         relationData.forEach((relation) => {
-          if(relation.merchant_id === item.id){
+          if(relation.id === item.id){
             isActive = true;
             cost_to_program = relation.cost_to_program;
             featured = relation.featured;

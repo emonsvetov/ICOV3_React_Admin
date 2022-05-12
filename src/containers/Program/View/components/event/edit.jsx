@@ -11,7 +11,7 @@ import renderToggleButtonField from "@/shared/components/form/ToggleButton";
 import axios from "axios";
 import renderSelectField from '@/shared/components/form/Select'
 import Tabs from "./Tabs";
-import {fetchEventTypes} from '@/shared/apiHelper'
+import {fetchEventTypes, fetchEmailTemplates} from '@/shared/apiHelper'
 import {labelizeNamedData} from '@/shared/helpers'
 
 const fetchEvent = async (oId, pId, eId ) => {
@@ -31,6 +31,9 @@ const Edit = ({organization}) => {
   const [isOpen, setOpen] = useState(false);
   const [event, setEvent] = useState(null);
   const [eventTypes, setEventTypes] = useState([]);
+  const [emailTemplates, setEmailTemplates] = useState([]);
+  const [templateContents, setTemplateContents] = useState([]);
+  const [currentTemplate, setCurrentTemplate] = useState(0);
   const [visibleLedgerCode, setVisibleLedgerCode] = useState(false);
   const [customEmailTemplate, setEnableCustomize] = useState(false);
   const [activeTab, setActiveTab] = useState('2');
@@ -65,6 +68,11 @@ const Edit = ({organization}) => {
       // console.log(evtypes)
       setEventTypes(labelizeNamedData(evtypes))
     })
+    fetchEmailTemplates('program_event')
+    .then( res => {
+      setEmailTemplates(labelizeNamedData(res))
+      setTemplateContents(res)
+    })
   }, [])
 
   useEffect( () => {
@@ -94,11 +102,10 @@ const Edit = ({organization}) => {
       message,
       award_message_editable,
       event_icon_id,
-      event_type_id
+      event_type_id,
+      template_name,
+      email_template
     } = values;
-
-    // console.log(eventType)
-    // return
 
     eventData.name = name;
     eventData.max_awardable_amount = max_awardable_amount;
@@ -111,15 +118,18 @@ const Edit = ({organization}) => {
     
     eventData.enable = enable ? 1 : 0;
     
+    
     eventData.message = message;
-    // eventData.event_icon_id = icon.id;
     eventData.event_icon_id = event_icon_id;
     eventData.include_in_budget = 1;
 
     //static
     eventData.event_type_id = event_type_id.value;
 
-    // console.log(eventData)
+    //template
+    eventData.template_name = template_name;
+    eventData.email_template = email_template;
+    // console.log(values)
     // return
     
     axios
@@ -165,9 +175,21 @@ const Edit = ({organization}) => {
         changeValue(state, 'event_icon_id', () => fieldVal.id);
         changeValue(state, fieldName, () => fieldVal);
     }
-    
+    const handleTemplateChange = (selected) => {
+        // setCurrentTemplate(selected.value - 1)
+        
+    }
+
+    const onChangeEmailTemplate = ([field], state, { setIn, changeValue }) => {
+        const v = field.value
+        if(!v)
+        return;
+        let targetField = state.fields["email_template"];
+        targetField.change( templateContents[v - 1 ].content);
+        targetField = state.fields["template_name"];
+        targetField.change( templateContents[v - 1 ].name);
+    }
       
-    
     const onChangeAwardValue = ([field], state, { setIn, changeValue }) => {
         const v = field.target.value
         if( isNaN( v ) ) return;
@@ -201,7 +223,8 @@ const Edit = ({organization}) => {
                                 //   changeValue(state, field, () => value)
                                 // }
                                 onChangeAwardValue,
-                                setEventIcon
+                                setEventIcon,
+                                onChangeEmailTemplate
                                 }}
                                 onSubmit={onSubmit}
                                 validate={(values) => formValidation.validateForm(values)}
@@ -432,27 +455,77 @@ const Edit = ({organization}) => {
                                         </div>
                                         </Col>
                                     </Row>
-                                    
-                                    {customEmailTemplate && 
                                     <Row>
-                                        <Col md="12" lg="8" xl="8">
-                                        <div className="form__form-group">
-                                            <span className="form__form-group-label">
-                                            Email Template
-                                            </span>
-                                            <div className="form__form-group-field">
-                                            <div className="form__form-group-row">
-                                                <Field
-                                                    name="email_template"
-                                                    component="textarea"
-                                                    type="text"
-                                                />
-                                            </div>
-                                            </div>
-                                        </div>
-                                        </Col>
-                                    </Row>}
+                                    {!customEmailTemplate &&
                                     
+                                        <Col md="6" lg="4" xl="4">
+                                            <div className="form__form-group">
+                                                <span className="form__form-group-label">
+                                                    Select Email Template
+                                                </span>
+                                                <div className="form__form-group-field">
+                                                <div className="form__form-group-row">
+                                                    <Field 
+                                                        name="email_template_id"
+                                                        options={emailTemplates}
+                                                        component={renderSelectField}
+                                                        initialValue = {emailTemplates[event.email_template_id - 1]} 
+                                                        parse={value => {
+                                                            handleTemplateChange(value)
+                                                            form.mutators.onChangeEmailTemplate(value)
+                                                            return value;
+                                                        }}
+                                                    />
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </Col>
+                                        
+                                    }
+                                        <Col md="6" lg="4" xl="4">
+                                            <div className="form__form-group" style={{display: customEmailTemplate? 'block':'none'}}>
+                                                <span className="form__form-group-label">
+                                                    Template Name
+                                                </span>
+                                                <div className="form__form-group-field">
+                                                <div className="form__form-group-row">
+                                                    <Field
+                                                        name="template_name"
+                                                        component="input"
+                                                        type="text"
+                                                        initialValue = {templateContents[event.email_template_id - 1].name}
+                                                        parse={value => {
+                                                            form.mutators.onChangeEmailTemplate(value)
+                                                            return value;
+                                                        }}
+                                                    />
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </Col>
+                                        <Col md="12" lg="8" xl="8">
+                                            <div className="form__form-group">
+                                                <span className="form__form-group-label">
+                                                    Email Template
+                                                </span>
+                                                <div className="form__form-group-field">
+                                                <div className="form__form-group-row">
+                                                    <Field
+                                                        name="email_template"
+                                                        component="textarea"
+                                                        type="text"
+                                                        initialValue = {templateContents[event.email_template_id - 1].content}
+                                                        parse={value => {
+                                                            form.mutators.onChangeEmailTemplate(value)
+                                                            return value;
+                                                        }}
+                                                        readOnly={!customEmailTemplate}
+                                                    />
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </Col>
+                                    </Row>
                                     <Row>
                                         <Col md="6" lg="4" xl="4">
                                         <div className="form__form-group">
