@@ -87,7 +87,7 @@ const EditMerchantForm = () => {
 
     // console.log(merchant)
     merchant = patchMerchantMediaURL( merchant )
-    // console.log(merchant)
+    console.log(merchant)
 
     return (
     <Form
@@ -202,7 +202,7 @@ const EditMerchantForm = () => {
             </Col>
         </Row>
         <Row>
-            <Col md="6" lg="6" xl="6">
+            <Col md="3" lg="3" xl="3">
                 <div className="form__form-group">
                     <Field 
                         name="use_tango_api"
@@ -215,6 +215,20 @@ const EditMerchantForm = () => {
                         }}
                     /> 
                 </div>
+            </Col>
+            <Col md="3" lg="3" xl="3">
+                <div className="form__form-group">
+                    <Field
+                        name="get_gift_codes_from_root"
+                        type="checkbox"
+                        component={CheckboxField}
+                        label="Get Gift Codes from root"
+                    />
+                </div>
+            </Col>
+        </Row>
+        <Row>
+            <Col md="6" lg="6" xl="6">
                 {useTango && 
                     <div className="form__form-group">
                         <span className="form__form-group-label">Tango Configurations</span>
