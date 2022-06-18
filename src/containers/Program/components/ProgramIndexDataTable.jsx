@@ -17,6 +17,8 @@ import ContentCopyIcon from 'mdi-react/ContentCopyIcon'
 import CopyProgramModal from "./CopyProgramModal"
 import MoveProgramModal from "./MoveProgramModal"
 import {renameChildrenToSubrows} from '@/shared/helpers'
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 
 const queryClient = new QueryClient()
 
@@ -66,41 +68,43 @@ const reducer = (state, { type, payload }) => {
   }
 };
 
-const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
-    // const offset = page * pageSize;
-    const params = []
-    let paramStr = ''
-    if( pageFilterO ) {
-        if(pageFilterO.status !== 'undefined' && pageFilterO.status) params.push(`status=${pageFilterO.status}`)
-        if(pageFilterO.keyword !== 'undefined' && pageFilterO.keyword) params.push(`keyword=${pageFilterO.keyword}`)
-        // console.log(params)
-        paramStr = params.join('&')
-    }
-    if( pageSortBy.length > 0 ) {
-        const sortParams = pageSortBy[0];
-        const sortyByDir = sortParams.desc ? 'desc' : 'asc'
-        paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
-    }
-    try {
-        const response = await axios.get(
-        `/organization/1/program?page=${page+1}&limit=${pageSize}&${paramStr}`
-        );
-        // console.log(response)
-        if( response.data.length === 0) return {results:[],count:0}
-        const data = {
-            results: renameChildrenToSubrows(response.data.data),
-            count: response.data.total
-        };
-        // console.log(data)
-        return data;
-    } catch (e) {
-        throw new Error(`API error:${e?.message}`);
-    }
-};
+const DataTable = ({organization}) => {
 
-const DataTable = () => {
+    // console.log(organization)
 
-    const [movingProgramId, setMovingProgramId] = useState(null)
+    const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
+        // const offset = page * pageSize;
+        const params = []
+        let paramStr = ''
+        if( pageFilterO ) {
+            if(pageFilterO.status !== 'undefined' && pageFilterO.status) params.push(`status=${pageFilterO.status}`)
+            if(pageFilterO.keyword !== 'undefined' && pageFilterO.keyword) params.push(`keyword=${pageFilterO.keyword}`)
+            // console.log(params)
+            paramStr = params.join('&')
+        }
+        if( pageSortBy.length > 0 ) {
+            const sortParams = pageSortBy[0];
+            const sortyByDir = sortParams.desc ? 'desc' : 'asc'
+            paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
+        }
+        try {
+            const response = await axios.get(
+            `/organization/${organization.id}/program?page=${page+1}&limit=${pageSize}&${paramStr}`
+            );
+            // console.log(response)
+            if( response.data.length === 0) return {results:[],count:0}
+            const data = {
+                results: renameChildrenToSubrows(response.data.data),
+                count: response.data.total
+            };
+            // console.log(data)
+            return data;
+        } catch (e) {
+            throw new Error(`API error:${e?.message}`);
+        }
+    };
+
+    const [movingProgram, setMovingProgram] = useState(null)
     const [copyingProgram, setCopyingProgram] = useState(null)
 
     const [isMoveOpen, setMoveOpen] = useState(false)
@@ -119,8 +123,8 @@ const DataTable = () => {
         // alert(status, keyword)
     }
 
-    const onClickStartMoveProgram = ( programId ) => {
-        setMovingProgramId(programId)
+    const onClickStartMoveProgram = ( program ) => {
+        setMovingProgram(program)
         setMoveOpen(true)
     }
     const onClickStartCopyProgram = ( program ) => {
@@ -137,7 +141,7 @@ const DataTable = () => {
         return (
             <>
                 <span>
-                    <FolderMoveOutlineIcon onClick={() => onClickStartMoveProgram(row.original.id)} />
+                    <FolderMoveOutlineIcon onClick={() => onClickStartMoveProgram(row.original)} />
                     <span style={{width:'15px', display: 'inline-block'}}></span>
                     <ContentCopyIcon onClick={() => onClickStartCopyProgram(row.original)} />
                 </span>
@@ -325,8 +329,8 @@ const DataTable = () => {
                             ))}
                         </tfoot> */}
                     </table>
-                    {copyingProgram && <CopyProgramModal isOpen={isCopyOpen} setOpen={setCopyOpen} toggle={copyToggle} program={copyingProgram}/>}
-                    <MoveProgramModal isOpen={isMoveOpen} setOpen={setMoveOpen} toggle={moveToggle} programId={movingProgramId} />
+                    {copyingProgram && <CopyProgramModal organization={organization} isOpen={isCopyOpen} setOpen={setCopyOpen} toggle={copyToggle} program={copyingProgram}/>}
+                    {movingProgram && <MoveProgramModal organization={organization} isOpen={isMoveOpen} setOpen={setMoveOpen} toggle={moveToggle} program={movingProgram} />}
                 </div>
                 {(rows.length > 0) && (
                     <>
@@ -391,12 +395,15 @@ const Sorting = ({ column }) => (
     </span>
   );
 
-const TableWrapper = () => {
+const TableWrapper = ({organization}) => {
+    // console.log(organization)
+    if( !organization ) return 'Loading...'
     return (
         <QueryClientProvider client={queryClient}>
-            <DataTable />
+            <DataTable organization={organization} />
         </QueryClientProvider>
     )
 }
-
-export default TableWrapper;
+export default withRouter(connect((state) => ({
+    organization: state.organization
+}))(TableWrapper));

@@ -21,7 +21,7 @@ const getMonthLabelByMonth = number => {
     return MONTHS.find( month => month.number === number)?.label
 }
 
-const AwardingPointsModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
+const AwardingPointsModal = ({organization, data, isOpen, setOpen, toggle, theme, rtl}) => {
     const [loading, setLoading] = useState(false)
     const [month, setMonth] = useState(null)
     const [DAYS, setDAYS] = useState([])
@@ -52,7 +52,7 @@ const AwardingPointsModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
         // alert(JSON.stringify(data))
         // return;
         try {
-            const response = await axios.put(`/organization/1/program/${data.id}`, data);
+            const response = await axios.put(`/organization/${organization.id}/program/${data.id}`, data);
             // console.log(response)
             setLoading(false)
             setData( values )

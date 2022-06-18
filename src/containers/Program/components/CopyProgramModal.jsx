@@ -8,7 +8,7 @@ import { ThemeProps, RTLProps } from '../../../shared/prop-types/ReducerProps';
 import renderCheckBoxField from '@/shared/components/form/CheckBox';
 import axios from 'axios'
 
-const CopyProgramModal = ({isOpen, setOpen, toggle, program, theme, rtl}) => {
+const CopyProgramModal = ({organization, isOpen, setOpen, toggle, program, theme, rtl}) => {
     const [loading, setLoading] = useState(false)
     const [sourceProgram, setSourceProgram] = useState(program)
     const [programId, setProgramId] = useState(program.id)
@@ -21,7 +21,7 @@ const CopyProgramModal = ({isOpen, setOpen, toggle, program, theme, rtl}) => {
         sourceProgram.name = values.name
         // alert(values.create_as_sub)
         // alert(JSON.stringify(sourceProgram))
-        axios.post('/organization/1/program', sourceProgram)
+        axios.post(`/organization/${organization.id}/program`, sourceProgram)
         .then( (res) => {
             if(res.status == 200)  {
                 window.location = '/program?message=Program copied successfully!'
@@ -39,6 +39,9 @@ const CopyProgramModal = ({isOpen, setOpen, toggle, program, theme, rtl}) => {
         }
         return errors;
     }
+
+    if( !organization ) return 'Loading...'
+
     return (
     <Modal className={`modal-program ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
         <ModalHeader>

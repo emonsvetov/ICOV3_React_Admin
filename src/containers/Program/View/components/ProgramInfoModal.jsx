@@ -24,7 +24,7 @@ const prepareForValidation = values => {
     return {...values, ...clean}
 }
 
-const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
+const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) => {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
     const [usState, setUsState] = useState(null)
@@ -44,7 +44,7 @@ const ProgramInfo = ({isOpen, setOpen, toggle, data, theme, rtl}) => {
         // alert(JSON.stringify(savedata))
         // return;
         try {
-            const response = await axios.put(`/organization/1/program/${savedata.id}`, savedata);
+            const response = await axios.put(`/organization/${organization.id}/program/${savedata.id}`, savedata);
             // console.log(response)
             setLoading(false)
             setData( savedata )

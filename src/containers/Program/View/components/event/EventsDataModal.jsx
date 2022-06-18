@@ -18,6 +18,7 @@ import { COLUMNS } from "./columns"
 import axios from 'axios'
 
 const EventsDataModal = ({
+  organization,
   isOpen,
   setOpen,
   toggle,
@@ -40,7 +41,7 @@ const EventsDataModal = ({
   const fetchProgramEvents = async(programId) => {
     setLoading(true)
     try {
-        const response = await axios.get(`/organization/1/program/${programId}/event`);
+        const response = await axios.get(`/organization/${organization.id}/program/${programId}/event`);
         console.log(response)
         setProgramEvents(response.data);
         setLoading(false)

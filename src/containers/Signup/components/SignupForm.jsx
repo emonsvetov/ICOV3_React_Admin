@@ -6,6 +6,7 @@ import { Form, Field } from 'react-final-form';
 import AccountCircleOutlineIcon from 'mdi-react/AccountCircleOutlineIcon';
 import LockOutlineIcon from 'mdi-react/LockOutlineIcon';
 import EmailOutlineIcon from 'mdi-react/EmailOutlineIcon';
+import HomeOutlineIcon from 'mdi-react/HomeOutlineIcon';
 
 const required = value => value ? undefined : 'Required';
 
@@ -39,7 +40,22 @@ const SignupForm = ({onSubmit, errors, loading}) => {
             </ul>
           </div>
         </div>}
-
+        <Field name="organization_name">
+        {({ input, meta }) => (
+          <div className="form__form-group">
+            <span className="form__form-group-label">Organization</span>
+              <div className="form__form-group-field">
+                <div className="form__form-group-icon">
+                  <HomeOutlineIcon />
+                </div>
+                <div className="form__form-group-row">
+                  <input type="text" {...input} placeholder="Organization name" />
+                  {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                </div>
+            </div>
+          </div>
+        )}
+      </Field>
         <Field name="first_name">
           {({ input, meta }) => (
             <div className="form__form-group">
@@ -137,6 +153,9 @@ const SignupForm = ({onSubmit, errors, loading}) => {
 
 const validate = values => {
   let errors = {};
+  if (!values.organization_name) {
+    errors.organization_name = "Organization name is required";
+  }
   if (!values.first_name) {
     errors.first_name = "First Name is required";
   }

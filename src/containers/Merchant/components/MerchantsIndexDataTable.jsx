@@ -17,6 +17,8 @@ import ContentCopyIcon from 'mdi-react/ContentCopyIcon';
 // import CopyProgramModal from "./CopyProgramModal";
 // import MoveProgramModal from "./MoveProgramModal";
 import {renameChildrenToSubrows} from '@/shared/helpers'
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 const queryClient = new QueryClient()
 
@@ -66,37 +68,40 @@ const reducer = (state, { type, payload }) => {
   }
 };
 
-const fetchMerchantData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
-    // const offset = page * pageSize;
-    const params = []
-    let paramStr = ''
-    if( pageFilterO ) {
-        if(pageFilterO.keyword !== 'undefined' && pageFilterO.keyword) params.push(`keyword=${pageFilterO.keyword}`)
-        paramStr = params.join('&')
-    }
-    if( pageSortBy.length > 0 ) {
-        const sortParams = pageSortBy[0];
-        const sortyByDir = sortParams.desc ? 'desc' : 'asc'
-        paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
-    }
-    try {
-        const response = await axios.get(
-        `/merchant?page=${page+1}&limit=${pageSize}&${paramStr}`
-        );
-        // console.log(response)
-        if( response.data.length === 0) return {results:[],count:0}
-        const data = {
-            results: renameChildrenToSubrows(response.data.data),
-            count: response.data.total
-        };
-        // console.log(data)
-        return data;
-    } catch (e) {
-        throw new Error(`API error:${e?.message}`);
-    }
-};
+const DataTable = ({organization}) => {
 
-const DataTable = () => {
+    console.log(organization)
+
+    const fetchMerchantData = async (organization, page, pageSize, pageFilterO = null, pageSortBy) => {
+        if( !organization ) return;
+        // const offset = page * pageSize;
+        const params = []
+        let paramStr = ''
+        if( pageFilterO ) {
+            if(pageFilterO.keyword !== 'undefined' && pageFilterO.keyword) params.push(`keyword=${pageFilterO.keyword}`)
+            paramStr = params.join('&')
+        }
+        if( pageSortBy.length > 0 ) {
+            const sortParams = pageSortBy[0];
+            const sortyByDir = sortParams.desc ? 'desc' : 'asc'
+            paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
+        }
+        try {
+            const response = await axios.get(
+            `/organization/${organization.id}/merchant?page=${page+1}&limit=${pageSize}&${paramStr}`
+            );
+            // console.log(response)
+            if( response.data.length === 0) return {results:[],count:0}
+            const data = {
+                results: renameChildrenToSubrows(response.data.data),
+                count: response.data.total
+            };
+            // console.log(data)
+            return data;
+        } catch (e) {
+            throw new Error(`API error:${e?.message}`);
+        }
+    };
 
     const [filter, setFilter] = useState({ keyword:''});
     // var [data, setData] = useState([]);
@@ -137,7 +142,7 @@ const DataTable = () => {
 
     const { isLoading, error, data, isSuccess } = useQuery(
         ['merchants', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
-        () => fetchMerchantData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
+        () => fetchMerchantData(organization, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
         {
             keepPreviousData: true,
             staleTime: Infinity,
@@ -354,12 +359,17 @@ const Sorting = ({ column }) => (
     </span>
   );
 
-const TableWrapper = () => {
+const TableWrapper = ( {organization} ) => {
+    if( !organization ) return 'Loading...'
     return (
         <QueryClientProvider client={queryClient}>
-            <DataTable />
+            <DataTable organization={organization} />
         </QueryClientProvider>
     )
 }
 
-export default TableWrapper;
+export default withRouter(connect((state) => ({
+    theme: state.theme,
+    rtl: state.rtl,
+    organization: state.organization
+}))(TableWrapper));

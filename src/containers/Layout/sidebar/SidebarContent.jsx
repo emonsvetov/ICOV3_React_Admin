@@ -3,11 +3,15 @@ import PropTypes from 'prop-types';
 import SidebarLink from './SidebarLink';
 import SidebarCategory from './SidebarCategory';
 import {logout} from '../../App/auth';
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 
-const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
+const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
   const handleHideSidebar = () => {
     onClick();
   }
+
+  if( !auth ) return 'Loading...'
 
   return (
     <div className="sidebar__content">
@@ -19,7 +23,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
           <SidebarLink title="All Programs" route="/program" />
           <SidebarLink title="Create Program" route="/program/add" />
         </SidebarCategory>
-        <SidebarLink title="Merchants"  icon="store" route="/merchants" />
+        {auth.isSuperAdmin && <SidebarLink title="Merchants"  icon="store" route="/merchants" />}
         <SidebarLink title="Import"  icon="download" route="/import" />
         <SidebarCategory title="Reports" icon="book">
           <SidebarLink title="Inventory" route="/reports/inventory" />
@@ -34,8 +38,8 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight }) => {
           <SidebarLink title="Unassigned Program Domains" route="/reports/unassigned-program-domains" />
           <SidebarLink title="Monies Pending Amount" route="/reports/monies-pending-amount" />
         </SidebarCategory>
-        <SidebarLink title="Roles" icon="user" route="/roles" />
-        <SidebarLink title="Permissions" icon="user" route="/permissions" />
+        {auth.isSuperAdmin && <SidebarLink title="Roles" icon="user" route="/roles" />}
+        {auth.isSuperAdmin && <SidebarLink title="Permissions" icon="user" route="/permissions" />}
         <SidebarLink title="Users" icon="users" route="/users" />
         <SidebarLink title="Physical Orders"  icon="file-empty" route="/physical-orders" />
         <SidebarLink title="Domains"  icon="layers" route="/domains" />
@@ -60,4 +64,6 @@ SidebarContent.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
 
-export default SidebarContent;
+export default withRouter(connect((state) => ({ 
+  auth: state.auth
+}))(SidebarContent));

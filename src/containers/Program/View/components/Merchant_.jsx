@@ -117,7 +117,7 @@ const Merchant = (props) => {
     // const [isLoading, setIsLoading] = useState(true) //first page load!
     const fetchProgramData = async() => {
         try {
-            const response = await axios.get(`/organization/1/program/${programId}`);
+            const response = await axios.get(`/organization/${organization.id}/program/${programId}`);
             // console.log(response)
             setProgramData(response.data)
         } catch (e) {

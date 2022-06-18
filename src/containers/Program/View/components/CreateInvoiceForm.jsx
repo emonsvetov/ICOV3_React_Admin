@@ -34,7 +34,7 @@ const CreateInvoiceForm = (props) => {
   const fetchPrograms = async() =>{
     try {
         const response = await axios.get(
-        `/organization/1/program?minimal=true`
+        `/organization/${props.organization.id}/program?minimal=true`
         );
         // console.log(response)
         const results = response.data;
@@ -51,7 +51,7 @@ const CreateInvoiceForm = (props) => {
     return;
     
     axios
-      .post(`/organization/1/program/${programId.id}/event`, invoiceData)
+      .post(`/organization/${props.organization.id}/program/${programId.id}/event`, invoiceData)
       .then((res) => {
         //   console.log(res)
         if (res.status == 200) {

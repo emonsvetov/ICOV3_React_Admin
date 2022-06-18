@@ -26,7 +26,7 @@ const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
 
     const getRoles = ( organization ) => {
         setLoading(true)
-        fetchRoles( organization.id )
+        fetchRoles( organization.id, true )
         .then( data => {
             if( config.roleInput === 'select')    {
                 data = labelizeNamedData(data);

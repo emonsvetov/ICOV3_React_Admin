@@ -104,7 +104,7 @@ const fetchEventData = async (page, pageSize, pageFilterO = null, pageSortBy, pr
   }
   try {
       const response = await axios.get(
-      `/organization/1/program/${programId}/event/?page=${page}&limit=${pageSize}&${paramStr}`
+      `/organization/${organization.id}/program/${programId}/event/?page=${page}&limit=${pageSize}&${paramStr}`
       );
       // console.log(response)
       if( response.data.length === 0) return {results:[],count:0}

@@ -66,7 +66,7 @@ const ProgramsCard = ( {user, organization}) => {
 
     const getRoles = () => {
         setLoading(true)
-        fetchRoles( organization.id )
+        fetchRoles( organization.id, true )
         .then( data => {
             setRoles(data);
             setLoading(false)

@@ -15,7 +15,22 @@ const Signup = () => {
 
   const onSubmit = async(values) => {
     // alert("submitted");
-    // console.log(values);
+    console.log(values);
+
+  //  try {
+  //     const resp = await axios.post('/organization', {"name": values.organization_name});
+  //     console.log(resp)
+  //   } catch (error) {
+  //     // Handle Error Here
+  //     // alert('NOWHERE')
+  //     console.log(error.response.data.errors);
+  //     setErrors(error.response.data.errors)
+  //     console.log(errors)
+  //   }
+
+  //   return
+
+
     // const data = {
     //   first_name: values.first_name,
     //   last_name: values.last_name,
@@ -24,6 +39,7 @@ const Signup = () => {
     //   password_confirmation: values.password_confirmation,
     // }
     // console.log(data)
+    // return;
 
     // try {
     //   const resp = await axios.post('/organization/1/register', values);
@@ -39,7 +55,7 @@ const Signup = () => {
     setLoading(true)
 
     // const perform = await axios.post('/organization/1/register', values);
-    axios.post('/organization/1/register', values)
+    axios.post('/register', values)
     .then( (res) => {
       // console.log(res)
       // console.log(res.status == 200)

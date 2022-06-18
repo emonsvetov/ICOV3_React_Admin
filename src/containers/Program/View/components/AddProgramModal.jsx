@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { Modal, ModalBody, Button } from 'reactstrap';
 import axios from 'axios'
-import AddProgram from '../../components/AddProgram';
+import AddProgram from '../../components/AddProgramForm';
 
 const AddProgramModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
     var [data, setData] = useState(data)

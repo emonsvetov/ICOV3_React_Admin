@@ -22,7 +22,7 @@ import AddProgram from '../Program/add_program';
 import ProgramView from '../Program/view';
 import Pokemon from '../Program/components/pokemon';
 // import Merchant from '../Program/View/components/Merchant';
-import SubProgram from '../Program/View/components/subprogram';
+import SubProgram from '../Program/View/Subprogram';
 import ProgramUsers from '../Program/View/User';
 import ProgramUser from '../Program/View/User/view';
 

@@ -189,4 +189,4 @@ RedemptionsWeekView.propTypes = {
   themeName: PropTypes.string.isRequired,
 };
 
-export default connect(state => ({ themeName: state.theme.className }))(RedemptionsWeekView);
+export default connect(state => ({ themeName: state.theme.className, dir: 'ltr' }))(RedemptionsWeekView);

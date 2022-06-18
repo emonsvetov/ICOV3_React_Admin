@@ -23,8 +23,11 @@ const RenderBuildTree = ({data}) => {
     })
 }
 
-const ProgramTreeView = ({data, handleSelect, selected}) => {
+const ProgramTreeView = ({data, handleSelect, selected, rootNode = true}) => {
     // const [expanded, setExpanded] = React.useState([]);
+
+    console.log(data)
+    console.log(selected)
 
     // const handleToggle = (event, nodeIds) => {
     //     setExpanded(nodeIds);
@@ -59,9 +62,14 @@ const ProgramTreeView = ({data, handleSelect, selected}) => {
                     onNodeSelect={handleSelect}
                     defaultSelected={selected ? selected : null}
                 >
+                    {rootNode && 
                     <TreeItem nodeId="allprograms" label="All Programs" disableSelection={true}>
                         <RenderBuildTree data={data} />
-                    </TreeItem>
+                    </TreeItem>}
+
+                    {!rootNode && 
+                        <RenderBuildTree data={data} />
+                    }
                 </TreeView>
             </div>
         </List>

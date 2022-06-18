@@ -6,7 +6,7 @@ import axios from 'axios'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
 import formValidation from "@/shared/validation/program-accounting";
 
-const AccountingModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
+const AccountingModal = ({organization, data, isOpen, setOpen, toggle, theme, rtl}) => {
     const [loading, setLoading] = useState(false)
     var [data, setData] = useState(data)
 
@@ -17,7 +17,7 @@ const AccountingModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
         data  = {...data, ...values}
         // alert(JSON.stringify(data))
         try {
-            const response = await axios.put(`/organization/1/program/${data.id}`, data);
+            const response = await axios.put(`/organization/${organization.id}/program/${data.id}`, data);
             // console.log(response)
             setLoading(false)
             setData( values )

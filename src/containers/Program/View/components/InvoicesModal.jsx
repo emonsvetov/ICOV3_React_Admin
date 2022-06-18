@@ -11,7 +11,7 @@ import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import CreateInvoiceForm from './CreateInvoiceForm';
 
-const MerchantsModal = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
+const MerchantsModal = ({organization, isOpen, setOpen, toggle, programId, theme, rtl}) => {
     const LOGO_PUBLIC_URL = `${process.env.PUBLIC_URL}/img/logo`;
     // console.log(LOGO_PUBLIC_URL)
     const InvoiceData = (props) =>{
@@ -40,7 +40,7 @@ const MerchantsModal = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
             const getData = () => {
                 // alert("Loading merchants data")
                 //   axios
-                //     .get('/organization/1/program')
+                //     .get('/organization/${organization.id}/program')
                 //     .then((response) => {
                 //         // check if the data is populated
                 //     //   console.log(response.data);
@@ -181,8 +181,8 @@ const MerchantsModal = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
     <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
         
         <ModalBody className='modal-lg'>
-            { step === 0 && <InvoiceData  onStep = { handleStep} />}
-            { step === 1 && <CreateInvoiceForm onStep = { handleStep} />}
+            { step === 0 && <InvoiceData organization={organization} onStep = { handleStep} />}
+            { step === 1 && <CreateInvoiceForm organization={organization} onStep = { handleStep} />}
         </ModalBody>
     </Modal>
 )}

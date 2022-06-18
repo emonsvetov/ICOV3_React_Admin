@@ -9,6 +9,8 @@ import SortAscendingIcon from 'mdi-react/SortAscendingIcon'
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination'
 import UsersFilter  from "./UsersFilter"
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 
 const queryClient = new QueryClient()
 
@@ -58,39 +60,42 @@ const reducer = (state, { type, payload }) => {
   }
 };
 
-const fetchUsersData = async (page, pageSize, pageFilter, pageSortBy) => {
-    let paramStr = ''
-    if( pageFilter.trim().length > 1 ) {
-        paramStr = `&keyword=${pageFilter}`
-    }
-    if( pageSortBy.length > 0 ) {
-        const sortParams = pageSortBy[0];
-        const sortyByDir = sortParams.desc ? 'desc' : 'asc'
-        paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
-    }
-    try {
-        const response = await axios.get(
-        `/organization/1/user?page=${page+1}&limit=${pageSize}${paramStr}`
-        );
-        const results = response.data.data;
-        var finalResults = results;
-        if( results )  {
-            finalResults = results.map(item => ({
-                ...item,
-                name: `${item.first_name} ${item.last_name}` || "",
-            }))
-        }
-        const data = {
-            results: finalResults,
-            count: response.data.total
-        };
-        return data;
-    } catch (e) {
-        throw new Error(`API error:${e?.message}`)
-    }
-}
+const DataTable = ( {organization} ) => {
 
-const DataTable = () => {
+    const fetchUsersData = async (organization, page, pageSize, pageFilter, pageSortBy) => {
+        if( !organization ) return;
+        console.log('fecing')
+        let paramStr = ''
+        if( pageFilter.trim().length > 1 ) {
+            paramStr = `&keyword=${pageFilter}`
+        }
+        if( pageSortBy.length > 0 ) {
+            const sortParams = pageSortBy[0];
+            const sortyByDir = sortParams.desc ? 'desc' : 'asc'
+            paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
+        }
+        try {
+            const response = await axios.get(
+            `/organization/${organization.id}/user?page=${page+1}&limit=${pageSize}${paramStr}`
+            );
+            const results = response.data.data;
+            var finalResults = results;
+            if( results )  {
+                finalResults = results.map(item => ({
+                    ...item,
+                    name: `${item.first_name} ${item.last_name}` || "",
+                }))
+            }
+            const data = {
+                results: finalResults,
+                count: response.data.total
+            };
+            return data;
+        } catch (e) {
+            throw new Error(`API error:${e?.message}`)
+        }
+    }
+
     const [keyword, setKeyword] = useState('');
     const [useFilter, setUseFilter] = useState(false);
     const onClickFilterCallback = ( filter ) => {
@@ -112,8 +117,8 @@ const DataTable = () => {
     useReducer(reducer, initialState);
 
     const { isLoading, error, data, isSuccess } = useQuery(
-        ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
-        () => fetchUsersData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
+        ['users', organization, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
+        () => fetchUsersData(organization, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
         {
             keepPreviousData: false,
             staleTime: Infinity,
@@ -311,12 +316,14 @@ const Sorting = ({ column }) => (
     </span>
 );
 
-const TableWrapper = () => {
+const TableWrapper = ( {organization} ) => {
     return (
         <QueryClientProvider client={queryClient}>
-            <DataTable />
+            <DataTable organization={organization} />
         </QueryClientProvider>
     )
 }
 
-export default TableWrapper;
+export default withRouter(connect((state) => ({
+    organization: state.organization
+}))(TableWrapper));

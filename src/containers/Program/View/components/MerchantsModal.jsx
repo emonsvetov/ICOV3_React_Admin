@@ -74,42 +74,6 @@ const reducer = (state, { type, payload }) => {
   }
 };
 
-const fetchMerchantData = async(
-  page,
-  pageSize,
-  pageFilterO = null,
-  pageSortBy
-) => {
-  // const offset = page * pageSize;
-  const params = [];
-  let paramStr = "";
-  if (pageFilterO) {
-    if (pageFilterO.keyword !== "undefined" && pageFilterO.keyword)
-      params.push(`keyword=${pageFilterO.keyword}`);
-    paramStr = params.join("&");
-  }
-  if (pageSortBy.length > 0) {
-    const sortParams = pageSortBy[0];
-    const sortyByDir = sortParams.desc ? "desc" : "asc";
-    paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`;
-  }
-  try {
-    const response = await axios.get(
-      `/merchant?page=${page+1}&limit=${pageSize}&${paramStr}`
-    );
-    // console.log(response)
-    if (response.data.length === 0) return { results: [], count: 0 };
-    const data = {
-      results: renameChildrenToSubrows(response.data.data),
-      count: response.data.total,
-    };
-    // console.log(data)
-    return data;
-  } catch (e) {
-    throw new Error(`API error:${e?.message}`);
-  }
-};
-
 const MerchantsModal = ({ isOpen, setOpen, toggle, theme, rtl, organization, data }) => {
   return (
     <Modal
@@ -124,6 +88,43 @@ const MerchantsModal = ({ isOpen, setOpen, toggle, theme, rtl, organization, dat
   );
 };
 const DataTable = ({ toggle, organization, program }) => {
+
+  const fetchMerchantData = async(
+    page,
+    pageSize,
+    pageFilterO = null,
+    pageSortBy
+  ) => {
+    // const offset = page * pageSize;
+    const params = [];
+    let paramStr = "";
+    if (pageFilterO) {
+      if (pageFilterO.keyword !== "undefined" && pageFilterO.keyword)
+        params.push(`keyword=${pageFilterO.keyword}`);
+      paramStr = params.join("&");
+    }
+    if (pageSortBy.length > 0) {
+      const sortParams = pageSortBy[0];
+      const sortyByDir = sortParams.desc ? "desc" : "asc";
+      paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`;
+    }
+    try {
+      const response = await axios.get(
+        `/organization/${organization.id}/merchant?page=${page+1}&limit=${pageSize}&${paramStr}`
+      );
+      // console.log(response)
+      if (response.data.length === 0) return { results: [], count: 0 };
+      const data = {
+        results: renameChildrenToSubrows(response.data.data),
+        count: response.data.total,
+      };
+      // console.log(data)
+      return data;
+    } catch (e) {
+      throw new Error(`API error:${e?.message}`);
+    }
+  };
+
   const LOGO_PUBLIC_URL = `${process.env.REACT_APP_API_STORAGE_URL}`;
 
   // console.log(program)

@@ -2,6 +2,10 @@ import { Link } from 'react-router-dom';
 
 export const USERS_COLUMNS = [
     {
+        Header: "ID",
+        accessor: "id",
+    },
+    {
         Header: "Email",
         accessor: "email",
     },

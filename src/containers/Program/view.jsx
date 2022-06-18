@@ -3,6 +3,8 @@ import { Link, useParams, useHistory } from 'react-router-dom';
 import { Col, Container, Row, Card, CardBody, } from 'reactstrap';
 import MainModalWrapper from './View/components/MainModalWrapper';
 import axios from 'axios'
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 const PUBLIC_URL = `${process.env.PUBLIC_URL}`;
 const GeneralIcon = `${PUBLIC_URL}/img/icon/general.svg`;
@@ -13,7 +15,7 @@ const EngagementIcon = `${PUBLIC_URL}/img/icon/engagement.svg`;
 const MerchantsIcon = `${PUBLIC_URL}/img/icon/merchants.svg`;
 const EventsIcon = `${PUBLIC_URL}/img/icon/events.svg`;
 
-const ProgramView = () => {
+const ProgramView = ( {organization} ) => {
     const { id } = useParams()
     const [message, setMessage] = useState('')
     const [data, setData] = useState(null)
@@ -23,12 +25,15 @@ const ProgramView = () => {
     useEffect(() => {
         // alert(id)
         checkFlashMessage()
-        fetchProgramData()
-    },[id])
+        if(id && organization)    {
+            // console.log(organization)
+            fetchProgramData(organization)
+        }
+    },[id, organization])
 
-    const fetchProgramData = async() => {
+    const fetchProgramData = async(organization) => {
         try {
-            const response = await axios.get(`/organization/1/program/${id}`);
+            const response = await axios.get(`/organization/${organization.id}/program/${id}`);
             // console.log(response)
             setData(response.data)
         } catch (e) {
@@ -47,7 +52,7 @@ const ProgramView = () => {
         setOpen(prevState => !prevState)
     }
 
-  if( !data ) return 'Loading...'
+  if( !data || !organization ) return 'Loading...'
   return (
     <Container className="program-view">
       <Row>
@@ -74,7 +79,7 @@ const ProgramView = () => {
                     </Row>
                 </CardBody>
             </Card>
-            <MainModalWrapper data={data} name={modalName} isOpen={isOpen} setOpen={setOpen} toggle={toggle} programId={id} />
+            <MainModalWrapper organization={organization} data={data} name={modalName} isOpen={isOpen} setOpen={setOpen} toggle={toggle} programId={id} />
         </Col>
         <Col md="6" lg="4" xl="4">
             <Card>
@@ -204,4 +209,8 @@ const ProgramView = () => {
     </Container>
 )}
 
-export default ProgramView;
+export default withRouter(connect((state) => ({
+    theme: state.theme,
+    rtl: state.rtl,
+    organization: state.organization
+  }))(ProgramView));

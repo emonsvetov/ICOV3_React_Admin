@@ -18,11 +18,12 @@ const LogInForm = () => {
 
   const onSubmit = async values => {
 
-    // console.log(values);
+    console.log(values);
 
-    axios.post('/login', values)
+    axios.post('/admin/login', values)
     .then( (res) => {
-      // console.log(res)
+      // console.log(res);
+      // return;
       // console.log(res.status == 200)
       if(res.status == 200)  {
         login(res.data)

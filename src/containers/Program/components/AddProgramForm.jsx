@@ -5,7 +5,7 @@ import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/program-add";
 import axios from 'axios';
 
-const AddProgramForm = ( {program} ) => {
+const AddProgramForm = ( {program, organization} ) => {
 
     const [errors, setErrors] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -30,7 +30,7 @@ const AddProgramForm = ( {program} ) => {
         // return
 
         setLoading(true)
-        axios.post('/organization/1/program', values)
+        axios.post(`/organization/${organization.id}/program`, values)
         .then( (res) => {
             // console.log(res)
             // console.log(res.status == 200)
@@ -45,6 +45,8 @@ const AddProgramForm = ( {program} ) => {
             setLoading(false)
         })
     }
+
+    if( !organization ) return 'Loading...'
 
     return (
     <Form

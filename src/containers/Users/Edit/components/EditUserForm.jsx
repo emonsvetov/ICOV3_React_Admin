@@ -10,13 +10,23 @@ import FormFields from '../../components/FormFields'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 
+const patchRole4Select = (user) => {
+    if( user.roles.length > 0)  {
+        user.role_id = {
+            value:user.roles[0].id,
+            label: user.roles[0].name
+        }
+    }
+    return user
+}
+
 
 const EditUserForm = ({organization}) => {
     const dispatch = useDispatch()
     let config = {
         roleInput: 'select',
         roleField: 'role_id',
-        roleDisable: true
+        roleDisable: false
     }
     let { id } = useParams();
 
@@ -26,20 +36,24 @@ const EditUserForm = ({organization}) => {
     let [user, setUser] = useState(null)
 
     useEffect( () => {
-        fetchUser(organization.id, id)
-        .then( data => {
-            setUser(data);
-            setLoading(false)
-        })
+        if(organization)    {
+            fetchUser(organization.id, id)
+            .then( data => {
+                setUser(data);
+                setLoading(false)
+            })
+        }
     }, [organization])
 
     useEffect( () => {
-        getRoles(organization)
+        if(organization)    {
+            getRoles(organization)
+        }
     }, [organization])
 
     const getRoles = ( organization ) => {
         setLoading(true)
-        fetchRoles( 1 )
+        fetchRoles( organization.id )
         .then( data => {
             let newData = labelizeNamedData(data);
             // console.log(newData)
@@ -59,7 +73,7 @@ const EditUserForm = ({organization}) => {
             delete(values["roles"]);
         }
         delete(values["role_id"]);
-        console.log(values)
+        // console.log(values)
         // return
         axios.put(`/organization/${organization.id}/user/${user.id}`, values)
         .then( (res) => {
@@ -85,10 +99,10 @@ const EditUserForm = ({organization}) => {
     // console.log(user)
     // console.log(roles)
 
-    user = patch4Select(user, "role_id", roles)
+    user = patchRole4Select(user)
     config = {...config, ...{roles}}
 
-    // console.log(user)
+    console.log(user)
     return (
     <Form
         onSubmit={onSubmit}

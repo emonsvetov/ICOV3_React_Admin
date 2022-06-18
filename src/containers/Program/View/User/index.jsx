@@ -315,9 +315,9 @@ const TableWrapper = ({program, organization}) => {
 const ProgramUsers = ({organization}) => {
     const { programId } = useParams();
     const [program, setProgram] = useState(null);
-    const fetchProgramData = async() => {
+    const fetchProgramData = async(organization) => {
         try {
-            const response = await axios.get(`/organization/1/program/${programId}`);
+            const response = await axios.get(`/organization/${organization.id}/program/${programId}`);
             // console.log(response)
             setProgram(response.data)
         } catch (e) {
@@ -325,8 +325,10 @@ const ProgramUsers = ({organization}) => {
         }
     };
     useEffect(() => {
-        fetchProgramData()
-    },[])
+        if( organization )  {
+            fetchProgramData(organization)
+        }
+    },[organization])
 
     if( !program?.id || !organization?.id )  {
         return 'Loading...'

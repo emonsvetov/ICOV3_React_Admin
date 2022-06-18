@@ -58,7 +58,7 @@ const EventsModal = ({isOpen, setOpen, toggle, programId, theme, rtl}) => {
         const getData = () => {
             // alert("Loading merchants data")
             //   axios
-            //     .get('/organization/1/program')
+            //     .get('/organization/${organization.id}/program')
             //     .then((response) => {
             //         // check if the data is populated
             //     //   console.log(response.data);

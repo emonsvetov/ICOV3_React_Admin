@@ -57,7 +57,7 @@ const InsertIconModal = ({isOpen, theme, rtl}) => {
       });
       
       axios
-      .post(`/organization/1/event_icons`, data,{
+      .post(`/organization/${organization.id}/event_icons`, data,{
               headers: {
                   "Content-type": "multipart/form-data",
               },       

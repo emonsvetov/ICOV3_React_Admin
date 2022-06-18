@@ -20,12 +20,14 @@ const AddUserForm = ({organization}) => {
     const [roles, setRoles] = useState(null)
 
     React.useEffect( () => {
-        getRoles(organization)
+        if( organization )  {
+            getRoles(organization)
+        }
     }, [organization])
 
     const getRoles = ( organization ) => {
         setLoading(true)
-        fetchRoles( 1 )
+        fetchRoles( organization.id )
         .then( data => {
             let newData = labelizeNamedData(data);
             // console.log(newData)
@@ -35,16 +37,20 @@ const AddUserForm = ({organization}) => {
     }
   
     const onSubmit = values => {
-        // values["organization_id"] = 1
-        values = unpatchSelect(values, ["role_id"])
+        if(!config.roleDisable && values.role_id?.value) {
+            values.roles = [values.role_id.value]
+        }   else    {
+            delete(values["roles"]);
+        }
+        delete(values["role_id"]);
         // console.log(values)
         // return
-        // setLoading(true)
-        axios.put('/organization/1/users/create', values)
+        setLoading(true)
+        axios.put(`/organization/${organization.id}/users/create`, values)
         .then( (res) => {
             // console.log(res)
             if(res.status == 200)  {
-                // window.location = `/users/?message=User saved successfully`
+                window.location = `/users/?message=User saved successfully`
             }
         })
         .catch( error => {
