@@ -90,7 +90,7 @@ export const renameChildrenToSubrows = data => {
     // console.log(data)
     
     if( !data || (typeof data == 'object' && data.length == 0) ) return data;
-    // console.log(data.length)
+    // console.log(data)
     let newData = []
     data.map( row => {
         let newRow = refit_keys( row )

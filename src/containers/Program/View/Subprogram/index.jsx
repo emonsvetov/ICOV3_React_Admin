@@ -263,7 +263,7 @@ const DataTable = ( {organization, program} ) => {
                           })}
                       </tbody>
                   </table>
-                  {movingSubProgram && <MoveSubProgramModal organization={organization} isOpen={isMoveOpen} setOpen={setMoveOpen} toggle={moveToggle} program={movingSubProgram} />}
+                  {movingSubProgram && <MoveSubProgramModal organization={organization} isOpen={isMoveOpen} setOpen={setMoveOpen} toggle={moveToggle} subprogram={movingSubProgram} />}
               </div>
               {(rows.length > 0) && (
                   <>

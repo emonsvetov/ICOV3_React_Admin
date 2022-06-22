@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
@@ -9,12 +9,20 @@ import TreeItem from '@material-ui/lab/TreeItem';
 // import ListItem from '@material-ui/core/ListItem';
 // import ListItemText from '@material-ui/core/ListItemText';
 
-const RenderBuildTree = ({data}) => {
+const RenderBuildTree = ({data, exclude}) => {
+    console.log(exclude)
     return data.map( row => {
+        let disabled = false;
+        if( typeof exclude === 'object' && exclude.length > 0 && row && row?.id)  {
+            console.log(row.id)
+            disabled = exclude.indexOf(row.id) !== -1;
+            console.log(disabled)
+        }
+        // console.log(disabled)
         if(typeof row.subRows !== 'undefined' && row.subRows.length > 0)    {
             return (
                 <TreeItem nodeId={row.id} label={row.name}>
-                    <RenderBuildTree data={row.subRows} />
+                    <RenderBuildTree data={row.subRows} exclude={exclude} />
                 </TreeItem>
             )
         }   else {
@@ -23,11 +31,16 @@ const RenderBuildTree = ({data}) => {
     })
 }
 
-const ProgramTreeView = ({data, handleSelect, selected, rootNode = true}) => {
-    // const [expanded, setExpanded] = React.useState([]);
+const ProgramTreeView = ({data, handleSelect, selected, rootNode = true, exclude}) => {
+    const [expanded, setExpanded] = React.useState([]);
+    // useEffect( () => {
+    //     if( !rootNode )  {
+    //         setExpanded([data[0].id])
+    //     }
+    // }, [rootNode])
 
-    console.log(data)
-    console.log(selected)
+    // console.log(data)
+    // console.log(exclude)
 
     // const handleToggle = (event, nodeIds) => {
     //     setExpanded(nodeIds);
@@ -41,6 +54,7 @@ const ProgramTreeView = ({data, handleSelect, selected, rootNode = true}) => {
     //     alert(nodeIds)
     //     setSelected(nodeIds);
     // };
+    if( !data ) return 'Loading...'
     return (
         <List>
             <div className="text-left">
@@ -64,11 +78,11 @@ const ProgramTreeView = ({data, handleSelect, selected, rootNode = true}) => {
                 >
                     {rootNode && 
                     <TreeItem nodeId="allprograms" label="All Programs" disableSelection={true}>
-                        <RenderBuildTree data={data} />
+                        <RenderBuildTree data={data} exclude={exclude} />
                     </TreeItem>}
 
                     {!rootNode && 
-                        <RenderBuildTree data={data} />
+                        <RenderBuildTree data={data} exclude={exclude}/>
                     }
                 </TreeView>
             </div>

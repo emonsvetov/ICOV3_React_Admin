@@ -104,16 +104,39 @@ export const fetchProgramList = async(organization_id, flatList = false) => {
     }
 }
 
-export const fetchProgramFlatListAndDifference = async(organization_id, program_id) => {
+export const fetchProgramFlatListAndDifference = async (organization_id, program_id, action = 'add') => {
     try {
         // console.log(forceOrg)
-        let url = `/organization/${organization_id}/program/${program_id}/flatlist?minimal=true`
+        let url = `/organization/${organization_id}/subprogram/${program_id}/available/${action}`
+        const response = await axios.get(
+            url
+        );
+        const available = response.data;
+        if( action == 'move') return available;
+        let url2 = `/organization/${organization_id}/program/${program_id}/subprogram?minimal=true&flatlist=true`
+        const response2 = await axios.get(
+            url2
+        );
+        // console.log(response)
+        const subprograms = response2.data;
+        return {
+            available,
+            subprograms
+        };
+    } catch (e) {
+        throw new Error(`API error:${e?.message}`)
+    }
+}
+
+export const fetchProgramTreeForMoving = async (organization_id, program_id) => {
+    try {
+        // console.log(forceOrg)
+        let url = `/organization/${organization_id}/subprogram/${program_id}/available/move`
         const response = await axios.get(
             url
         );
         // console.log(response)
-        const results = response.data;
-        return results;
+        return response.data;
     } catch (e) {
         throw new Error(`API error:${e?.message}`)
     }

@@ -26,7 +26,7 @@ const AddSubProgramModal = ({organization, program, isOpen, setOpen, toggle, the
         // return
         try {
             let formData = {
-                program_id: values.direct_anscestor.value
+                parent_id: values.direct_anscestor.value
             }
             let program_to_add = values.sub_program.value
             setLoading( true )
@@ -42,7 +42,6 @@ const AddSubProgramModal = ({organization, program, isOpen, setOpen, toggle, the
             dispatch(sendFlashMessage('Subprogram could not be added', 'alert-danger', 'top'))
             throw new Error(`API error:${e?.message}`);
         }
-
     };
     useEffect( () => {
         if( organization && program )  {
@@ -50,11 +49,11 @@ const AddSubProgramModal = ({organization, program, isOpen, setOpen, toggle, the
             fetchProgramFlatListAndDifference(organization.id, program.id)
             .then( list => {
                 // console.log(list)
-                if( list?.difference )   {
-                    setInventory(labelizeNamedData(list.difference));
+                if( list?.available )   {
+                    setInventory(labelizeNamedData(list.available));
                 }
-                if( list?.subprogram )   {
-                    let subprograms = labelizeNamedData(list.subprogram);
+                if( list?.subprograms )   {
+                    let subprograms = labelizeNamedData(list.subprograms);
                     for( var x in subprograms)  {
                         if(subprograms[x]['value'] == program.id)  {
                             subprograms[x]['label'] = '-- none --'

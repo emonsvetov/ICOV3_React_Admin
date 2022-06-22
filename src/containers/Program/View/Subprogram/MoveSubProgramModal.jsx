@@ -4,7 +4,7 @@ import axios from 'axios'
 import {renameChildrenToSubrows} from '@/shared/helpers'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
 import ProgramTreeView from "../../components/ProgramTreeView";
-import {fetchProgramFlatListAndDifference} from "@/shared/apiHelper"
+import {fetchProgramTreeForMoving} from "@/shared/apiHelper"
 import {labelizeNamedData} from '@/shared/helpers'
 
 // const fetchProgramData = async (organization) => {
@@ -24,54 +24,31 @@ import {labelizeNamedData} from '@/shared/helpers'
 //     }
 // };
 
-const MoveSubProgramModal = ({isOpen, setOpen, toggle, program, organization}) => {
+const MoveSubProgramModal = ({isOpen, setOpen, toggle, subprogram, organization}) => {
     const dispatch = useDispatch()
     const [formError, setFormError] = useState('');
     const [loading, setLoading] = useState(false);
     const [selected, setSelected] = useState([]);
+    const [exclude, setExclude] = useState([]);
     let [data, setData] = useState(null);
     const [originalSelected, setOriginalSelected] = useState([]);
 
-    // useEffect( () => {
-    //     setSelected(program.id)
-    //     setOriginalSelected(program.id)
-    //     // console.log(data)
-    //     if( !data || (typeof data == 'object' && data.length === 0) ) {
-    //         console.log('fetching programs...')
-    //         fetchProgramData(organization)
-    //         .then( response => {
-    //             console.log(response)
-    //             setData(response)
-    //         })
-    //     }
-    // }, [program, fetchProgramData, data])
-
     useEffect( () => {
-        if( organization && program )  {
+        // console.log("here")
+        if( organization && subprogram )  {
             // console.log(organization)
-            setSelected(program.id)
-            setOriginalSelected(program.id)
-            fetchProgramFlatListAndDifference(organization.id, program.id)
-            .then( list => {
-                console.log(list)
-                if( list?.difference )   {
-                    setData(list.difference);
-                }
-                // if( list?.subprogram )   {
-                //     let subprograms = labelizeNamedData(list.subprogram);
-                //     for( var x in subprograms)  {
-                //         if(subprograms[x]['value'] == program.id)  {
-                //             subprograms[x]['label'] = '-- none --'
-                //             // setInitialValues({direct_anscestor: subprograms[x]})
-                //             // console.log(subprograms[x])
-                //             // setDirectAnscestor(subprograms[x])
-                //         }
-                //     }
-                //     // setSubprogramList(subprograms);
-                // }
+            setSelected(subprogram.id)
+            setOriginalSelected(subprogram.id)
+            fetchProgramTreeForMoving(organization.id, subprogram.id)
+            .then( response => {
+                // console.log(response.tree)
+                // console.log(renameChildrenToSubrows([response.tree]))
+                // console.log(renameChildrenToSubrows(response.tree))
+                setData(renameChildrenToSubrows([response.tree]));
+                setExclude(response.exclude);
             })
         }
-    }, [organization, program])
+    }, [organization, subprogram])
 
     const handleSelect = (event, nodeIds) => {
         setSelected(nodeIds)
@@ -83,14 +60,14 @@ const MoveSubProgramModal = ({isOpen, setOpen, toggle, program, organization}) =
         // console.log(selected)
         // return;
         if( selected.length <=0 ) setFormError('Select a program to move to');
-        else if( selected === program.id )  setFormError('Select a different program to move to');
+        else if( selected === subprogram.id )  setFormError('Select a different program to move to');
         else   {
             try {
                 let formData = {
                     program_id: selected === 'allprograms' ? null : selected
                 }
                 setLoading( true )
-                const response = await axios.patch(`/organization/${organization.id}/program/${program.id}/move`, formData);
+                const response = await axios.patch(`/organization/${organization.id}/program/${subprogram.id}/move`, formData);
                 // console.log(response)
                 setLoading(false)
                 if( response.status === 200)    {
@@ -107,17 +84,18 @@ const MoveSubProgramModal = ({isOpen, setOpen, toggle, program, organization}) =
     };
     // console.log(data)
     // data = renameChildrenToSubrows(data)
-    // console.log(data)
+    // console.log(subprogram)
     // console.log(selected)
     // console.log(originalSelected)
-    if( !data || !program ) return 'Loading...'
+    if( !organization || !subprogram || !data ) return 'Loading...'
     // console.log(data)
     // console.log(data.results)
+    // console.log(exclude)
     return (
         <Modal className="modal-program" isOpen={isOpen} toggle={() => setOpen(true)}>
             <h3 style={{"fontWeight": 500}}>Move Sub Program to</h3>
             <ModalBody style={{maxHeight:'600px', overflow:'scroll'}}>
-                <ProgramTreeView data={data} handleSelect={handleSelect} selected={selected} rootNode={false} />
+                <ProgramTreeView data={data} handleSelect={handleSelect} selected={selected} rootNode={false} exclude={exclude} />
                 {formError && <span className="form__form-group-error">{formError}</span>}
             </ModalBody>
             <ButtonToolbar className="modal__footer flex justify-content-right">
