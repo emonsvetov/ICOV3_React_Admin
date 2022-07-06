@@ -10,7 +10,7 @@ import axios from 'axios'
 import renderSelectField from '@/shared/components/form/Select';
 import {labelizeNamedData} from '@/shared/helpers'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
-const AddSubProgramModal = ({organization, program, isOpen, setOpen, toggle, theme, rtl}) => {
+const AddSubProgramModal = ({organization, program, isOpen, setOpen, toggle, theme, rtl, setTrigger}) => {
     // console.log(program)
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false)
@@ -18,7 +18,7 @@ const AddSubProgramModal = ({organization, program, isOpen, setOpen, toggle, the
     const [inventory, setInventory] = useState(null)
     // const [subprogramList, setSubprogramList] = useState(null)
     // const [directAnscestor, setDirectAnscestor] = useState({label:'-- none --',value:program.id})
-    const [initialValues, setInitialValues] = useState(null)
+    const [initialValues, setInitialValues] = useState({direct_anscestor: {label: 'None', value: program.id}})
     
     const onSubmit = async(values) => {
         // console.log('submitting')
@@ -34,8 +34,10 @@ const AddSubProgramModal = ({organization, program, isOpen, setOpen, toggle, the
             // console.log(response)
             setLoading(false)
             if( response.status === 200)    {
+                setOpen(false)
                 dispatch(sendFlashMessage('Subprogram has been added', 'alert-success', 'top'))
-                // let tmp = setTimeout(()=> window.location = '/program', 2000)
+                // let tmp = setTimeout(()=> window.location = '/program', 5000)
+                setTrigger( Math.floor(Date.now() / 1000) )
             }
         } catch (e) {
             setLoading(false)
@@ -53,15 +55,19 @@ const AddSubProgramModal = ({organization, program, isOpen, setOpen, toggle, the
                     setInventory(labelizeNamedData(list.available));
                 }
                 if( list?.subprograms )   {
+                    // console.log(list.subprograms)
                     let subprograms = labelizeNamedData(list.subprograms);
-                    for( var x in subprograms)  {
-                        if(subprograms[x]['value'] == program.id)  {
-                            subprograms[x]['label'] = '-- none --'
-                            setInitialValues({direct_anscestor: subprograms[x]})
-                            // console.log(subprograms[x])
-                            // setDirectAnscestor(subprograms[x])
-                        }
-                    }
+                    subprograms = [...[{label: 'None', value: program.id}], ...subprograms]
+                    // console.log(subprograms)
+
+                    // for( var x in subprograms)  {
+                    //     if(subprograms[x]['value'] == program.id)  {
+                    //         subprograms[x]['label'] = '-- none --'
+                    //         setInitialValues({direct_anscestor: subprograms[x]})
+                    //         // console.log(subprograms[x])
+                    //         // setDirectAnscestor(subprograms[x])
+                    //     }
+                    // }
                     setSubprogramList(subprograms);
                 }
             })
@@ -69,7 +75,7 @@ const AddSubProgramModal = ({organization, program, isOpen, setOpen, toggle, the
     }, [organization, program])
 
     const validate = values => {
-        console.log(values)
+        // console.log(values)
         let errors = {};
         if (!values.sub_program) {
             errors.sub_program = "Sub program is required";

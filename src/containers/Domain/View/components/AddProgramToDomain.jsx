@@ -9,16 +9,34 @@ import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 
 const queryClient = new QueryClient()
 
-const AddProgramToDomain = ( {organization, domain, setTrigger}) => {
+const initialState = {
+    queryTrigger: Math.floor(Date.now() / 1000)
+};
+
+const QUERY_TRIGGER = 'QUERY_TRIGGER';
+
+const reducer = (state, { type, payload }) => {
+    switch (type) {
+      case QUERY_TRIGGER:
+          return {
+              ...state,
+              queryTrigger: payload,
+          };
+      default:
+        throw new Error(`Unhandled action type: ${type}`);
+    }
+  };
+
+const AddProgramToDomain = ( {organization, domain, setTrigger, searchTrigger, setSearchTrigger}) => {
+
+    // console.log(domain)
 
     const search = async( queryKeyword, cbShow ) => {
-        if( queryKeyword.trim().length < 2) return []
-    
+        // if( queryKeyword.trim().length < 2) return []
         // console.log("searching..")
-    
         try {
             const response = await axios.get(
-            `/organization/${organization.id}/program?minimal=true&findById=true&keyword=${queryKeyword}`
+            `/organization/${domain.organization_id}/domain/${domain.id}/listAvailableProgramsToAdd?keyword=${queryKeyword}`
             );
             // console.log(response)
             const results = response.data;
@@ -37,9 +55,11 @@ const AddProgramToDomain = ( {organization, domain, setTrigger}) => {
 
     const debouncedKeyword = useDebounce(keyword, 500);
 
+    const [{ queryTrigger }, dispatcher] = React.useReducer(reducer, initialState);
+
     const { isLoading, error, data, isSuccess } = useQuery(
-        ['programs', debouncedKeyword, setShow],
-        () => search(debouncedKeyword, setShow),
+        ['programs', debouncedKeyword, setShow, queryTrigger],
+        () => search(debouncedKeyword, setShow, queryTrigger),
         {
             keepPreviousData: false,
             staleTime: Infinity,
@@ -69,9 +89,11 @@ const AddProgramToDomain = ( {organization, domain, setTrigger}) => {
                 toggleResults()
                 setKeyword('')
                 setTrigger( Math.floor(Date.now() / 1000) )
+                setSearchTrigger( Math.floor(Date.now() / 1000) )
             }
         })
         .catch( error => {
+            console.log(error)
             dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))
             console.log(error.response.data);
             setAdding(false)
@@ -87,6 +109,10 @@ const AddProgramToDomain = ( {organization, domain, setTrigger}) => {
             <Col md="6" lg="6" xl="6" className='pr-3 text-right'><span className='a' disabled={adding} onClick={()=>onClickAddProgram(program.id)}>Add</span></Col>
         </Row>
     )
+
+    React.useEffect(() => {
+        dispatcher({ type: QUERY_TRIGGER, payload: searchTrigger });
+    }, [searchTrigger]);
 
     return(
         <Card>
@@ -126,10 +152,10 @@ const AddProgramToDomain = ( {organization, domain, setTrigger}) => {
     )
 }
 
-const AddProgramToDomainWrapper = ({organization, domain, setTrigger}) => {
+const AddProgramToDomainWrapper = ({organization, domain, setTrigger, searchTrigger, setSearchTrigger}) => {
     return (
         <QueryClientProvider client={queryClient}>
-            <AddProgramToDomain organization={organization} domain={domain} setTrigger={setTrigger} />
+            <AddProgramToDomain organization={organization} domain={domain} setTrigger={setTrigger} searchTrigger={searchTrigger} setSearchTrigger={setSearchTrigger} />
         </QueryClientProvider>
     )
 }

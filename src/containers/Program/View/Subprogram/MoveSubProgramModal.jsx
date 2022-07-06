@@ -24,11 +24,13 @@ import {labelizeNamedData} from '@/shared/helpers'
 //     }
 // };
 
-const MoveSubProgramModal = ({isOpen, setOpen, toggle, subprogram, organization}) => {
+const MoveSubProgramModal = ({isOpen, setOpen, toggle, subprogram, organization, setTrigger}) => {
     const dispatch = useDispatch()
     const [formError, setFormError] = useState('');
     const [loading, setLoading] = useState(false);
-    const [selected, setSelected] = useState([]);
+    const [disableMove, setDisableMove] = useState(false);
+    const [selected, setSelected] = useState(null);
+    const [expanded, setExpanded] = useState(null);
     const [exclude, setExclude] = useState([]);
     let [data, setData] = useState(null);
     const [originalSelected, setOriginalSelected] = useState([]);
@@ -51,6 +53,18 @@ const MoveSubProgramModal = ({isOpen, setOpen, toggle, subprogram, organization}
     }, [organization, subprogram])
 
     const handleSelect = (event, nodeIds) => {
+        // console.log(nodeIds)
+        // console.log(exclude)
+        setFormError('');
+        setDisableMove(false);
+        if( typeof exclude === 'object' && exclude.length > 0 && nodeIds)  {
+            if(exclude.indexOf(nodeIds) !== -1)  {
+                // alert("cannot move to this node");
+                setDisableMove(true);
+                setFormError('cannot select to this node');
+                return;
+            }
+        }
         setSelected(nodeIds)
     };
     const onClickMoveConfrim = async() => {
@@ -64,15 +78,20 @@ const MoveSubProgramModal = ({isOpen, setOpen, toggle, subprogram, organization}
         else   {
             try {
                 let formData = {
-                    program_id: selected === 'allprograms' ? null : selected
+                    parent_id: selected === 'allprograms' ? null : selected
                 }
                 setLoading( true )
+                // console.log(subprogram.id)
+                // console.log(formData)
+                // return
                 const response = await axios.patch(`/organization/${organization.id}/program/${subprogram.id}/move`, formData);
-                // console.log(response)
+                console.log(response)
                 setLoading(false)
                 if( response.status === 200)    {
-                    dispatch(sendFlashMessage('Program has been moved', 'alert-success', 'top'))
-                    let tmp = setTimeout(()=> window.location = '/program', 2000)
+                    setOpen(false)
+                    dispatch(sendFlashMessage('SubProgram has been moved', 'alert-success', 'top'))
+                    // let tmp = setTimeout(()=> window.location = window.location, 500)
+                    setTrigger( Math.floor(Date.now() / 1000) )
                 }
             } catch (e) {
                 setLoading(false)
@@ -88,19 +107,20 @@ const MoveSubProgramModal = ({isOpen, setOpen, toggle, subprogram, organization}
     // console.log(selected)
     // console.log(originalSelected)
     if( !organization || !subprogram || !data ) return 'Loading...'
-    // console.log(data)
+
+    // console.log(expanded)
     // console.log(data.results)
     // console.log(exclude)
     return (
         <Modal className="modal-program" isOpen={isOpen} toggle={() => setOpen(true)}>
-            <h3 style={{"fontWeight": 500}}>Move Sub Program to</h3>
+            <h3 style={{"fontWeight": 500}}>Move Sub Program "{subprogram.name}" to</h3>
             <ModalBody style={{maxHeight:'600px', overflow:'scroll'}}>
-                <ProgramTreeView data={data} handleSelect={handleSelect} selected={selected} rootNode={false} exclude={exclude} />
+                <ProgramTreeView data={data} handleSelect={handleSelect} selected={selected} rootNode={false} expandedList={expanded} />
                 {formError && <span className="form__form-group-error">{formError}</span>}
             </ModalBody>
             <ButtonToolbar className="modal__footer flex justify-content-right">
                 <Button outline color="primary" className="mr-3" onClick={toggle}>Cancel</Button>{' '}
-                <Button type="submit" disabled={selected===originalSelected || loading} className="btn btn-primary" color="#ffffff" onClick={onClickMoveConfrim}>Confirm</Button>
+                <Button type="submit" disabled={selected===originalSelected || loading || disableMove} className="btn btn-primary" color="#ffffff" onClick={onClickMoveConfrim}>Confirm</Button>
             </ButtonToolbar>
         </Modal>
     )

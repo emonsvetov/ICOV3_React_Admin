@@ -53,6 +53,7 @@ const ProgramView = ( {organization} ) => {
     }
 
   if( !data || !organization ) return 'Loading...'
+  console.log(data)
   return (
     <Container className="program-view">
       <Row>
@@ -200,6 +201,28 @@ const ProgramView = ( {organization} ) => {
                         <Col md={9} className='col-right pl-0'>
                             <h5>Sub Programs</h5>
                             <p>Description</p>
+                        </Col>
+                    </Row>
+                </CardBody>
+            </Card>
+        </Col>
+      </Row>
+      <Row>
+        <Col md="6" lg="4" xl="4">
+            <Card>
+                <CardBody>
+                    <Row>
+                        <Col md={3} className='col-left'>
+                            <img src={EventsIcon} className="card-img-top" alt="Domains" />
+                        </Col>
+                        <Col md={9} className='col-right pl-0'>
+                            <h5>Domains</h5>
+                            {
+                                data.domains.length > 0 && 
+                                data.domains.map( domain => {
+                                    return <li><a href={`${domain.name}`}>{domain.name}</a></li>
+                                })
+                            }
                         </Col>
                     </Row>
                 </CardBody>

@@ -30,6 +30,7 @@ const EditDomainForm = ({organization}) => {
     const [loading, setLoading] = useState(false)
     const [loadingGenerateKey, setLoadingGenerateKey] = useState(false)
     const [keygenerated, setKeygenerated] = useState(false)
+    const [edited, setEdited] = useState(false)
     const [errors, setErrors] = useState(null)
     const history = useHistory();
     let [domain, setDomain] = useState(null);
@@ -69,6 +70,7 @@ const EditDomainForm = ({organization}) => {
         //patch domain object with updated field
         const newDomain = {...domain, ...{[field]:value}}
         setDomain(newDomain)
+        setEdited(true)
     }
     
     const generateSecretKey = (e) => {
@@ -115,7 +117,7 @@ const EditDomainForm = ({organization}) => {
             <Col md="6" lg="6" xl="6" className='text-right'>
                 <ButtonToolbar className="modal__footer flex justify-content-right w100">
                     <Button outline color="primary" className="mr-3" onClick={onClickCancel}>Cancel</Button>{' '}
-                    <Button type="submit" disabled={loading || (pristine && !keygenerated)} className="btn btn-primary" color="#ffffff">Save</Button>
+                    <Button type="submit" disabled={loading || (pristine && !keygenerated && !edited)} className="btn btn-primary" color="#ffffff">Save</Button>
                 </ButtonToolbar>
             </Col>
         </Row>

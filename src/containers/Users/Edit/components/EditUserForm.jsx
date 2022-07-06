@@ -30,7 +30,6 @@ const EditUserForm = ({organization}) => {
     }
     let { id } = useParams();
 
-    const [error, setError] = useState(false)
     const [loading, setLoading] = useState(true)
     const [roles, setRoles] = useState(null)
     let [user, setUser] = useState(null)
@@ -97,12 +96,12 @@ const EditUserForm = ({organization}) => {
     if( !roles || !user || !organization?.id) return 'Loading...'
 
     // console.log(user)
-    // console.log(roles)
+    console.log(roles)
 
     user = patchRole4Select(user)
     config = {...config, ...{roles}}
 
-    console.log(user)
+    // console.log(user)
     return (
     <Form
         onSubmit={onSubmit}

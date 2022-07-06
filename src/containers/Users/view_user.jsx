@@ -51,6 +51,7 @@ const ViewUser = ({organization}) => {
         return <p>Loading...</p>;
     }
     if( isSuccess )   {
+        // console.log(data)
         const fullName = `${data.first_name} ${data.last_name}`
         return (
             <Container className="dashboard">
@@ -92,14 +93,10 @@ const ViewUser = ({organization}) => {
                                 </Row>
                                 <Row>
                                     <Col md="2" lg="2" xl="2" sm="2" className='label'>
-                                        Role:
+                                        Roles:
                                     </Col>
                                     <Col md="10" lg="10" xl="10" sm="10">
-                                        {
-                                        data.roles.map( (role, i) => {
-                                            return role.name
-                                        }).join(", ")
-                                        }
+                                        <RenderUserRoles user={data} />
                                     </Col>
                                 </Row>
                                 <Row>
@@ -179,6 +176,27 @@ const ViewUser = ({organization}) => {
             </Container>
         )
     }
+}
+
+const RenderUserRoles = ({user}) => {
+    // console.log(user)
+    let rolesHtml = []
+    if( user.roles?.length > 0 )    {
+        user.roles.map( role => {
+            if( !role.is_program_role)  {
+                console.log(role)
+                rolesHtml.push(<li>{role.name}</li>);
+            }
+        })
+        if( user.programRoles?.length > 0 ) {
+            user.programRoles.map( programRoles => {
+                programRoles.roles.map( programRole => {
+                    rolesHtml.push(<li>{programRole.name} in <a href={`/program/view/${programRoles.id}`}>{programRoles.name}</a></li>);
+                })
+            })
+        }
+    }
+    return rolesHtml;
 }
 
 const Wrapper = ({organization}) => {

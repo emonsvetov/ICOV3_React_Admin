@@ -9,20 +9,25 @@ import TreeItem from '@material-ui/lab/TreeItem';
 // import ListItem from '@material-ui/core/ListItem';
 // import ListItemText from '@material-ui/core/ListItemText';
 
-const RenderBuildTree = ({data, exclude}) => {
-    console.log(exclude)
-    return data.map( row => {
-        let disabled = false;
-        if( typeof exclude === 'object' && exclude.length > 0 && row && row?.id)  {
-            console.log(row.id)
-            disabled = exclude.indexOf(row.id) !== -1;
-            console.log(disabled)
+let expandedList = [];
+const makeExpandedList = (data) => {
+    if( !data || !data?.length > 0) return;
+    data.map( item => {
+        // console.log(item)
+        expandedList.push(item.id)
+        if( item?.subRows && typeof item.subRows === 'object' && item.subRows.length > 0)   {
+            // alert("Here")
+            makeExpandedList(item.subRows)
         }
-        // console.log(disabled)
+    })
+}
+
+const RenderBuildTree = ({data}) => {
+    return data.map( row => {
         if(typeof row.subRows !== 'undefined' && row.subRows.length > 0)    {
             return (
-                <TreeItem nodeId={row.id} label={row.name}>
-                    <RenderBuildTree data={row.subRows} exclude={exclude} />
+                <TreeItem disableSelection={true} nodeId={row.id} label={row.name}>
+                    <RenderBuildTree data={row.subRows} />
                 </TreeItem>
             )
         }   else {
@@ -31,30 +36,25 @@ const RenderBuildTree = ({data, exclude}) => {
     })
 }
 
-const ProgramTreeView = ({data, handleSelect, selected, rootNode = true, exclude}) => {
+const ProgramTreeView = ({data, handleSelect, selected, rootNode = true}) => {
     const [expanded, setExpanded] = React.useState([]);
-    // useEffect( () => {
-    //     if( !rootNode )  {
-    //         setExpanded([data[0].id])
-    //     }
-    // }, [rootNode])
+    useEffect( () => {
+        // if( !rootNode )  {
+        //     setExpanded([data[0].id])
+        // }
+        if( data ) {
+            // console.log(data)
+            expandedList = [];
+            makeExpandedList(data)
+            if( rootNode )    {
+                expandedList.push('allprograms')
+            }
+            setExpanded(expandedList)
+        }
+    }, [rootNode, data])
 
-    // console.log(data)
-    // console.log(exclude)
-
-    // const handleToggle = (event, nodeIds) => {
-    //     setExpanded(nodeIds);
-    // };
-    // const handleExpandClick = () => {
-    //     setExpanded((oldExpanded) =>
-    //       oldExpanded.length === 0 ? ['allprograms', '1', '2', '3', '4', '5', '6', '7'] : [],
-    //     );
-    //   };
-    // const handleSelect = (event, nodeIds) => {
-    //     alert(nodeIds)
-    //     setSelected(nodeIds);
-    // };
     if( !data ) return 'Loading...'
+    // console.log(expanded)
     return (
         <List>
             <div className="text-left">
@@ -70,19 +70,19 @@ const ProgramTreeView = ({data, handleSelect, selected, rootNode = true, exclude
                     defaultExpandIcon={<ArrowRightIcon className="arrowIcon" />}
                     sx={{ height: 240, flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}
                     defaultEndIcon={<ArrowRightIcon className="arrowIcon" />}
-                    defaultExpanded={['allprograms']} //all is the ID of the parent node
-                    // expanded={expanded}
+                    // defaultExpanded={expanded} //all is the ID of the parent node
+                    expanded={expanded}
                     // onNodeToggle={handleToggle}
                     onNodeSelect={handleSelect}
                     defaultSelected={selected ? selected : null}
                 >
                     {rootNode && 
                     <TreeItem nodeId="allprograms" label="All Programs" disableSelection={true}>
-                        <RenderBuildTree data={data} exclude={exclude} />
+                        <RenderBuildTree data={data} />
                     </TreeItem>}
 
                     {!rootNode && 
-                        <RenderBuildTree data={data} exclude={exclude}/>
+                        <RenderBuildTree data={data}/>
                     }
                 </TreeView>
             </div>

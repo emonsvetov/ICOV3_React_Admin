@@ -75,7 +75,6 @@ import {Inventory,
 
 import TreeView from '../TreeViewBasic';
 
-
 const Pages = () => (
   <Switch>
     <Route exact path="/pages" component={PagesDashboard} />

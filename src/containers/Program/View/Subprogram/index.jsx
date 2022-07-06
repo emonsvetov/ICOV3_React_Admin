@@ -6,7 +6,8 @@ import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useF
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
-import DeleteVariantIcon from 'mdi-react/DeleteVariantIcon';
+import VectorPolylineRemoveIcon from 'mdi-react/VectorPolylineRemoveIcon';
+import LinkVariantRemoveIcon from 'mdi-react/LinkVariantRemoveIcon';
 import InfoOutlineIcon from 'mdi-react/InfoOutlineIcon';
 import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter, Sorting} from "@/shared/apiTableHelper"
 import {getProgramById} from "@/shared/apiHelper"
@@ -40,26 +41,31 @@ const DataTable = ( {organization, program} ) => {
     const [movingSubProgram, setMovingSubProgram] = useState(null)
     const [isMoveOpen, setMoveOpen] = useState(false)
     const [loading, setLoading] = useState(true)
-
+    const [trigger, setTrigger] = useState( 0 );
 
     const onClickStartMoveSubProgram = ( program ) => {
         setMovingSubProgram(program)
         setMoveOpen(true)
-    }    
+    }   
     
-    const onClickDeleteSubProgramAndSubTree = ( program ) => {
-        if( !window.confirm('Are you sure to delete sub program and sub tree?'))   {
+    const onClickUnlink = ( program, removeTree = false ) => {
+        if( !window.confirm(`Are you sure to remove sub program${removeTree ? ' and sub tree' : ''}?`))   {
             return;
         }
         setLoading(true)
-        axios.patch(`/organization/${organization.id}/subprogram/${program.id}/unlink`)
+        let url = `/organization/${organization.id}/subprogram/${program.id}/unlink`;
+        if( removeTree )   {
+            url += '?subtree=1'
+        }
+        axios.patch(url)
         .then( (res) => {
-            console.log(res)
+            // console.log(res)
             // console.log(res.status == 200)
             if(res.status == 200)  {
                 // var t = setTimeout(window.location = '/', 500)
                 // window.location = '/program?message=Sub program removed successfully!'
                 flashDispatch(sendFlashMessage('Program has been deleted', 'alert-success', 'top'))
+                setTrigger( Math.floor(Date.now() / 1000) )
             }
         })
         .catch( error => {
@@ -93,13 +99,13 @@ const DataTable = ( {organization, program} ) => {
   const RenderActions = ({row}) => {
     return (
         <>
-            <InfoOutlineIcon style={{cursor:'pointer'}} onClick={() => {window.location.href = `/program/view/${row.original.id}`}} disabled={loading} />
+            <span title="View"><InfoOutlineIcon style={{cursor:'pointer'}} onClick={() => {window.location.href = `/program/view/${row.original.id}`}} disabled={loading} /></span>
             <span style={{width:'15px', display: 'inline-block'}}></span>
-            <FolderMoveOutlineIcon onClick={() => onClickStartMoveSubProgram(row.original)}  style={{cursor:'pointer'}}  disabled={loading} />
+            <span title="Move node"><FolderMoveOutlineIcon onClick={() => onClickStartMoveSubProgram(row.original)}  style={{cursor:'pointer'}}  disabled={loading} /></span>
             <span style={{width:'15px', display: 'inline-block'}}></span>
-            <DeleteVariantIcon  disabled={loading}  style={{cursor:'pointer', 'content':'Delete sub program and sub tree'}} onClick={() => onClickDeleteSubProgramAndSubTree(row.original)} title="Delete sub program and sub tree" />
+            <span title="Delete with subtree"><VectorPolylineRemoveIcon  disabled={loading}  style={{cursor:'pointer'}} onClick={() => onClickUnlink(row.original, true)} title="Delete sub program and sub tree" /></span>
             <span style={{width:'15px', display: 'inline-block'}}></span>
-            <FolderMoveOutlineIcon  disabled={loading}  style={{cursor:'pointer'}} onClick={() => {}} />
+            <span title="Delete only this node"><LinkVariantRemoveIcon disabled={loading}  style={{cursor:'pointer'}} onClick={() => onClickUnlink(row.original)} /></span>
         </>
     )
   }
@@ -123,20 +129,21 @@ const DataTable = ( {organization, program} ) => {
       []
   )
 
-  const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
+  const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] =
   React.useReducer(reducer, initialState);
 
   const apiUrl = `/organization/${organization.id}/program/${program.id}/subprogram`
 
     const { isLoading, error, data, isSuccess } = useQuery(
-        ['roles', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
+        ['roles', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
         () => fetchApiData(
             {
                 url: apiUrl,
                 page: queryPageIndex,
                 size: queryPageSize,
                 filter: queryPageFilter,
-                sortby: queryPageSortBy
+                sortby: queryPageSortBy,
+                trigger: queryTrigger
             }),
         {
             keepPreviousData: true,
@@ -193,7 +200,7 @@ const DataTable = ( {organization, program} ) => {
     data.results = renameChildrenToSubrows(data.results);
   }
 
-  useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter} );
+  useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger} );
 
   if (error) {
       return <p>Error: {JSON.stringify(error)}</p>;
@@ -222,7 +229,7 @@ const DataTable = ( {organization, program} ) => {
                         </div>
                     </div>
                 </form>
-                <AddSubProgramModal program={program} organization={organization} isOpen={isOpen} setOpen={setOpen} toggle={toggle} />
+                <AddSubProgramModal program={program} organization={organization} isOpen={isOpen} setOpen={setOpen} toggle={toggle} setTrigger={setTrigger} />
                   <table {...getTableProps()} className="table">
                       <thead>
                           {headerGroups.map( (headerGroup) => (
@@ -263,7 +270,7 @@ const DataTable = ( {organization, program} ) => {
                           })}
                       </tbody>
                   </table>
-                  {movingSubProgram && <MoveSubProgramModal organization={organization} isOpen={isMoveOpen} setOpen={setMoveOpen} toggle={moveToggle} subprogram={movingSubProgram} />}
+                  {movingSubProgram && <MoveSubProgramModal organization={organization} isOpen={isMoveOpen} setOpen={setMoveOpen} toggle={moveToggle} subprogram={movingSubProgram} setTrigger={setTrigger} />}
               </div>
               {(rows.length > 0) && (
                   <>

@@ -47,7 +47,7 @@ const DomainDetails = ( {data, organization} ) => {
                             <Col md="6" lg="6" xl="6" className="text-right">
                                 <ButtonToolbar className="flex justify-content-right w100">
                                     <Link className='text-blue' to={`/domains/edit/${domain.id}`}>Edit</Link>
-                                    <Link disabled={loading} className="text-danger" onClick={(e) => {if(window.confirm('Are you sure to delete this domain?')){onClickDelete(e)}}}>Delete</Link>
+                                    <Link to={`#`} disabled={loading} className="text-danger" onClick={(e) => {if(window.confirm('Are you sure to delete this domain?')){onClickDelete(e)}}}>Delete</Link>
                                     
                                 </ButtonToolbar>
                             </Col>

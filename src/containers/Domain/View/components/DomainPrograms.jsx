@@ -6,12 +6,13 @@ import AddProgramToDomain from './AddProgramToDomain';
 
 const DomainPrograms = ( {domain, organization} ) => {
     const [trigger, setTrigger] = useState( 0 );
+    const [searchTrigger, setSearchTrigger] = useState( 0 );
     if( !organization?.id ) return null
     if( !domain?.id ) return null
     return (
         <>
-            <AddProgramToDomain organization={organization} domain={domain} setTrigger={setTrigger} />
-            <DomainProgramsDataTable organization={organization} domain={domain} trigger={trigger} setTrigger={setTrigger} />
+            <AddProgramToDomain organization={organization} domain={domain} searchTrigger={searchTrigger} setSearchTrigger={setSearchTrigger} setTrigger={setTrigger} />
+            <DomainProgramsDataTable organization={organization} domain={domain} trigger={trigger} setTrigger={setTrigger} setSearchTrigger={setSearchTrigger} />
         </>
     )
 }

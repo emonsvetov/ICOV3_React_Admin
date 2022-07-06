@@ -19,7 +19,7 @@ const queryClient = new QueryClient()
 const initialState = {
     queryPageIndex: 0,
     queryPageSize: 5,
-    totalCount: null,
+    totalCount: 0,
     queryPageFilter:{},
     queryPageSortBy: [],
     queryTrigger:Math.floor(Date.now() / 1000)
@@ -71,7 +71,7 @@ const reducer = (state, { type, payload }) => {
   }
 };
 
-const DomainProgramsDataTable = ( {domain, organization, trigger, setTrigger} ) => {
+const DomainProgramsDataTable = ( {domain, organization, trigger, setTrigger, setSearchTrigger} ) => {
 
     // const [trigger, setTrigger] = useState(0);
     const dispatcher = useDispatch()
@@ -135,6 +135,7 @@ const DomainProgramsDataTable = ( {domain, organization, trigger, setTrigger} ) 
                 dispatcher(sendFlashMessage('Program removed from Domain!', 'alert-success'));
                 // window.location = `/domains/view/${domain.id}?message=domain deleted successfully!`
                 setTrigger( Math.floor(Date.now() / 1000) )
+                setSearchTrigger( Math.floor(Date.now() / 1000) )
             }
         })
         .catch( error => {
@@ -148,11 +149,11 @@ const DomainProgramsDataTable = ( {domain, organization, trigger, setTrigger} ) 
         return (
             <>
                 <span>
-                    <Link onClick={() => onClickRemove(row.original.id)} disabled={loading}>Remove </Link>
+                    <Link to="#" onClick={() => onClickRemove(row.original.id)} disabled={loading}>Remove </Link>
                     <span style={{width:'15px', display: 'inline-block'}}></span>
-                    <Link onClick={() => {alert(`Generating...`)}}>Generate Configration </Link>
+                    <Link  to="#" onClick={() => {alert(`Generating...`)}}>Generate Configration </Link>
                     <span style={{width:'15px', display: 'inline-block'}}></span>
-                    <Link onClick={() => {alert(`Downloading...`)}}>Download </Link>
+                    <Link  to="#" onClick={() => {alert(`Downloading...`)}}>Download </Link>
                 </span>
             </>
         )
@@ -412,10 +413,10 @@ const Sorting = ({ column }) => (
     </span>
   );
 
-const TableWrapper = ({ organization, domain, trigger, setTrigger}) => {
+const TableWrapper = ({ organization, domain, trigger, setTrigger, setSearchTrigger}) => {
     return (
         <QueryClientProvider client={queryClient}>
-            <DomainProgramsDataTable organization={organization} domain={domain} trigger={trigger} setTrigger={setTrigger} />
+            <DomainProgramsDataTable organization={organization} domain={domain} trigger={trigger} setTrigger={setTrigger} setSearchTrigger={setSearchTrigger} />
         </QueryClientProvider>
     )
 }

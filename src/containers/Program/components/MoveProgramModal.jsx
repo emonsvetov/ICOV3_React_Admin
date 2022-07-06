@@ -59,7 +59,7 @@ const MoveProgramModal = ({isOpen, setOpen, toggle, program, organization}) => {
         else   {
             try {
                 let formData = {
-                    program_id: selected === 'allprograms' ? null : selected
+                    parent_id: selected === 'allprograms' ? null : selected
                 }
                 setLoading( true )
                 const response = await axios.patch(`/organization/${organization.id}/program/${program.id}/move`, formData);
@@ -67,7 +67,7 @@ const MoveProgramModal = ({isOpen, setOpen, toggle, program, organization}) => {
                 setLoading(false)
                 if( response.status === 200)    {
                     dispatch(sendFlashMessage('Program has been moved', 'alert-success', 'top'))
-                    let tmp = setTimeout(()=> window.location = '/program', 2000)
+                    let tmp = setTimeout(()=> window.location = '/program', 500)
                 }
             } catch (e) {
                 setLoading(false)
