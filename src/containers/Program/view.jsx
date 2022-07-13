@@ -53,7 +53,7 @@ const ProgramView = ( {organization} ) => {
     }
 
   if( !data || !organization ) return 'Loading...'
-  console.log(data)
+//   console.log(data)
   return (
     <Container className="program-view">
       <Row>
@@ -220,9 +220,24 @@ const ProgramView = ( {organization} ) => {
                             {
                                 data.domains.length > 0 && 
                                 data.domains.map( domain => {
-                                    return <li><a href={`${domain.name}`}>{domain.name}</a></li>
+                                    return <li><Link className="" to={`/domains/view/${domain.id}`}>{domain.name}</Link></li>
                                 })
                             }
+                        </Col>
+                    </Row>
+                </CardBody>
+            </Card>
+        </Col>
+        <Col md="6" lg="4" xl="4">
+            <Card>
+                <CardBody>
+                    <Row onClick={()=>{toggle('themesettings')}}>
+                        <Col md={3} className='col-left'>
+                            <img src={EventsIcon} className="card-img-top" alt="Sub Programs" />
+                        </Col>
+                        <Col md={9} className='col-right pl-0'>
+                            <h5>Theme Settings</h5>
+                            <p>Theme/template related settings</p>
                         </Col>
                     </Row>
                 </CardBody>

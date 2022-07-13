@@ -133,6 +133,26 @@ export const mapFormDataUploads = (values, multiple = false) => {
 
 export const answerYesNo = value => value ? 'Yes' : 'No'
 
+export const patchMediaURL = ( dataset, fields ) => {
+    if( !dataset || !fields ) return dataset;
+    for (const [key, value] of Object.entries(dataset)) {
+        if( inArray(key, fields) && value && value.indexOf(process.env.REACT_APP_API_STORAGE_URL) === -1)  {
+            dataset[key] = `${process.env.REACT_APP_API_STORAGE_URL}/${value}`
+        }
+    }
+    return dataset
+}
+
+export const unpatchMedia = ( dataset, fields ) => {
+    if( !dataset || !fields ) return dataset;
+    for (const [key, value] of Object.entries(dataset)) {
+        if( inArray(key, fields) && typeof value === 'string')  {
+            delete dataset[key]
+        }
+    }
+    return dataset
+}
+
 export const MERCHANT_MEDIA_FIELDS = ['logo', 'icon', 'large_icon', 'banner']
 
 export const patchMerchantMediaURL = ( merchant ) => {

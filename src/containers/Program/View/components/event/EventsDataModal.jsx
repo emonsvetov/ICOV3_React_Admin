@@ -38,10 +38,10 @@ const EventsDataModal = ({
   var [data, setData] = useState(data)
   var [programEvents, setProgramEvents] = useState([])
 
-  const fetchProgramEvents = async(programId) => {
+  const fetchProgramEvents = async(organizationId, programId) => {
     setLoading(true)
     try {
-        const response = await axios.get(`/organization/${organization.id}/program/${programId}/event`);
+        const response = await axios.get(`/organization/${organizationId}/program/${programId}/event`);
         console.log(response)
         setProgramEvents(response.data);
         setLoading(false)
@@ -51,7 +51,7 @@ const EventsDataModal = ({
 };
 
   useEffect(() => {
-    fetchProgramEvents(data.id)
+    fetchProgramEvents(data.organization_id, data.id)
   },[data])
 
   let columns = useMemo( () => COLUMNS, [])

@@ -65,86 +65,89 @@ const Edit = ({organization}) => {
   useEffect( () => {
     fetchEventTypes()
     .then( evtypes => {
-      // console.log(evtypes)
-      setEventTypes(labelizeNamedData(evtypes))
+        setEventTypes(labelizeNamedData(evtypes))
     })
     fetchEmailTemplates('program_event')
     .then( res => {
-      setEmailTemplates(labelizeNamedData(res))
-      setTemplateContents(res)
+        console.log(res)
+        setEmailTemplates(labelizeNamedData(res))
+        setTemplateContents(res)
     })
   }, [])
 
   useEffect( () => {
-    fetchProgramData(programId)
-  }, [programId]);
+    if( organization && programId )  {
+        fetchProgramData(programId)
+    }
+  }, [programId, organization]);
 
   useEffect( () => {
-    setLoading(true)
-    fetchEvent(organization.id, programId, eventId)
-    .then( res => {
-        setEvent(res)
-        setLoading(false)
-    })
-  }, [organization, programId, eventId]);
+    if( program?.id )   {
+        setLoading(true)
+        fetchEvent(program.organization_id, programId, eventId)
+        .then( res => {
+            setEvent(res)
+            setLoading(false)
+        })
+    }
+  }, [program, programId, eventId]);
 
     let history = useHistory();
 
     const onSubmit = (values) => {
         let eventData = {};
-    eventData["organization_id"] = organization.id;
-    eventData["program_id"] = program.id;
-    let {
-      name,
-      enable,
-      max_awardable_amount,
-      post_to_social_wall,
-      message,
-      award_message_editable,
-      event_icon_id,
-      event_type_id,
-      template_name,
-      email_template
-    } = values;
+        eventData["organization_id"] = program.organization_id;
+        eventData["program_id"] = program.id;
+        let {
+            name,
+            enable,
+            max_awardable_amount,
+            post_to_social_wall,
+            message,
+            award_message_editable,
+            event_icon_id,
+            event_type_id,
+            template_name,
+            email_template
+        } = values;
 
-    eventData.name = name;
-    eventData.max_awardable_amount = max_awardable_amount;
-    if( post_to_social_wall ) {
-      eventData.post_to_social_wall = post_to_social_wall;
-    }
-    if( award_message_editable ) {
-      eventData.award_message_editable = award_message_editable;
-    }    
-    
-    eventData.enable = enable ? 1 : 0;
-    
-    
-    eventData.message = message;
-    eventData.event_icon_id = event_icon_id;
-    eventData.include_in_budget = 1;
-
-    //static
-    eventData.event_type_id = event_type_id.value;
-
-    //template
-    eventData.template_name = template_name;
-    eventData.email_template = email_template;
-    // console.log(values)
-    // return
-    
-    axios
-      .put(`/organization/${organization.id}/program/${programId}/event/${eventId}`, eventData)
-      .then((res) => {
-        //   console.log(res)
-        if (res.status == 200) {
-          // onStep(0);
-          window.location = `/program/view/${programId}/?message=Event ${eventId} Updated successfully!`
+        eventData.name = name;
+        eventData.max_awardable_amount = max_awardable_amount;
+        if( post_to_social_wall ) {
+            eventData.post_to_social_wall = post_to_social_wall;
         }
-      })
-      .catch((err) => {
-        dispatch(sendFlashMessage(<ApiErrorMessage errors={err.response.data} />, 'alert-danger', 'top'))
-        setLoading(false);
-      });
+        if( award_message_editable ) {
+            eventData.award_message_editable = award_message_editable;
+        }    
+        
+        eventData.enable = enable ? 1 : 0;
+
+        eventData.message = message;
+        eventData.event_icon_id = event_icon_id;
+        eventData.include_in_budget = 1;
+
+        //static
+        eventData.event_type_id = event_type_id.value;
+
+        //template
+        eventData.template_name = template_name;
+        eventData.email_template = email_template;
+        console.log(eventData)
+        // return
+        
+        axios
+        .put(`/organization/${program.organization_id}/program/${programId}/event/${eventId}`, eventData)
+        .then((res) => {
+            //   console.log(res)
+            if (res.status == 200) {
+            // onStep(0);
+            window.location = `/program/view/${programId}/?message=Event ${eventId} Updated successfully!`
+            }
+        })
+        .catch((err) => {
+            dispatch(sendFlashMessage(<ApiErrorMessage errors={err.response.data} />, 'alert-danger', 'top'))
+            setLoading(false);
+        });
 
         // axios
         // .put(`/organization/${ORGANIZATION_ID}/program/${programId}/event/${eventId}`, eventData,)
@@ -182,6 +185,7 @@ const Edit = ({organization}) => {
 
     const onChangeEmailTemplate = ([field], state, { setIn, changeValue }) => {
         const v = field.value
+        // console.log(templateContents)
         if(!v)
         return;
         let targetField = state.fields["email_template"];
@@ -469,7 +473,7 @@ const Edit = ({organization}) => {
                                                         name="email_template_id"
                                                         options={emailTemplates}
                                                         component={renderSelectField}
-                                                        initialValue = {emailTemplates[event.email_template_id - 1]} 
+                                                        initialValue = {emailTemplates.length > 0 ? emailTemplates[0] : null} 
                                                         parse={value => {
                                                             handleTemplateChange(value)
                                                             form.mutators.onChangeEmailTemplate(value)
@@ -493,7 +497,7 @@ const Edit = ({organization}) => {
                                                         name="template_name"
                                                         component="input"
                                                         type="text"
-                                                        initialValue = {templateContents[event.email_template_id - 1].name}
+                                                        initialValue = {templateContents.length > 0 ? templateContents[0].name : ''}
                                                         parse={value => {
                                                             form.mutators.onChangeEmailTemplate(value)
                                                             return value;
@@ -514,7 +518,7 @@ const Edit = ({organization}) => {
                                                         name="email_template"
                                                         component="textarea"
                                                         type="text"
-                                                        initialValue = {templateContents[event.email_template_id - 1].content}
+                                                        initialValue = {templateContents.length > 0 ? templateContents[0].content : ''}
                                                         parse={value => {
                                                             form.mutators.onChangeEmailTemplate(value)
                                                             return value;

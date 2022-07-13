@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import ProgramInfoModal from './ProgramInfoModal';
+import ThemeSettingsModal from './ThemeSettingsModal';
 import MerchantsModal from './MerchantsModal';
 import InvoicesModal from './InvoicesModal';
 import AccountingModal from './AccountingModal';
@@ -48,7 +49,9 @@ const MainModalWrapper = ({organization, data, name, isOpen, setOpen, toggle, th
         {
             name==='users' && <AddProgramModal {...props} />
         }
-        
+        {
+            name==='themesettings' && <ThemeSettingsModal {...props} />
+        }
         </>
     )
 }

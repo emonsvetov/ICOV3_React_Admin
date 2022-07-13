@@ -79,7 +79,7 @@ const fetchDomainsData = async (page, pageSize, pageFilterO = null, pageSortBy) 
     }
     try {
         const response = await axios.get(
-        `/organization/${organization.id}/domain?page=${page}&limit=${pageSize}&${paramStr}`
+        `/organization/${organization.id}/domain?page=${page+1}&limit=${pageSize}&${paramStr}`
         );
         // console.log(response)
         if( response.data.length === 0) return {results:[],count:0}
