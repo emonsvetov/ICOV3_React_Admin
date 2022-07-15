@@ -60,6 +60,7 @@ const ProgramView = ( {organization} ) => {
         <Col md={6}>
           <h3 className="page-title">All Programs</h3>
           <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/program">Programs</Link> / {data.name}</h3>
+          <p> (Organization: {data.organization.id} - {data.organization.name})</p>
         </Col>
         <Col md={6} className='text-right'>
         <span style={{maxWidth:'200px'}} className="btn btn-primary account__btn account__btn--small" onClick={()=>toggle('addprogram')}>Add new program</span>

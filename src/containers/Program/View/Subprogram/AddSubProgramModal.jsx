@@ -30,7 +30,7 @@ const AddSubProgramModal = ({organization, program, isOpen, setOpen, toggle, the
             }
             let program_to_add = values.sub_program.value
             setLoading( true )
-            const response = await axios.patch(`/organization/${organization.id}/program/${program_to_add}/move`, formData);
+            const response = await axios.patch(`/organization/${program.organization.id}/program/${program_to_add}/move`, formData);
             // console.log(response)
             setLoading(false)
             if( response.status === 200)    {
@@ -48,7 +48,7 @@ const AddSubProgramModal = ({organization, program, isOpen, setOpen, toggle, the
     useEffect( () => {
         if( organization && program )  {
             // console.log(organization)
-            fetchProgramFlatListAndDifference(organization.id, program.id)
+            fetchProgramFlatListAndDifference(program.organization.id, program.id)
             .then( list => {
                 // console.log(list)
                 if( list?.available )   {

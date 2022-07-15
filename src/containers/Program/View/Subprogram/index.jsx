@@ -34,6 +34,7 @@ import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 const queryClient = new QueryClient()
 
 const DataTable = ( {organization, program} ) => {
+    // console.log(program)
     const flashDispatch = useDispatch()
 
     const [filter, setFilter] = useState({status:'', keyword:''});
@@ -53,7 +54,7 @@ const DataTable = ( {organization, program} ) => {
             return;
         }
         setLoading(true)
-        let url = `/organization/${organization.id}/subprogram/${program.id}/unlink`;
+        let url = `/organization/${program.organization_id}/subprogram/${program.id}/unlink`;
         if( removeTree )   {
             url += '?subtree=1'
         }
@@ -132,7 +133,7 @@ const DataTable = ( {organization, program} ) => {
   const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] =
   React.useReducer(reducer, initialState);
 
-  const apiUrl = `/organization/${organization.id}/program/${program.id}/subprogram`
+  const apiUrl = `/organization/${program.organization.id}/program/${program.id}/subprogram`
 
     const { isLoading, error, data, isSuccess } = useQuery(
         ['roles', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
