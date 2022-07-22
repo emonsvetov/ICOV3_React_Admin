@@ -96,7 +96,7 @@ const EditUserForm = ({organization}) => {
     if( !roles || !user || !organization?.id) return 'Loading...'
 
     // console.log(user)
-    console.log(roles)
+    // console.log(roles)
 
     user = patchRole4Select(user)
     config = {...config, ...{roles}}

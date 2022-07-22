@@ -170,7 +170,7 @@ const ViewUser = ({organization}) => {
                 </Row>
                 <Row>
                     <Col md={12}>
-                        <ProgramsCard user={data} organization={organization} />
+                        <ProgramsCard user={data} />
                     </Col>
                 </Row>
             </Container>

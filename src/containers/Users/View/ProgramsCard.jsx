@@ -12,7 +12,7 @@ import ProgramFormModal from './ProgramFormModal'
 
 const queryClient = new QueryClient()
 
-const ProgramsCard = ( {user, organization}) => {
+const ProgramsCard = ( {user}) => {
     const dispatch = useDispatch()
 
     // console.log(user)
@@ -41,7 +41,7 @@ const ProgramsCard = ( {user, organization}) => {
         // console.log("searching..")
         try {
             const response = await axios.get(
-            `/organization/${organization.id}/program?minimal=true&keyword=${queryKeyword}`
+            `/organization/${user.organization_id}/program?minimal=true&keyword=${queryKeyword}`
             );
             return response.data;
         } catch (e) {
@@ -66,7 +66,7 @@ const ProgramsCard = ( {user, organization}) => {
 
     const getRoles = () => {
         setLoading(true)
-        fetchRoles( organization.id, true )
+        fetchRoles( user.organization_id, true )
         .then( data => {
             setRoles(data);
             setLoading(false)
@@ -75,7 +75,7 @@ const ProgramsCard = ( {user, organization}) => {
 
     const getUserPrograms = () => {
         setLoading(true)
-        fetchUserPrograms( organization.id, user.id )
+        fetchUserPrograms( user.organization_id, user.id )
         .then( data => {
             setUserPrograms(data);
             setUserProgramIds(data.map(a => a.id));
@@ -84,7 +84,7 @@ const ProgramsCard = ( {user, organization}) => {
     }
 
     useEffect( () => {
-        if( organization?.id)   {
+        if( user.organization_id )   {
             getUserPrograms()
             getRoles()
         }
@@ -105,7 +105,7 @@ const ProgramsCard = ( {user, organization}) => {
         setProgramRoles(null)
         if( updating )  {
             setUpdating(true)
-            fetchUserProgramRoles(organization.id, user.id, program.id)
+            fetchUserProgramRoles(user.organization_id, user.id, program.id)
             .then( _roles => {
                 // const _roles = extractRolesFromProgramPermissions(_permissions, program.id);
                 setProgramRoles(buildIdArray(_roles))
@@ -124,7 +124,7 @@ const ProgramsCard = ( {user, organization}) => {
         // alert(JSON.stringify(data))
         // return
         setAdding(true)
-        axios.post(`/organization/${organization.id}/user/${user.id}/program`, data)
+        axios.post(`/organization/${user.organization_id}/user/${user.id}/program`, data)
         .then( (res) => {
             if(res.status == 200)  {
                 setAdding(false)
@@ -150,7 +150,7 @@ const ProgramsCard = ( {user, organization}) => {
             return;
         }
         setRemoving(true)
-        axios.delete(`/organization/${organization.id}/user/${user.id}/program/${program.id}`)
+        axios.delete(`/organization/${user.organization_id}/user/${user.id}/program/${program.id}`)
         .then( (res) => {
             if(res.status == 200)  {
                 setRemoving(false)
@@ -240,10 +240,10 @@ const ProgramsCard = ( {user, organization}) => {
     )
 }
 
-const ProgramsCardWrapper = ({user, organization}) => {
+const ProgramsCardWrapper = ({user}) => {
     return (
         <QueryClientProvider client={queryClient}>
-            <ProgramsCard user={user} organization={organization} />
+            <ProgramsCard user={user} />
         </QueryClientProvider>
     )
 }
