@@ -183,6 +183,14 @@ const EngagementModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
                             />
                         </div>
                     </Col>
+                    <Col md="6" lg="4" xl="4">
+                        <div className="form__form-group">
+                            <CheckboxField
+                              name="remove_social_from_pending_deactivation"
+                              label="Remove Social From Pending Deactivation View"
+                            />
+                        </div>
+                    </Col>
                 </Row>
                 <Row>
                     <Col md="6" lg="4" xl="4">
