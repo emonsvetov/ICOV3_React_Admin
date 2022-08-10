@@ -10,10 +10,15 @@ const AddProgramForm = ( {program, organization} ) => {
     const [errors, setErrors] = useState(null);
     const [loading, setLoading] = useState(false);
 
+   
+
     const onSubmitAddProgram = values => {
         // alert(values);
         // console.log(values);
         // alert(JSON.stringify(values))
+        // console.log(program)
+        const organization_id = program ? program.organization_id : organization.id
+        // console.log(organization_id)
         // return;
         values = {...values, 
             ...{
@@ -28,9 +33,10 @@ const AddProgramForm = ( {program, organization} ) => {
 
         // alert(JSON.stringify(values))
         // return
+        
 
         setLoading(true)
-        axios.post(`/organization/${organization.id}/program`, values)
+        axios.post(`/organization/${organization_id}/program`, values)
         .then( (res) => {
             // console.log(res)
             // console.log(res.status == 200)

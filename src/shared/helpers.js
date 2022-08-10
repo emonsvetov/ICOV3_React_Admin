@@ -271,4 +271,33 @@ export const labelizeNamedData = (data, fields = ["id", "name"]) => {
     }
     return newData;
 }
+
+export const labelizeRecursive = (programs, depth = 0) => {
+    const fields = ["id", "name"];
+    let labelizedData = []
+    if( programs.length > 0) {
+        programs.map( p => {
+          labelizedData.push({label: String('-'.repeat(depth) + ' ' + p[fields[1]]), value: String(p[fields[0]])})
+            if( p?.children && p.children.length > 0)   {
+                depth++;
+                labelizedData = [...labelizedData, ...labelizeRecursive(p.children, depth)]
+            }
+        })
+    }
+    return labelizedData;
+}
+
+export const BuildProgramOptions = ({programs, depth = 0}) => {
+    let optionsHtml = []
+    if( programs.length > 0) {
+        programs.map( p => {
+            optionsHtml.push(<option key={`program-option-${p.id}`} value={`${p.id}`}>{'-'.repeat(depth)} {p.name}</option>)
+            if( p?.children && p.children.length > 0)   {
+                depth++;
+                optionsHtml.push(<BuildProgramOptions key={`program-option-group-${p.id}`} programs={p.children} depth={depth} />)
+            }
+        })
+    }
+    return optionsHtml
+  }
   

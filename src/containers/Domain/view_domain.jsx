@@ -95,7 +95,7 @@ const ViewDomain = () => {
                 <Row>
                     <Col md={12}>
                         <Card>
-                            <CardBody className='merchant-view-menu'>
+                            <CardBody className='view-tabbed-menu'>
                                 <RenderMenu />
                             </CardBody>
                         </Card>

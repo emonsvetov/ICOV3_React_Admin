@@ -2,20 +2,35 @@ import React, { useState, useEffect } from "react";
 import { Form, Field } from "react-final-form";
 import { Row, Col, ButtonToolbar, Button, Modal, ModalBody } from "reactstrap";
 import { useParams } from "react-router-dom";
-
+import {labelizeRecursive} from '@/shared/helpers'
+import {useDispatch, sendFlashMessage, ApiErrorMessage} from "@/shared/components/flash"
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/createInvoice";
+
 
 import renderSelectField from '@/shared/components/form/Select'
 import axios from "axios";
 
+export const BuildProgramOptions = ({programs, depth = 0}) => {
+  let optionsHtml = []
+  if( programs.length > 0) {
+      programs.map( p => {
+          optionsHtml.push(<option key={`program-option-${p.id}`} value={`${p.id}`}>{'-'.repeat(depth)} {p.name}</option>)
+          if( p?.children && p.children.length > 0)   {
+              depth++;
+              optionsHtml.push(<BuildProgramOptions key={`program-option-group-${p.id}`} programs={p.children} depth={depth} />)
+          }
+      })
+  }
+  return optionsHtml
+}
 
 const CreateInvoiceForm = (props) => {
+  const dispatch = useDispatch()
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [program, setProgram] = useState(null);
   const [programList, setProgramList] = useState(null);
-
 
   const [isOpen, setOpen] = useState(false);
 
@@ -23,7 +38,8 @@ const CreateInvoiceForm = (props) => {
     setProgram(selected.value);
   };
   
-  
+  // console.log(props)
+
   const programId = useParams();
 
 
@@ -34,40 +50,41 @@ const CreateInvoiceForm = (props) => {
   const fetchPrograms = async() =>{
     try {
         const response = await axios.get(
-        `/organization/${props.organization.id}/program?minimal=true`
+        `/organization/${props.program.organization_id}/program/${props.program.id}/descendents?includeSelf=1`
         );
         // console.log(response)
         const results = response.data;
-        let processed = results.map((item) => ({"label": item.name, "value": item.id}));
-        
-        setProgramList(processed);
+        setProgramList(labelizeRecursive(results));
     } catch (e) {
         throw new Error(`API error:${e?.message}`)
     }
   }
 
   const onSubmit = (values) => {
-    let invoiceData = {};
-    return;
+    // console.log(values)
+    const programId = values.program.value;
+    let invoiceData = {
+      amount: values.amount,
+      amount_confirmation: values.amount_confirmation,
+    };
+    console.log(invoiceData)
+    // return;
     
     axios
-      .post(`/organization/${props.organization.id}/program/${programId.id}/event`, invoiceData)
+      .post(`/organization/${props.organization.id}/program/${programId}/invoice/on-demand`, invoiceData)
       .then((res) => {
-        //   console.log(res)
+          console.log(res)
         if (res.status == 200) {
-          props.onStep(0);
+          props.setStep(0);
+          dispatch(sendFlashMessage('Invoice saved successfully', 'alert-success', 'top'))
           // window.location = `/program/view/${programId}`;
         }
       })
       .catch((error) => {
-        //console.log(error.response.data);
-        setError(error.response.data.errors);
-        setLoading(false);
+        // console.log(error.response.data);
+        dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger', 'top'))
+        setLoading(false)
       });
-  };
-
-  const onClickCancel = () => {
-    props.onStep(0);
   };
 
 //   const templatePlaceholder = template ? template : "Select a Template";
@@ -91,14 +108,9 @@ const CreateInvoiceForm = (props) => {
             )}
             <Row className="w100">
               <Col md="6" lg="6" xl="6">
-                <div className="react-table__wrapper">
-                    <div className="card__title">
-                        <h3 className="mb-4">Create Invoice </h3>
-                        
-                    </div>
-                </div>
-                        
-                
+                  <div className="modal__title">
+                      <h3 className="mb-4">Create Invoice </h3>
+                  </div>
               </Col>
               <Col md="6" lg="6" xl="6" className="text-right">
                 <ButtonToolbar className="modal__footer flex justify-content-right w100">
@@ -106,7 +118,7 @@ const CreateInvoiceForm = (props) => {
                     outline
                     color="primary"
                     className="mr-3"
-                    onClick={onClickCancel}
+                    onClick={()=>props.setStep(0)}
                   >
                     Cancel
                   </Button>{" "}
@@ -196,7 +208,7 @@ const CreateInvoiceForm = (props) => {
                 <div className="form__form-group">
                   <div className="form__form-group-field">
                     <div className="form__form-group-row">
-                        <Field name="amount_confirm">
+                        <Field name="amount_confirmation">
                             {({ input, meta }) => (
                                 
                                 <>

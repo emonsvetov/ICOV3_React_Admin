@@ -4,8 +4,7 @@ const validationSchema = {
     field: {
         program: [Validators.required.validator],
         amount:[Validators.required.validator],
-        amount_confirm: [Validators.required.validator]
-        
+        amount_confirmation: [Validators.required.validator]
     }
 }
 export default validationSchema;
