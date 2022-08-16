@@ -126,7 +126,7 @@ const EngagementModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField 
-                                name="other_in_hierarchy_can_view_social_wall"
+                                name="allow_hierarchy_to_view_social_wall"
                                 label="Other programs in this hierarchy can view this programs social wall"
                             />
                         </div>
@@ -134,7 +134,7 @@ const EngagementModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField 
-                                name="program_can_view_others_social_wall"
+                                name="can_view_hierarchy_social_wall"
                                 label="This program can view other programs social wall"
                             />
                         </div>
@@ -152,7 +152,7 @@ const EngagementModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField 
-                                name="allow_participants_to_view_social_wall_not_logged_into"
+                                name="social_wall_separation"
                                 label="Allow participants to view the social wall of any program he is not currently logged into"
                             />
                         </div>
