@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col } from 'reactstrap';
+import React, {useEffect, useState} from 'react';
+import {Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col, Spinner} from 'reactstrap';
 import { Form, Field } from 'react-final-form';
 import axios from 'axios'
 import renderDropZoneField from '@/shared/components/form/DropZone';
@@ -12,12 +12,12 @@ import US_STATES from "@/shared/json/usstates.json";
 
 import WYSIWYGEditor from '@/shared/components/form/WYSIWYGEditor'
 
-const MEDIA_FIELDS = ['small_logo', 'big_logo']
+const MEDIA_FIELDS = ['small_logo', 'big_logo', 'hero_banner']
 
 const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) => {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
-    let [template, setTemplate] = useState(data.template)
+    let [template, setTemplate] = useState(null)
     // console.log(data)
     const onSubmitForm = async (values) => {
         // setLoading(true)
@@ -50,6 +50,13 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
             setLoading(false)
         })
     }
+
+    useEffect(() => {
+        if (!template && data.template) {
+            setTemplate(data.template)
+        }
+    }, [template, data])
+
     template = patchMediaURL( template, MEDIA_FIELDS )
     console.log(template)
     return (
@@ -104,6 +111,18 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                             </div>
                         </div>
                         <div className="form__form-group">
+                            <span className="form__form-group-label">Hero Banner</span>
+                            <div className="form__form-group-field  flex-column">
+                                <Field
+                                  name="hero_banner"
+                                  component={renderDropZoneField}
+                                  multiple={false}
+                                  customHeight
+                                />
+                                Current Big Logo <RenderImage src={template?.hero_banner} />
+                            </div>
+                        </div>
+                        <div className="form__form-group">
                             <span className="form__form-group-label">Welcome Message</span>
                             <div className="form__form-group-field flex-column">
                                 <Field
@@ -125,7 +144,7 @@ const RenderImage = ({src}) => {
     if( !src || typeof src === 'undefined' ) return ''
     return (
         <div className='dropzone-img'>
-            <img src={src} />
+            <img style={{maxHeight:200}} src={src} />
         </div>
     )
 }
