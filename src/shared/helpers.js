@@ -146,7 +146,7 @@ export const patchMediaURL = ( dataset, fields ) => {
 export const unpatchMedia = ( dataset, fields ) => {
     if( !dataset || !fields ) return dataset;
     for (const [key, value] of Object.entries(dataset)) {
-        if( inArray(key, fields) && typeof value === 'string')  {
+        if( inArray(key, fields) && (typeof value === 'string' || value === null))  {
             delete dataset[key]
         }
     }
