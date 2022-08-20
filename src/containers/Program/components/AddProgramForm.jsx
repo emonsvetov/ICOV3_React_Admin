@@ -10,8 +10,6 @@ const AddProgramForm = ( {program, organization} ) => {
     const [errors, setErrors] = useState(null);
     const [loading, setLoading] = useState(false);
 
-   
-
     const onSubmitAddProgram = values => {
         // alert(values);
         // console.log(values);

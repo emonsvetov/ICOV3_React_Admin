@@ -8,46 +8,65 @@ import axios from 'axios'
 
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
 import {PROGRAM_TYPES, PROGRAM_STATUSES} from "@/shared/options";
+import {labelizeNamedData} from '@/shared/helpers'
 
 import renderCheckBoxField from '@/shared/components/form/CheckBox';
 import renderSelectField from '@/shared/components/form/Select';
-import US_STATES from "@/shared/json/usstates.json";
+// import US_STATES from "@/shared/json/usstates.json";
+import getStatesByCountry from "@/service/getStatesByCountry";
 
 import formValidation from "@/shared/validation/program-info";
+import { useEffect } from 'react';
 
-const getLabelByCode = code => {
-    return US_STATES.find( state => state.value === code)?.label
-}
+const COUNTRY_ID = 223;
 
 const prepareForValidation = values => {
-    const clean = {state: values.state?.value}
+    const clean = {state_id: values.state_id?.value}
+    // console.log(clean)
     return {...values, ...clean}
 }
 
 const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) => {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
-    const [usState, setUsState] = useState(null)
+    const [states, setStates] = useState(null)
     var [data, setData] = useState(data)
-    const handleStateChange = (selectedState) => {
-        // alert(JSON.stringify(selectedOption))
-        setUsState(selectedState)
-    }
-    console.log(data)
+    useEffect( () => {
+        if( states ) return;
+        getStatesByCountry(223)
+        .then( result => {
+            setStates(labelizeNamedData(result))
+        })
+        // alert(COUNTRY_ID);
+    }, [states])
+    // console.log(data)
     const onSubmitForm = async (values) => {
-        setLoading(true)
+        // setLoading(true)
         // alert(values.state.value)
-        values.state = values?.state?.value
+        // console.log(values.address)
+        if( !values.address )   {
+            values.address = {
+                country_id: COUNTRY_ID
+            }
+        }
+        if(values?.state_id?.value) {
+            values.address.state_id =  values.state_id.value
+        }
+        const state_id = values["state_id"];
+        delete values["state_id"];
         values.type = values?.type?.value
         values.status = values?.status?.value
         const savedata  = {...data, ...values}
+        // console.log(savedata)
         // alert(JSON.stringify(savedata))
         // return;
         try {
             const response = await axios.put(`/organization/${organization.id}/program/${savedata.id}`, savedata);
             // console.log(response)
+            
             setLoading(false)
-            setData( savedata )
+            console.log(state_id)
+            setData( {...savedata, ...{state_id}} )
             if( response.status === 200)    {
                 toggle()
                 dispatch(sendFlashMessage('Program has been updated', 'alert-success', 'top'))
@@ -59,6 +78,12 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
         }
         // setTimeout(alert('Allset'), 2000)
     }
+    // data = patch4Select(data, 'state')
+    // console.log(data)
+    if( !data.state_id )    {
+        data.state_id = data.address?.state ? {label: data.address.state.name, value: String(data.address.state.id)} : null;
+    }
+    // console.log(data.state_id)
     return (
     <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
         <Form
@@ -70,9 +95,6 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
                     external_id: data.external_id,
                     corporate_entity: data.corporate_entity,
                     address: data.address,
-                    address_ext: data.address_ext,
-                    city: data.city,
-                    state: {value:data.state, label: getLabelByCode(data.state)},
                     cc_email_list: data.cc_email_list,
                     bcc_email_list: data.bcc_email_list,
                     sub_program_groups: data.sub_program_groups,
@@ -82,8 +104,8 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
                     factor_valuation: data.factor_valuation,
                     prefix: data.prefix,
                     public_contact_email: data.public_contact_email,
-                    zip: data.zip,
                     status: {value:data.status, label: PROGRAM_STATUSES.find( stype => stype.value === data.status)?.label},
+                    state_id: data.state_id
                 }}
             >
             {({ handleSubmit, form, submitting, pristine, values }) => (
@@ -321,7 +343,7 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
                     <h5 className='thick size16 mb-4'>Address Settings</h5>
                     <Row className='w100'>
                         <Col md="6" lg="4" xl="4">
-                            <Field name="address">
+                            <Field name="address.address">
                             {({ input, meta }) => (
                                 <div className="form__form-group">
                                     <span className="form__form-group-label">Address</span>
@@ -336,7 +358,7 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
                             </Field>  
                         </Col>
                         <Col md="6" lg="4" xl="4">
-                            <Field name="address_ext">
+                            <Field name="address.address_ext">
                             {({ input, meta }) => (
                                 <div className="form__form-group">
                                     <span className="form__form-group-label">Address line 2</span>
@@ -353,7 +375,7 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
                     </Row>
                     <Row className='w100'>
                         <Col md="6" lg="4" xl="4">
-                            <Field name="city">
+                            <Field name="address.city">
                             {({ input, meta }) => (
                                 <div className="form__form-group">
                                     <span className="form__form-group-label">City</span>
@@ -368,7 +390,7 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
                             </Field>  
                             </Col>
                             <Col md="6" lg="4" xl="4">
-                                <Field name="zip">
+                                <Field name="address.zip">
                                 {({ input, meta }) => (
                                     <div className="form__form-group">
                                         <span className="form__form-group-label">Zip</span>
@@ -387,9 +409,9 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
                                     <span className="form__form-group-label">State</span>
                                     <div className="form__form-group-field">
                                         <Field
-                                            name="state"
+                                            name="state_id"
                                             component={renderSelectField}
-                                            options={US_STATES}
+                                            options={states}
                                         />
                                     </div>
                                 </div>

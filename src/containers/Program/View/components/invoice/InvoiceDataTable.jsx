@@ -11,7 +11,7 @@ const InvoiceDataTable = (props) =>{
         {
             Header: "Invoice Number",
             // accessor: "id",
-            Cell: ({ row, value }) => { return `${row.original.key}-${row.original.id}`},
+            Cell: ({ row, value }) => { return `${row.original.key}-${row.original.seq}`},
         },
         {
             Header: "Type",
@@ -37,7 +37,7 @@ const InvoiceDataTable = (props) =>{
     const RenderActions = ({row}) => {
         return (
             <>
-                <span className='link' onClick={() => onClickViewInvoice(row.original)}>View</span>
+                <a className='link' onClick={() => onClickViewInvoice(row.original)}>View</a>
             </>
         )
     }

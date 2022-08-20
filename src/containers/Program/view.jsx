@@ -220,8 +220,8 @@ const ProgramView = ( {organization} ) => {
                             <h5>Domains</h5>
                             {
                                 data.domains.length > 0 && 
-                                data.domains.map( domain => {
-                                    return <li><Link className="" to={`/domains/view/${domain.id}`}>{domain.name}</Link></li>
+                                data.domains.map( (domain, i) => {
+                                    return <li key={`domain-list-${i}`}><Link className="" to={`/domains/view/${domain.id}`}>{domain.name}</Link></li>
                                 })
                             }
                         </Col>
