@@ -63,7 +63,7 @@ const ProgramView = ( {organization} ) => {
           <p> (Organization: {data.organization.id} - {data.organization.name})</p>
         </Col>
         <Col md={6} className='text-right'>
-        <span style={{maxWidth:'200px'}} className="btn btn-primary account__btn account__btn--small" onClick={()=>toggle('addprogram')}>Add new program</span>
+        <span style={{maxWidth:'200px'}} className="btn btn-primary account__btn account__btn--small" onClick={()=>toggle('addprogram')}>Add sub program</span>
         </Col>
       </Row>
       <Row>

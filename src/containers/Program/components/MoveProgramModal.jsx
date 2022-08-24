@@ -6,10 +6,10 @@ import {renameChildrenToSubrows} from '@/shared/helpers'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
 
 
-const fetchProgramData = async (organization) => {
+const fetchProgramData = async (organization_id) => {
     try {
         const response = await axios.get(
-        `/organization/${organization.id}/program?sortby=name`
+        `/organization/${organization_id}/program?sortby=name`
         );
         // console.log(response)
         if( response.data.length === 0) return {results:[],count:0}
@@ -23,7 +23,7 @@ const fetchProgramData = async (organization) => {
     }
 };
 
-const MoveProgramModal = ({isOpen, setOpen, toggle, program, organization}) => {
+const MoveProgramModal = ({isOpen, setOpen, toggle, program}) => {
     const dispatch = useDispatch()
     const [formError, setFormError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -32,18 +32,15 @@ const MoveProgramModal = ({isOpen, setOpen, toggle, program, organization}) => {
     const [originalSelected, setOriginalSelected] = useState([]);
 
     useEffect( () => {
+        if( program?.id )   {
         setSelected(program.id)
         setOriginalSelected(program.id)
-        // console.log(data)
-        if( !data || (typeof data == 'object' && data.length === 0) ) {
-            console.log('fetching programs...')
-            fetchProgramData(organization)
+            fetchProgramData(program.organization_id)
             .then( response => {
-                console.log(response)
                 setData(response)
             })
         }
-    }, [program, fetchProgramData, data])
+    }, [program])
 
     const handleSelect = (event, nodeIds) => {
         setSelected(nodeIds)
@@ -62,7 +59,7 @@ const MoveProgramModal = ({isOpen, setOpen, toggle, program, organization}) => {
                     parent_id: selected === 'allprograms' ? null : selected
                 }
                 setLoading( true )
-                const response = await axios.patch(`/organization/${organization.id}/program/${program.id}/move`, formData);
+                const response = await axios.patch(`/organization/${program.organization_id}/program/${program.id}/move`, formData);
                 // console.log(response)
                 setLoading(false)
                 if( response.status === 200)    {

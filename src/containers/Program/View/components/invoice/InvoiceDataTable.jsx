@@ -10,8 +10,7 @@ const InvoiceDataTable = (props) =>{
     const INVOICES_COLUMNS = [
         {
             Header: "Invoice Number",
-            // accessor: "id",
-            Cell: ({ row, value }) => { return `${row.original.key}-${row.original.seq}`},
+            accessor: "invoice_number",
         },
         {
             Header: "Type",

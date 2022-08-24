@@ -23,6 +23,7 @@ import SortAscendingIcon from "mdi-react/SortAscendingIcon";
 import SortDescendingIcon from "mdi-react/SortDescendingIcon";
 import MerchantsFilter from "./MerchantsFilter";
 import { renameChildrenToSubrows } from "@/shared/helpers";
+import CloseButton from "@/shared/components/CloseButton";
 import axios from "axios";
 import { Form, Field } from "react-final-form";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
@@ -81,6 +82,7 @@ const MerchantsModal = ({ isOpen, setOpen, toggle, theme, rtl, organization, dat
       isOpen={isOpen}
       toggle={() => setOpen(true)}
     >
+      <CloseButton onClick={toggle} />
       <ModalBody className="modal-lg">
         <TableWrapper toggle={toggle} organization={organization} program={data} />
       </ModalBody>

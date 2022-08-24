@@ -109,10 +109,10 @@ const DataTable = () => {
         setFilter({keyword})
         
     }
-    const onClickDelete = (e, id) => {
+    const onClickDelete = (e, program) => {
         e.preventDefault()
         setLoading( true )
-        axios.delete(`/organization/${organization.id}/domain/${id}`)
+        axios.delete(`/organization/${program.organization_id}/domain/${program.id}`)
         .then( (res) => {
             // console.log(res)
             if(res.status == 200)  {
@@ -132,7 +132,7 @@ const DataTable = () => {
                 <span>
                     <Link to={`/domains/view/${row.original.id}`}>View </Link>
                     <span style={{width:'15px', display: 'inline-block'}}></span>
-                    <Link disabled={loading} to={'#delete-domain'} className="text-danger" onClick={(e) => {if(window.confirm('Are you sure to delete this domain?')){onClickDelete(e, row.original.id)}}}>Delete</Link>
+                    <Link disabled={loading} to={'#delete-domain'} className="text-danger" onClick={(e) => {if(window.confirm('Are you sure to delete this domain?')){onClickDelete(e, row.original)}}}>Delete</Link>
                 </span>
             </>
         )

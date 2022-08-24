@@ -291,3 +291,15 @@
 }
 .table-filter-form.form .form__form-group{display:flex;align-items: center;}
 .table-filter-form-fields .form__form-group-field{margin-left:0 !important;padding-left: 0px !important;}
+
+.outline{
+    display: inline-block;
+    border: 1px solid #000;
+    padding: 1px 2px;
+}
+
+.modal-content button.close{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}

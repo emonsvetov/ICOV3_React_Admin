@@ -6,6 +6,8 @@ import { PROGRAM_COLUMNS } from "./columns"
 import SortIcon from 'mdi-react/SortIcon'
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon'
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon'
+import DeleteIcon from 'mdi-react/DeleteOutlineIcon'
+import RestoreIcon from 'mdi-react/RestoreIcon'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination'
 // import { GlobalFilter } from "./GlobalFilter"
 // import { StatusFilter } from "./StatusFilter"
@@ -122,7 +124,33 @@ const DataTable = ({organization}) => {
         setFilter({status, keyword})
         // alert(status, keyword)
     }
-
+    const onClickDeleteProgram = ( e, program ) => {
+        e.preventDefault();
+        axios.delete(`/organization/${program.organization_id}/program/${program.id}`)
+        .then( (res) => {
+            // console.log(res)
+            if(res.status == 200)  {
+                window.location = `/program?message=Program deleted successfully!`
+            }
+        })
+        .catch( error => {
+            console.log(error)
+            throw new Error(`API error:${error?.message}`);
+        })
+    }    
+    const onClickRestoreProgram = ( program ) => {
+        axios.patch(`/organization/${program.organization_id}/program/${program.id}/restore`)
+        .then( (res) => {
+            // console.log(res)
+            if(res.status == 200)  {
+                window.location = `/program?message=Program restored successfully!`
+            }
+        })
+        .catch( error => {
+            console.log(error)
+            throw new Error(`API error:${error?.message}`);
+        })
+    }
     const onClickStartMoveProgram = ( program ) => {
         setMovingProgram(program)
         setMoveOpen(true)
@@ -144,6 +172,8 @@ const DataTable = ({organization}) => {
                     <FolderMoveOutlineIcon onClick={() => onClickStartMoveProgram(row.original)} />
                     <span style={{width:'15px', display: 'inline-block'}}></span>
                     <ContentCopyIcon onClick={() => onClickStartCopyProgram(row.original)} />
+                    <span style={{width:'15px', display: 'inline-block'}}></span>
+                    {row.original.status !== 'deleted' ? <DeleteIcon onClick={(e) => {if(window.confirm('Are you sure to delete this program?')){onClickDeleteProgram(e, row.original)}}} /> : <RestoreIcon onClick={() => onClickRestoreProgram(row.original)} />}
                 </span>
             </>
         )
@@ -329,7 +359,7 @@ const DataTable = ({organization}) => {
                             ))}
                         </tfoot> */}
                     </table>
-                    {copyingProgram && <CopyProgramModal organization={organization} isOpen={isCopyOpen} setOpen={setCopyOpen} toggle={copyToggle} program={copyingProgram}/>}
+                    {copyingProgram && <CopyProgramModal isOpen={isCopyOpen} setOpen={setCopyOpen} toggle={copyToggle} program={copyingProgram}/>}
                     {movingProgram && <MoveProgramModal organization={organization} isOpen={isMoveOpen} setOpen={setMoveOpen} toggle={moveToggle} program={movingProgram} />}
                 </div>
                 {(rows.length > 0) && (

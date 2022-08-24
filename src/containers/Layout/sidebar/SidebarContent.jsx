@@ -41,7 +41,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
         {auth.isSuperAdmin && <SidebarLink title="Roles" icon="user" route="/roles" />}
         {auth.isSuperAdmin && <SidebarLink title="Permissions" icon="user" route="/permissions" />}
         <SidebarLink title="Users" icon="users" route="/users" />
-        <SidebarLink title="Physical Orders"  icon="file-empty" route="/physical-orders" />
+        {auth.isSuperAdmin && <SidebarLink title="Physical Orders"  icon="file-empty" route="/physical-orders" />}
         <SidebarLink title="Domains"  icon="layers" route="/domains" />
       </ul>
       <ul className="sidebar__block">

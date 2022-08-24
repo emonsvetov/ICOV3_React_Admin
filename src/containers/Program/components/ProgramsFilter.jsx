@@ -6,6 +6,7 @@ const statusOptions = [
     {'value':'Active', 'label':'Active'},
     {'value':'Inactive', 'label':'Inactive'},
     {'value':'Pending', 'label':'Pending'},
+    {'value':'Deleted', 'label':'Deleted'},
 ]
 
 const ProgramFilter = ({onClickFilterCallback}) => {
