@@ -1,7 +1,57 @@
 
 .programTemplateModal {
 
+  .modal-header {
+    border-bottom: 0px;
+    padding-bottom: 0px;
+  }
+
+  .tab-content {
+    padding-top: 20px;
+  }
+
+  .nav-tabs .nav-link {
+    margin-bottom: 0px;
+    cursor: pointer;
+  }
+
   .image-wrap {
     overflow: hidden;
   }
+
+  .button-result {
+    border-left: 1px solid #ccc;
+    overflow: hidden;
+    text-align: center;
+    margin-left: 60px;
+    padding: 0px 20px 20px 20px;
+  }
+
+  .template-button {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-color: transparent !important;
+    transition: none !important;
+    box-shadow: none !important;
+  }
+  .template-button:hover {
+    /* Darken on click by 15% (down to 85%) */
+    filter: brightness(0.9);
+  }
+  .template-button:before {
+    height: auto !important;
+    width: auto !important;
+  }
+  .template-button.width100 {
+    display: block;
+    width: 100%;
+  }
+
+  .MuiSlider-markLabel {
+    font-size: 12px !important;
+  }
+
+  .form__form-group-label {
+  }
+
 }
