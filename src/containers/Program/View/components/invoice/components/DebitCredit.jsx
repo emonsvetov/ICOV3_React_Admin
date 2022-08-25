@@ -95,8 +95,8 @@ export const DebitCredit = ({invoice}) => {
     let html = []
 
     if(invoice?.invoices && invoice.invoices.length > 0)    {
-        invoice.invoices.forEach( row => {
-            html.push(<RenderItem invoice={invoice} row={row} />)
+        invoice.invoices.forEach( (i, row) => {
+            html.push(<RenderItem invoice={invoice} row={row} key={`invoice-item-${i}`} />)
         })
     }
     return html
