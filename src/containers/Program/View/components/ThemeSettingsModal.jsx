@@ -8,12 +8,15 @@ import {mapFormDataUploads, unpatchMedia, patchMediaURL} from '@/shared/helpers'
 import classnames from 'classnames';
 import Slider from "@/shared/components/form/Slider"
 import { ColorPicker } from 'material-ui-color';
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import renderCheckBoxField from '@/shared/components/form/CheckBox';
 import renderSelectField from '@/shared/components/form/Select';
 import US_STATES from "@/shared/json/usstates.json";
 
 import WYSIWYGEditor from '@/shared/components/form/WYSIWYGEditor'
+import { THEME_FONT_FAMILIES  } from './ThemeData';
 
 const MEDIA_FIELDS = ['small_logo', 'big_logo', 'hero_banner', 'slider_01', 'slider_02', 'slider_03']
 
@@ -26,6 +29,7 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
         values.button_corner = sliderValue;
         values.button_color = selectedColor;
         values.button_bg_color = selectedBGColor;
+        values.font_family = fontFamily;
         // setLoading(true)
         values = unpatchMedia(values, MEDIA_FIELDS)
         // console.log(values)
@@ -96,6 +100,29 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
         setSelectedBGColor('#'+e.hex);
     };
 
+    // Font Type
+    const [fontFamily, setFontFamily] = useState('Roboto');
+    const fontFamilyHandler = (e, data) => {
+        setStylePath("https://fonts.googleapis.com/css?family="+data+":100,300,400,500,700,900");
+        setFontFamily(data);
+    };
+
+    const [ stylePath, setStylePath ] = useState("https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900");
+
+    useEffect(() => {
+        var head = document.head;
+        var link = document.createElement("link");
+
+        link.type = "text/css";
+        link.rel = "stylesheet";
+        link.href = stylePath;
+
+        head.appendChild(link);
+
+        return () => { head.removeChild(link); }
+
+    }, [stylePath]);
+
     useEffect(() => {
         if (!template && data.template) {
             setTemplate(data.template)
@@ -105,8 +132,7 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
           setSliderValue(parseInt(template.button_corner))
           setSelectedColor(template.button_color)
           setSelectedBGColor(template.button_bg_color)
-          console.log(sliderValue)
-
+          setFontFamily(template.font_family)
         }
     }, [template, data])
 
@@ -157,6 +183,17 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                           onClick={() => { togglePan('2'); }}
                         >
                             Buttons wizard
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                          className={classnames({
+                              active:
+                                currentActiveTab === '3'
+                          })}
+                          onClick={() => { togglePan('3'); }}
+                        >
+                            Font styles
                         </NavLink>
                     </NavItem>
                 </Nav>
@@ -321,6 +358,42 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                                         onClick={() => {return false;}}>
                                         My Button
                                     </Button>
+                                </div>
+                            </Col>
+                        </Row>
+                    </TabPane>
+                    <TabPane tabId="3">
+                        <Row>
+                            <Col sm="8">
+                                <div className="form__form-group">
+                                    <span className="form__form-group-label thick">Font Type</span>
+                                    <div className="form__form-group-field flex-column">
+                                        <Autocomplete
+                                          className='custom_autocomplete'
+                                          id="font_family"
+                                          options={THEME_FONT_FAMILIES}
+                                          sx={{width: 300}}
+                                          onChange={fontFamilyHandler}
+                                          value={fontFamily}
+                                          renderInput={(params) => <TextField {...params}
+                                            name='font_family' label="Choose Font" margin="normal"
+                                          />}
+                                        />
+                                    </div>
+                                </div>
+                            </Col>
+                            <Col sm="4">
+                                <div className="button-result">
+                                    <span className="form__form-group-label thick">Result</span>
+                                    <br/>
+                                    <br/>
+                                    <div
+                                      style={{fontFamily: "'" + fontFamily + "', sans-serif", textAlign: 'left'}}
+                                      >
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                        Etiam vulputate, odio sit amet finibus porta, elit nunc lobortis metus,
+                                        a gravida metus velit et augue.
+                                    </div>
                                 </div>
                             </Col>
                         </Row>
