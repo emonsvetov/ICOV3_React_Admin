@@ -13,6 +13,8 @@ import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 import Select from 'react-select';
 import { Field } from 'react-final-form';
 import {makeCsvErrors} from "@/shared/apiTableHelper"
+import FormStep1 from './FormStep1';
+
 const tableConfig = {
     isResizable: true,
     isSortable:false
@@ -193,39 +195,7 @@ const ImportForm = ({organization}) => {
                     </div>
                 )}
                 </Field></div>}
-                {step === 1 && 
-                <div>
-                <Field  name={config.importFile.name}>
-                    {({ input, meta }) => (
-                    <div className="form__form-group">
-                        <span className="form__form-group-label">{config.importFile.label}</span>
-                        <div className="form__form-group-field flex-column">
-                            <div className="form__form-group-row">
-                                <input
-                                    type='file'
-                                    // accept='.csv'
-                                    id='csvFile'
-                                    {...input}
-                                    onChange={(e) => {
-                                        setCsvFile(e.target.files[0])
-                                    }}
-                                    value={csvFile?.name.file}
-                                >
-                                </input>
-                                {meta.touched && !csvFile && (
-                                <span className="form__form-group-error">
-                                    {meta.error}
-                                </span>
-                                )}
-                            </div>
-                            <div className="form__form-group-row flex-row pt-3">
-                                <Button className="btn btn-outline-primary btn-sm" color="#ffffff" disabled={1==2} onClick={onclickBack} style={{}}>Back</Button>
-                                <Button className="btn btn-primary btn-sm" color="#ffffff" disabled={1==2} type="submit" style={{}}>Upload</Button>
-                            </div>
-                        </div>
-                    </div>
-                    )}
-                </Field></div>}
+                {step === 1 && <FormStep1 { ...{config, csvFile, setCsvFile, onclickBack} } />}
             </Col>
         </Row>
         {errorComponent}
