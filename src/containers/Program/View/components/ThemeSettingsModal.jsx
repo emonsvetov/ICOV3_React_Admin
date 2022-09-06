@@ -201,10 +201,6 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                     <TabPane tabId="1">
                         <Row>
                             <Col xs="12" md="3" lg="3">
-                                <Button variant="contained" component="label">
-                                    Upload
-                                    <input hidden accept="image/*" multiple type="file" />
-                                </Button>
                                 <div className="form__form-group">
                                     <span className="form__form-group-label thick">Big Logo</span>
                                     <div className="form__form-group-field  flex-column">
