@@ -76,7 +76,15 @@ const AccountingModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
             </ModalHeader>
             <ModalBody className='modal-lg'>
                 <Row>
-                    <Col md="6" lg="4" xl="4">
+                    <Col md="4" lg="4" xl="4">
+                        <div className="form__form-group">
+                            <CheckboxField 
+                                name="create_setup_fee_account"
+                                label="Fix setup fee account"
+                            /><span style={{color:'red'}}>(This is a patch for missing setup fee account in old programs. Use only if you know what you are doing!!</span>)
+                        </div>
+                    </Col>
+                    <Col md="4" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField 
                                 name="use_budget_cascading"
@@ -84,7 +92,7 @@ const AccountingModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
                             />
                         </div>
                     </Col>
-                    <Col md="6" lg="4" xl="4">
+                    <Col md="4" lg="4" xl="4">
                         <CheckboxField 
                             name="budget_summary"
                             label="Enable budget summary"
