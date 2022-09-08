@@ -105,7 +105,7 @@ const ImportForm = ({organization}) => {
     const dispatch = useDispatch()
     const [importType, setImportType] = useState('');
     const [csvFile, setCsvFile] = useState(null);
-    const [step, setStep] = useState(2);
+    const [step, setStep] = useState(0);
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
     const [roles, setRoles] = useState(null)
