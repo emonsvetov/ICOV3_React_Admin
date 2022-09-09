@@ -14,7 +14,7 @@ export const IMPORT_LIST_COLUMNS = [
         Header: "File Name",
         accessor: "name",
         Footer:"File Name",
-        Cell: ({ row, value }) => { return <Link to={`/program/view/${row.original.id}`}>{value}</Link>},
+        Cell: ({ row, value }) => { return <Link to={`/import/view/${row.original.id}`}>{value}</Link>},
     },
     {
         Header: "Date",

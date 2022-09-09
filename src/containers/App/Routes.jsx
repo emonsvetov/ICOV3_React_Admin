@@ -7,6 +7,7 @@ import MainWrapper from './MainWrapper';
 import Dashboard from '../Dashboard/index';
 import Import from '../Import';
 import ImportList from '../Import/list';
+import ImportView from '../Import/view';
 import LogIn from '../LogIn/index';
 import Signup from '../Signup/index';
 import SignupSuccess from '../Signup/SignupSuccess';
@@ -184,6 +185,7 @@ const Imports = () => (
   <Switch>
     <Route exact path="/import" component={Import} />
     <Route exact path="/import/list" component={ImportList} />
+    <Route exact path="/import/view/:id" component={ImportView} />
   </Switch>
 );
 
