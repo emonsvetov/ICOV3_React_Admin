@@ -2,70 +2,19 @@ import React, {useState, useEffect, useMemo} from "react";
 import {useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout} from "react-table";
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import {IMPORT_LIST_COLUMNS} from "./ImportListColumns"
-import SortIcon from 'mdi-react/SortIcon'
-import SortAscendingIcon from 'mdi-react/SortAscendingIcon'
-import SortDescendingIcon from 'mdi-react/SortDescendingIcon'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination'
-import {Link} from 'react-router-dom'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import {IMPORT_DATA} from "./MockData";
 
+import {reducer, useEffectToDispatch, fetchApiData, initialState, Sorting} from "@/shared/apiTableHelper"
+
 const queryClient = new QueryClient()
-
-const initialState = {
-  queryPageIndex: 0,
-  queryPageSize: 2,
-  totalCount: 0,
-  queryPageFilter: {},
-  queryPageSortBy: [],
-};
-
-const PAGE_CHANGED = 'PAGE_CHANGED';
-const PAGE_SIZE_CHANGED = 'PAGE_SIZE_CHANGED';
-const PAGE_SORT_CHANGED = 'PAGE_SORT_CHANGED'
-const PAGE_FILTER_CHANGED = 'PAGE_FILTER_CHANGED';
-const TOTAL_COUNT_CHANGED = 'TOTAL_COUNT_CHANGED';
-
-const reducer = (state, {type, payload}) => {
-  switch (type) {
-    case PAGE_CHANGED:
-      return {
-        ...state,
-        queryPageIndex: payload,
-      };
-    case PAGE_SIZE_CHANGED:
-      return {
-        ...state,
-        queryPageSize: payload,
-      };
-    case PAGE_SORT_CHANGED:
-      return {
-        ...state,
-        queryPageSortBy: payload,
-      };
-    case PAGE_FILTER_CHANGED:
-      return {
-        ...state,
-        queryPageFilter: payload,
-      };
-    case TOTAL_COUNT_CHANGED:
-      return {
-        ...state,
-        totalCount: payload,
-      };
-    default:
-      throw new Error(`Unhandled action type: ${type}`);
-  }
-};
-
 const ImportData = IMPORT_DATA;
 
 const DataTable = ({organization}) => {
 
   const fetchData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
-    console.log(page);
-    console.log(pageSize);
     let tmp = page*pageSize;
     const data = {
       results: ImportData.slice(tmp, pageSize+tmp),
@@ -78,15 +27,6 @@ const DataTable = ({organization}) => {
     ...IMPORT_LIST_COLUMNS,
   ]
   let columns = useMemo(() => import_list_columns, [])
-
-  const defaultColumn = React.useMemo(
-    () => ({
-      minWidth: 30,
-      width: 150,
-      maxWidth: 400,
-    }),
-    []
-  )
 
   const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy}, dispatch] =
     React.useReducer(reducer, initialState);
@@ -131,8 +71,6 @@ const DataTable = ({organization}) => {
       autoResetSortBy: false,
       autoResetExpanded: false,
       autoResetPage: false,
-      defaultColumn,
-
     },
     useSortBy,
     useExpanded,
@@ -143,28 +81,7 @@ const DataTable = ({organization}) => {
 
   const manualPageSize = []
 
-  React.useEffect(() => {
-    dispatch({type: PAGE_CHANGED, payload: pageIndex});
-  }, [pageIndex]);
-
-  React.useEffect(() => {
-    dispatch({type: PAGE_SIZE_CHANGED, payload: pageSize});
-    gotoPage(0);
-  }, [pageSize, gotoPage]);
-
-  useEffect(() => {
-    dispatch({type: PAGE_SORT_CHANGED, payload: sortBy});
-    gotoPage(0);
-  }, [sortBy, gotoPage]);
-
-  React.useEffect(() => {
-    if (data?.count) {
-      dispatch({
-        type: TOTAL_COUNT_CHANGED,
-        payload: data.count,
-      });
-    }
-  }, [data?.count]);
+  useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, data} );
 
   if (error) {
     return <p>Error: {JSON.stringify(error)}</p>;
@@ -173,6 +90,7 @@ const DataTable = ({organization}) => {
   if (isLoading) {
     return <p>Loading...</p>;
   }
+
   if (isSuccess)
     return (
       <>
@@ -269,20 +187,6 @@ const DataTable = ({organization}) => {
       </>
     )
 }
-
-const Sorting = ({column}) => (
-  <span className="react-table__column-header sortable">
-      {column.isSortedDesc === undefined ? (
-        <SortIcon/>
-      ) : (
-        <span>
-          {column.isSortedDesc
-            ? <SortAscendingIcon/>
-            : <SortDescendingIcon/>}
-        </span>
-      )}
-    </span>
-);
 
 const TableWrapper = ({organization}) => {
   if (!organization) return 'Loading...'
