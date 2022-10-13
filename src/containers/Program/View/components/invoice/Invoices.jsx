@@ -7,9 +7,12 @@ import PayInvoice from './PayInvoice';
 const Invoices = (props) => {
     const [step, setStep] = useState(0);
     const [invoice, setInvoice] = useState(null);
+    const [trigger, setTrigger] = useState( 0 );
     props = {
         ...props,
-        setStep
+        setStep,
+        trigger,
+        setTrigger
     }
     return (
         <>

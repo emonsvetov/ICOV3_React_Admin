@@ -79,14 +79,6 @@ const AccountingModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
                     <Col md="4" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField 
-                                name="create_setup_fee_account"
-                                label="Fix setup fee account"
-                            /><span style={{color:'red'}}>(This is a patch for missing setup fee account in old programs. Use only if you know what you are doing!!</span>)
-                        </div>
-                    </Col>
-                    <Col md="4" lg="4" xl="4">
-                        <div className="form__form-group">
-                            <CheckboxField 
                                 name="use_budget_cascading"
                                 label="Use budget cascading"
                             />
