@@ -4,39 +4,50 @@ import { Button, ButtonToolbar, Row, Col  } from 'reactstrap';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {reducer, useEffectToDispatch, fetchApiData, initialState, Sorting} from "@/shared/apiTableHelper"
+import PaymentReversalModal from './PaymentReversalModal'
 const queryClient = new QueryClient()
-const InvoiceDataTable = (props) =>{
+const PaymentsDataTable = (props) =>{
+
+    const [isOpen, setOpen] = useState(false);
+    const [payment, setPayment] = useState(null);
+    const toggle = () => {
+        setOpen(prevState => !prevState)
+    }
+
+    const onClickReversePayment = (row) => {
+        // console.log(row)
+        setPayment(row)
+        setOpen(true)
+    }
+
     // console.log(props)
     const INVOICES_COLUMNS = [
         {
-            Header: "Invoice Number",
+            Header: "Date",
+            accessor: "date_paid",
+        },
+        {
+            Header: "Payment Kind",
+            accessor: "event_type"
+        },
+        {
+            Header: "Invoice",
             accessor: "invoice_number",
         },
         {
-            Header: "Type",
-            accessor: "invoice_type.name"
+            Header: "Amount",
+            accessor: row => '$' + parseFloat(row.amount).toFixed(2)
         },
         {
-            Header: "Start Date",
-            accessor: "date_begin"
-        },
-        {
-            Header: "End Date",
-            accessor: "date_end"
+            Header: "Notes",
+            accessor: "notes"
         }
     ]
-
-    const [loading, setLoading] = useState(false)
-
-    const onClickViewInvoice = (invoice) => {
-        props.setInvoice(invoice)
-        props.setStep(2)
-    }
 
     const RenderActions = ({row}) => {
         return (
             <>
-                <a className='link' onClick={() => onClickViewInvoice(row.original)}>View {row.original.id}</a>
+                <button className='btn btn-primary btn-xs mb-0' onClick={() => onClickReversePayment(row.original)}>Reverse Payment</button>
             </>
         )
     }
@@ -55,7 +66,7 @@ const InvoiceDataTable = (props) =>{
     const [{ queryPageIndex, queryPageSize, totalCount, queryPageSortBy, queryTrigger }, dispatch] =
     React.useReducer(reducer, initialState);
 
-    const apiUrl = `/organization/${props.program.organization_id}/program/${props.program.id}/invoice`
+    const apiUrl = `/organization/${props.program.organization_id}/program/${props.program.id}/payments?pays_for_points=1`
 
     const { isLoading, error, data, isSuccess } = useQuery(
         ['invoices', apiUrl, queryPageIndex, queryPageSize, queryPageSortBy, queryTrigger],
@@ -116,7 +127,7 @@ const InvoiceDataTable = (props) =>{
 
     useEffect(() => {
         // console.log(props)
-        props.setTrigger( Math.floor(Date.now() / 1000) )
+        // props.setTrigger( Math.floor(Date.now() / 1000) )
     }, [props])
 
     if (error) {
@@ -125,26 +136,6 @@ const InvoiceDataTable = (props) =>{
 
     return(
         <>
-            <Row className='w100'>
-                <Col md="6" lg="6" xl="6">
-                    <div className="modal__title">
-                        <h3 className="mb-4">Program's Invoices</h3>
-                    </div>
-                </Col>
-                <Col md="6" lg="6" xl="6">
-                    <ButtonToolbar className="modal__footer flex justify-content-right w100">
-                        <Button outline color="primary" className="mr-3" onClick={props.toggle}>Cancel</Button>{' '}
-                        {props.program.is_pay_in_advance == 1 && <Button type="submit" 
-                            disabled={loading} 
-                            className="btn btn-primary" 
-                            color="#ffffff"
-                            onClick = {() => props.setStep(1)}
-                            >Create Invoice
-                        </Button>}
-                    </ButtonToolbar>
-                </Col>
-            </Row>
-
             {isLoading ? (
                 <p>Loading Please wait...</p>
             ) : (
@@ -179,6 +170,7 @@ const InvoiceDataTable = (props) =>{
                                 })}
                             </tbody>
                         </table>
+                        <PaymentReversalModal isOpen={isOpen} setOpen={setOpen} toggle={toggle} action={props.reversePayment} payment={payment} />
                     </div>
                     {(rows.length > 0) && (
                         <ReactTablePagination
@@ -206,7 +198,7 @@ const InvoiceDataTable = (props) =>{
 const TableWrapper = (props) => {
     return (
         <QueryClientProvider client={queryClient}>
-            <InvoiceDataTable {...props} />
+            <PaymentsDataTable {...props} />
         </QueryClientProvider>
     )
 }

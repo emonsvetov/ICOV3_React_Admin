@@ -3,9 +3,10 @@ import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col, ListGro
 // import { Form, Field } from 'react-final-form';
 // import Select from 'react-select';
 import Invoices from './invoice/Invoices';
-import StatementsTabContent from './invoice/Statements';
+import StatementTabContent from './invoice/Statement';
 import PaymentsTabContent from './invoice/Payments';
 import TransferMoniesTabContent from './invoice/TransferMonies';
+import CloseButton from "@/shared/components/CloseButton";
 
 const TAB_MENU_LINKS = [
     {
@@ -13,7 +14,7 @@ const TAB_MENU_LINKS = [
         label: 'Invoices'
     },
     {
-        value: 'statements',
+        value: 'statement',
         label: 'Statements'
     },
     {
@@ -50,6 +51,7 @@ const InvoiceModal = ({organization, isOpen, setOpen, toggle, data, theme, rtl})
     
     return (
         <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} {...modalProps}>
+            <CloseButton onClick={toggle} />
             <ModalBody className='modal-lg'>
                 <Card>
                     <CardBody className='pt-0'>
@@ -72,7 +74,10 @@ const InvoiceModal = ({organization, isOpen, setOpen, toggle, data, theme, rtl})
                         </Row>
                         <Row>
                             <Col md={12} className={'py-4'}>
-                                {activeTab == 'invoices' && <Invoices {...componentProps}  />}   
+                                {activeTab == 'invoices' && <Invoices {...componentProps}  />}
+                                {activeTab == 'payments' && <PaymentsTabContent {...componentProps}  />}
+                                {activeTab == 'statement' && <StatementTabContent {...componentProps}  />}
+                                {activeTab == 'transfermonies' && <TransferMoniesTabContent {...componentProps}  />}
                             </Col>
                         </Row>
                     </CardBody>

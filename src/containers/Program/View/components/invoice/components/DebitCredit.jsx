@@ -4,7 +4,6 @@ const RenderItem = ({invoice, row}) => {
     if(!row?.info) return null
     const info = row.info
     let html = []
-    // console.log(row)
     html.push(
         <tr>
             <td>
@@ -93,10 +92,10 @@ const RenderItem = ({invoice, row}) => {
 export const DebitCredit = ({invoice}) => {
 
     let html = []
-
     if(invoice?.invoices && invoice.invoices.length > 0)    {
-        invoice.invoices.forEach( row => {
-            html.push(<RenderItem invoice={invoice} row={row} />)
+        // console.log(invoice?.invoices)
+        invoice.invoices.forEach( (row, i) => {
+            html.push(<RenderItem invoice={invoice} row={row} key={`invoice-item-${i}`} />)
         })
     }
     return html

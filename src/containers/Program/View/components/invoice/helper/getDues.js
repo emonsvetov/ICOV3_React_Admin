@@ -11,7 +11,7 @@ export const getDues = (invoice) => {
         if( invoice?.journal_summary )  {
             return {
                 label: 'Invoice Total',
-                amount: `$${(invoice.journal_summary * -1).toFixed(2)}`
+                amount: `$${(invoice.journal_summary.grand_total * -1).toFixed(2)}`
             }
         }   else {
             return {

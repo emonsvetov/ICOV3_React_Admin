@@ -1,4 +1,6 @@
-export const BillTo = ({invoice}) => {
+export const BillTo = ({
+    invoice
+}) => {
     let html = []
     if(invoice?.program?.name) 
     {
