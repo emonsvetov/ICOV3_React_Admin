@@ -6,6 +6,8 @@ import Layout from '../Layout/index';
 import MainWrapper from './MainWrapper';
 import Dashboard from '../Dashboard/index';
 import Import from '../Import';
+import ImportList from '../Import/list';
+import ImportView from '../Import/view';
 import LogIn from '../LogIn/index';
 import Signup from '../Signup/index';
 import SignupSuccess from '../Signup/SignupSuccess';
@@ -181,6 +183,14 @@ const Events = () => (
   </Switch>
 );
 
+const Imports = () => (
+  <Switch>
+    <Route exact path="/import" component={Import} />
+    <Route exact path="/import/list" component={ImportList} />
+    <Route exact path="/import/view/:id" component={ImportView} />
+  </Switch>
+);
+
 const CustomPrivateRoute = (props) => {
   return (
     <div>
@@ -205,7 +215,7 @@ const privateRoutes = () => {
         <PrivateRoute path="/roles" component={Roles} />
         <PrivateRoute path="/permissions" component={Permissions} />
         <PrivateRoute path="/events" component={Events} />
-        <PrivateRoute path="/import" component={Import} />
+        <PrivateRoute path="/import" component={Imports} />
         <PrivateRoute path="/domains" component={Domains} />
         <PrivateRoute path="/physical-orders" component={PhysicalOrders} />
         <PrivateRoute path="/tango-orders" component={TangoOrders} />
