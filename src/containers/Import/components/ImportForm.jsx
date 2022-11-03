@@ -14,6 +14,7 @@ import Select from 'react-select';
 import { Field } from 'react-final-form';
 import {makeCsvErrors} from "@/shared/apiTableHelper"
 import FormStep1 from './FormStep1';
+import FormStep2 from './FormStep2';
 
 const tableConfig = {
     isResizable: true,
@@ -35,7 +36,70 @@ let config = {
     importFile: {
         name: 'import_file',
         label: 'Choose File'
-    }
+    },
+    importTypeStep2: {
+        name: 'import_type',
+        label: 'Select Import Type',
+        options: [
+            {
+                label: 'Users',
+                value: 'Users'
+            }
+        ],
+        placeholder: ' ----- '
+    },
+    userRole: {
+        name: 'user_role',
+        label: 'Select User Role',
+        options: [
+            {
+                label: 'Participant',
+                value: 'Participant'
+            },
+            {
+                label: 'Manager',
+                value: 'Manager'
+            }
+        ],
+        placeholder: ' ----- '
+    },
+    csvFields: [
+      "org", "name", "surname", "email", "birthday", "status", "program name", "external id", "employee_number"
+    ],
+    fieldsToMap: [
+        {
+            label: 'user_status_id',
+            value: 'user_status_id'
+        },
+        {
+            label: 'first_name',
+            value: 'first_name'
+        },
+        {
+            label: 'last_name',
+            value: 'last_name'
+        },
+        {
+            label: 'email',
+            value: 'email'
+        },
+        {
+            label: 'email_verified_at',
+            value: 'email_verified_at'
+        },
+        {
+            label: 'password',
+            value: 'password'
+        },
+        {
+            label: 'phone',
+            value: 'phone'
+        },
+        {
+            label: 'etc.',
+            value: 'etc.'
+        }
+    ]
 }
 const ImportForm = ({organization}) => {
     const dispatch = useDispatch()
@@ -162,7 +226,7 @@ const ImportForm = ({organization}) => {
             </Col>
         </Row>
         <Row>
-            <Col md="6" lg="6" xl="6">
+            <Col md="8" lg="8" xl="8">
                 {step === 0 && 
                 <div>
                 <Field name={config.importType.name}
@@ -196,6 +260,7 @@ const ImportForm = ({organization}) => {
                 )}
                 </Field></div>}
                 {step === 1 && <FormStep1 { ...{config, csvFile, setCsvFile, onclickBack} } />}
+                {step === 2 && <FormStep2 { ...{config, csvFile, setCsvFile, onclickBack} } />}
             </Col>
         </Row>
         {errorComponent}
