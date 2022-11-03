@@ -60,8 +60,9 @@ import OrdersIndex from '../PhysicalOrders/index';
 import EditOrder from '../PhysicalOrders/edit_order';
 import TangoOrder from '../PhysicalOrders/tango_order';
 
-import {Inventory, 
-  InventoryOrder, 
+import {Inventory,
+  AwardDetail,
+  InventoryOrder,
   JournalDetailed,
   PointsPurchaseSummary,
   PointsReserve,
@@ -158,6 +159,7 @@ const TangoOrders = () => (
 
 const Reports = () => (
   <Switch>
+    <Route exact path="/reports/award-detail" component={AwardDetail} />
     <Route exact path="/reports/inventory" component={Inventory} />
     <Route exact path="/reports/inventory-order" component={InventoryOrder} />
     <Route exact path="/reports/journal-detailed" component={JournalDetailed} />

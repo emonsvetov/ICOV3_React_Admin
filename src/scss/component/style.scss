@@ -285,12 +285,44 @@
     font-size: 11px;
     color: red;
 }
-.table-filter-form.form .form__form-group-label {
-    width: auto !important;
-    padding-right:10px;
+.table-filter-form.form {
+    .MuiInputBase-input {
+        font-size: 12px !important; padding: 1px 6px 1px 1px !important;
+        outline: none;
+    }
+    .MuiInput-underline:before, .MuiInput-underline:after {
+        border: none !important;
+    }
+    .form__form-group-label {
+        width: auto !important;
+        padding-right: 10px;
+    }
+    .float-filter:first-child {
+
+    }
+    .float-filter {
+        padding-right: 30px;
+        float: left;
+        margin-bottom: 10px;
+    }
+    .form__form-group {
+        margin-bottom: 0px;
+    }
+    .form__form-group-label {
+        font-weight: bold;
+    }
 }
 .table-filter-form.form .form__form-group{display:flex;align-items: center;}
 .table-filter-form-fields .form__form-group-field{margin-left:0 !important;padding-left: 0px !important;}
+.report-table tbody td {
+    padding: 4px 4px;
+}
+.report-table thead th {
+    padding: 4px 0 2px 4px;
+}
+.report-table {
+    overflow: visible   ;
+}
 
 .outline{
     display: inline-block;
