@@ -32,8 +32,6 @@ const CreateInvoiceForm = (props) => {
   const [program, setProgram] = useState(null);
   const [programList, setProgramList] = useState(null);
 
-  const [isOpen, setOpen] = useState(false);
-
   const handleChangeProgram = (selected) => {
     setProgram(selected.value);
   };
@@ -78,6 +76,7 @@ const CreateInvoiceForm = (props) => {
           props.setStep(0);
           dispatch(sendFlashMessage('Invoice saved successfully', 'alert-success', 'top'))
           // window.location = `/program/view/${programId}`;
+          props.setTrigger( Math.floor(Date.now() / 1000) )
         }
       })
       .catch((error) => {

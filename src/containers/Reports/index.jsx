@@ -1,4 +1,5 @@
 export { default as Inventory } from './Inventory';
+export { default as AwardDetail } from './AwardDetail';
 export { default as Deposit } from './Deposit';
 export { default as InventoryOrder } from './InventoryOrder';
 export { default as JournalDetailed } from './JournalDetailed';

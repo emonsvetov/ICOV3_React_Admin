@@ -285,12 +285,44 @@
     font-size: 11px;
     color: red;
 }
-.table-filter-form.form .form__form-group-label {
-    width: auto !important;
-    padding-right:10px;
+.table-filter-form.form {
+    .MuiInputBase-input {
+        font-size: 12px !important; padding: 1px 6px 1px 1px !important;
+        outline: none;
+    }
+    .MuiInput-underline:before, .MuiInput-underline:after {
+        border: none !important;
+    }
+    .form__form-group-label {
+        width: auto !important;
+        padding-right: 10px;
+    }
+    .float-filter:first-child {
+
+    }
+    .float-filter {
+        padding-right: 30px;
+        float: left;
+        margin-bottom: 10px;
+    }
+    .form__form-group {
+        margin-bottom: 0px;
+    }
+    .form__form-group-label {
+        font-weight: bold;
+    }
 }
 .table-filter-form.form .form__form-group{display:flex;align-items: center;}
 .table-filter-form-fields .form__form-group-field{margin-left:0 !important;padding-left: 0px !important;}
+.report-table tbody td {
+    padding: 4px 4px;
+}
+.report-table thead th {
+    padding: 4px 0 2px 4px;
+}
+.report-table {
+    overflow: visible   ;
+}
 
 .outline{
     display: inline-block;
@@ -302,4 +334,39 @@
     position: absolute;
     right: 10px;
     top: 10px;
+}
+.form table td{vertical-align: middle;}
+.modal{
+    background: rgba($color: black, $alpha: 0.5);
+    backdrop-filter: blur(2px);
+}
+.modal {
+    &.padded{
+        .modal-content{
+            padding: 0.5rem
+        }
+    }
+    .close{
+        position: absolute;
+        right:-2rem;
+        top:-1.5rem;
+        color: white;
+        span {
+            color: black;
+            font-size: 22px;
+        }
+    }
+    .modal-alert{
+        .modal-content{
+            padding:0;
+        }
+    }
+}
+.bordered{
+    border: 1px solid #ccc;
+}
+.btn.btn-xs{
+    padding: 3px 10px;
+    line-height: 1rem;
+    white-space: nowrap;
 }

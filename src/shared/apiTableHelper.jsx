@@ -1,12 +1,16 @@
-import React from "react"
+import React, {useState} from "react"
 import axios from 'axios'
 import SortIcon from 'mdi-react/SortIcon';
-import { Row, Col } from 'reactstrap';
+import {Row, Col, Button} from 'reactstrap';
 
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import DatePicker from 'react-datepicker';
 import {dateStrToYmd} from '@/shared/helpers';
+import MultipleSelectField from '@/shared/components/form/MultipleSelectField'
+import ProgramsHierarchy from '@/shared/components/ProgramsHierarchy'
+import {isEqual, clone} from 'lodash';
+import { CSVLink } from "react-csv";
 
 const QUERY_TRIGGER = 'QUERY_TRIGGER';
 const PAGE_CHANGED = 'PAGE_CHANGED';
@@ -102,7 +106,7 @@ export const useEffectToDispatch = (dispatch, {
 
 export const initialState = {
     queryPageIndex: 0,
-    queryPageSize: 20,
+    queryPageSize: 10,
     totalCount: 0,
     queryPageFilter:{},
     queryPageSortBy: [],
@@ -153,9 +157,14 @@ export const fetchApiData = async( queryParams )  => {
         const sortyByDir = sortParams.desc ? 'desc' : 'asc'
         paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
     }
+    let glue = '?'
+    if(options.url.indexOf('?') > 0 ) {
+        glue = '&'
+    }
+    let apiUrl = `${options.url}${glue}page=${options.page+1}&limit=${options.size}&${paramStr}`
     try {
         const response = await axios.get(
-        `${options.url}?page=${options.page+1}&limit=${options.size}&${paramStr}`
+            apiUrl
         );
         // console.log(response)
         if( response.data.length === 0) return {results:[], count:0}
@@ -170,15 +179,70 @@ export const fetchApiData = async( queryParams )  => {
     }
 };
 
+export const fetchApiDataExport = async( queryParams )  => {
+    const queryDefaults = {
+        url: '/',
+        filter: initialState.queryPageFilter,
+        sortby: initialState.queryPageSortBy,
+        trigger: initialState.queryTrigger
+    }
+
+    const options = { ...queryDefaults, ...queryParams }
+
+    // console.log(options)
+
+    const params = []
+    let paramStr = ''
+    if( options.trigger > 0) {
+        params.push(`t=${options.trigger}`)
+    }
+    if( options.filter ) {
+        // console.log(options.filter)
+        const fields = Object.keys(options.filter);
+        if( fields.length > 0)  {
+            for(var i in fields)    {
+                params.push(`${fields[i]}=${options.filter[fields[i]]}`)
+            }
+        }
+    }
+    if( params.length > 0 ) {
+        paramStr = params.join('&')
+    }
+    if( options.sortby.length > 0 ) {
+        const sortParams = options.sortby[0];
+        const sortyByDir = sortParams.desc ? 'desc' : 'asc'
+        paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
+    }
+    try {
+        const response = await axios.get(
+          `${options.url}?${paramStr}`
+        );
+        if( response.data.length === 0) return {results:[], count:0}
+        const data = {
+            results: response.data.data,
+            headers: response.data?.headers,
+            count: response.data.total
+        };
+        return data;
+    } catch (e) {
+        throw new Error(`API error:${e?.message}`);
+    }
+};
+
 const getFirstDayOfMonth = () =>{
     let date = new Date();
     return new Date(date.getFullYear(), date.getMonth(), 1)
 }
 
-const defaultFrom = getFirstDayOfMonth()
+const getFirstDay = () => {
+    let date = new Date();
+    return new Date(date.getFullYear(), 0, 1)
+}
+
+const defaultFrom = getFirstDay()
 const defaultTo = new Date()
 
-export const TableFilter = ({ config, filter, setFilter, setUseFilter}) => {
+export const TableFilter = ({ config, filter, setFilter, setUseFilter, download, exportData, exportLink, exportHeaders}) => {
 
     const defaultFilters = {
         keyword: '',
@@ -201,11 +265,8 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter}) => {
     const [keyword, setKeyword] = React.useState(finalFilter.keyword)
     const [from, setFrom] = React.useState( finalFilter.from )
     const [to, setTo] = React.useState( finalFilter.to )
-
-    // if( options.dateRange ) {
-    //     // setFrom(finalFilter.from)
-    //     // setTo(finalFilter.to)
-    // }
+    const [awardLevels, setAwardLevels] = React.useState(finalFilter.awardLevels);
+    const [selectedPrograms, setSelectedPrograms] = useState([]);
 
     const onKeywordChange = (e) => {
         setKeyword( e.target.value )
@@ -216,7 +277,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter}) => {
     const onEndChange = ( value ) => {
         setTo(  value )
     }
-    const onClickFilter = (reset = false) => {
+    const onClickFilter = (reset = false, exportToCsv = 0) => {
         let dataSet = {}
         if( options.keyword ) {
             dataSet.keyword = reset ? '' : keyword
@@ -225,21 +286,48 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter}) => {
             dataSet.from = dateStrToYmd(reset ? defaultFrom : from)
             dataSet.to = dateStrToYmd(reset ? defaultTo : to)
         }
+        if( options.programs ) {
+            dataSet.programs = reset ? [] : clone(selectedPrograms)
+        }
+        if( options.awardLevels ) {
+            dataSet.awardLevels = reset ? [] : clone(awardLevels)
+        }
         onClickFilterCallback( dataSet )
         if( reset ) {
             setKeyword('')
             setFrom( defaultFrom )
             setTo( defaultTo )
+            setSelectedPrograms([]);
+            setAwardLevels([]);
         }
     }
-    const onClickFilterCallback = (values) => {
 
-        // alert(JSON.stringify(finalFilter))
-        // alert(JSON.stringify(values))
-        var change = false;
+    const awardLevelAll = () => {
+        let all = options.awardLevels.map(award => award.value);
+        if (isEqual(awardLevels, all)){
+            setAwardLevels([]);
+        } else {
+            setAwardLevels(all);
+        }
+    };
+
+    const onClickFilterCallback = (values) => {
+        let change = false;
 
         if(options.keyword) {
             if(finalFilter.keyword !== values.keyword)   {
+                change = true
+            }
+        }
+
+        if(options.programs) {
+            if(!isEqual(finalFilter.programs, values.programs))   {
+                change = true
+            }
+        }
+
+        if(options.awardLevels) {
+            if(!isEqual(finalFilter.awardLevels, values.awardLevels))   {
                 change = true
             }
         }
@@ -255,26 +343,68 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter}) => {
             setUseFilter(false)
             return
         }
-        // alert(JSON.stringify(values))
+
         let filters = {}
         if( options.keyword ) filters.keyword = values.keyword
+        if( options.programs ) {
+            filters.programs = values.programs
+        }
+        if( options.awardLevels ) {
+            filters.awardLevels = values.awardLevels
+        }
         if( options.dateRange ) {
             filters.from = values.from
             filters.to = values.to
         }
-        // alert(JSON.stringify(filters))
+
         setFilter( filters )
         setUseFilter(true)
     }
     return (
         <Row className="table-filter-form form">
-            <Col className="table-filter-form-fields">
-                {options.keyword && 
+            <Col md={8} lg={8} sm={8} className="table-filter-form-fields">
+                <div>
+                    {options.awardLevels &&
+                      <div className="table-filter-form-col table-filter-form-col1 float-filter" style={{paddingTop: 4}}>
+                          <div className="">
+                              <span className="form__form-group-label" onClick={awardLevelAll}
+                                    style={{cursor: 'pointer'}}
+                              >View for Award Level</span>
+                              <div className="form__form-group-field">
+                                  <div className="form__form-group-row">
+                                      <MultipleSelectField
+                                        name="view_for_award_level"
+                                        options={options.awardLevels}
+                                        type="native"
+                                        setValue={setAwardLevels}
+                                        fieldValue={awardLevels}
+                                      />
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                    }
+                    {options.programs &&
+                      <div className="table-filter-form-col table-filter-form-col1 float-filter" style={{paddingTop: 4}}>
+                          <div className="form__form-group">
+                              <div className="form__form-group-field">
+                                  <div className="form__form-group-row">
+                                      <ProgramsHierarchy
+                                        defaultPrograms={options.programs}
+                                        selectedPrograms={selectedPrograms}
+                                        setSelectedPrograms={setSelectedPrograms}
+                                      />
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                    }
+                {options.keyword &&
                     <div className="table-filter-form-col table-filter-form-col1">
                         <div className="form__form-group">
                             <div className="form__form-group-field">
                                 <div className="form__form-group-row">
-                                    <input 
+                                    <input
                                         value={keyword}
                                         onChange={onKeywordChange}
                                         type="text"
@@ -285,52 +415,73 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter}) => {
                         </div>
                     </div>
                 }
-                {options.dateRange && 
-                <div className="table-filter-form-col table-filter-form-col2">
-                    <Row>
-                        <Col md={6} lg={6} sm={6}>
-                            <div className="form__form-group">
-                                <span className="form__form-group-label">From</span>
-                                <div className="form__form-group-field">
-                                    <div className="form__form-group-row">
-                                        <DatePicker
-                                            dateFormat="MM/dd/yyyy"
-                                            selected={from}
-                                            onChange={onStartChange}
-                                            popperPlacement="center"
-                                            dropDownMode="select"
-                                            className="form__form-group-datepicker"
-                                        />
-                                    </div>
+                {options.dateRange &&
+                  <>
+                    <div className="table-filter-form-col table-filter-form-col2 float-filter">
+                        <div className="form__form-group">
+                            <span className="form__form-group-label">From</span>
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <DatePicker
+                                        dateFormat="MM/dd/yyyy"
+                                        selected={from}
+                                        onChange={onStartChange}
+                                        popperPlacement="center"
+                                        dropDownMode="select"
+                                        className="form__form-group-datepicker"
+                                    />
                                 </div>
                             </div>
-                        </Col>
-                        <Col md={6} lg={6} sm={6}>
-                            <div className="form__form-group">
-                                <span className="form__form-group-label">To</span>
-                                <div className="form__form-group-field">
-                                    <div className="form__form-group-row">
-                                        <DatePicker
-                                            dateFormat="MM/dd/yyyy"
-                                            selected={to}
-                                            onChange={onEndChange}
-                                            popperPlacement="center"
-                                            dropDownMode="select"
-                                            className="form__form-group-datepicker"
-                                        />
-                                    </div>
+                        </div>
+                    </div>
+                    <div className="table-filter-form-col table-filter-form-col2 float-filter">
+                        <div className="form__form-group">
+                            <span className="form__form-group-label">To</span>
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <DatePicker
+                                        dateFormat="MM/dd/yyyy"
+                                        selected={to}
+                                        onChange={onEndChange}
+                                        popperPlacement="center"
+                                        dropDownMode="select"
+                                        className="form__form-group-datepicker"
+                                    />
                                 </div>
                             </div>
-                        </Col>
-                    </Row>
-                </div>
+                        </div>
+                    </div>
+                  </>
                 }
+                </div>
             </Col>
             <Col className="align-items-center max-height-32px pl-1">
-                <span className="text-blue pointer mr-2" onClick={()=>onClickFilter()}>Filter</span> | 
-                <span className="text-blue pointer ml-2" onClick={()=>onClickFilter(true)}>Reset</span>
+                <Button
+                  onClick={()=>onClickFilter()}
+                  className="btn btn-sm btn-primary"
+                  color="#ffffff"
+                >Filter</Button>
+                <Button
+                  onClick={()=>onClickFilter(true)}
+                  className="btn btn-sm btn-primary"
+                  color="#ffffff"
+                >Reset</Button>
+                {options.exportToCsv &&
+                  <div>
+                      <span className="text-blue pointer mr-2" onClick={() => {download(filter)}}>Export to CSV</span>
+                      <CSVLink
+                        data={exportData}
+                        headers={exportHeaders}
+                        filename="report.csv"
+                        className="hidden"
+                        ref={exportLink}
+                        target="_blank"
+                      />
+                  </div>
+                }
             </Col>
         </Row>
+
     )
 }
 

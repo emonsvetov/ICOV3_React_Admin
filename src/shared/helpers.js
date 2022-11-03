@@ -300,4 +300,28 @@ export const BuildProgramOptions = ({programs, depth = 0}) => {
     }
     return optionsHtml
   }
-  
+
+export const toCurrency = (numberString) => {
+    let locale = 'en-US';
+    let options = {style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2};
+    let formatter = new Intl.NumberFormat(locale, options);
+    return formatter.format(numberString);
+}
+
+export const toPoints = (numberString) => {
+    let locale = 'en-US';
+    let options = {style: 'decimal', minimumFractionDigits: 3, maximumFractionDigits: 3};
+    let formatter = new Intl.NumberFormat(locale, options);
+    let number = formatter.format(numberString);
+    return number.toString().replace(/\./g, ",");
+}
+
+export const indexOfAll = (array, searchItem) => {
+    var i = array.indexOf(searchItem),
+      indexes = [];
+    while (i !== -1) {
+        indexes.push(i);
+        i = array.indexOf(searchItem, ++i);
+    }
+    return indexes;
+}

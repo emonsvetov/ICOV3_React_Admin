@@ -6,6 +6,8 @@ import Layout from '../Layout/index';
 import MainWrapper from './MainWrapper';
 import Dashboard from '../Dashboard/index';
 import Import from '../Import';
+import ImportList from '../Import/list';
+import ImportView from '../Import/view';
 import LogIn from '../LogIn/index';
 import Signup from '../Signup/index';
 import SignupSuccess from '../Signup/SignupSuccess';
@@ -60,8 +62,9 @@ import OrdersIndex from '../PhysicalOrders/index';
 import EditOrder from '../PhysicalOrders/edit_order';
 import TangoOrder from '../PhysicalOrders/tango_order';
 
-import {Inventory, 
-  InventoryOrder, 
+import {Inventory,
+  AwardDetail,
+  InventoryOrder,
   JournalDetailed,
   PointsPurchaseSummary,
   PointsReserve,
@@ -158,6 +161,7 @@ const TangoOrders = () => (
 
 const Reports = () => (
   <Switch>
+    <Route exact path="/reports/award-detail" component={AwardDetail} />
     <Route exact path="/reports/inventory" component={Inventory} />
     <Route exact path="/reports/inventory-order" component={InventoryOrder} />
     <Route exact path="/reports/journal-detailed" component={JournalDetailed} />
@@ -176,6 +180,14 @@ const Reports = () => (
 const Events = () => (
   <Switch>
     {/* <Route exact path="/events" component={EventsIndex} /> */}
+  </Switch>
+);
+
+const Imports = () => (
+  <Switch>
+    <Route exact path="/import" component={Import} />
+    <Route exact path="/import/list" component={ImportList} />
+    <Route exact path="/import/view/:id" component={ImportView} />
   </Switch>
 );
 
@@ -203,7 +215,7 @@ const privateRoutes = () => {
         <PrivateRoute path="/roles" component={Roles} />
         <PrivateRoute path="/permissions" component={Permissions} />
         <PrivateRoute path="/events" component={Events} />
-        <PrivateRoute path="/import" component={Import} />
+        <PrivateRoute path="/import" component={Imports} />
         <PrivateRoute path="/domains" component={Domains} />
         <PrivateRoute path="/physical-orders" component={PhysicalOrders} />
         <PrivateRoute path="/tango-orders" component={TangoOrders} />
