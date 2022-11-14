@@ -64,13 +64,13 @@ import TangoOrder from '../PhysicalOrders/tango_order';
 
 import {Inventory,
   AwardDetail,
+  CashDeposit,
   InventoryOrder,
   JournalDetailed,
   PointsPurchaseSummary,
   PointsReserve,
   ProgramStatus,
   SupplierRedemption,
-  TrialBalance,
   Deposit,
   UnassignedProgramDomains,
   MoniesPendingAmount
@@ -162,6 +162,7 @@ const TangoOrders = () => (
 const Reports = () => (
   <Switch>
     <Route exact path="/reports/award-detail" component={AwardDetail} />
+    <Route exact path="/reports/cash-deposit" component={CashDeposit} />
     <Route exact path="/reports/inventory" component={Inventory} />
     <Route exact path="/reports/inventory-order" component={InventoryOrder} />
     <Route exact path="/reports/journal-detailed" component={JournalDetailed} />
@@ -169,7 +170,6 @@ const Reports = () => (
     <Route exact path="/reports/points-reserve" component={PointsReserve} />
     <Route exact path="/reports/program-status" component={ProgramStatus} />
     <Route exact path="/reports/supplier-redemption" component={SupplierRedemption} />
-    <Route exact path="/reports/trial-balance" component={TrialBalance} />
     <Route exact path="/reports/deposit" component={Deposit} />
     <Route exact path="/reports/unassigned-program-domains" component={UnassignedProgramDomains} />
     <Route exact path="/reports/monies-pending-amount" component={MoniesPendingAmount} />
