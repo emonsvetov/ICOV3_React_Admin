@@ -11,6 +11,10 @@ import axios from 'axios'
 
 const Payments = (props) => {
 
+    useEffect( () => {
+        props.setTrigger(Math.floor(Date.now() / 1000))
+    }, [props])
+
     const dispatch = useDispatch()
 
     const [trigger, setTrigger] = useState( 0 );
