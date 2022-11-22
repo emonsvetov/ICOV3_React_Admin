@@ -1,11 +1,9 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-import { Col, Container, Row, Card, CardBody } from 'reactstrap';
-import InventoryIndexDataTable from './components/InventoryIndexDataTable';
+import { Col, Container, Row } from 'reactstrap';
+import InventoryIndex from './components/InventoryIndex.jsx';
 
-const Inventory = ({organization}) => {
+const Inventory = () => {
   return (
     <Container className="dashboard">
       <Row>
@@ -15,17 +13,9 @@ const Inventory = ({organization}) => {
         </Col>
       </Row>
       <Row>
-        <Col md={12}>
-          <Card>
-            <CardBody>
-              {organization?.id && <InventoryIndexDataTable organization={organization} />}
-            </CardBody>
-          </Card>
-        </Col>
+        <InventoryIndex />
       </Row>
     </Container>
-)}
+  )}
 
-export default withRouter(connect((state) => ({
-  organization: state.organization
-}))(Inventory));
+export default Inventory;

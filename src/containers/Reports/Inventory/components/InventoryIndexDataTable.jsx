@@ -1,135 +1,377 @@
-import React, {useState, useEffect, useMemo} from "react";
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
-import { Col, Row} from 'reactstrap';
-import InventoryFilter  from "./InventoryFilter";
-import axios from 'axios'
-import { jsdate2ymd } from '@/shared/helpers'
+import React, {useEffect, useMemo, useState, useCallback} from "react";
+import {useExpanded, useFlexLayout, usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
+import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
+import {toCurrency, toPoints} from '@/shared/helpers'
+import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
+import {Col, Row} from 'reactstrap';
+import {dateStrToYmd} from '@/shared/helpers';
+
+import {Link, withRouter} from "react-router-dom";
+import {connect} from "react-redux";
+import {
+  reducer,
+  useEffectToDispatch,
+  fetchApiData,
+  fetchApiDataExport,
+  initialState,
+  TableFilter,
+  Sorting
+} from "@/shared/apiTableHelper"
+import axios from "axios";
+import {isEqual, clone} from 'lodash';
+import moment from "moment";
 
 const queryClient = new QueryClient()
 
-const initialState = {
-    queryPageFilter:{},
-};
+const DataTable = ({organization, merchants}) => {
+  const [filter, setFilter] = useState({merchants: merchants, from: new Date()});
+  const [useFilter, setUseFilter] = useState(false);
+  const [trigger, setTrigger] = useState(0);
+  const [exportData, setExportData] = useState([]);
+  const [exportHeaders, setExportHeaders] = useState([]);
+  const [exportToCsv, setExportToCsv] = useState(false);
+  const [filterValues, setFilterValues] = useState([]);
+  const [columns, setColumns] = useState([{Header: 'Cost Basis', accessor: 'cost_basis'}]);
+  const exportLink = React.createRef();
 
-const PAGE_FILTER_CHANGED = 'PAGE_FILTER_CHANGED';
-
-const reducer = (state, { type, payload }) => {
-  switch (type) {
-    case PAGE_FILTER_CHANGED:
-        return {
-            ...state,
-            queryPageFilter: payload,
-        };
-    default:
-      throw new Error(`Unhandled action type: ${type}`);
-  }
-};
-
-const DataTable = ({organization}) => {
-
-    const fetchReport = async (pageFilter = null) => {
-        // console.log('fetching reports...')
-        let params = {}
-        if( pageFilter ) {
-            if( pageFilter?.action )    {
-                params.action = pageFilter.action
-                if( pageFilter.merchant_id && pageFilter.merchant_id.length > 0)    {
-                    params.merchant_id = pageFilter.merchant_id
-                }
-                if( pageFilter.end_date )    {
-                    // console.log(pageFilter.end_date)
-                    let end_date = jsdate2ymd(pageFilter.end_date)
-                    params.end_date = end_date
-                }
-            }
-        }
-        console.log(params)
-        return
-        try {
-            const response = await axios.post(
-                `/organization/${organization.id}/reports/inventory`,
-                params
-            );
-            // console.log(response)
-            return response.data
-        } catch (e) {
-            throw new Error(`API error:${e?.message}`);
-        }
-    }
-
-    const [filter, setFilter] = useState({});
-
-    const onSubmitFilterCb = ( values ) => {
-        // alert(JSON.stringify(values))
-        setFilter( values );
-    }
-
-    const [{ queryPageFilter }, dispatch] =
+  const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
     React.useReducer(reducer, initialState);
 
-    const { isLoading, error, data, isSuccess } = useQuery(
-        ['inventory', queryPageFilter],
-        () => fetchReport(queryPageFilter),
-        {
-            keepPreviousData: true,
-            staleTime: Infinity,
-        }
+  const apiUrl = `/organization/${organization.id}/report/inventory`;
+  const {isLoading, error, data, isSuccess} = useQuery(
+    ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+    () => fetchApiData(
+      {
+        url: apiUrl,
+        page: queryPageIndex,
+        size: queryPageSize,
+        filter,
+        sortby: queryPageSortBy,
+        trigger: queryTrigger
+      }
+    ),
+    {
+      keepPreviousData: true,
+      staleTime: Infinity,
+    }
+  );
+
+  useEffect(() => {
+    if (exportToCsv) {
+      if (exportLink.current) {
+        setExportToCsv(false);
+        exportLink.current.link.click();
+      }
+    }
+  }, [exportLink])
+
+  const download = async (filterValues) => {
+    let tmpFilter = clone(filterValues);
+    tmpFilter.exportToCsv = 1;
+
+    const response = await fetchApiDataExport(
+      {
+        url: apiUrl,
+        filter: tmpFilter,
+        sortby: queryPageSortBy,
+        trigger: queryTrigger
+      }
     );
+    setExportData(response.results);
+    setExportHeaders(response.headers);
+    setExportToCsv(true);
+  }
 
-    // console.log(data)
+  const updateColumns = useCallback((data) => {
+    if (data) {
+      let resultArr = [];
+      let report = Object.values(data.results.report);
+      for (let key in report) {
+        let item = report[key];
+        let tmpColumns = [];
 
-    React.useEffect(() => {
-        dispatch({ type: PAGE_FILTER_CHANGED, payload: filter });
-    }, [filter]);
-
-    if( isLoading ){
-        return <p>Loading...</p>
+        resultArr = [
+          {
+            Header: 'Merchant Name',
+            accessor: 'name',
+            width: 200
+          }
+        ];
+        /** Promotional Codes On Hand */
+        let innerObject = Object.keys(item.on_hand);
+        for (let innerKey in innerObject) {
+          let innerItem = innerObject[innerKey];
+          tmpColumns.push(
+            {
+              id: "on_hand" + innerKey,
+              Header: "$" + innerItem,
+              accessor: (row) => { return row.on_hand[innerItem]; },
+              width: 100
+            },
+          )
+        }
+        resultArr.push(
+          {
+            id: 'promotional',
+            Header: () => (
+              <div style={{textAlign: 'center', borderTop: '1px solid #eff1f5', paddingTop: 6}}>Promotional Codes On
+                Hand</div>),
+            className: 'align-center',
+            Footer: "",
+            columns: tmpColumns
+          }
+        );
+        /** Optimal Inventory Limits */
+        tmpColumns = [];
+        innerObject = Object.keys(item.optimal_values);
+        for (let innerKey in innerObject) {
+          let innerItem = innerObject[innerKey];
+          tmpColumns.push(
+            {
+              id: "optimal_values" + innerKey,
+              Header: "$" + innerItem,
+              accessor: (row) => { return row.optimal_values[innerItem]; },
+              width: 100
+            },
+          )
+        }
+        resultArr.push(
+          {
+            id: 'optimal',
+            Header: () => (
+              <div style={{textAlign: 'center', borderTop: '1px solid #eff1f5', paddingTop: 6}}>Optimal Inventory
+                Limits</div>),
+            className: 'align-center',
+            Footer: "",
+            columns: tmpColumns
+          }
+        );
+        /** %Remaining */
+        tmpColumns = [];
+        innerObject = Object.keys(item.percent_remaining);
+        for (let innerKey in innerObject) {
+          let innerItem = innerObject[innerKey];
+          tmpColumns.push(
+            {
+              id: "percent_remaining" + innerKey,
+              Header: "$" + innerItem,
+              accessor: (row) => { return row.percent_remaining[innerItem]; },
+              width: 100
+            },
+          )
+        }
+        resultArr.push(
+          {
+            id: 'remaining',
+            Header: () => (
+              <div style={{textAlign: 'center', borderTop: '1px solid #eff1f5', paddingTop: 6}}>%Remaining</div>),
+            className: 'align-center',
+            Footer: "",
+            columns: tmpColumns
+          }
+        );
+        resultArr.push(
+          {
+            Header: 'Cost Basis',
+            accessor: 'cost_basis',
+            Cell: ({row, value}) => {
+              return toCurrency(value);
+            },
+            width: 150
+          });
+        break;
+      }
+      setColumns(resultArr);
     }
+  }, []);
 
-    if (error) {
-        return <p>Error: {JSON.stringify(error)}</p>;
-    }
+  useEffect(() => {
+    updateColumns(data);
+  }, [updateColumns, data]);
 
-    // console.log(data)
+  const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    footerGroups,
+    rows,
+    prepareRow,
+    page,
+    pageCount,
+    pageOptions,
+    gotoPage,
+    previousPage,
+    canPreviousPage,
+    nextPage,
+    canNextPage,
+    setPageSize,
+    state: {pageIndex, pageSize, sortBy}
+  } = useTable({
+      columns: columns,
+      data: data ? Object.values(data.results.report) : [],
+      initialState: {
+        pageIndex: queryPageIndex,
+        pageSize: queryPageSize,
+        sortBy: queryPageSortBy,
+      },
+      manualPagination: true, // Tell the usePagination
+      pageCount: data ? totalPageCount : null,
+      autoResetSortBy: false,
+      autoResetExpanded: false,
+      autoResetPage: false,
+      disableResizing: true,
+      autoResetHiddenColumns: false
+    },
+    useSortBy,
+    useExpanded,
+    usePagination,
+    useResizeColumns,
+    useFlexLayout,
+  );
+
+  const manualPageSize = []
+  useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {JSON.stringify(error)}</p>;
+  }
+
+  if (isSuccess)
     return (
-            <>
-                <div className='table react-table'>
-                    <div className="action-panel">
-                        <Row className="mx-0">
-                            <Col lg={9} md={9} sm={8}>
-                                <InventoryFilter onSubmitFilterCb={onSubmitFilterCb} />
-                            </Col>
-                        </Row>
-                    </div>
+      <>
+        <div className='table react-table report-table'>
+          <div className="action-panel">
+            <Row className="mx-0">
+              <Col>
+                <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter}
+                             exportData={exportData} exportLink={exportLink} exportHeaders={exportHeaders}
+                             download={download}
+
+                             config={{
+                               keyword: false,
+                               dateRange: false,
+                               date: true,
+                               merchants: true,
+                               exportToCsv: true
+                             }}/>
+              </Col>
+            </Row>
+            <div style={{clear: 'both'}}>&nbsp;</div>
+          </div>
+          {
+            isLoading && <p>Loading...</p>
+          }
+          {
+            isSuccess &&
+            <table {...getTableProps()} className="table">
+              <thead>
+              {headerGroups.map((headerGroup) => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map(column => (
+                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                      {column.render('Header')}
+                      {column.isSorted ? <Sorting column={column}/> : ''}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+              </thead>
+              <tbody className="table table--bordered" {...getTableBodyProps()}>
+              {page.map(row => {
+                prepareRow(row);
+                const subCount = (row.id.match(/\./g) || []).length
+                return (
+                  <tr {...row.getRowProps()}>
                     {
-                    isSuccess && 
-                        <table className="table">
-                            <thead>
-                                    <tr>
-                                        <th>
-                                            Promotional Codes On Hand
-                                        </th>
-                                    </tr>
-                            </thead>
-                            <tbody className="table table--bordered">
-                                <tr>
-                                    <td>$1</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                      row.cells.map(cell => {
+                        // console.log(cell)
+                        const paddingLeft = subCount * 20
+                        return <td {...cell.getCellProps()}><span
+                          style={cell.column.Header === '#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span>
+                        </td>
+                      })
                     }
-                </div>
+                  </tr>
+                )
+              })}
+              </tbody>
+              <tfoot>
+              {footerGroups.map((footerGroup) => (
+                <tr {...footerGroup.getFooterGroupProps()}>
+                  {footerGroup.headers.map(column => (
+                    <th {...column.getFooterProps()}>{column.render('Footer')}</th>
+                  ))}
+                </tr>
+              ))}
+              </tfoot>
+            </table>
+          }
+
+          {(rows.length > 0) && (
+            <>
+              <ReactTablePagination
+                page={page}
+                gotoPage={gotoPage}
+                previousPage={previousPage}
+                nextPage={nextPage}
+                canPreviousPage={canPreviousPage}
+                canNextPage={canNextPage}
+                pageOptions={pageOptions}
+                pageSize={pageSize}
+                pageIndex={pageIndex}
+                pageCount={pageCount}
+                setPageSize={setPageSize}
+                manualPageSize={manualPageSize}
+                dataLength={totalCount}
+              />
+              <div className="pagination justify-content-end mt-2">
+                            <span>
+                            Go to page:{' '}
+                              <input
+                                type="number"
+                                value={pageIndex + 1}
+                                onChange={(e) => {
+                                  const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                                  gotoPage(page);
+                                }}
+                                style={{width: '100px'}}
+                              />
+                            </span>{' '}
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                  }}
+                >
+                  {[10, 20, 30, 40, 50].map((pageSize) => (
+                    <option key={pageSize} value={pageSize}>
+                      Show {pageSize}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </>
+          )}
+        </div>
+      </>
     )
 }
 
-const TableWrapper = ({organization}) => {
-    return (
-        <QueryClientProvider client={queryClient}>
-            <DataTable organization={organization} />
-        </QueryClientProvider>
-    )
+const TableWrapper = ({organization, merchants}) => {
+  if (!organization) return 'Loading...'
+  return (
+    <QueryClientProvider client={queryClient}>
+      <DataTable organization={organization} merchants={merchants}/>
+    </QueryClientProvider>
+  )
 }
 
-export default TableWrapper;
+export default withRouter(connect((state) => ({
+  organization: state.organization
+}))(TableWrapper));

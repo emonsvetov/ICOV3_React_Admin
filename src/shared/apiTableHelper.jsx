@@ -9,6 +9,7 @@ import DatePicker from 'react-datepicker';
 import {dateStrToYmd} from '@/shared/helpers';
 import MultipleSelectField from '@/shared/components/form/MultipleSelectField'
 import ProgramsHierarchy from '@/shared/components/ProgramsHierarchy'
+import MerchantsHierarchy from '@/shared/components/MerchantsHierarchy'
 import {isEqual, clone} from 'lodash';
 import { CSVLink } from "react-csv";
 
@@ -129,8 +130,6 @@ export const fetchApiData = async( queryParams )  => {
 
     const options = { ...queryDefaults, ...queryParams }
 
-    // console.log(options)
-
     const params = []
     let paramStr = ''
     if( options.trigger > 0) {
@@ -141,7 +140,11 @@ export const fetchApiData = async( queryParams )  => {
         const fields = Object.keys(options.filter);
         if( fields.length > 0)  {
             for(var i in fields)    {
-                params.push(`${fields[i]}=${options.filter[fields[i]]}`)
+                let value = options.filter[fields[i]];
+                if (fields[i] === 'from'){
+                    value = dateStrToYmd(value);
+                }
+                params.push(`${fields[i]}=${value}`)
             }
         }
         // if(options.filter.keyword !== 'undefined' && options.filter.keyword) params.push(`keyword=${options.filter.keyword}`)
@@ -267,6 +270,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
     const [to, setTo] = React.useState( finalFilter.to )
     const [awardLevels, setAwardLevels] = React.useState(finalFilter.awardLevels);
     const [selectedPrograms, setSelectedPrograms] = useState([]);
+    const [selectedMerchants, setSelectedMerchants] = useState(filter.merchants ? filter.merchants : []);
 
     const onKeywordChange = (e) => {
         setKeyword( e.target.value )
@@ -286,8 +290,14 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
             dataSet.from = dateStrToYmd(reset ? defaultFrom : from)
             dataSet.to = dateStrToYmd(reset ? defaultTo : to)
         }
+        if( options.date ) {
+            dataSet.from = dateStrToYmd(reset ? defaultFrom : from)
+        }
         if( options.programs ) {
             dataSet.programs = reset ? [] : clone(selectedPrograms)
+        }
+        if( options.merchants ) {
+            dataSet.merchants = reset ? [] : clone(selectedMerchants)
         }
         if( options.awardLevels ) {
             dataSet.awardLevels = reset ? [] : clone(awardLevels)
@@ -298,6 +308,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
             setFrom( defaultFrom )
             setTo( defaultTo )
             setSelectedPrograms([]);
+            setSelectedMerchants([]);
             setAwardLevels([]);
         }
     }
@@ -326,6 +337,12 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
             }
         }
 
+        if(options.merchants) {
+            if(!isEqual(finalFilter.merchants, values.merchants))   {
+                change = true
+            }
+        }
+
         if(options.awardLevels) {
             if(!isEqual(finalFilter.awardLevels, values.awardLevels))   {
                 change = true
@@ -334,6 +351,12 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
 
         if(options.dateRange) {
             if(finalFilter.from !== values.from || finalFilter.to !== values.to )   {
+                change = true
+            }
+        }
+
+        if(options.date) {
+            if(finalFilter.from !== values.from)   {
                 change = true
             }
         }
@@ -349,12 +372,18 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
         if( options.programs ) {
             filters.programs = values.programs
         }
+        if( options.merchants ) {
+            filters.merchants = values.merchants
+        }
         if( options.awardLevels ) {
             filters.awardLevels = values.awardLevels
         }
         if( options.dateRange ) {
             filters.from = values.from
             filters.to = values.to
+        }
+        if( options.date ) {
+            filters.from = values.from
         }
 
         setFilter( filters )
@@ -399,6 +428,21 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                           </div>
                       </div>
                     }
+                    {options.merchants &&
+                      <div className="table-filter-form-col table-filter-form-col1 float-filter" style={{paddingTop: 4}}>
+                          <div className="form__form-group">
+                              <div className="form__form-group-field">
+                                  <div className="form__form-group-row">
+                                      <MerchantsHierarchy
+                                        defaultMerchants={options.merchants}
+                                        selectedMerchants={selectedMerchants}
+                                        setSelectedMerchants={setSelectedMerchants}
+                                      />
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                    }
                 {options.keyword &&
                     <div className="table-filter-form-col table-filter-form-col1">
                         <div className="form__form-group">
@@ -414,6 +458,27 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                             </div>
                         </div>
                     </div>
+                }
+                {options.date &&
+                      <>
+                      <div className="table-filter-form-col table-filter-form-col2 float-filter">
+                          <div className="form__form-group">
+                              <span className="form__form-group-label">Through&nbsp;Date</span>
+                              <div className="form__form-group-field">
+                                  <div className="form__form-group-row">
+                                      <DatePicker
+                                        dateFormat="MM/dd/yyyy"
+                                        selected={from}
+                                        onChange={onStartChange}
+                                        popperPlacement="center"
+                                        dropDownMode="select"
+                                        className="form__form-group-datepicker"
+                                      />
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      </>
                 }
                 {options.dateRange &&
                   <>
