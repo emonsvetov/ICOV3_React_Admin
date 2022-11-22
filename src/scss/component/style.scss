@@ -180,6 +180,8 @@
     background-color: #ffffff;
     z-index: 999;
     border: 1px solid #f2f4f7;
+    max-height: 400px;
+    overflow: scroll;
 }
 .input-spinner{
     position: absolute;
