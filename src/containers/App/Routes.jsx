@@ -62,9 +62,10 @@ import OrdersIndex from '../PhysicalOrders/index';
 import EditOrder from '../PhysicalOrders/edit_order';
 import TangoOrder from '../PhysicalOrders/tango_order';
 
-import {Inventory,
+import {
   AwardDetail,
   CashDeposit,
+  Inventory,
   InventoryOrder,
   JournalDetailed,
   PointsPurchaseSummary,
