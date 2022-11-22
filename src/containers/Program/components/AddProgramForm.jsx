@@ -25,7 +25,8 @@ const AddProgramForm = ( {program, organization} ) => {
                 invoice_for_awards: 0,
                 is_add_default_merchants: 1,
                 parent_id: program ? program.id : null,
-                factor_valuation: 1
+                factor_valuation: 1,
+                is_demo: 0
             }
         }
 
