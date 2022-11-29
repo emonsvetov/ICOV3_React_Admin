@@ -7,6 +7,7 @@ import EyeIcon from 'mdi-react/EyeIcon';
 import LockOutlineIcon from 'mdi-react/LockOutlineIcon';
 import EmailOutlineIcon from 'mdi-react/EmailOutlineIcon';
 import renderCheckBoxField from '../../../shared/components/form/CheckBox';
+import { ApiErrorMessage } from '@/shared/components/flash';
 import {login} from '../../App/auth';
 
 const axios = require('axios');
@@ -18,9 +19,9 @@ const LogInForm = () => {
 
   const onSubmit = async values => {
 
-    console.log(values);
+    // console.log(values);
 
-    axios.post('/admin/login', values)
+    axios.post('/login', values)
     .then( (res) => {
       // console.log(res);
       // return;
@@ -32,7 +33,7 @@ const LogInForm = () => {
     })
     .catch( error => {
       // console.log(error.response.data.message);
-      setErrors(error.response.data.message);
+      setErrors(error.response.data);
       setLoading(false)
     })
   };
@@ -43,14 +44,8 @@ const LogInForm = () => {
     validate={validate}
     render={({ handleSubmit, form, submitting, pristine, values }) => (
     <form className="form" onSubmit={handleSubmit}>
-      {errors && 
-        <div className="alert alert-danger fade show w100" role="alert">
-          <div className="alert__content">
-            <ul>
-              <li>{errors}</li>
-            </ul>
-          </div>
-        </div>
+      {
+        errors && <ApiErrorMessage className="alert alert-danger fade show w100" errors={errors} />
       }
       <Field name="email">
         {({ input, meta }) => (
