@@ -18,12 +18,13 @@ import {
 } from "@/shared/apiTableHelper"
 import axios from "axios";
 import {isEqual, clone} from 'lodash';
+import {getFirstDay} from '@/shared/helpers'
 
 const queryClient = new QueryClient()
 
-const DataTable = ({organization}) => {
-
-  const [filter, setFilter] = useState({programs: [], awardLevels: []});
+const DataTable = ({organization, programs}) => {
+  const defaultFrom = getFirstDay();
+  const [filter, setFilter] = useState({programs: programs, awardLevels: [], from: defaultFrom, to: new Date()});
   const [useFilter, setUseFilter] = useState(false);
   const [trigger, setTrigger] = useState(0);
   const [exportData, setExportData] = useState([]);
@@ -262,11 +263,11 @@ const DataTable = ({organization}) => {
     )
 }
 
-const TableWrapper = ({organization}) => {
-  if (!organization) return 'Loading...'
+const TableWrapper = ({organization, programs}) => {
+  if (!organization || !programs) return 'Loading...'
   return (
     <QueryClientProvider client={queryClient}>
-      <DataTable organization={organization}/>
+      <DataTable organization={organization} programs={programs}/>
     </QueryClientProvider>
   )
 }
