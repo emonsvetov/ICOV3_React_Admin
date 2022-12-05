@@ -5,6 +5,7 @@ import {TABLE_COLUMNS} from "./columns";
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {Col, Row} from 'reactstrap';
 import {getFirstDay} from '@/shared/helpers'
+
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {
@@ -21,12 +22,9 @@ import {isEqual, clone} from 'lodash';
 
 const queryClient = new QueryClient()
 
-const DataTable = ({organization, programs}) => {
+const DataTable = ({organization}) => {
   const defaultFrom = getFirstDay();
-  const [filter, setFilter] = useState({
-      programs: programs, awardLevels: ['default','ntc'],
-      from: defaultFrom, to: new Date()
-  });
+  const [filter, setFilter] = useState({programs: [], awardLevels: [], from: defaultFrom, to: new Date()});
   const [useFilter, setUseFilter] = useState(false);
   const [trigger, setTrigger] = useState(0);
   const [exportData, setExportData] = useState([]);
@@ -37,10 +35,11 @@ const DataTable = ({organization, programs}) => {
 
   let columns = useMemo(() => TABLE_COLUMNS, [])
 
+  initialState.queryPageSize = 999999999;
   const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
     React.useReducer(reducer, initialState);
 
-  const apiUrl = `/organization/${organization.id}/report/award-detail`;
+  const apiUrl = `/organization/${organization.id}/report/portfolio-status-report-new`;
   const {isLoading, error, data, isSuccess} = useQuery(
     ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
     () => fetchApiData(
@@ -157,18 +156,16 @@ const DataTable = ({organization, programs}) => {
                              config={{
                                keyword: false,
                                dateRange: true,
-                               awardLevels: availableAwardLevels,
-                               programs: true,
                                exportToCsv: true
                              }}/>
               </Col>
             </Row>
+            <div className='cleafix'>&nbsp;</div>
           </div>
           {
             isLoading && <p>Loading...</p>
           }
           {
-            // ref={r => { csvLinkTable = r; }}
             isSuccess &&
             <table {...getTableProps()} className="table">
               <thead>
@@ -264,11 +261,11 @@ const DataTable = ({organization, programs}) => {
     )
 }
 
-const TableWrapper = ({organization, programs}) => {
-  if (!organization || !programs) return 'Loading...'
+const TableWrapper = ({organization}) => {
+  if (!organization) return 'Loading...'
   return (
     <QueryClientProvider client={queryClient}>
-      <DataTable organization={organization} programs={programs}/>
+      <DataTable organization={organization}/>
     </QueryClientProvider>
   )
 }

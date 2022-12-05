@@ -325,3 +325,8 @@ export const indexOfAll = (array, searchItem) => {
     }
     return indexes;
 }
+
+export const getFirstDay = () => {
+    let date = new Date();
+    return new Date(date.getFullYear(), 0, 1)
+}
