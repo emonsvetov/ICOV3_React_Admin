@@ -11,6 +11,7 @@ import ReactTablePagination from '@/shared/components/table/components/ReactTabl
 import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter} from "@/shared/apiTableHelper"
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
+import ChangeStatusModal from "@/containers/Users/components/ChangeStatusModal"
 
 import axios from "axios";
 import {
@@ -41,12 +42,18 @@ const DataTable = ({program, organization}) => {
     const [isOpenAdd, setOpenAdd] = useState(false)
     const [isOpenEdit, setOpenEdit] = useState(false)
     const [selectedUser, selectUser] = useState(false)
+    const [user, setUser] = useState(null)
+
+    const [isChangeStatusOpen, setChangeStatusOpen] = useState(false)
 
     const toggleAdd = () => {
         setOpenAdd(prevState => !prevState)
     }
     const toggleEdit = () => {
         setOpenEdit(prevState => !prevState)
+    }
+    const toggleChangeStatus = () => {
+        setChangeStatusOpen(prevState => !prevState)
     }
     const onClickViewUser = ( user_id ) => {
         toggleEdit();
@@ -77,6 +84,17 @@ const DataTable = ({program, organization}) => {
             </>
         )
     }
+
+    const onClickStatus = user => {
+        // console.log(user)
+        setUser(user);
+        toggleChangeStatus()
+
+    }
+
+    const strShowUserStatus = user => {
+        return user?.status?.status ? <span onClick={() => onClickStatus(user)} className={'link'}>{user.status.status}</span> : 'unknown'
+    }
     
     let user_columns = [
         ...USERS_COLUMNS, 
@@ -84,8 +102,20 @@ const DataTable = ({program, organization}) => {
             Header: "",
             accessor: "action",
             Cell: ({ row }) => <RenderActions row={row} />,
-        }]
+        }],
+        // ...[{
+        //     Header: "Status",
+        //     accessor: "user_status_id",
+        //     Cell: ({ row }) => 'Click here',
+        // }]
     ]
+    user_columns.forEach( (column, i) => {
+        // console.log(column)
+        if( column.Header === 'Status')
+        {
+            user_columns[i].Cell =  ({ row, value }) => { return strShowUserStatus(row.original)}
+        }
+    })
     let columns = useMemo( () => user_columns, [])
 
 
@@ -197,6 +227,7 @@ const DataTable = ({program, organization}) => {
                 </form>
                 <AddProgramUserModal organization={organization} program={program} isOpen={isOpenAdd} setOpen={setOpenAdd} toggle={toggleAdd} setTrigger={setTrigger} />
                 <EditProgramUserModal organization={organization} program={program} userid={selectedUser} isOpen={isOpenEdit} setOpen={setOpenEdit} toggle={toggleEdit} setTrigger={setTrigger} />
+                {user && <ChangeStatusModal isOpen={isChangeStatusOpen} setOpen={setChangeStatusOpen} toggle={toggleChangeStatus} setTrigger={setTrigger} user={user} />}
 
                   <table {...getTableProps()} className="table">
                       <thead>
@@ -220,7 +251,7 @@ const DataTable = ({program, organization}) => {
                       <tbody className="table table--bordered" {...getTableBodyProps()}>
                           {page.map( row => {
                               prepareRow(row);
-                              // console.log(row)
+                            //   console.log(row)
                               const subCount = (row.id.match(/\./g) || []).length
                               // const paddingCount = subCount > 0 ? Number(subCount) + 3 : 0;
                               // console.log(subCount)
@@ -239,7 +270,6 @@ const DataTable = ({program, organization}) => {
                       </tbody>
                       
                   </table>
-                  
               </div>
               {(rows.length > 0) && (
                   <>
