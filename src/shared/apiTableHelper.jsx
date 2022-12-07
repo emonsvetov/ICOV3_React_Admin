@@ -105,6 +105,19 @@ export const useEffectToDispatch = (dispatch, {
     }, [trigger, gotoPage]);
 }
 
+const getFirstDayOfMonth = () =>{
+    let date = new Date();
+    return new Date(date.getFullYear(), date.getMonth(), 1)
+}
+
+const getFirstDay = () => {
+    let date = new Date();
+    return new Date(date.getFullYear(), 0, 1)
+}
+
+const defaultFrom = getFirstDay()
+const defaultTo = new Date()
+
 export const initialState = {
     queryPageIndex: 0,
     queryPageSize: 10,
@@ -141,7 +154,7 @@ export const fetchApiData = async( queryParams )  => {
         if( fields.length > 0)  {
             for(var i in fields)    {
                 let value = options.filter[fields[i]];
-                if (fields[i] === 'from'){
+                if (fields[i] === 'from' || fields[i] === 'to'){
                     value = dateStrToYmd(value);
                 }
                 params.push(`${fields[i]}=${value}`)
@@ -204,7 +217,11 @@ export const fetchApiDataExport = async( queryParams )  => {
         const fields = Object.keys(options.filter);
         if( fields.length > 0)  {
             for(var i in fields)    {
-                params.push(`${fields[i]}=${options.filter[fields[i]]}`)
+                let value = options.filter[fields[i]];
+                if (fields[i] === 'from' || fields[i] === 'to'){
+                    value = dateStrToYmd(value);
+                }
+                params.push(`${fields[i]}=${value}`)
             }
         }
     }
@@ -232,19 +249,6 @@ export const fetchApiDataExport = async( queryParams )  => {
     }
 };
 
-const getFirstDayOfMonth = () =>{
-    let date = new Date();
-    return new Date(date.getFullYear(), date.getMonth(), 1)
-}
-
-const getFirstDay = () => {
-    let date = new Date();
-    return new Date(date.getFullYear(), 0, 1)
-}
-
-const defaultFrom = getFirstDay()
-const defaultTo = new Date()
-
 export const TableFilter = ({ config, filter, setFilter, setUseFilter, download, exportData, exportLink, exportHeaders}) => {
 
     const defaultFilters = {
@@ -269,7 +273,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
     const [from, setFrom] = React.useState( finalFilter.from )
     const [to, setTo] = React.useState( finalFilter.to )
     const [awardLevels, setAwardLevels] = React.useState(finalFilter.awardLevels);
-    const [selectedPrograms, setSelectedPrograms] = useState([]);
+    const [selectedPrograms, setSelectedPrograms] = useState(filter.programs ? filter.programs : []);
     const [selectedMerchants, setSelectedMerchants] = useState(filter.merchants ? filter.merchants : []);
 
     const onKeywordChange = (e) => {
