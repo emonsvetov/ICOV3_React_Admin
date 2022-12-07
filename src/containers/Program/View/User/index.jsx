@@ -86,10 +86,8 @@ const DataTable = ({program, organization}) => {
     }
 
     const onClickStatus = user => {
-        // console.log(user)
         setUser(user);
         toggleChangeStatus()
-
     }
 
     const strShowUserStatus = user => {
@@ -103,14 +101,8 @@ const DataTable = ({program, organization}) => {
             accessor: "action",
             Cell: ({ row }) => <RenderActions row={row} />,
         }],
-        // ...[{
-        //     Header: "Status",
-        //     accessor: "user_status_id",
-        //     Cell: ({ row }) => 'Click here',
-        // }]
     ]
     user_columns.forEach( (column, i) => {
-        // console.log(column)
         if( column.Header === 'Status')
         {
             user_columns[i].Cell =  ({ row, value }) => { return strShowUserStatus(row.original)}
@@ -128,12 +120,9 @@ const DataTable = ({program, organization}) => {
       []
   )
 
-  const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] =
-  React.useReducer(reducer, initialState);
+  const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] = React.useReducer(reducer, initialState);
 
   const apiUrl = `/organization/${organization.id}/program/${program.id}/user`
-
-//   alert(apiUrl)
       
   const { isLoading, error, data, isSuccess } = useQuery(
       ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],

@@ -26,6 +26,10 @@ export const USERS_COLUMNS = [
         }).join(", ") },
     },
     {
+        Header: "Status",
+        accessor: "user_status_id",
+    },
+    {
         Header: "Employee Number",
         accessor: "employee_number"
     },

@@ -25,7 +25,6 @@ export const USERS_COLUMNS = [
     {
         Header: "Status",
         accessor: "user_status_id",
-        // Cell: ({ row, value }) => { return strShowUserStatus(row.original)},
     },
     {
         Header: "Default Contract",
