@@ -154,7 +154,7 @@ export const fetchApiData = async( queryParams )  => {
         if( fields.length > 0)  {
             for(var i in fields)    {
                 let value = options.filter[fields[i]];
-                if (fields[i] === 'from' || fields[i] === 'to'){
+                if ( (fields[i] === 'from' || fields[i] === 'to') && value !== "" ){
                     value = dateStrToYmd(value);
                 }
                 params.push(`${fields[i]}=${value}`)

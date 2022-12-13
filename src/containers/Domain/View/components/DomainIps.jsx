@@ -10,6 +10,8 @@ import axios from 'axios';
 const DomainIps = ({ organization, domain}) => {
     const dispatch = useDispatch()
 
+    console.log(domain)
+
     const [deleting, setDeleting] = useState(false)
     const [adding, setAdding] = useState(false)
     const [domainIps, setDomainIps] = useState(domain.domain_ips)
