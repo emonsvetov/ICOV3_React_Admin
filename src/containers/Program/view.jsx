@@ -25,15 +25,15 @@ const ProgramView = ( {organization} ) => {
     useEffect(() => {
         // alert(id)
         checkFlashMessage()
-        if(id && organization)    {
-            // console.log(organization)
-            fetchProgramData(organization)
+        if(id && organization?.id)    {
+            const {id: organizationId} = organization //store as 
+            fetchProgramData(organizationId)
         }
     },[id, organization])
 
-    const fetchProgramData = async(organization) => {
+    const fetchProgramData = async(organizationId) => {
         try {
-            const response = await axios.get(`/organization/${organization.id}/program/${id}`);
+            const response = await axios.get(`/organization/${organizationId}/program/${id}`);
             // console.log(response)
             setData(response.data)
         } catch (e) {
@@ -53,6 +53,7 @@ const ProgramView = ( {organization} ) => {
     }
 
   if( !data || !organization ) return 'Loading...'
+  const {id: organizationId, name: organizationName} = data.organization
 //   console.log(data)
   return (
     <Container className="program-view">
@@ -60,7 +61,7 @@ const ProgramView = ( {organization} ) => {
         <Col md={6}>
           <h3 className="page-title">All Programs</h3>
           <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/program">Programs</Link> / {data.name}</h3>
-          <p> (Organization: {data.organization.id} - {data.organization.name})</p>
+          <p> (Organization: {organizationId} - {organizationName})</p>
         </Col>
         <Col md={6} className='text-right'>
         <span style={{maxWidth:'200px'}} className="btn btn-primary account__btn account__btn--small" onClick={()=>toggle('addprogram')}>Add sub program</span>

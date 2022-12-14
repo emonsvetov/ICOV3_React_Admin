@@ -18,7 +18,7 @@ const StatementTab = (props) => {
     const FilterComponent = (props) => {
         const onSubmit = async(values) => {
             setLoading(true)
-            getStatement(props.organization.id, props.program.id, {
+            getStatement(props.program.organization_id, props.program.id, {
                 params: values
             })
             .then( response => {

@@ -52,7 +52,7 @@ const AwardingPointsModal = ({organization, data, isOpen, setOpen, toggle, theme
         // alert(JSON.stringify(data))
         // return;
         try {
-            const response = await axios.put(`/organization/${organization.id}/program/${data.id}`, data);
+            const response = await axios.put(`/organization/${data.organization_id}/program/${data.id}`, data);
             // console.log(response)
             setLoading(false)
             setData( values )

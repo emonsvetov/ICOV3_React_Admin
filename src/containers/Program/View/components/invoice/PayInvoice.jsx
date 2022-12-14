@@ -138,7 +138,7 @@ const PayInvoice = (props) => {
     };
 
     useEffect( () => {
-            getPayInvoice(props.organization.id, props.program.id, props.invoice.id)
+            getPayInvoice(props.program.organization_id, props.program.id, props.invoice.id)
             .then( res => {
                 setInvoice(res)
                 setLoading(false)
@@ -181,11 +181,11 @@ const PayInvoice = (props) => {
         }
         console.log(formData)
         // return;
-        submitInvoicePayment(props.organization.id, props.program.id, props.invoice.id, formData)
+        submitInvoicePayment(props.program.organization_id, props.program.id, props.invoice.id, formData)
         .then( res => {
             if( res.success )    {
                 dispatch(sendFlashMessage('Invoice payments applied', 'alert-success', 'top'))
-                getPayInvoice(props.organization.id, props.program.id, props.invoice.id)
+                getPayInvoice(props.program.organization_id, props.program.id, props.invoice.id)
                 .then( res => {
                     setInvoice(res)
                     setLoading(false)

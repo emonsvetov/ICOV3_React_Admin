@@ -15,7 +15,7 @@ const EngagementModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
         data  = {...data, ...values}
         // alert(JSON.stringify(data))
         try {
-            const response = await axios.put(`/organization/${organization.id}/program/${data.id}`, data);
+            const response = await axios.put(`/organization/${data.organization_id}/program/${data.id}`, data);
             // console.log(response)
             setLoading(false)
             setData( values )

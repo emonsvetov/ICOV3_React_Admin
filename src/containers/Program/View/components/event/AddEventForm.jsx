@@ -66,7 +66,7 @@ const AddEventForm = ({onStep, organization, program}) => {
     let eventData = {};
     // Object.assign(eventData, values);
     
-    eventData["organization_id"] = organization.id;
+    eventData["organization_id"] = program.organization_id;
     eventData["program_id"] = program.id;
 
     let {
@@ -112,7 +112,7 @@ const AddEventForm = ({onStep, organization, program}) => {
     // return
     
     axios
-      .post(`/organization/${organization.id}/program/${program.id}/event`, eventData)
+      .post(`/organization/${program.organization_id}/program/${program.id}/event`, eventData)
       .then((res) => {
         //   console.log(res)
         if (res.status == 200) {

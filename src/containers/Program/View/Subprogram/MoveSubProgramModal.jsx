@@ -1,28 +1,10 @@
 import React, {useState, useEffect} from "react";
-import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar } from 'reactstrap';
+import { Modal, ModalBody, Button, ButtonToolbar } from 'reactstrap';
 import axios from 'axios'
 import {renameChildrenToSubrows} from '@/shared/helpers'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
 import ProgramTreeView from "../../components/ProgramTreeView";
 import {fetchProgramTreeForMoving} from "@/shared/apiHelper"
-import {labelizeNamedData} from '@/shared/helpers'
-
-// const fetchProgramData = async (organization) => {
-//     try {
-//         const response = await axios.get(
-//         `/organization/${organization.id}/program?sortby=name`
-//         );
-//         // console.log(response)
-//         if( response.data.length === 0) return {results:[],count:0}
-//         const data = {
-//             results: renameChildrenToSubrows(response.data.data),
-//             count: response.data.total
-//         };
-//         return data;
-//     } catch (e) {
-//         throw new Error(`API error:${e?.message}`);
-//     }
-// };
 
 const MoveSubProgramModal = ({isOpen, setOpen, toggle, subprogram, organization, setTrigger}) => {
     const dispatch = useDispatch()
@@ -37,20 +19,17 @@ const MoveSubProgramModal = ({isOpen, setOpen, toggle, subprogram, organization,
 
     useEffect( () => {
         // console.log("here")
-        if( organization && subprogram )  {
+        if( subprogram?.id )  {
             // console.log(organization)
             setSelected(subprogram.id)
             setOriginalSelected(subprogram.id)
-            fetchProgramTreeForMoving(organization.id, subprogram.id)
+            fetchProgramTreeForMoving(subprogram.organization_id, subprogram.id)
             .then( response => {
-                // console.log(response.tree)
-                // console.log(renameChildrenToSubrows([response.tree]))
-                // console.log(renameChildrenToSubrows(response.tree))
                 setData(renameChildrenToSubrows([response.tree]));
                 setExclude(response.exclude);
             })
         }
-    }, [organization, subprogram])
+    }, [subprogram])
 
     const handleSelect = (event, nodeIds) => {
         // console.log(nodeIds)
@@ -68,6 +47,8 @@ const MoveSubProgramModal = ({isOpen, setOpen, toggle, subprogram, organization,
         setSelected(nodeIds)
     };
     const onClickMoveConfrim = async() => {
+        // console.log(`/organization/${subprogram.organization_id}/program/${subprogram.id}/move`);
+        // return;
         setLoading(true)
         // alert(JSON.stringify({selected, programId}))
         // console.log(programId)
@@ -84,8 +65,8 @@ const MoveSubProgramModal = ({isOpen, setOpen, toggle, subprogram, organization,
                 // console.log(subprogram.id)
                 // console.log(formData)
                 // return
-                const response = await axios.patch(`/organization/${organization.id}/program/${subprogram.id}/move`, formData);
-                console.log(response)
+                const response = await axios.patch(`/organization/${subprogram.organization_id}/program/${subprogram.id}/move`, formData);
+                // console.log(response)
                 setLoading(false)
                 if( response.status === 200)    {
                     setOpen(false)

@@ -63,7 +63,7 @@ const DataTable = ({program, organization}) => {
         if( !window.confirm( 'Are you sure to remove this user from this program?') )    {
             return;
         }
-        axios.delete(`/organization/${organization.id}/user/${user_id}/program/${program.id}`)
+        axios.delete(`/organization/${program.organization_id}/user/${user_id}/program/${program.id}`)
         .then( (res) => {
             if(res.status == 200)  {
                 flashDispatcher(sendFlashMessage('User removed successfully!', 'alert-success'))
@@ -122,7 +122,7 @@ const DataTable = ({program, organization}) => {
 
   const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] = React.useReducer(reducer, initialState);
 
-  const apiUrl = `/organization/${organization.id}/program/${program.id}/user`
+  const apiUrl = `/organization/${program.organization_id}/program/${program.id}/user`
       
   const { isLoading, error, data, isSuccess } = useQuery(
       ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],

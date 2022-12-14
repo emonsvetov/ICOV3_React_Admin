@@ -35,7 +35,7 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
         // console.log(values)
         let formData = mapFormDataUploads( values )
         // console.log(formData)
-        let saveUrl = `/organization/${organization.id}/program/${data.id}/template`;
+        let saveUrl = `/organization/${data.organization_id}/program/${data.id}/template`;
         if( template?.id)  {
             formData.append('_method', 'PUT')
             saveUrl += `/${template.id}`

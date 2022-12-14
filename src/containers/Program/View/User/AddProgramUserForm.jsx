@@ -21,12 +21,13 @@ const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
     const [roles, setRoles] = useState(null)
 
     React.useEffect( () => {
-        getRoles(organization)
-    }, [organization])
+        // console.log(program)
+        getRoles(program.organization_id)
+    }, [program])
 
-    const getRoles = ( organization ) => {
+    const getRoles = ( organizationId ) => {
         setLoading(true)
-        fetchRoles( organization.id, true )
+        fetchRoles( organizationId, true )
         .then( data => {
             if( config.roleInput === 'select')    {
                 data = labelizeNamedData(data);
@@ -43,7 +44,7 @@ const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
         // console.log(values)
         // return
         // setLoading(true)
-        axios.post(`/organization/${organization.id}/program/${program.id}/user`, values)
+        axios.post(`/organization/${program.organization_id}/program/${program.id}/user`, values)
         .then( (res) => {
             // console.log(res)
             if(res.status == 200)  {

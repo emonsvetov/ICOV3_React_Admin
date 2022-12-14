@@ -61,7 +61,7 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
         // alert(JSON.stringify(savedata))
         // return;
         try {
-            const response = await axios.put(`/organization/${organization.id}/program/${savedata.id}`, savedata);
+            const response = await axios.put(`/organization/${data.organization_id}/program/${savedata.id}`, savedata);
             // console.log(response)
             
             setLoading(false)

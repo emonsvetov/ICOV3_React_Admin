@@ -23,29 +23,29 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
     let [user, setUser] = useState(null)
 
     React.useEffect( () => {
-        getRoles(organization);
-        fetchUser(organization.id, userid)
+        getRoles(program.organization_id);
+        fetchUser(program.organization_id, userid)
         .then( data => {
             setUser(data);
             setLoading(false)
         })
 
-        fetchUserProgramRoles(organization.id, userid, program.id)
+        fetchUserProgramRoles(program.organization_id, userid, program.id)
         .then( _roles => {
             console.log(_roles)
             // const _roles = extractRolesFromProgramPermissions(_permissions, program.id);
             setProgramRoles(buildIdArray(_roles))
         })
-    }, [organization])
+    }, [program])
 
     React.useEffect( () => {
         
     }, [user])
 
 
-    const getRoles = ( organization ) => {
+    const getRoles = ( organizationId ) => {
         setLoading(true)
-        fetchRoles( organization.id, 1 )
+        fetchRoles( organizationId, 1 )
         .then( data => {
             if( config.roleInput === 'select')    {
                 data = labelizeNamedData(data);
@@ -67,7 +67,7 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
         // console.log(values)
         // return
         // setLoading(true)
-        axios.put(`/organization/${organization.id}/program/${program.id}/user/${userid}`, values)
+        axios.put(`/organization/${program.organization_id}/program/${program.id}/user/${userid}`, values)
         .then( (res) => {
             // console.log(res)
             if(res.status == 200)  {

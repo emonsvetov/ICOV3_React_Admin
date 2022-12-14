@@ -15,7 +15,7 @@ const AddProgramForm = ( {program, organization} ) => {
         // console.log(values);
         // alert(JSON.stringify(values))
         // console.log(program)
-        const organization_id = program ? program.organization_id : organization.id
+        const organization_id = (program && program?.organization_id) ? program.organization_id : organization.id
         // console.log(organization_id)
         // return;
         values = {...values, 

@@ -18,7 +18,7 @@ const TransferMonies = (props) => {
 
     useEffect(() => {
         if(props?.organization?.id)  {
-            getTransferMonies(props.organization.id, props.program.id)
+            getTransferMonies(props.program.organization_id, props.program.id)
             .then( response => {
                 console.log(response)
                 setData(response);
@@ -49,7 +49,7 @@ const TransferMonies = (props) => {
             const formData = {
                 "amounts": amountData
             }
-            postTransferMonies(props.organization.id, props.program.id, formData)
+            postTransferMonies(props.program.organization_id, props.program.id, formData)
             .then( response => {
                 // console.log(response)
                 // setData(response);

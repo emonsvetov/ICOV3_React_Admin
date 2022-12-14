@@ -56,7 +56,8 @@ const Edit = ({organization}) => {
 
   const fetchProgramData = async(id) => {
     try {
-        const response = await axios.get(`/organization/${organization.id}/program/${id}`);
+        const {id: organizationId} = organization
+        const response = await axios.get(`/organization/${organizationId}/program/${id}`);
         setProgram(response.data)
     } catch (e) {
         throw new Error(`API error:${e?.message}`);
@@ -212,7 +213,7 @@ const Edit = ({organization}) => {
     if (loading || !event) {
         return <p>Loading...</p>;
     }
-    console.log(event)
+    // console.log(event)
 
     if( event )   {
         return (

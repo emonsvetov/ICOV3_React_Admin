@@ -30,7 +30,7 @@ const AddSubProgramModal = ({organization, program, isOpen, setOpen, toggle, the
             }
             let program_to_add = values.sub_program.value
             setLoading( true )
-            const response = await axios.patch(`/organization/${program.organization.id}/program/${program_to_add}/move`, formData);
+            const response = await axios.patch(`/organization/${program.organization_id}/program/${program_to_add}/move`, formData);
             // console.log(response)
             setLoading(false)
             if( response.status === 200)    {

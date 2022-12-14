@@ -65,11 +65,11 @@ const CreateInvoiceForm = (props) => {
       amount: values.amount,
       amount_confirmation: values.amount_confirmation,
     };
-    console.log(invoiceData)
+    // console.log(invoiceData)
     // return;
     
     axios
-      .post(`/organization/${props.organization.id}/program/${programId}/invoice/on-demand`, invoiceData)
+      .post(`/organization/${props.program.organization_id}/program/${programId}/invoice/on-demand`, invoiceData)
       .then((res) => {
           console.log(res)
         if (res.status == 200) {

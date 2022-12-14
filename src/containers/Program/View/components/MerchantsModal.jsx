@@ -112,7 +112,7 @@ const DataTable = ({ toggle, organization, program }) => {
     }
     try {
       const response = await axios.get(
-        `/organization/${organization.id}/merchant?page=${page+1}&limit=${pageSize}&${paramStr}`
+        `/organization/${program.organization_id}/merchant?page=${page+1}&limit=${pageSize}&${paramStr}`
       );
       // console.log(response)
       if (response.data.length === 0) return { results: [], count: 0 };
@@ -138,7 +138,7 @@ const DataTable = ({ toggle, organization, program }) => {
   const fetchProgramMerchantData = async () => {
     try {
       const response = await axios.get(
-        `/organization/${organization.id}/program/${program.id}/merchant?minimal=true&sortby=name`
+        `/organization/${program.organization_id}/program/${program.id}/merchant?minimal=true&sortby=name`
       );
       let result = response.data;
       let temp_relation = [];
@@ -170,15 +170,15 @@ const DataTable = ({ toggle, organization, program }) => {
       if(type == "featured" || type == "cost_to_program"){
         postData[type] = value;
         response = await axios.post(
-          `/organization/${organization.id}/program/${program.id}/merchant`,postData );
+          `/organization/${program.organization_id}/program/${program.id}/merchant`,postData );
       }
       else{
         if (value) {
           response = await axios.post(
-            `/organization/${organization.id}/program/${program.id}/merchant`,postData );
+            `/organization/${program.organization_id}/program/${program.id}/merchant`,postData );
         } else {
           response = await axios.delete(
-              `/organization/${organization.id}/program/${program.id}/merchant/${id}`);
+              `/organization/${program.organization_id}/program/${program.id}/merchant/${id}`);
         }
       }
       console.log(response, 'response')

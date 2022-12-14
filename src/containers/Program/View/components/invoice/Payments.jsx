@@ -32,7 +32,7 @@ const Payments = (props) => {
         }
         try {
             const response = await axios.post(
-              `/organization/${props.organization.id}/program/${props.program.id}/invoice/${payment.invoice_id}/reversepayment`,
+              `/organization/${props.program.organization_id}/program/${props.program.id}/invoice/${payment.invoice_id}/reversepayment`,
                 data
             );
             if( response.status === 200)    {
@@ -61,7 +61,7 @@ const Payments = (props) => {
             }
             try {
                 const response = await axios.post(
-                  `/organization/${props.organization.id}/program/${props.program.id}/payments`,
+                  `/organization/${props.program.organization_id}/program/${props.program.id}/payments`,
                     data
                 );
                 if( response.status === 200)    {
@@ -92,7 +92,7 @@ const Payments = (props) => {
         useEffect( () => {
             // console.log(props)
             if(props?.organization?.id)  {
-                getPayments(props.organization.id, props.program.id)
+                getPayments(props.program.organization_id, props.program.id)
                 .then( res => {
                     // console.log(res)
                     if( res.payment_kinds ) {

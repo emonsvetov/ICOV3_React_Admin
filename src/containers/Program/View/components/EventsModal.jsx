@@ -87,7 +87,7 @@ const Sorting = ({ column }) => (
   </span>
 );
 
-const fetchEventData = async (page, pageSize, pageFilterO = null, pageSortBy, programId) => {
+const fetchEventData = async (page, pageSize, pageFilterO = null, pageSortBy, program) => {
   // const offset = page * pageSize;
   const params = []
   let paramStr = ''
@@ -104,7 +104,7 @@ const fetchEventData = async (page, pageSize, pageFilterO = null, pageSortBy, pr
   }
   try {
       const response = await axios.get(
-      `/organization/${organization.id}/program/${programId}/event/?page=${page}&limit=${pageSize}&${paramStr}`
+      `/organization/${program.organization_id}/program/${program.id}/event/?page=${page}&limit=${pageSize}&${paramStr}`
       );
       // console.log(response)
       if( response.data.length === 0) return {results:[],count:0}
@@ -120,7 +120,7 @@ const fetchEventData = async (page, pageSize, pageFilterO = null, pageSortBy, pr
 };
 
 const RenderEventsData = (props) =>{
-  const {programId, toggle} = props;
+  const {program, toggle} = props;
   const reactTableData = CreateTableData();
   const [filter, setFilter] = useState({ keyword: "" });
 
@@ -151,7 +151,7 @@ const RenderEventsData = (props) =>{
         queryPageSize,
         queryPageFilter,
         queryPageSortBy,
-        programId
+        program
       ),
     {
       keepPreviousData: true,
@@ -354,7 +354,7 @@ const EventsModal = ({
     >
       <ModalBody className="modal-lg">
         <Col md={12} lg={12}>
-        { step === 0 && <TableWrapper programId = {data.id} onStep = { handleStep} />}
+        { step === 0 && <TableWrapper program = {data} onStep = { handleStep} />}
         { step === 1 && <AddEventForm onStep = { handleStep} />}
         { step === 2 && <AddIconForm onStep = { handleStep} />}
         </Col>
@@ -363,10 +363,10 @@ const EventsModal = ({
   );
 };
 
-const TableWrapper = ({ programId, toggle, onStep  }) => {
+const TableWrapper = ({ program, toggle, onStep  }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <RenderEventsData programId = {programId} toggle={toggle} onStep={onStep} />
+      <RenderEventsData program = {program} toggle={toggle} onStep={onStep} />
     </QueryClientProvider>
   );
 };

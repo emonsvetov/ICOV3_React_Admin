@@ -12,7 +12,7 @@ const ViewInvoice = (props) => {
     const [loading, setLoading] = useState(true)
     const [invoice, setInvoice] = useState(null)
     useEffect( () => {
-            getInvoice(props.organization.id, props.program.id, props.invoice.id)
+            getInvoice(props.program.organization_id, props.program.id, props.invoice.id)
             .then( res => {
                 setInvoice(res)
                 setLoading(false)

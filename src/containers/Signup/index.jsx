@@ -15,7 +15,7 @@ const Signup = () => {
 
   const onSubmit = async(values) => {
     // alert("submitted");
-    console.log(values);
+    // console.log(values);
 
   //  try {
   //     const resp = await axios.post('/organization', {"name": values.organization_name});
@@ -53,11 +53,13 @@ const Signup = () => {
     // }
 
     setLoading(true)
+    return;
 
     // const perform = await axios.post('/organization/1/register', values);
     axios.post('/register', values)
     .then( (res) => {
       // console.log(res)
+      // return;
       // console.log(res.status == 200)
       if(res.status == 200)  {
         // localStorage.setItem("authToken", res.data.access_token);

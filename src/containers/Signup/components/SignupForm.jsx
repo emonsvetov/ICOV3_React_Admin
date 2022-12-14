@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Form, Field } from 'react-final-form';
+import { Spinner } from 'reactstrap';
 // import { connect } from 'react-redux';
 import AccountCircleOutlineIcon from 'mdi-react/AccountCircleOutlineIcon';
 import LockOutlineIcon from 'mdi-react/LockOutlineIcon';
@@ -116,7 +117,7 @@ const SignupForm = ({onSubmit, errors, loading}) => {
                     <LockOutlineIcon />
                   </div>
                   <div className="form__form-group-row">
-                    <input type="text" {...input} placeholder="Password" />
+                    <input type="password" {...input} placeholder="Password" />
                     {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                   </div>
               </div>
@@ -133,7 +134,7 @@ const SignupForm = ({onSubmit, errors, loading}) => {
                     <LockOutlineIcon />
                   </div>
                   <div className="form__form-group-row">
-                    <input type="text" {...input} placeholder="Confirm Password" />
+                    <input type="password" {...input} placeholder="Confirm Password" />
                     {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                   </div>
               </div>
@@ -142,6 +143,9 @@ const SignupForm = ({onSubmit, errors, loading}) => {
         </Field>
 
         <button type="submit" className="btn btn-outline-primary account__btn account__btn--small" disabled={loading}>Submit</button>
+        {loading && <div className='text-center w100 mb-3'>
+          <Spinner animation="border" size="sm" variant="warning" />
+        </div>}
         {/* <Link onSubmit={} className="btn btn-outline-primary account__btn account__btn--small" to="/signup">Create Account</Link> */}
 
         <div className="text-center w100"><span className="form__form-group-label">Already have an account ?</span> <Link to="/login">Log In</Link></div>

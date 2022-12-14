@@ -90,8 +90,9 @@ const DataTable = ({organization}) => {
             paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
         }
         try {
+            const {id: organizationId} = organization
             const response = await axios.get(
-            `/organization/${organization.id}/program?page=${page+1}&limit=${pageSize}&${paramStr}`
+            `/organization/${organizationId}/program?page=${page+1}&limit=${pageSize}&${paramStr}`
             );
             // console.log(response)
             if( response.data.length === 0) return {results:[],count:0}
