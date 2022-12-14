@@ -44,7 +44,7 @@ const Forgot = () => {
     })
     .catch( error => {
       // console.log(error.response.data.message);
-      setErrors(error.response.data.message);
+      setErrors(error.response.data);
       setLoading(false)
     })
   }

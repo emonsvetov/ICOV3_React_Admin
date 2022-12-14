@@ -36,7 +36,7 @@ const InvoiceDataTable = (props) =>{
     const RenderActions = ({row}) => {
         return (
             <>
-                <a className='link' onClick={() => onClickViewInvoice(row.original)}>View {row.original.id}</a>
+                <a className='link' onClick={() => onClickViewInvoice(row.original)}>View</a>
             </>
         )
     }

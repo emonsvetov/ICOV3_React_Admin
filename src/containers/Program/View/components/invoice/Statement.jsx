@@ -77,7 +77,7 @@ const StatementTab = (props) => {
                                     <Field name="end_date">
                                         {({ input, meta }) => (
                                             <div className="form__form-group">
-                                                <span className="form__form-group-label">From</span>
+                                                <span className="form__form-group-label">To</span>
                                                 <div className="form__form-group-field">
                                                     <div className="form__form-group-row">
                                                         <input type="date" {...input} placeholder="yyyy-mm-dd" />

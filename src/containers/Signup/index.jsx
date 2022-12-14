@@ -89,7 +89,7 @@ const Signup = () => {
               <h4 className="account__subhead subhead">Create an account to continue</h4>
             </div>
             <SignupForm onSubmit={onSubmit} errors={errors} loading={loading} />
-            <div className="account__or">
+            {/* <div className="account__or">
               <p>Or Easily Using</p>
             </div>
             <div className="account__social">
@@ -103,7 +103,7 @@ const Signup = () => {
                 to="/pages/one"
               ><GooglePlusIcon />
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

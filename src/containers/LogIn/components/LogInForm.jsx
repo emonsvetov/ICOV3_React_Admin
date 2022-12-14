@@ -72,7 +72,7 @@ const LogInForm = () => {
                   <LockOutlineIcon />
                 </div>
                 <div className="form__form-group-row">
-                  <input type="text" {...input} placeholder="Password" />
+                  <input type="password" {...input} placeholder="Password" />
                   {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                 </div>
             </div>
@@ -82,7 +82,7 @@ const LogInForm = () => {
           </div>
         )}
       </Field>
-      <div className="form__form-group">
+      {/* <div className="form__form-group">
         <div className="form__form-group-field">
           <Field
             name="remember_me"
@@ -90,7 +90,7 @@ const LogInForm = () => {
             label="Remember me"
           />
         </div>
-      </div>
+      </div> */}
       <button type="submit" className="btn btn-primary account__btn account__btn--small" disabled={loading}>Log In</button>
       {/* <Link className="btn btn-primary account__btn account__btn--small" to="/pages/one">Sign In</Link> */}
       <Link className="btn btn-outline-primary account__btn account__btn--small" to="/signup">Create Account</Link>

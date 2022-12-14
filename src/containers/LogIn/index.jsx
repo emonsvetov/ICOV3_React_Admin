@@ -20,7 +20,7 @@ const LogIn = () => (
             <h4 className="account__subhead subhead">Log in to continue</h4>
           </div>
           <LogInForm onSubmit />
-          <div className="account__or">
+          {/* <div className="account__or">
             <p>Or Easily Using</p>
           </div>
           <div className="account__social">
@@ -34,7 +34,7 @@ const LogIn = () => (
               to="/pages/one"
             ><GooglePlusIcon />
             </Link>
-          </div>
+          </div> */}
         </div>
     </div>
   </div>

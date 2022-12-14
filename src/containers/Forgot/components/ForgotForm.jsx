@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Form, Field } from 'react-final-form';
 import EmailOutlineIcon from 'mdi-react/EmailOutlineIcon';
 import { Spinner } from 'reactstrap';
+import {ApiErrorMessage} from '@/shared/components/flash'
 
 const ForgotForm = ( {onSubmit, loading, errors} ) => {
 
@@ -37,14 +38,8 @@ const ForgotForm = ( {onSubmit, loading, errors} ) => {
       </div>
       <p className="py-4">Please enter the email address you use to sign in with INCENTCO</p>
 
-      {errors && 
-        <div className="alert alert-danger fade show w100" role="alert">
-          <div className="alert__content">
-            <ul>
-              <li>{errors}</li>
-            </ul>
-          </div>
-        </div>
+      {
+        errors && <ApiErrorMessage className="alert alert-danger fade show w100" errors={errors} />
       }
 
       <Field name="email">
