@@ -31,15 +31,15 @@ const Forgot = () => {
 
   const onSubmitForgotForm = values => {
 
-    // setLoading(true)
+    setLoading(true)
 
     axios.post('/password/forgot', values)
     .then( (res) => {
-      console.log(res)
+      // console.log(res)
       // console.log(res.status == 200)
       if(res.status == 200)  {
         // var t = setTimeout(window.location = '/', 500)
-        // window.location = '/forgot/checkemail'
+        window.location = '/forgot/checkemail'
       }
     })
     .catch( error => {
