@@ -11,7 +11,16 @@ import axios from 'axios'
 
 const StatementTab = (props) => {
 
-    const [filters, setFilters] = useState( {} );
+    let dt = new Date()
+    const offset = dt.getTimezoneOffset()
+    let end_date = new Date(dt.getTime() - (offset*60*1000))
+    end_date =  end_date.toISOString().split('T')[0]
+
+    dt.setMonth(dt.getMonth() - 1)
+    let start_date = new Date(dt.getTime() - (offset*60*1000))
+    start_date =  start_date.toISOString().split('T')[0]
+
+    const [filters, setFilters] = useState( {start_date, end_date} );
     const [loading, setLoading] = useState( false );
     const [statement, setStatement] = useState( null );
 

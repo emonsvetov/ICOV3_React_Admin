@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { Col, Container, Row, Card, CardBody } from 'reactstrap';
 import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
@@ -6,15 +6,15 @@ import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import ProgramsCard from './View/ProgramsCard'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import {isEmpty} from '@/shared/helpers'
+import { isEmpty } from '@/shared/helpers'
 
 const queryClient = new QueryClient()
 
-const ViewUser = ({organization}) => {
-    
+const ViewUser = ({ organization }) => {
+
     // console.log(organization)
 
-    const fetchUser = async ( id ) => {
+    const fetchUser = async (id) => {
         try {
             const response = await axios.get(`/organization/${organization.id}/user/${id}`);
             return response.data;
@@ -29,7 +29,7 @@ const ViewUser = ({organization}) => {
 
     const { isLoading, error, data, isSuccess, remove } = useQuery(
         ['user', id],
-        () => fetchUser( id ),
+        () => fetchUser(id),
         {
             keepPreviousData: false,
             staleTime: Infinity,
@@ -50,7 +50,7 @@ const ViewUser = ({organization}) => {
     if (isLoading) {
         return <p>Loading...</p>;
     }
-    if( isSuccess )   {
+    if (isSuccess) {
         // console.log(data)
         const fullName = `${data.first_name} ${data.last_name}`
         return (
@@ -73,27 +73,27 @@ const ViewUser = ({organization}) => {
                                     <Col md="6" lg="6" xl="6" className="text-right">
                                         <Link className="" to={`/users/edit/${data.id}`}>Edit</Link>
                                     </Col>
-                                    
+
                                 </Row>
                                 <Row>
                                     <Col md="2" lg="2" xl="2" sm="2" className='label'>
-                                        First Name:
+                                        <p>First Name:</p>
                                     </Col>
                                     <Col md="10" lg="10" xl="10" sm="10">
-                                        {data.first_name}
+                                        <p>{data.first_name}</p>
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col md="2" lg="2" xl="2" sm="2" className='label'>
-                                        Last Name:
+                                        <p>Last Name:</p>
                                     </Col>
                                     <Col md="10" lg="10" xl="10" sm="10">
-                                        {data.last_name}
+                                        <p>{data.last_name}</p>
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col md="2" lg="2" xl="2" sm="2" className='label'>
-                                        Roles:
+                                        <p>Roles:</p>
                                     </Col>
                                     <Col md="10" lg="10" xl="10" sm="10">
                                         <RenderUserRoles user={data} />
@@ -101,69 +101,69 @@ const ViewUser = ({organization}) => {
                                 </Row>
                                 <Row>
                                     <Col md="2" lg="2" xl="2" sm="2" className='label'>
-                                        Email:
+                                        <p>Email:</p>
                                     </Col>
                                     <Col md="10" lg="10" xl="10" sm="10">
-                                        {data.email}
+                                        <p>{data.email}</p>
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col md="2" lg="2" xl="2" sm="2" className='label'>
-                                        Phone:
+                                        <p>Phone:</p>
                                     </Col>
                                     <Col md="10" lg="10" xl="10" sm="10">
-                                        {data.phone}
+                                        <p>{data.phone}</p>
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col md="2" lg="2" xl="2" sm="2" className='label'>
-                                        Award Level:
+                                        <p>Award Level:</p>
                                     </Col>
                                     <Col md="10" lg="10" xl="10" sm="10">
-                                        {data.award_level}
+                                        <p>{data.award_level}</p>
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col md="2" lg="2" xl="2" sm="2" className='label'>
-                                        Work Anniversary:
+                                        <p>Work Anniversary:</p>
                                     </Col>
                                     <Col md="10" lg="10" xl="10" sm="10">
-                                        {data.work_anniversary}
+                                        <p>{data.work_anniversary}</p>
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col md="2" lg="2" xl="2" sm="2" className='label'>
-                                        Department / Team:
+                                        <p>Department / Team:</p>
                                     </Col>
                                     <Col md="10" lg="10" xl="10" sm="10">
-                                        {data.division}
+                                        <p>{data.division}</p>
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col md="2" lg="2" xl="2" sm="2" className='label'>
-                                        Birthday:
+                                        <p>Birthday:</p>
                                     </Col>
                                     <Col md="10" lg="10" xl="10" sm="10">
-                                        {data.dob}
+                                        <p>{data.dob}</p>
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col md="2" lg="2" xl="2" sm="2" className='label'>
-                                        Employee Number:
+                                        <p>Employee Number:</p>
                                     </Col>
                                     <Col md="10" lg="10" xl="10" sm="10">
-                                        {data.employee_number}
+                                        <p>{data.employee_number}</p>
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col md="2" lg="2" xl="2" sm="2" className='label'>
-                                        Supervisor ID:
+                                        <p>Supervisor ID:</p>
                                     </Col>
                                     <Col md="10" lg="10" xl="10" sm="10">
-                                        {data.supervisor_employee_number}
+                                        <p>{data.supervisor_employee_number}</p>
                                     </Col>
                                 </Row>
-                                
+
                             </CardBody>
                         </Card>
                     </Col>
@@ -178,19 +178,19 @@ const ViewUser = ({organization}) => {
     }
 }
 
-const RenderUserRoles = ({user}) => {
+const RenderUserRoles = ({ user }) => {
     // console.log(user)
     let rolesHtml = []
-    if( user.roles?.length > 0 )    {
-        user.roles.map( role => {
-            if( !role.is_program_role)  {
+    if (user.roles?.length > 0) {
+        user.roles.map(role => {
+            if (!role.is_program_role) {
                 console.log(role)
                 rolesHtml.push(<li>{role.name}</li>);
             }
         })
-        if( user.programRoles?.length > 0 ) {
-            user.programRoles.map( programRoles => {
-                programRoles.roles.map( programRole => {
+        if (user.programRoles?.length > 0) {
+            user.programRoles.map(programRoles => {
+                programRoles.roles.map(programRole => {
                     rolesHtml.push(<li>{programRole.name} in <a href={`/program/view/${programRoles.id}`}>{programRoles.name}</a></li>);
                 })
             })
@@ -199,7 +199,7 @@ const RenderUserRoles = ({user}) => {
     return rolesHtml;
 }
 
-const Wrapper = ({organization}) => {
+const Wrapper = ({ organization }) => {
     return (
         <QueryClientProvider client={queryClient}>
             {!isEmpty(organization) && <ViewUser organization={organization} />}

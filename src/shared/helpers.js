@@ -335,3 +335,12 @@ export const getFirstDay = () => {
     let date = new Date();
     return new Date(date.getFullYear(), 0, 1)
 }
+
+export const setDefaultTheme = (theme) => {
+    localStorage.setItem('defaultTheme', theme);
+}
+
+export const getDefaultTheme = () => {
+    const defaultTheme = localStorage.getItem('defaultTheme');
+    return defaultTheme ? defaultTheme : 'theme-dark';
+}
