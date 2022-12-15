@@ -65,7 +65,7 @@ const reducer = (state, { type, payload }) => {
 const fetchMockData = () => {
     const data = {
         results: renameChildrenToSubrows(MOCK_DATA),
-        count: 15
+        count: MOCK_DATA.length
     };
     return data;
 };
