@@ -14,6 +14,8 @@ import renderCheckBoxField from '@/shared/components/form/CheckBox';
 import renderSelectField from '@/shared/components/form/Select';
 // import US_STATES from "@/shared/json/usstates.json";
 import getStatesByCountry from "@/service/getStatesByCountry";
+import getProgramStatusList from '@/service/program/getProgramStatusList'
+
 
 import formValidation from "@/shared/validation/program-info";
 import { useEffect } from 'react';
@@ -28,17 +30,28 @@ const prepareForValidation = values => {
 
 const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) => {
     const dispatch = useDispatch();
+    const [statusOptions, setStatusOptions] = React.useState([])
     const [loading, setLoading] = useState(false)
     const [states, setStates] = useState(null)
     var [data, setData] = useState(data)
     useEffect( () => {
-        if( states ) return;
-        getStatesByCountry(223)
-        .then( result => {
-            setStates(labelizeNamedData(result))
-        })
+        if( states )
+        {
+            getStatesByCountry(223)
+            .then( result => {
+                setStates(labelizeNamedData(result))
+            })
+        }
+
+        if( organization?.id )
+        {
+            getProgramStatusList( organization.id )
+            .then( list => {
+                setStatusOptions(labelizeNamedData(list, ["status", "status"]))
+            })
+        }
         // alert(COUNTRY_ID);
-    }, [states])
+    }, [states, organization])
     // console.log(data)
     const onSubmitForm = async (values) => {
         // setLoading(true)
@@ -104,7 +117,7 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
                     factor_valuation: data.factor_valuation,
                     prefix: data.prefix,
                     public_contact_email: data.public_contact_email,
-                    status: {value:data.status, label: PROGRAM_STATUSES.find( stype => stype.value === data.status)?.label},
+                    status: {value: data.status, label: statusOptions.find( stype => stype.value === data.status)?.label},
                     state_id: data.state_id
                 }}
             >
@@ -240,7 +253,7 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
                                             <Field
                                                 name="status"
                                                 component={renderSelectField}
-                                                options={PROGRAM_STATUSES}
+                                                options={statusOptions}
                                             />
                                             {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                                         </div>

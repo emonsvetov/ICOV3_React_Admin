@@ -28,54 +28,7 @@ const DataTable = ({ organization }) => {
         setChangeStatusOpen(prevState => !prevState)
     }
 
-    const fetchUsersData = async (organization, page, pageSize, pageFilter, pageSortBy) => {
-        if (!organization) return;
-        console.log('fecing')
-        let paramStr = ''
-        if (pageFilter.trim().length > 1) {
-            paramStr = `&keyword=${pageFilter}`
-        }
-        if (pageSortBy.length > 0) {
-            const sortParams = pageSortBy[0];
-            const sortyByDir = sortParams.desc ? 'desc' : 'asc'
-            paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
-        }
-        try {
-            const response = await axios.get(
-                `/organization/${organization.id}/user?page=${page + 1}&limit=${pageSize}${paramStr}`
-            );
-            const results = response.data.data;
-            var finalResults = results;
-            if (results) {
-                finalResults = results.map(item => ({
-                    ...item,
-                    name: `${item.first_name} ${item.last_name}` || "",
-                }))
-            }
-            const data = {
-                results: finalResults,
-                count: response.data.total
-            };
-            return data;
-        } catch (e) {
-            throw new Error(`API error:${e?.message}`)
-        }
-    }
-
-    const [keyword, setKeyword] = useState('');
     const [useFilter, setUseFilter] = useState(false);
-    const onClickFilterCallback = (filter) => {
-        if (filter.trim() === "") {
-            alert('Please enter a keyword to search!')
-            return
-        }
-        if (filter === keyword) {
-            alert('No change in search')
-            return
-        }
-        setUseFilter(true)
-        setKeyword(filter)
-    }
 
     const onClickStatus = user => {
         setUser(user);

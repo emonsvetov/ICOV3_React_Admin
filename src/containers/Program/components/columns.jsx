@@ -49,9 +49,7 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "Status",
-        accessor: "status",
-        Footer: "Status",
-        filter: 'equals'
+        accessor: "status_id",
     },
 ]
 
