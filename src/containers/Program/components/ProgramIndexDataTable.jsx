@@ -204,9 +204,14 @@ const DataTable = ({organization}) => {
         }
     );
 
+    // const data = {
+    //     results: renameChildrenToSubrows(response.data.data),
+    //     count: response.data.total
+    // };
+
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
-    // console.log(data)
+    console.log(data)
 
     const {
         getTableProps,
@@ -226,7 +231,7 @@ const DataTable = ({organization}) => {
         state: { pageIndex, pageSize, sortBy }
     } = useTable({
         columns,
-        data: data ? data.results : [],
+        data: data ? renameChildrenToSubrows(data.results) : [],
         initialState: {
             pageIndex: queryPageIndex,
             pageSize: queryPageSize,
