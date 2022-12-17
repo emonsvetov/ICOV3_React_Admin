@@ -9,11 +9,40 @@ const DomainDetails = ( {data, organization} ) => {
     const dispatch = useDispatch()
 
     const [loading, setLoading] = useState(false)
+    const [resultCheckStatus, setResultCheckStatus] = useState(false)
+    const [failResultCheckStatus, setFailResultCheckStatus] = useState(false)
     let [domain, setDomain] = useState(data)
 
     const checkAWSRouteStatus = (e) => {
         e.preventDefault()
-        alert('checking status...')
+        setLoading( true )
+        axios.get(`/organization/${organization.id}/domain/${domain.id}/check-status`)
+          .then( (res) => {
+              setLoading( false )
+              if(res.status === 200)  {
+                  let result = res.data.result;
+                  if (result.length > 0){
+                      let item = result.shift();
+                      let ips = [];
+                      item.ResourceRecords.forEach((resourceRecord) => {
+                          console.log(resourceRecord)
+                          ips.push(resourceRecord.Value);
+                      });
+                      let tmpResultCheckStatus = 'Domain is Registered';
+                      tmpResultCheckStatus += '; Pointed to → ' + ips.join(', ');
+                      setResultCheckStatus(tmpResultCheckStatus);
+                  } else {
+                      let tmpResultCheckStatus = 'Domain is not Registered';
+                      setFailResultCheckStatus(tmpResultCheckStatus);
+                  }
+              }
+          })
+          .catch( error => {
+              console.log(error)
+              setLoading( false )
+              dispatch(sendFlashMessage(JSON.stringify(error.response.data), 'alert-danger'))
+              // throw new Error(`API error:${e?.message}`);
+          })
     }
 
     const onClickDelete = (e) => {
@@ -65,7 +94,15 @@ const DomainDetails = ( {data, organization} ) => {
                                 AWS Route53:
                             </Col>
                             <Col md="8" lg="8" xl="8" sm="8">
-                                <Link to={'#/'} onClick={checkAWSRouteStatus}>Check Status</Link>
+                                {resultCheckStatus &&
+                                  <div style={{color: 'green'}}>{resultCheckStatus}</div>
+                                }
+                                {failResultCheckStatus &&
+                                  <div style={{color: 'red'}}>{failResultCheckStatus}</div>
+                                }
+                                {!resultCheckStatus && !failResultCheckStatus &&
+                                  <Link to={'#/'} onClick={checkAWSRouteStatus}>Check Status</Link>
+                                }
                             </Col>
                         </Row>
                         <Row>
