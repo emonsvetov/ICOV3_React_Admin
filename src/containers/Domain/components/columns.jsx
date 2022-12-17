@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export const COLUMNS = [
     {
-        Header: "#",
+        Header: "ID",
         accessor: "id",
     },
     {
