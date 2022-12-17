@@ -3,14 +3,6 @@ import Select from 'react-select'
 import getProgramStatusList from '@/service/program/getProgramStatusList'
 import {labelizeNamedData} from '@/shared/helpers'
 
-// const statusOptions = [
-//     {'value':'', 'label':'All'},
-//     {'value':'Active', 'label':'Active'},
-//     {'value':'Inactive', 'label':'Inactive'},
-//     {'value':'Pending', 'label':'Pending'},
-//     {'value':'Deleted', 'label':'Deleted'},
-// ]
-
 const ProgramFilter = ({onClickFilterCallback, organization}) => {
     const [statusOptions, setStatusOptions] = React.useState([])
     const [status, setStatus] = React.useState('')
@@ -39,7 +31,7 @@ const ProgramFilter = ({onClickFilterCallback, organization}) => {
         }
     }, [organization])
     const statusPlaceholder = status ? status : 'All'
-    console.log(statusOptions);
+    // console.log(statusOptions);
     return (
         <div className="form__form-group">
             <div className="col-md-4 px-0">

@@ -21,7 +21,6 @@ const DataTable = ({ organization }) => {
     const [trigger, setTrigger] = useState(Math.floor(Date.now() / 1000));
     const [filter, setFilter] = useState({ keyword:'' });
 
-
     const [isChangeStatusOpen, setChangeStatusOpen] = useState(false)
     const [user, setUser] = useState(null)
     const toggleChangeStatus = () => {

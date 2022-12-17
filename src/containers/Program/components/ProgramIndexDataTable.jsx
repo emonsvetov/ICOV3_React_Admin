@@ -211,7 +211,7 @@ const DataTable = ({organization}) => {
 
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
-    console.log(data)
+    // console.log(data)
 
     const {
         getTableProps,
