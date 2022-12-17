@@ -55,7 +55,7 @@ const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
         })
         .catch( error => {
             //console.log(error.response.data);
-            dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))
+            dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger', 'top'))
             setLoading(false)
         })
     }
