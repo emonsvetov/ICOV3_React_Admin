@@ -277,6 +277,14 @@ export const labelizeNamedData = (data, fields = ["id", "name"]) => {
     return newData;
 }
 
+export const labelizeNamedRow = (row, fields = ["id", "name"]) => {
+    if(typeof row[fields[0]] !== 'undefined' && typeof row[fields[1]] !== 'undefined')
+    {
+        return {...row, ...{value: String(row[fields[0]]), label: String(row[fields[1]])}}
+    }
+    return row
+}
+
 export const labelizeRecursive = (programs, depth = 0) => {
     const fields = ["id", "name"];
     let labelizedData = []

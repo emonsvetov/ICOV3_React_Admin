@@ -70,7 +70,7 @@ const DataTable = ({organization}) => {
 
     const [isMoveOpen, setMoveOpen] = useState(false)
     const [isCopyOpen, setCopyOpen] = useState(false)
-    const [filter, setFilter] = useState({status:'', keyword:''});
+    const [filter, setFilter] = useState({orgId: '', status:'', keyword:''});
 
     const [useFilter, setUseFilter] = useState(false);
     // var [data, setData] = useState([]);
@@ -78,14 +78,13 @@ const DataTable = ({organization}) => {
     const [isChangeStatusOpen, setChangeStatusOpen] = useState(false)
     const [program, setProgram] = useState(null)
 
-    const onClickFilterCallback = (status, keyword) => {
-        if(filter.status === status && filter.keyword === keyword)    {
+    const onClickFilterCallback = (status, keyword, orgId) => {
+        if(filter.status === status && filter.keyword === keyword && filter.orgId === orgId)    {
             alert('No change in filters')
             return
         }
-        setFilter({status, keyword});
+        setFilter({status, keyword, orgId});
         setUseFilter(true);
-        // alert(status, keyword)
     }
 
     const onClickDeleteProgram = ( e, program ) => {

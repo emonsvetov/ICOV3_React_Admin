@@ -1,12 +1,21 @@
 import React, {useEffect} from 'react'
 import Select from 'react-select'
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
+
+import getOrganizationList from '@/service/getOrganizationList';
 import getProgramStatusList from '@/service/program/getProgramStatusList'
 import {labelizeNamedData} from '@/shared/helpers'
 
-const ProgramFilter = ({onClickFilterCallback, organization}) => {
+const ProgramFilter = ({onClickFilterCallback, organization, auth}) => {
     const [statusOptions, setStatusOptions] = React.useState([])
     const [status, setStatus] = React.useState('')
+    const [orgOptions, setOrgOptions] = React.useState([])
+    const [org, setOrg] = React.useState('')
     const [keyword, setKeyword] = React.useState('')
+    const onOrgChange = (selectedOption) => {
+        setOrg(selectedOption.value)
+    };
     const onStatusChange = (selectedOption) => {
         setStatus(selectedOption.value)
     };
@@ -14,11 +23,21 @@ const ProgramFilter = ({onClickFilterCallback, organization}) => {
         setKeyword( e.target.value)
     }
     const onClickFilter = () => {
-        onClickFilterCallback(status, keyword)
+        onClickFilterCallback(status, keyword, org)
     }
     useEffect(() => {
         if( organization?.id )
         {
+            if( auth?.isSuperAdmin )
+            {
+                getOrganizationList()
+                .then(list => {
+                    setOrgOptions(
+                        labelizeNamedData(list)
+                    )
+                })
+            }
+
             getProgramStatusList( organization.id )
             .then( list => {
                 setStatusOptions(
@@ -29,24 +48,46 @@ const ProgramFilter = ({onClickFilterCallback, organization}) => {
                 )
             })
         }
-    }, [organization])
+    }, [organization, auth])
     const statusPlaceholder = status ? status : 'All'
-    // console.log(statusOptions);
+    let orgPlaceholder = 'All'
+    if (org) {
+        orgPlaceholder = orgOptions.filter(o => o.value === org).map(o => o.label)
+    }
     return (
         <div className="form__form-group">
-            <div className="col-md-4 px-0">
-                <Select
-                    value={status}
-                    onChange={onStatusChange}
-                    options={statusOptions}
-                    clearable={false}
-                    className="react-select"
-                    placeholder={statusPlaceholder}
-                    classNamePrefix="react-select"
-                />
+            {auth?.isSuperAdmin &&
+            <div className="col-md-3 px-0">
+                <p className="">Organization</p>
+                <div>
+                    <Select
+                        value={org}
+                        onChange={onOrgChange}
+                        options={orgOptions}
+                        clearable={false}
+                        className="react-select"
+                        placeholder={orgPlaceholder}
+                        classNamePrefix="react-select"
+                    />
+                </div>
+            </div>}
+            <div className="col-md-3 px-0">
+                <p className="">Program Status</p>
+                <div>
+                    <Select
+                        value={status}
+                        onChange={onStatusChange}
+                        options={statusOptions}
+                        clearable={false}
+                        className="react-select"
+                        placeholder={statusPlaceholder}
+                        classNamePrefix="react-select"
+                    />
+                </div>
             </div>
-            <div className="col-md-4">
-                <div className="">
+            <div className="col-md-3">
+                <p className="">Keyword</p>
+                <div>
                     <input 
                         value={keyword}
                         onChange={onProgramPhaseChange}
@@ -55,11 +96,15 @@ const ProgramFilter = ({onClickFilterCallback, organization}) => {
                     />
                 </div>
             </div>
-            <div className="col-md-4 d-flex align-items-center max-height-32px pl-1">
-                <span className="text-blue pointer" onClick={onClickFilter}>Filter</span>
+            <div className="col-md-3 pl-0">
+                <p className="">&nbsp;</p>
+                <div className='flex'>
+                    <span className="text-primary pointer btn-sm bordered" onClick={onClickFilter}>Filter</span>
+                </div>
             </div>
         </div>
     )
 }
-
-export default ProgramFilter;
+export default withRouter(connect((state) => ({
+    auth: state.auth
+}))(ProgramFilter));

@@ -8,15 +8,13 @@ import axios from 'axios'
 
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
 import {PROGRAM_TYPES, PROGRAM_STATUSES} from "@/shared/options";
-import {labelizeNamedData} from '@/shared/helpers'
+import {labelizeNamedData, labelizeNamedRow} from '@/shared/helpers'
 
 import renderCheckBoxField from '@/shared/components/form/CheckBox';
 import renderSelectField from '@/shared/components/form/Select';
 // import US_STATES from "@/shared/json/usstates.json";
 import getStatesByCountry from "@/service/getStatesByCountry";
 import getProgramStatusList from '@/service/program/getProgramStatusList'
-
-
 import formValidation from "@/shared/validation/program-info";
 import { useEffect } from 'react';
 
@@ -35,23 +33,20 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
     const [states, setStates] = useState(null)
     var [data, setData] = useState(data)
     useEffect( () => {
-        if( states )
+        if( organization?.id )
         {
             getStatesByCountry(223)
             .then( result => {
                 setStates(labelizeNamedData(result))
             })
-        }
 
-        if( organization?.id )
-        {
             getProgramStatusList( organization.id )
             .then( list => {
-                setStatusOptions(labelizeNamedData(list, ["status", "status"]))
+                setStatusOptions(labelizeNamedData(list, ["id", "status"]))
             })
         }
         // alert(COUNTRY_ID);
-    }, [states, organization])
+    }, [organization])
     // console.log(data)
     const onSubmitForm = async (values) => {
         // setLoading(true)
@@ -66,10 +61,16 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
             values.address.state_id =  values.state_id.value
         }
         const state_id = values["state_id"];
+        const status = values["status"];
+        // console.log(status)
         delete values["state_id"];
+        
         values.type = values?.type?.value
-        values.status = values?.status?.value
+        values.status_id = values?.status?.value
         const savedata  = {...data, ...values}
+
+        delete savedata["status"];
+        
         // console.log(savedata)
         // alert(JSON.stringify(savedata))
         // return;
@@ -78,8 +79,8 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
             // console.log(response)
             
             setLoading(false)
-            console.log(state_id)
-            setData( {...savedata, ...{state_id}} )
+            // console.log(state_id)
+            setData( {...savedata, ...{state_id, status}} )
             if( response.status === 200)    {
                 toggle()
                 dispatch(sendFlashMessage('Program has been updated', 'alert-success', 'top'))
@@ -97,6 +98,8 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
         data.state_id = data.address?.state ? {label: data.address.state.name, value: String(data.address.state.id)} : null;
     }
     // console.log(data.state_id)
+    const statusSelected = labelizeNamedRow(data.status, ['id', 'status'])
+    // console.log(statusSelected)
     return (
     <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
         <Form
@@ -117,7 +120,7 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
                     factor_valuation: data.factor_valuation,
                     prefix: data.prefix,
                     public_contact_email: data.public_contact_email,
-                    status: {value: data.status, label: statusOptions.find( stype => stype.value === data.status)?.label},
+                    status: statusSelected,
                     state_id: data.state_id
                 }}
             >

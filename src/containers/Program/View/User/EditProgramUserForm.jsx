@@ -5,14 +5,14 @@ import formValidation from "@/shared/validation/editprogramuser";
 import axios from 'axios';
 import { fetchUser, fetchRoles, fetchUserProgramRoles } from "@/shared/apiHelper"
 import {unpatchSelect, labelizeNamedData, buildIdArray} from '@/shared/helpers'
-import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
-import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
+import {useDispatch, flashSuccess, flashError} from "@/shared/components/flash"
 import ProgramUserFormFields from './ProgramUserFormFields'
 import arrayMutators from "final-form-arrays"
 
 let config = {
     roleInput:'checkbox',
-    roleField: 'roles'
+    roleField: 'roles',
+    isProgram: true
 }
 
 const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}) => {
@@ -73,12 +73,14 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
             if(res.status == 200)  {
                 toggle()
                 setTrigger( Math.floor(Date.now() / 1000) )
-                dispatch(sendFlashMessage("User Updated successfully!", 'alert-success'))
+                // dispatch(sendFlashMessage(, 'alert-success'))
+                flashSuccess(dispatch, "User Updated successfully!")
             }
         })
         .catch( error => {
             //console.log(error.response.data);
-            dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))
+            // dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))
+            flashError(dispatch, error.response.data)
             setLoading(false)
         })
     }

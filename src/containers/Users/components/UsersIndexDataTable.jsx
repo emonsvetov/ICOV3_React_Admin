@@ -19,12 +19,21 @@ const queryClient = new QueryClient()
 const DataTable = ({ organization }) => {
 
     const [trigger, setTrigger] = useState(Math.floor(Date.now() / 1000));
-    const [filter, setFilter] = useState({ keyword:'' });
+    const [filter, setFilter] = useState({orgId: '', status: '', keyword:'' });
 
     const [isChangeStatusOpen, setChangeStatusOpen] = useState(false)
     const [user, setUser] = useState(null)
     const toggleChangeStatus = () => {
         setChangeStatusOpen(prevState => !prevState)
+    }
+
+    const onClickFilterCallback = (status, keyword, orgId) => {
+        if(filter.status === status && filter.keyword === keyword && filter.orgId === orgId)    {
+            alert('No change in filters')
+            return
+        }
+        setFilter({status, keyword, orgId});
+        setUseFilter(true);
     }
 
     const [useFilter, setUseFilter] = useState(false);
@@ -130,7 +139,7 @@ const DataTable = ({ organization }) => {
                     <form className="form form--horizontal">
                         <div className="form__form-group">
                             <div className="col-md-9 col-lg-9">
-                                <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter} config={{label:'users'}} />
+                                <UsersFilter onClickFilterCallback={onClickFilterCallback} organization={organization} />
                             </div>
                             <div className="col-md-3 col-lg-3 text-right pr-0">
                                 <Link style={{ maxWidth: '200px' }}
@@ -142,9 +151,9 @@ const DataTable = ({ organization }) => {
                         </div>
                     </form>
                     {
-                        typeof data?.count === 'undefined' && <p>No results found</p>
+                        (typeof data?.count === 'undefined' || data.count <= 0) && <p>No results found</p>
                     }
-                    {data?.count &&
+                    {data?.count > 0 &&
                         <>
                             <table {...getTableProps()} className="table">
                                 <thead>
@@ -162,7 +171,6 @@ const DataTable = ({ organization }) => {
                                 <tbody className="table table--bordered" {...getTableBodyProps()}>
                                     {page.map(row => {
                                         prepareRow(row);
-                                        console.log(row)
                                         return (
                                             <tr {...row.getRowProps()}>
                                                 {
