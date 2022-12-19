@@ -52,7 +52,7 @@ const EditUserForm = ({organization}) => {
 
     const getRoles = ( organization ) => {
         setLoading(true)
-        fetchRoles( organization.id )
+        fetchRoles( organization.id, false )
         .then( data => {
             let newData = labelizeNamedData(data);
             // console.log(newData)

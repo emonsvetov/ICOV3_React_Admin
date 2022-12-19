@@ -20,12 +20,17 @@ export const getProgramById = async(organizationId, programId) => {
     }
 };
 
-export const fetchRoles = async(organization_id, getProgramRoles = false ) => {
+export const fetchRoles = async(organization_id, is_program_role = false, is_backend_role = false ) => {
     try {
-        // console.log(is_program_role)
-        const response = await axios.get(
-        `/organization/${organization_id}/role?minimal=true&is_program_role=${getProgramRoles ? 1 : 0}`
-        );
+        let url = `/organization/${organization_id}/role?minimal=true`
+        if( is_program_role )
+        {
+            url += `&is_program_role=1`
+        } else if( is_backend_role )
+        {
+            url += `&is_backend_role=1`
+        }
+        const response = await axios.get(url);
         // console.log(response)
         const results = response.data;
         return results;

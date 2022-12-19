@@ -15,10 +15,11 @@ const CopyProgramModal = ({isOpen, setOpen, toggle, program, theme, rtl}) => {
     const onSubmitCopyForm = values => {
         setLoading(true)
         if( typeof values.create_as_sub !== 'undefined' && values.create_as_sub )   {
-            sourceProgram.program_id = programId
+            sourceProgram.parent_id = programId
         }
-        delete sourceProgram.id
-        sourceProgram.name = values.name
+        delete sourceProgram.id;
+        delete sourceProgram.status;
+        sourceProgram.name = values.name;
         // alert(values.create_as_sub)
         // alert(JSON.stringify(sourceProgram))
         axios.post(`/organization/${sourceProgram.organization_id}/program`, sourceProgram)
