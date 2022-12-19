@@ -16,6 +16,9 @@ const EditDomainForm = ({organization}) => {
     const fetchDomain = async ( id ) => {
         try {
             const response = await axios.get(`/organization/${organization.id}/domain/${id}`);
+            if (response.data && response.data.secret_key){
+                response.data.secret_key = '';
+            }
             return response.data;
         } catch (e) {
             throw new Error(`API error:${e?.message}`);
