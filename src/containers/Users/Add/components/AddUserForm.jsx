@@ -27,7 +27,7 @@ const AddUserForm = ({organization}) => {
 
     const getRoles = ( organization ) => {
         setLoading(true)
-        fetchRoles( organization.id, false, true)
+        fetchRoles( organization.id, null, true)
         .then( data => {
             let newData = labelizeNamedData(data);
             // console.log(newData)

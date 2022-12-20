@@ -33,7 +33,7 @@ const ViewDomain = () => {
         if( isEmpty(organization) ) return;
 
         try {
-            console.log('fetching domain')
+            // console.log('fetching domain')
             const response = await axios.get(`/organization/${organization.id}/domain/${id}`);
             return response.data;
         } catch (e) {

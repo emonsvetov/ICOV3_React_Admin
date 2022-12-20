@@ -10,6 +10,10 @@ const strUserProgramRoles = (user) => {
 }
 export const USERS_COLUMNS = [
     {
+        Header: "ID",
+        accessor: "id",
+    },
+    {
         Header: "Name",
         accessor: "name",
     },

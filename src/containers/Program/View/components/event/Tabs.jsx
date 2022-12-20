@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  Nav, NavItem, NavLink, TabContent, TabPane, Col, Row, ButtonToolbar, Button, 
+  Nav, NavItem, NavLink, TabContent, TabPane 
 } from 'reactstrap';
 import classnames from 'classnames';
 import IconUpload from './IconUpload';
 import EventIcons from './EventIcons';
-import axios from 'axios';
 
 const Tabs = (props) => {
   

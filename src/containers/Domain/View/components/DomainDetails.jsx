@@ -8,6 +8,8 @@ import DomainIPs from './DomainIps'
 const DomainDetails = ( {data, organization} ) => {
     const dispatch = useDispatch()
 
+    const titleDiv = document.querySelector("span.copyLabel")
+
     const [loading, setLoading] = useState(false)
     const [resultCheckStatus, setResultCheckStatus] = useState(false)
     const [failResultCheckStatus, setFailResultCheckStatus] = useState(false)
@@ -62,6 +64,16 @@ const DomainDetails = ( {data, organization} ) => {
             // throw new Error(`API error:${e?.message}`);
         })
     }    
+
+    const onClickCopyKey = (key) => {
+        navigator.clipboard.writeText(key)
+        titleDiv.textContent = 'Copied!'
+        titleDiv.classList = 'px-2 border border-warning text-warning'
+        var t = setTimeout(() => {
+            titleDiv.textContent = 'Copy'
+            titleDiv.classList = 'px-2 link copyLabel border border-primary'
+        }, 3000)
+    }
     
     return(
         <>
@@ -77,7 +89,6 @@ const DomainDetails = ( {data, organization} ) => {
                                 <ButtonToolbar className="flex justify-content-right w100">
                                     <Link className='text-blue' to={`/domains/edit/${domain.id}`}>Edit</Link>
                                     <Link to={`#`} disabled={loading} className="text-danger" onClick={(e) => {if(window.confirm('Are you sure to delete this domain?')){onClickDelete(e)}}}>Delete</Link>
-                                    
                                 </ButtonToolbar>
                             </Col>
                         </Row>
@@ -110,7 +121,8 @@ const DomainDetails = ( {data, organization} ) => {
                                 Secret Key:
                             </Col>
                             <Col md="8" lg="8" xl="8" sm="8">
-                                {domain.secret_key}
+                                <span className='pr-2'>{domain.secret_key}</span>
+                                <span className='px-2 border border-primary link copyLabel' onClick={() => onClickCopyKey(domain.secret_key)}>Copy</span>
                             </Col>
                         </Row>
                         <Row>
