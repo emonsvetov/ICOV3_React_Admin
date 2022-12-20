@@ -9,7 +9,7 @@ import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
 const fetchProgramData = async (organization_id) => {
     try {
         const response = await axios.get(
-        `/organization/${organization_id}/program?sortby=name`
+        `/organization/${organization_id}/program?sortby=name&limit=1000`
         );
         // console.log(response)
         if( response.data.length === 0) return {results:[],count:0}
