@@ -8,7 +8,8 @@ import EditProgramUserForm from './EditProgramUserForm'
 
 const EditProgramUserModal = ({organization, program, userid, isOpen, setOpen, toggle, theme, rtl, setTrigger}) => {
     return (
-        <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
+        <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen}
+               toggle={toggle}>
             {organization?.id && program?.id && <EditProgramUserForm organization={organization} program={program} userid={userid} toggle={toggle} setTrigger={setTrigger} />}
         </Modal>
     )

@@ -87,7 +87,7 @@ const AddSubProgramModal = ({organization, program, isOpen, setOpen, toggle, the
     }
 
     return (
-    <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
+    <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={toggle}>
         <Form 
         onSubmit={onSubmit}
         validate={(values) => validate(values)}

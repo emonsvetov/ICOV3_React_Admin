@@ -31,7 +31,7 @@ const AccountingModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
         }
     }
     return (
-    <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
+    <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={toggle}>
         <Form
         onSubmit={onSubmitForm}
         validate={(values) => formValidation.validateForm(values)}

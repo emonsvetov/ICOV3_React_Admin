@@ -14,7 +14,7 @@ const AddProgramUserModal = ({organization, program, isOpen, setOpen, toggle, th
     };
     if(!organization?.id || !program?.id) return 'Loading...'
     return (
-        <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
+        <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={toggle}>
             <div className="tabs__wrap">
                 <Nav tabs>
                     <NavItem>
