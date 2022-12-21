@@ -103,7 +103,7 @@ const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
         <form className="form" onSubmit={handleSubmit}>
             <Row className='w100'>
                 <Col md="6" lg="6" xl="6">
-                    <h3 className="mb-4">Add User</h3>
+                    <h3 className="mb-4">Add New User to "{program.name}"</h3>
                 </Col>
                 <Col md="6" lg="6" xl="6" className='text-right'>
                     <ButtonToolbar className="modal__footer flex justify-content-right w100">

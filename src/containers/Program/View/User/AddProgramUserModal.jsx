@@ -6,6 +6,7 @@ import classnames from 'classnames';
 
 import { Modal, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 import AddProgramUserForm from './AddProgramUserForm'
+import AssignUser from './AssignUser'
 
 const AddProgramUserModal = ({organization, program, isOpen, setOpen, toggle, theme, rtl, setTrigger}) => {
     const [activeTab, setActiveTab] = useState('1');
@@ -35,12 +36,12 @@ const AddProgramUserModal = ({organization, program, isOpen, setOpen, toggle, th
                     </NavItem>
                     
                 </Nav>
-                <TabContent activeTab={activeTab}>
+                <TabContent activeTab={activeTab} className="p-3">
                     <TabPane tabId="1">
                         <AddProgramUserForm organization={organization} program={program} toggle={toggle} setTrigger={setTrigger} />
                     </TabPane>
                     <TabPane tabId="2">
-                        User Lab
+                        <AssignUser organization={organization} program={program} toggle={toggle} setTrigger={setTrigger} />
                     </TabPane>
                 </TabContent>
                 </div>
