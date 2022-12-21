@@ -119,7 +119,7 @@ const AddSubmerchantModal = ({isOpen, setOpen, toggle, theme, rtl, merchant, org
     }
 
     return (
-    <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
+    <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={toggle}>
         <Form 
             onSubmit={onSubmit}
             validate={validate}

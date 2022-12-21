@@ -111,7 +111,7 @@ const EventsDataModal = ({
     <Modal
       className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`}
       isOpen={isOpen}
-      toggle={() => setOpen(true)}
+      toggle={toggle}
     >
       <ModalBody className="modal-lg">
         <Col md={12} lg={12}>

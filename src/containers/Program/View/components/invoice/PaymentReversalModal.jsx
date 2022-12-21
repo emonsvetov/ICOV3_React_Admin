@@ -23,7 +23,7 @@ const PaymentReversalModal = ({payment, action, isOpen, setOpen, toggle}) => {
         return errors;
     }
     return (
-    <Modal className={`modal-md modal-alert`} isOpen={isOpen} toggle={() => setOpen(true)}>
+    <Modal className={`modal-md modal-alert`} isOpen={isOpen} toggle={toggle}>
 
       <Card className='w-100'>
         <CardHeader tag="h3">

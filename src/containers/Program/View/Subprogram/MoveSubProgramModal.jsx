@@ -93,7 +93,7 @@ const MoveSubProgramModal = ({isOpen, setOpen, toggle, subprogram, organization,
     // console.log(data.results)
     // console.log(exclude)
     return (
-        <Modal className="modal-program" isOpen={isOpen} toggle={() => setOpen(true)}>
+        <Modal className="modal-program" isOpen={isOpen} toggle={toggle}>
             <h3 style={{"fontWeight": 500}}>Move Sub Program "{subprogram.name}" to</h3>
             <ModalBody style={{maxHeight:'600px', overflow:'scroll'}}>
                 <ProgramTreeView data={data} handleSelect={handleSelect} selected={selected} rootNode={false} expandedList={expanded} />

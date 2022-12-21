@@ -65,7 +65,7 @@ const ChangeStatusModal = ({ organization, isOpen, setOpen, toggle, theme, rtl, 
     // console.log(user)
 
     return (
-        <Modal className={`modal-action modal-md ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
+        <Modal className={`modal-action modal-md ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={toggle}>
             <Card className='w-100'>
                 <CardHeader tag="h3">
                     Change Status

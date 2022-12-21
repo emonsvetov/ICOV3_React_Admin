@@ -83,7 +83,7 @@ const MoveProgramModal = ({isOpen, setOpen, toggle, program}) => {
     // console.log(data)
     // console.log(data.results)
     return (
-        <Modal className="modal-program" isOpen={isOpen} toggle={() => setOpen(true)}>
+        <Modal className="modal-program" isOpen={isOpen} toggle={toggle}>
             <ModalHeader>
                 <h3 style={{"fontWeight": 500}}>Move Program to</h3>
             </ModalHeader>

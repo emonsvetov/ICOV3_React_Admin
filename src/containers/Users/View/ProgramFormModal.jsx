@@ -12,7 +12,8 @@ const ProgramFormModal = ({program, roles, programRoles, isOpen, setOpen, toggle
     // console.log(programRoles)
     // var [roles, setRoles] = useState(roles)
     return (
-    <Modal className={`modal-program model-content-center modal-md ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
+    <Modal className={`modal-program model-content-center modal-md ${theme.className} ${rtl.direction}-support`} isOpen={isOpen}
+           toggle={toggle}>
         <ModalBody className='modal-md'>
             <Form
                 onSubmit={cbAddProgram}

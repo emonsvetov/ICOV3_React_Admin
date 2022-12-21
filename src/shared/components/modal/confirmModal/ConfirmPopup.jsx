@@ -18,7 +18,7 @@ const ConfirmPopup = ({message, action, isOpen, setOpen, toggle}) => {
   }
 
   return (
-    <Modal className={`modal-2col modal-md`} isOpen={isOpen} toggle={() => setOpen(true)}>
+    <Modal className={`modal-2col modal-md`} isOpen={isOpen} toggle={toggle}>
 
       <Card className='w-100'>
         <CardHeader tag="h3">
