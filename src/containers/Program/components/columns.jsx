@@ -34,7 +34,7 @@ export const PROGRAM_COLUMNS = [
         ) : null,
     },
     {
-        Header: "#",
+        Header: "ID",
         accessor: "id",
         Footer:"#",
         disableFilters:true,
