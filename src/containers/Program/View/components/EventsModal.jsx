@@ -336,21 +336,21 @@ const EventsModal = ({
   theme,
   rtl,
 }) => {
-  
-  
-  const [step, setStep] = useState(0);  
+
+
+  const [step, setStep] = useState(0);
   var [data, setData] = useState(data)
 
   const handleStep = (step) =>{
     setStep(step);
   }
-  
-  
+
+
   return (
     <Modal
       className={`modal-program-events modal-lg ${theme.className} ${rtl.direction}-support`}
       isOpen={isOpen}
-      toggle={() => setOpen(true)}
+      toggle={toggle}
     >
       <ModalBody className="modal-lg">
         <Col md={12} lg={12}>

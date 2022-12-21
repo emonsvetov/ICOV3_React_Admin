@@ -80,7 +80,7 @@ const MerchantsModal = ({ isOpen, setOpen, toggle, theme, rtl, organization, dat
     <Modal
       className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`}
       isOpen={isOpen}
-      toggle={() => setOpen(true)}
+      toggle={toggle}
     >
       <CloseButton onClick={toggle} />
       <ModalBody className="modal-lg">

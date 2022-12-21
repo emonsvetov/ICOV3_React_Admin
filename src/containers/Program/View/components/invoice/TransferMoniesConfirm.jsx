@@ -35,7 +35,7 @@ const TransferMoniesConfirm = ({programs, amounts, action, isOpen, setOpen, togg
   if( !programs || !amounts) return ''
 
   return (
-    <Modal className={`modal-2col modal-md p-0`} isOpen={isOpen} toggle={() => setOpen(true)}>
+    <Modal className={`modal-2col modal-md p-0`} isOpen={isOpen} toggle={toggle}>
       <Card className='w-100'>
         <CardHeader tag="h3">
           Confirm

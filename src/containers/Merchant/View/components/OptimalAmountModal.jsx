@@ -29,7 +29,7 @@ const OptimalAmountModal = ({merchant, isOpen, setOpen, toggle, theme, rtl, setT
         setLoading(true)
         if( !data )  {
             addValue(values)
-        }   
+        }
         else
         {
             updateValue(values)
@@ -77,8 +77,8 @@ const OptimalAmountModal = ({merchant, isOpen, setOpen, toggle, theme, rtl, setT
     }
 
     return (
-    <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
-        <Form 
+    <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={toggle} >
+        <Form
             onSubmit={onSubmit}
             validate={validate}
             initialValues={data}
@@ -99,8 +99,8 @@ const OptimalAmountModal = ({merchant, isOpen, setOpen, toggle, theme, rtl, setT
                 </Row>
             </ModalHeader>
             <ModalBody className="modal-lg">
-                
-                
+
+
             <Row className='w100'>
                     <Col md={6}>
                         <Field name="denomination">
@@ -115,7 +115,7 @@ const OptimalAmountModal = ({merchant, isOpen, setOpen, toggle, theme, rtl, setT
                                 </div>
                             </div>
                         )}
-                        </Field>  
+                        </Field>
                     </Col>
                     <Col md="6" >
                         <Field name="optimal_value">
@@ -130,10 +130,10 @@ const OptimalAmountModal = ({merchant, isOpen, setOpen, toggle, theme, rtl, setT
                                 </div>
                             </div>
                         )}
-                        </Field>  
+                        </Field>
                     </Col>
                 </Row>
-               
+
             </ModalBody>
             </form>
         )}
@@ -145,7 +145,7 @@ OptimalAmountModal.propTypes = {
     theme: ThemeProps.isRequired,
     rtl: RTLProps.isRequired
 };
-  
+
 export default withRouter(connect((state) => ({
     theme: state.theme,
     rtl: state.rtl

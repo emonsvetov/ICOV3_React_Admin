@@ -57,7 +57,7 @@ const AddCallbackModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
     }
 
     return (
-    <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
+    <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={toggle}>
         <Form 
             onSubmit={onSubmit}
             validate={(values) => formValidation.validateForm(values)}

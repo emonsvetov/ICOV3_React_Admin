@@ -139,7 +139,8 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
     template = patchMediaURL( template, MEDIA_FIELDS )
 
     return (
-    <Modal className={`modal-program programTemplateModal modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
+    <Modal className={`modal-program programTemplateModal modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen}
+           toggle={toggle}>
         <Form
             onSubmit={onSubmitForm}
             validate={validate}

@@ -101,7 +101,7 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
     const statusSelected = labelizeNamedRow(data.status, ['id', 'status'])
     // console.log(statusSelected)
     return (
-    <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
+    <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={toggle}>
         <Form
                 onSubmit={onSubmitForm}
                 validate={(values) => formValidation.validateForm(prepareForValidation(values))}

@@ -44,7 +44,7 @@ const CopyProgramModal = ({isOpen, setOpen, toggle, program, theme, rtl}) => {
     if( !program ) return 'Loading...'
 
     return (
-    <Modal className={`modal-program ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
+    <Modal className={`modal-program ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={toggle}>
         <ModalHeader>
             <h3 style={{"font-weight": 500}}>Copy Program</h3>
         </ModalHeader>
