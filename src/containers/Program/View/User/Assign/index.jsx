@@ -6,7 +6,8 @@ import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter} from "@/shared/apiTableHelper"
-import ChangeStatusModal from "@/containers/Users/components/ChangeStatusModal"
+import { fetchRoles } from "@/shared/apiHelper"
+import AssignRoleModal from "./AssignRoleModal"
 
 import axios from "axios";
 import {
@@ -21,24 +22,37 @@ import { USERS_COLUMNS } from "./columns";
 
 const queryClient = new QueryClient()
 
-const DataTable = ({program, organization}) => {
+const DataTable = ({program, setParentTrigger}) => {
     const [filter, setFilter] = useState({ keyword:'' });
     const [useFilter, setUseFilter] = useState(false);
-    const [trigger, setTrigger] = useState(Math.floor(Date.now() / 1000));
+    const [trigger, setTrigger] = useState(0);
     const [isAssignModalOpen, setAssignModalOpen] = useState(false)
     const [user, setUser] = useState(null)
+
+    const [roles, setRoles] = useState(null) //to be passed to assign model
+
+    useEffect(() => {
+        if(program?.id && roles === null)
+        {
+            fetchRoles(program.organization_id, 1)
+            .then(data => {
+                setRoles(data);
+            })
+        }
+    })
+
     const toggleAssignModal = () => {
         setAssignModalOpen(prevState => !prevState)
     }
     const onClickStatus = user => {
         setUser(user);
-        toggleAssignModal()
+        toggleAssignModal();
     }
 
     const RenderActions = ({row}) => {
         return (
             <>
-                <span onClick={()=>onClickStatus(row.original)} className="link a" >Assign</span>
+                <span onClick={()=>onClickStatus(row.original)} className="link a" >Manage Role</span>
             </>
         )
     }
@@ -97,7 +111,7 @@ const DataTable = ({program, organization}) => {
 
   const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
-//   console.log(data)
+//   console.log(user)
 
   const {
       getTableProps,
@@ -161,7 +175,7 @@ const DataTable = ({program, organization}) => {
                         </div>
                     </div>
                 </form>
-                {user && <ChangeStatusModal isOpen={isAssignModalOpen} setOpen={setAssignModalOpen} toggle={toggleAssignModal} setTrigger={setTrigger} user={user} />}
+                {user && roles && <AssignRoleModal setParentTrigger={setParentTrigger} isOpen={isAssignModalOpen} toggle={toggleAssignModal} setTrigger={setTrigger} user={user} program={program} roles={roles} />}
 
                   <table {...getTableProps()} className="table">
                       <thead>
@@ -268,10 +282,10 @@ const Sorting = ({ column }) => (
   </span>
 );
 
-const TableWrapper = ({program, organization}) => {
+const TableWrapper = ({program, organization, setParentTrigger}) => {
   return (
       <QueryClientProvider client={queryClient}>
-          <DataTable program={program} organization={organization} />
+          <DataTable program={program} organization={organization} setParentTrigger={setParentTrigger} />
       </QueryClientProvider>
   )
 }
@@ -284,14 +298,9 @@ const AssignUserIndex = ({organization, program, setTrigger}) => {
         <Container className="dashboard">
             <Row>
                 <Col md={12}>
-                <h3 className="page-title">Available Users</h3>
-                </Col>
-            </Row>
-            <Row>
-                <Col md={12}>
                     <Card>
                         <CardBody>
-                            {program && organization && <TableWrapper program={program} organization={organization} />}
+                            {program && organization && <TableWrapper program={program} organization={organization} setParentTrigger={setTrigger} />}
                         </CardBody>
                     </Card>
                 </Col>

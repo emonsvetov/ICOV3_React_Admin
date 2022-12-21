@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 const strUserProgramRoles = (user) => {
     let pRoles = []
     if( user?.roles )    {
@@ -6,7 +7,7 @@ const strUserProgramRoles = (user) => {
         }
     }
     // console.log(pRoles)
-    return pRoles.join(', ') || 'NA'
+    return pRoles.join(', ') || '--'
 }
 export const USERS_COLUMNS = [
     {
@@ -16,16 +17,17 @@ export const USERS_COLUMNS = [
     {
         Header: "Name",
         accessor: "name",
+        Cell: ({ row, value }) => { return <Link reloadDocument target={'_blank'} to={`/users/view/${row.original.id}`}>{value}</Link>},
     },
     {
         Header: "Email",
         accessor: "email",
     },
-    // {
-    //     Header: "Role",
-    //     accessor: "role_id",
-    //     Cell: ({ row, value }) => { return strUserProgramRoles(row.original)},
-    // },
+    {
+        Header: "Role in Program",
+        accessor: "role_id",
+        Cell: ({ row, value }) => { return strUserProgramRoles(row.original)},
+    },
     // {
     //     Header: "Status",
     //     accessor: "user_status_id",

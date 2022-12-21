@@ -18,7 +18,7 @@ const queryClient = new QueryClient()
 
 const DataTable = ({ organization }) => {
 
-    const [trigger, setTrigger] = useState(Math.floor(Date.now() / 1000));
+    const [trigger, setTrigger] = useState(0);
     const [filter, setFilter] = useState({orgId: '', status: '', keyword:'' });
 
     const [isChangeStatusOpen, setChangeStatusOpen] = useState(false)

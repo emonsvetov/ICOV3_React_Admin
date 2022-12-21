@@ -36,7 +36,7 @@ const DataTable = ({program, organization}) => {
   
     const [filter, setFilter] = useState({ keyword:'' });
     const [useFilter, setUseFilter] = useState(false);
-    const [trigger, setTrigger] = useState(Math.floor(Date.now() / 1000));
+    const [trigger, setTrigger] = useState(0);
 
     // var [data, setData] = useState([]);
     const [isOpenAdd, setOpenAdd] = useState(false)
@@ -80,7 +80,7 @@ const DataTable = ({program, organization}) => {
         return (
             <>
                 <span onClick={()=>onClickViewUser(row.original.id)} className="link a" >View</span>{' | '}
-                <span onClick={()=>onClickRemoveUser(row.original.id)} className="link a" >Delete</span>
+                <span onClick={()=>onClickRemoveUser(row.original.id)} className="link a" >Unassign</span>
             </>
         )
     }
