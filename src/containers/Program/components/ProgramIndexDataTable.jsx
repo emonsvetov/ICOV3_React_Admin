@@ -147,8 +147,8 @@ const DataTable = ({organization}) => {
     }
 
     const onClickStatus = p => {
-        setProgram(p);
-        toggleChangeStatus()
+      setProgram(p);
+      toggleChangeStatus()
     }
 
     const strShowUserStatus = p => {

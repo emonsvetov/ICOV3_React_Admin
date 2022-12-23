@@ -26,6 +26,7 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth}) => {
         onClickFilterCallback(status, keyword, org)
     }
     useEffect(() => {
+        console.log(organization)
         if( organization?.id )
         {
             if( auth?.isSuperAdmin )

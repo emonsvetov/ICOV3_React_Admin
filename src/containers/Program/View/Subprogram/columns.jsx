@@ -46,7 +46,11 @@ export const PROGRAM_COLUMNS = [
         accessor: "name",
         Footer:"Program Name",
         Cell: ({ row, value }) => { return <Link to={`/program/view/${row.original.id}`}>{value}</Link>},
-    }
+    },
+    {
+        Header: "Status",
+        accessor: "status_id",
+    },
 ]
 
 export const GROUPED_COLUMNS = [
