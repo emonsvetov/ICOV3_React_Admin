@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom'
 import getOrganizationList from '@/service/getOrganizationList';
 import getProgramStatusList from '@/service/program/getProgramStatusList'
 import {labelizeNamedData} from '@/shared/helpers'
+import {Button} from "reactstrap";
 
 const ProgramFilter = ({onClickFilterCallback, organization, auth}) => {
     const [statusOptions, setStatusOptions] = React.useState([])
@@ -22,8 +23,15 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth}) => {
     const onProgramPhaseChange = (e) => {
         setKeyword( e.target.value)
     }
-    const onClickFilter = () => {
-        onClickFilterCallback(status, keyword, org)
+    const onClickFilter = (reset = false) => {
+        if( reset ) {
+            setKeyword('');
+            setOrg('');
+            setStatus('');
+            onClickFilterCallback('', '', '')
+        } else {
+            onClickFilterCallback(status, keyword, org)
+        }
     }
     useEffect(() => {
         console.log(organization)
@@ -100,7 +108,16 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth}) => {
             <div className="col-md-3 pl-0">
                 <p className="">&nbsp;</p>
                 <div className='flex'>
-                    <span className="text-primary pointer btn-sm bordered" onClick={onClickFilter}>Filter</span>
+                    <Button
+                      onClick={()=>onClickFilter()}
+                      className="btn btn-sm btn-primary"
+                      color="#ffffff"
+                    >Filter</Button>
+                    <Button
+                      onClick={()=>onClickFilter(true)}
+                      className="btn btn-sm btn-primary"
+                      color="#ffffff"
+                    >Reset</Button>
                 </div>
             </div>
         </div>

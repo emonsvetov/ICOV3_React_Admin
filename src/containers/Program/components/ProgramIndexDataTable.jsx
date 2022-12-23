@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useMemo} from "react";
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
-// import MOCK_DATA from "./MOCK_DATA.json"
 import { PROGRAM_COLUMNS } from "./columns"
 import SortIcon from 'mdi-react/SortIcon'
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon'
@@ -10,8 +9,6 @@ import DeleteIcon from 'mdi-react/DeleteOutlineIcon'
 import RestoreIcon from 'mdi-react/RestoreIcon'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination'
 import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter} from "@/shared/apiTableHelper"
-// import { GlobalFilter } from "./GlobalFilter"
-// import { StatusFilter } from "./StatusFilter"
 import ProgramFilter  from "./ProgramsFilter"
 import { Link } from 'react-router-dom'
 import axios from 'axios'
@@ -29,41 +26,6 @@ const queryClient = new QueryClient()
 const DataTable = ({organization}) => {
 
     const [trigger, setTrigger] = useState(0);
-
-    // console.log(organization)
-
-    // const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
-    //     // const offset = page * pageSize;
-    //     const params = []
-    //     let paramStr = ''
-    //     if( pageFilterO ) {
-    //         if(pageFilterO.status !== 'undefined' && pageFilterO.status) params.push(`status=${pageFilterO.status}`)
-    //         if(pageFilterO.keyword !== 'undefined' && pageFilterO.keyword) params.push(`keyword=${pageFilterO.keyword}`)
-    //         // console.log(params)
-    //         paramStr = params.join('&')
-    //     }
-    //     if( pageSortBy.length > 0 ) {
-    //         const sortParams = pageSortBy[0];
-    //         const sortyByDir = sortParams.desc ? 'desc' : 'asc'
-    //         paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
-    //     }
-    //     try {
-    //         const {id: organizationId} = organization
-    //         const response = await axios.get(
-    //         `/organization/${organizationId}/program?page=${page+1}&limit=${pageSize}&${paramStr}`
-    //         );
-    //         // console.log(response)
-    //         if( response.data.length === 0) return {results:[],count:0}
-    //         const data = {
-    //             results: renameChildrenToSubrows(response.data.data),
-    //             count: response.data.total
-    //         };
-    //         // console.log(data)
-    //         return data;
-    //     } catch (e) {
-    //         throw new Error(`API error:${e?.message}`);
-    //     }
-    // };
 
     const [movingProgram, setMovingProgram] = useState(null)
     const [copyingProgram, setCopyingProgram] = useState(null)

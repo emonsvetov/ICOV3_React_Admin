@@ -456,7 +456,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                                         value={keyword}
                                         onChange={onKeywordChange}
                                         type="text"
-                                        placeholder={`Search ${options.label} here`}
+                                        placeholder={`Search ${options.label}`}
                                     />
                                 </div>
                             </div>

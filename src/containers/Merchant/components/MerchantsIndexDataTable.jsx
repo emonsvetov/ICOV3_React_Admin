@@ -1,162 +1,65 @@
 import React, {useState, useEffect, useMemo} from "react";
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
-// import MOCK_DATA from "./MOCK_DATA.json";
 import { COLUMNS } from "./columns";
 import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
-// import { GlobalFilter } from "./GlobalFilter";
-// import { StatusFilter } from "./StatusFilter";
 import MerchantsFilter  from "./MerchantsFilter";
 import { Link } from 'react-router-dom';
 import axios from 'axios'
-import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon';
-import ContentCopyIcon from 'mdi-react/ContentCopyIcon';
-// import CopyProgramModal from "./CopyProgramModal";
-// import MoveProgramModal from "./MoveProgramModal";
 import {renameChildrenToSubrows} from '@/shared/helpers'
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import {
+    reducer,
+    useEffectToDispatch,
+    fetchApiData,
+    initialState,
+    TableFilter,
+    Sorting
+} from "@/shared/apiTableHelper"
 
 const queryClient = new QueryClient()
 
-const initialState = {
-    queryPageIndex: 0,
-    queryPageSize: 20,
-    totalCount: 0,
-    queryPageFilter:{},
-    queryPageSortBy: [],
-};
-
-const PAGE_CHANGED = 'PAGE_CHANGED';
-const PAGE_SIZE_CHANGED = 'PAGE_SIZE_CHANGED';
-const PAGE_SORT_CHANGED = 'PAGE_SORT_CHANGED'
-const PAGE_FILTER_CHANGED = 'PAGE_FILTER_CHANGED';
-const TOTAL_COUNT_CHANGED = 'TOTAL_COUNT_CHANGED';
-
-const reducer = (state, { type, payload }) => {
-  switch (type) {
-    case PAGE_CHANGED:
-        return {
-            ...state,
-            queryPageIndex: payload,
-        };
-    case PAGE_SIZE_CHANGED:
-        return {
-            ...state,
-            queryPageSize: payload,
-        };
-    case PAGE_SORT_CHANGED:
-        return {
-            ...state,
-            queryPageSortBy: payload,
-        };
-    case PAGE_FILTER_CHANGED:
-        return {
-            ...state,
-            queryPageFilter: payload,
-        };
-    case TOTAL_COUNT_CHANGED:
-        return {
-            ...state,
-            totalCount: payload,
-        };
-    default:
-      throw new Error(`Unhandled action type: ${type}`);
-  }
-};
-
 const DataTable = ({organization}) => {
 
-    console.log(organization)
-
-    const fetchMerchantData = async (organization, page, pageSize, pageFilterO = null, pageSortBy) => {
-        if( !organization ) return;
-        // const offset = page * pageSize;
-        const params = []
-        let paramStr = ''
-        if( pageFilterO ) {
-            if(pageFilterO.keyword !== 'undefined' && pageFilterO.keyword) params.push(`keyword=${pageFilterO.keyword}`)
-            paramStr = params.join('&')
-        }
-        if( pageSortBy.length > 0 ) {
-            const sortParams = pageSortBy[0];
-            const sortyByDir = sortParams.desc ? 'desc' : 'asc'
-            paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
-        }
-        try {
-            const response = await axios.get(
-            `/organization/${organization.id}/merchant?page=${page+1}&limit=${pageSize}&${paramStr}`
-            );
-            // console.log(response)
-            if( response.data.length === 0) return {results:[],count:0}
-            const data = {
-                results: renameChildrenToSubrows(response.data.data),
-                count: response.data.total
-            };
-            // console.log(data)
-            return data;
-        } catch (e) {
-            throw new Error(`API error:${e?.message}`);
-        }
-    };
-
     const [filter, setFilter] = useState({ keyword:''});
-    // var [data, setData] = useState([]);
+    const [trigger, setTrigger] = useState(0);
+    const [useFilter, setUseFilter] = useState(false);
 
-    const onClickFilterCallback = (keyword) => {
-        // alert(JSON.stringify({status, keyword}))
-        // alert(JSON.stringify(filter))
-        if(filter.keyword === keyword)    {
-            alert('No change in filters')
-            return
-        }
-        setFilter({keyword})
-        // alert(status, keyword)
-    }
-    // const RenderActions = ({row}) => {
-    //     return (
-    //         <>
-    //             <span>
-    //                 View
-    //             </span>
-    //         </>
-    //     )
-    // }
-
-    // let program_columns = [
-    //     ...COLUMNS, 
-    //     ...[{
-    //         Header: "Action",
-    //         accessor: "action",
-    //         Footer: "Action",
-    //         Cell: ({ row }) => <RenderActions row={row} />,
-    //     }]
-    // ]
     let columns = useMemo( () => COLUMNS, [])
 
-    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
-    React.useReducer(reducer, initialState);
+    const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
+      React.useReducer(reducer, initialState);
 
-    const { isLoading, error, data, isSuccess } = useQuery(
-        ['merchants', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
-        () => fetchMerchantData(organization, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
+    const apiUrl = `/organization/${organization.id}/merchant`;
+    const {isLoading, error, data, isSuccess} = useQuery(
+      ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+      () => fetchApiData(
         {
-            keepPreviousData: true,
-            staleTime: Infinity,
+            url: apiUrl,
+            page: queryPageIndex,
+            size: queryPageSize,
+            filter,
+            sortby: queryPageSortBy,
+            trigger: queryTrigger
         }
+      ),
+      {
+          keepPreviousData: true,
+          staleTime: Infinity,
+      }
     );
 
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
-
-    // console.log(data)
 
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
+        footerGroups,
         rows,
         prepareRow,
         page,
@@ -168,59 +71,30 @@ const DataTable = ({organization}) => {
         nextPage,
         canNextPage,
         setPageSize,
-        state: { pageIndex, pageSize, sortBy }
+        state: {pageIndex, pageSize, sortBy}
     } = useTable({
-        columns,
-        data: data ? data.results : [],
-        initialState: {
-            pageIndex: queryPageIndex,
-            pageSize: queryPageSize,
-            sortBy: queryPageSortBy,
-        },
-        manualPagination: true, // Tell the usePagination
-        pageCount: data ? totalPageCount : null,
-        autoResetSortBy: false,
-        autoResetExpanded: false,
-        autoResetPage: false,
-    },
-    useSortBy,
-    useExpanded,
-    usePagination,
-    useResizeColumns,
-    useFlexLayout
+          columns,
+          data: data ? data.results : [],
+          initialState: {
+              pageIndex: queryPageIndex,
+              pageSize: queryPageSize,
+              sortBy: queryPageSortBy,
+          },
+          manualPagination: true, // Tell the usePagination
+          pageCount: data ? totalPageCount : null,
+          autoResetSortBy: false,
+          autoResetExpanded: false,
+          autoResetPage: false,
+      },
+      useSortBy,
+      useExpanded,
+      usePagination,
+      useResizeColumns,
+      useFlexLayout,
     );
-    // const [statusFilterValue, setStatusFilterValue] = useState("");
+
     const manualPageSize = []
-    
-    React.useEffect(() => {
-        dispatch({ type: PAGE_CHANGED, payload: pageIndex });
-    }, [pageIndex]);
-
-    React.useEffect(() => {
-        // alert(PAGE_SIZE_CHANGED)
-        dispatch({ type: PAGE_SIZE_CHANGED, payload: pageSize });
-        gotoPage(0);
-    }, [pageSize, gotoPage]);
-
-    useEffect(() => {
-        dispatch({ type: PAGE_SORT_CHANGED, payload: sortBy });
-        gotoPage(0);
-    }, [sortBy, gotoPage]);
-
-    React.useEffect(() => {
-        // alert(PAGE_FILTER_CHANGED)
-        dispatch({ type: PAGE_FILTER_CHANGED, payload: filter });
-        gotoPage(0);
-    }, [filter, gotoPage]);
-
-    React.useEffect(() => {
-        if (data?.count) {
-            dispatch({
-            type: TOTAL_COUNT_CHANGED,
-            payload: data.count,
-            });
-        }
-    }, [data?.count]);
+    useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
 
     if (error) {
         return <p>Error: {JSON.stringify(error)}</p>;
@@ -236,7 +110,14 @@ const DataTable = ({organization}) => {
                     <form className="form form--horizontal">
                         <div className="form__form-group pb-4">
                             <div className="col-md-9 col-lg-9">
-                                <MerchantsFilter onClickFilterCallback={onClickFilterCallback} />
+                              <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter}
+                                           config={{
+                                             keyword: true,
+                                             label: 'by ID or Name',
+                                             dateRange: false,
+                                             programs: false,
+                                             exportToCsv: false
+                                           }}/>
                             </div>
                             <div className="col-md-3 col-lg-3 text-right pr-0">
                                 <Link style={{maxWidth:'200px'}}
@@ -344,20 +225,6 @@ const DataTable = ({organization}) => {
             </>
     )
 }
-
-const Sorting = ({ column }) => (
-    <span className="react-table__column-header sortable">
-      {column.isSortedDesc === undefined ? (
-        <SortIcon />
-      ) : (
-        <span>
-          {column.isSortedDesc
-            ? <SortAscendingIcon />
-            : <SortDescendingIcon />}
-        </span>
-      )}
-    </span>
-  );
 
 const TableWrapper = ( {organization} ) => {
     if( !organization ) return 'Loading...'

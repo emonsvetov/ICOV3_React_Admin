@@ -4,6 +4,7 @@ export const COLUMNS = [
     {
         Header: "ID",
         accessor: "id",
+        width: 50,
     },
     {
         Header: "Domain Name",
