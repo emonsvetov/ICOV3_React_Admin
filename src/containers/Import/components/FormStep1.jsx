@@ -10,7 +10,6 @@ const FormStep1 = ({config, csvFile, setCsvFile, onclickBack}) => {
       <Field name={config.importFile.name}>
         {({input, meta}) => (
           <div className="form__form-group">
-
             <div className="form__form-group-field flex-column">
               <div className="flex-row form__form-group-field">
                 <div className="flex-column">
@@ -43,10 +42,9 @@ const FormStep1 = ({config, csvFile, setCsvFile, onclickBack}) => {
               <div>&nbsp;</div>
 
               <div className="form__form-group-row flex-row pt-3">
-                <Button className="btn btn-outline-primary btn-sm" color="#ffffff" disabled={1 == 2}
-                        onClick={onclickBack} style={{}}>Back</Button>
-                <Button className="btn btn-primary btn-sm" color="#ffffff" disabled={1 == 2} type="submit"
-                        style={{}}>Upload</Button>
+                {/* <Button className="btn btn-outline-primary btn-sm" color="#ffffff" disabled={1 == 2}
+                        onClick={onclickBack} style={{}}>Back</Button> */}
+                <Button className="btn btn-primary btn-sm" color="#ffffff" disabled={!(csvFile instanceof File)} type="submit">Upload</Button>
               </div>
             </div>
           </div>

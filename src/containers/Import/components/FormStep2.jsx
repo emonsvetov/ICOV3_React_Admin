@@ -6,12 +6,14 @@ import SwitchField from '@/shared/components/form/Switch';
 import Select from "react-select";
 import FormCsvField from "./FormCsvField";
 
-const FormStep2 = ({config, csvFile, setCsvFile, onclickBack}) => {
+const FormStep2 = ({config, csvFile, setCsvFile, onclickBack, importHeaders}) => {
   const [checked, setChecked] = useState(false);
-
+  console.log(importHeaders)
   const switchHandler = () => {
     setChecked(!checked);
   };
+
+  if( !importHeaders ) return 'Loading...'
 
   return (
     <div className="form-step2">
@@ -117,7 +119,7 @@ const FormStep2 = ({config, csvFile, setCsvFile, onclickBack}) => {
         <Row>
           <Col md="12"><h4>Mapping</h4></Col>
         </Row>
-        {config.csvFields.map((field, index) => <div key={index}><FormCsvField { ... {field, config}} /></div>)}
+        {importHeaders.CSVheaders.map((field, index) => <div key={index}><FormCsvField { ... {field, config}} /></div>)}
 
         <br/>
         <div className="form__form-group-field flex-column">
