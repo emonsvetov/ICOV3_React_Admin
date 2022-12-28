@@ -1,7 +1,12 @@
+export const isArray = function(a) {
+  return (!!a) && (a.constructor === Array);
+};
+export const isObject = function(a) {
+  return (!!a) && (a.constructor === Object);
+};
 export const getLabelByCode = (value, list) => {
     return list.find( item => item.value === value)?.label
 }
-
 export const patch4Select = (data, field, list, cb) => {
     // console.log(data[field])
     // console.log(list)
@@ -16,7 +21,6 @@ export const patch4Select = (data, field, list, cb) => {
         }
     }
 }
-
 export const unpatchSelect = (values, fields, renameFields = null) => {
     let clean = {}
     fields.map( (field, i) => {
@@ -352,3 +356,4 @@ export const getDefaultTheme = () => {
     const defaultTheme = localStorage.getItem('defaultTheme');
     return defaultTheme ? defaultTheme : 'theme-dark';
 }
+

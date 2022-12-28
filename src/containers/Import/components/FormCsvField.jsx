@@ -3,7 +3,7 @@ import {Row, Col} from 'reactstrap';
 import {Field} from 'react-final-form';
 import Select from "react-select";
 
-const FormCsvField = ({field, config}) => {
+const FormCsvField = ({field, fieldsToMap}) => {
   return (
     <div>
       <Row>
@@ -11,15 +11,16 @@ const FormCsvField = ({field, config}) => {
           <h5>{field}</h5>
         </Col>
         <Col md="9" lg="7" xl="5" >
-          <Field name={field}>
+          <Field name={`fieldsToMap[${field}]`}>
             {({input, meta}) => (
               <div>
                 <Select
-                  options={config.fieldsToMap}
+                  options={fieldsToMap}
                   clearable={false}
                   className="react-select"
                   classNamePrefix="react-select"
-                  placeholder=" ----- "
+                  placeholder=" - - - "
+                  touchUi={false}
                   {...input}
                 />
                 {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}

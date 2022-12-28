@@ -4,12 +4,13 @@ import {Row, Col, ButtonToolbar, Button} from 'reactstrap';
 import {Field} from 'react-final-form';
 import MuiButton from '@material-ui/core/Button';
 
-const FormStep1 = ({config, csvFile, setCsvFile, onclickBack}) => {
+const FormStep1 = ({config, setStep, csvFile, onSelectCsvFile, onclickBack, onclickNext, importHeaders}) => {
   return (
     <div>
       <Field name={config.importFile.name}>
         {({input, meta}) => (
           <div className="form__form-group">
+            <h4 className='mb-4'>Upload File</h4>
             <div className="form__form-group-field flex-column">
               <div className="flex-row form__form-group-field">
                 <div className="flex-column">
@@ -22,7 +23,7 @@ const FormStep1 = ({config, csvFile, setCsvFile, onclickBack}) => {
                       id='csvFile'
                       {...input}
                       onChange={(e) => {
-                        setCsvFile(e.target.files[0])
+                        onSelectCsvFile(e.target.files[0])
                       }}
                       value={csvFile?.name.file}
                     >
@@ -42,9 +43,11 @@ const FormStep1 = ({config, csvFile, setCsvFile, onclickBack}) => {
               <div>&nbsp;</div>
 
               <div className="form__form-group-row flex-row pt-3">
-                {/* <Button className="btn btn-outline-primary btn-sm" color="#ffffff" disabled={1 == 2}
-                        onClick={onclickBack} style={{}}>Back</Button> */}
+                <Button className="btn btn-outline-primary btn-sm" color="#ffffff" disabled={1 == 2}
+                        onClick={onclickBack} style={{}}>Back</Button>
                 <Button className="btn btn-primary btn-sm" color="#ffffff" disabled={!(csvFile instanceof File)} type="submit">Upload</Button>
+                {(csvFile instanceof File) &&  importHeaders && 
+                <Button className="btn btn-primary btn-sm" color="#ffffff" onClick={onclickNext} style={{}}>Next</Button>}
               </div>
             </div>
           </div>
