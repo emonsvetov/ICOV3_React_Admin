@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col, Spinner, TabContent, TabPane, Nav, NavItem, NavLink } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
 import axios from 'axios'
@@ -10,26 +10,42 @@ import Slider from "@/shared/components/form/Slider"
 import { ColorPicker } from 'material-ui-color';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+// import Select, { SelectChangeEvent } from '@material-ui/core/Select';
+// import MenuItem from '@material-ui/core/MenuItem';
 
 import renderCheckBoxField from '@/shared/components/form/CheckBox';
 import renderSelectField from '@/shared/components/form/Select';
-import US_STATES from "@/shared/json/usstates.json";
+import renderSelectOptionsField from '@/shared/components/form/SelectOptions';
 
 import WYSIWYGEditor from '@/shared/components/form/WYSIWYGEditor'
 import { THEME_FONT_FAMILIES  } from './ThemeData';
+import {SelectOptionsField} from "../../../../shared/components/form/SelectOptions";
 
 const MEDIA_FIELDS = ['small_logo', 'big_logo', 'hero_banner', 'slider_01', 'slider_02', 'slider_03']
+const THEME_IMAGE = {
+    'Original' : `${process.env.PUBLIC_URL}/img/theme/Original.png`,
+    'New' : `${process.env.PUBLIC_URL}/img/theme/New.png`,
+}
+const THEME_OPTIONS = [
+    { value: "Original", label: "Original" },
+    { value: "New", label: "New" },
+];
 
 const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) => {
+    console.log(data);
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
+    const [currentTheme, setCurrentTheme] = useState();
+    const [resetTheme, setResetTheme] = useState(false);
     let [template, setTemplate] = useState(null)
     // console.log(data)
     const onSubmitForm = async (values) => {
+        values.resetTheme = resetTheme;
         values.button_corner = sliderValue;
         values.button_color = selectedColor;
         values.button_bg_color = selectedBGColor;
         values.font_family = fontFamily;
+        values.name = currentTheme;
         // setLoading(true)
         values = unpatchMedia(values, MEDIA_FIELDS)
         // console.log(values)
@@ -89,25 +105,37 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
     };
 
     // Color
-    const [selectedColor, setSelectedColor] = useState('#ffffff');
+    const [selectedColor, setSelectedColor] = useState(null);
     const updateColorHandler = (e, data) => {
         setSelectedColor('#'+e.hex);
     };
 
     // BG Color
-    const [selectedBGColor, setSelectedBGColor] = useState('#ffffff');
+    const [selectedBGColor, setSelectedBGColor] = useState(null);
     const updateBGColorHandler = (e, data) => {
         setSelectedBGColor('#'+e.hex);
     };
 
     // Font Type
-    const [fontFamily, setFontFamily] = useState('Roboto');
+    const [fontFamily, setFontFamily] = useState(null);
     const fontFamilyHandler = (e, data) => {
         setStylePath("https://fonts.googleapis.com/css?family="+data+":100,300,400,500,700,900");
         setFontFamily(data);
     };
 
     const [ stylePath, setStylePath ] = useState("https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900");
+
+    const onSelectTheme = (selectedOption) => {
+        setCurrentTheme(selectedOption.value);
+    };
+
+    useEffect(() => {
+        let [option] = THEME_OPTIONS.filter((item) => item.value === template?.name);
+        if (!option){
+            [option] = THEME_OPTIONS.filter((item) => item.value === 'Original');
+        }
+        setCurrentTheme(option.value);
+    }, [template]);
 
     useEffect(() => {
         var head = document.head;
@@ -172,7 +200,7 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                           })}
                           onClick={() => { togglePan('1'); }}
                         >
-                            General Settings
+                            Theme select
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -183,7 +211,7 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                           })}
                           onClick={() => { togglePan('2'); }}
                         >
-                            Buttons wizard
+                            General Settings
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -194,12 +222,56 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                           })}
                           onClick={() => { togglePan('3'); }}
                         >
+                            Buttons wizard
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                          className={classnames({
+                              active:
+                                currentActiveTab === '4'
+                          })}
+                          onClick={() => { togglePan('4'); }}
+                        >
                             Font styles
                         </NavLink>
                     </NavItem>
                 </Nav>
                 <TabContent activeTab={currentActiveTab}>
                     <TabPane tabId="1">
+                        <Row>
+                            <Col sm="3">
+                                <div className="form__form-group">
+                                    <span className="form__form-group-label thick">Current Theme</span>
+                                    <div className="form__form-group-field flex-column">
+                                        <Field
+                                          name="name"
+                                          component={renderSelectOptionsField}
+                                          options={THEME_OPTIONS}
+                                          fieldValue={currentTheme}
+                                          fieldOnChange={onSelectTheme}
+                                        />
+                                    </div>
+                                    <div>&nbsp;</div>
+                                    <div>&nbsp;</div>
+                                    <Button type="submit" onClick={() => setResetTheme(true) } disabled={loading} className="btn btn-primary" color="#ffffff">
+                                        Reset theme settings to default
+                                    </Button>
+                                </div>
+                            </Col>
+                            <Col sm="9">
+                                <div className="button-result">
+                                    <br/>
+                                    <div
+                                      style={{fontFamily: "'" + fontFamily + "', sans-serif", textAlign: 'left'}}
+                                    >
+                                        <img src={THEME_IMAGE[currentTheme]} className="" alt="" />
+                                    </div>
+                                </div>
+                            </Col>
+                        </Row>
+                    </TabPane>
+                    <TabPane tabId="2">
                         <Row>
                             <Col xs="12" md="3" lg="3">
                                 <div className="form__form-group">
@@ -319,7 +391,7 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                             </Col>
                         </Row>
                     </TabPane>
-                    <TabPane tabId="2">
+                    <TabPane tabId="3">
                         <Row>
                             <Col sm="8">
                                 <div className="form__form-group">
@@ -363,7 +435,7 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                             </Col>
                         </Row>
                     </TabPane>
-                    <TabPane tabId="3">
+                    <TabPane tabId="4">
                         <Row>
                             <Col sm="8">
                                 <div className="form__form-group">
