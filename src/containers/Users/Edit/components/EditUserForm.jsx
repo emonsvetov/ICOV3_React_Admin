@@ -38,6 +38,7 @@ const EditUserForm = ({organization}) => {
         if(organization)    {
             fetchUser(organization.id, id)
             .then( data => {
+                data.avatar = null;
                 setUser(data);
                 setLoading(false)
             })
