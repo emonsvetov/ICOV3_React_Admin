@@ -105,19 +105,19 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
     };
 
     // Color
-    const [selectedColor, setSelectedColor] = useState('#ffffff');
+    const [selectedColor, setSelectedColor] = useState(null);
     const updateColorHandler = (e, data) => {
         setSelectedColor('#'+e.hex);
     };
 
     // BG Color
-    const [selectedBGColor, setSelectedBGColor] = useState('#ffffff');
+    const [selectedBGColor, setSelectedBGColor] = useState(null);
     const updateBGColorHandler = (e, data) => {
         setSelectedBGColor('#'+e.hex);
     };
 
     // Font Type
-    const [fontFamily, setFontFamily] = useState('Roboto');
+    const [fontFamily, setFontFamily] = useState(null);
     const fontFamilyHandler = (e, data) => {
         setStylePath("https://fonts.googleapis.com/css?family="+data+":100,300,400,500,700,900");
         setFontFamily(data);
@@ -130,12 +130,11 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
     };
 
     useEffect(() => {
-        if (template) {
-            let [option] = THEME_OPTIONS.filter((item) => item.value === template.name);
-            if (option){
-                setCurrentTheme(option.value);
-            }
+        let [option] = THEME_OPTIONS.filter((item) => item.value === template?.name);
+        if (!option){
+            [option] = THEME_OPTIONS.filter((item) => item.value === 'Original');
         }
+        setCurrentTheme(option.value);
     }, [template]);
 
     useEffect(() => {
