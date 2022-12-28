@@ -1,12 +1,33 @@
 const ApiErrorMessage = ({errors, className}) => {
     className = 'apiError-wrap form-error mt-0' + (className ? ' ' + className : '')
-    if(!errors?.errors){
-        errors.errors = errors.message; //sometimes there is not errors but just a message!
+    let errorObj = null;
+    if( typeof errors === "string" )
+    {
+      errorObj = errors; //just a message!
+    }
+    else if(typeof errors === "object")
+    {
+        if(errors.hasOwnProperty("errors"))
+        {
+          errorObj = errors.errors;
+        }
+        else if(errors.hasOwnProperty("message"))
+        {
+          errorObj = errors.message;
+        }
+        else 
+        {
+          errorObj = errors;
+        }
+    }
+    if( !errorObj )
+    {
+      errorObj = "ApiErrorMessage: Undefined error";
     }
     return (
         <div className={className}>
-            {typeof errors.errors === 'object' && <List errors={errors.errors} />}
-            {typeof errors.errors === 'string' && <span>{errors.errors}</span>}
+            {typeof errorObj === 'object' && <List errors={errorObj} />}
+            {typeof errorObj === 'string' && <span>{errorObj}</span>}
         </div>
     )
 }
