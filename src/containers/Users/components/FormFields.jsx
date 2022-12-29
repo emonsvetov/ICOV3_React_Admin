@@ -221,7 +221,7 @@ const FormFields = ({form, values, submitting, pristine, config = {
                             <span className="form__form-group-label">Password</span>
                             <div className="form__form-group-field">
                                 <div className="form__form-group-row">
-                                    <input type="text" {...input} placeholder="password" />
+                                    <input type="password" {...input} placeholder="password" />
                                     {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                                 </div>
                             </div>
@@ -236,7 +236,7 @@ const FormFields = ({form, values, submitting, pristine, config = {
                             <span className="form__form-group-label">Confirm Password</span>
                             <div className="form__form-group-field">
                                 <div className="form__form-group-row">
-                                    <input type="text" {...input} placeholder="confirm password" />
+                                    <input type="password" {...input} placeholder="confirm password" />
                                     {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                                 </div>
                             </div>

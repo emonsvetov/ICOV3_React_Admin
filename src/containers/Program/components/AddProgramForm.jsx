@@ -32,7 +32,6 @@ const AddProgramForm = ( {program, organization} ) => {
 
         // alert(JSON.stringify(values))
         // return
-        
 
         setLoading(true)
         axios.post(`/organization/${organization_id}/program`, values)
@@ -113,7 +112,7 @@ const AddProgramForm = ( {program, organization} ) => {
             </Row>
         </div>
 
-        <button type="submit" className="btn btn-primary account__btn account__btn--small" disabled={loading}>Create Program</button>
+        <button type="submit" className="btn btn-primary account__btn account__btn--small" disabled={loading || pristine || !(values.name && values.type)}>Create Program</button>
       </form>
     )}
   </Form>
