@@ -26,6 +26,7 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
         getRoles(program.organization_id);
         fetchUser(program.organization_id, userid)
         .then( data => {
+            data.avatar = null;
             setUser(data);
             setLoading(false)
         })
