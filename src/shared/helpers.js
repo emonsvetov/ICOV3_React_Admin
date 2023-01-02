@@ -4,11 +4,7 @@ export const isArray = function(a) {
 export const isObject = function(a) {
   return (!!a) && (a.constructor === Object);
 };
-export const getLabelByCode = (value, list) => {
-    return list.find( item => item.value === value)?.label
-}
 export const patch4Select = (data, field, list, cb) => {
-    // console.log(data[field])
     // console.log(list)
     if( typeof data[field] === 'object') return data //in case it is already patched!
     return {
@@ -16,10 +12,13 @@ export const patch4Select = (data, field, list, cb) => {
         ...{
             [field]: {
                 label: typeof cb === 'function' ? cb(data[field], list) : getLabelByCode(data[field], list),
-                value: data[field]
+                value: String(data[field])
             }
         }
     }
+}
+export const getLabelByCode = (value, list) => {
+    return list.find( item => String(item.value) === String(value) )?.label
 }
 export const unpatchSelect = (values, fields, renameFields = null) => {
     let clean = {}

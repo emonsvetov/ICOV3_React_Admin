@@ -96,7 +96,7 @@ const DomainProgramsDataTable = ( {domain, organization, trigger, setTrigger, se
             const response = await axios.get(
             `/organization/${organization.id}/domain/${domain.id}/program?page=${page}&limit=${pageSize}&${paramStr}`
             );
-            console.log(response)
+            // console.log(response)
             if( response.data.length === 0) return {results:[],count:0}
             const data = {
                 results: renameChildrenToSubrows(response.data.data),

@@ -10,10 +10,10 @@ import renderToggleButtonField from "@/shared/components/form/ToggleButton";
 import renderSelectField from '@/shared/components/form/Select'
 import {fetchEventTypes, fetchEmailTemplates} from '@/shared/apiHelper'
 import {labelizeNamedData} from '@/shared/helpers'
-import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
-import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
+import { useDispatch, flashSuccess, flashError } from "@/shared/components/flash"
 import axios from "axios";
 import Tabs from "./Tabs";
+import{makeFormData} from './common'
 
 const AddEventForm = ({onStep, organization, program}) => {
   const dispatch = useDispatch()
@@ -63,52 +63,8 @@ const AddEventForm = ({onStep, organization, program}) => {
   }, [])
 
   const onSubmit = (values) => {
-    let eventData = {};
-    // Object.assign(eventData, values);
-    
-    eventData["organization_id"] = program.organization_id;
-    eventData["program_id"] = program.id;
-
-    let {
-      name,
-      enable,
-      max_awardable_amount,
-      post_to_social_wall,
-      message,
-      award_message_editable,
-      event_icon_id,
-      event_type_id,
-      template_name,
-      email_template
-    } = values;
-
-    // console.log(eventType)
-    // return
-
-    eventData.name = name;
-    eventData.max_awardable_amount = max_awardable_amount;
-    if( post_to_social_wall ) {
-      eventData.post_to_social_wall = post_to_social_wall;
-    }
-    if( award_message_editable ) {
-      eventData.award_message_editable = award_message_editable;
-    }    
-    
-    eventData.enable = enable ? 1 : 0;
-    
-    eventData.message = message;
-    // eventData.event_icon_id = icon.id;
-    eventData.event_icon_id = event_icon_id;
-    eventData.include_in_budget = 1;
-
-    //static
-    eventData.event_type_id = event_type_id.value;
-
-    //template
-    eventData.template_name = template_name;
-    eventData.email_template = email_template;
-    
-    // console.log(eventData)
+    const eventData = makeFormData(program, values)
+    console.log(eventData)
     // return
     
     axios
@@ -121,7 +77,7 @@ const AddEventForm = ({onStep, organization, program}) => {
         }
       })
       .catch((err) => {
-        dispatch(sendFlashMessage(<ApiErrorMessage errors={err.response.data} />, 'alert-danger', 'top'))
+        flashError(dispatch, err.response.data)
         setLoading(false);
       });
   };

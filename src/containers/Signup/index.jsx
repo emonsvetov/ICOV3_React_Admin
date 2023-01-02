@@ -53,7 +53,7 @@ const Signup = () => {
     // }
 
     setLoading(true)
-    return;
+    // return;
 
     // const perform = await axios.post('/organization/1/register', values);
     axios.post('/register', values)
