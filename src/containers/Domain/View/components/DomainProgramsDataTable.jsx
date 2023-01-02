@@ -152,8 +152,6 @@ const DomainProgramsDataTable = ( {domain, organization, trigger, setTrigger, se
                     <Link to="#" onClick={() => onClickRemove(row.original.id)} disabled={loading}>Remove </Link>
                     <span style={{width:'15px', display: 'inline-block'}}></span>
                     <Link  to="#" onClick={() => {alert(`Generating...`)}}>Generate Configration </Link>
-                    <span style={{width:'15px', display: 'inline-block'}}></span>
-                    <Link  to="#" onClick={() => {alert(`Downloading...`)}}>Download </Link>
                 </span>
             </>
         )
