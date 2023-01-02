@@ -2,10 +2,16 @@ import React, {useState} from 'react';
 import { Row, Col } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
 import renderRadioButtonField from '@/shared/components/form/RadioButton';
+import CheckboxField from '@/shared/components/form/CheckboxField';
 import formValidation from "@/shared/validation/program-add";
 import axios from 'axios';
 
 const AddProgramForm = ( {program, organization} ) => {
+
+    const hasValidValues = values => {
+      if( (values?.name && values.name.trim() !== "") && values.type && values.setup_fee) return true;
+      return false;
+    }
 
     const [errors, setErrors] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -20,12 +26,12 @@ const AddProgramForm = ( {program, organization} ) => {
         // return;
         values = {...values, 
             ...{
-                setup_fee: 100,
-                is_pay_in_advance: 1, 
-                invoice_for_awards: 0,
-                is_add_default_merchants: 1,
+                // setup_fee: 100,
+                // is_pay_in_advance: 1, 
+                // invoice_for_awards: 0,
+                // is_add_default_merchants: 1,
                 parent_id: program ? program.id : null,
-                factor_valuation: 1,
+                factor_valuation: 40,
                 is_demo: 0
             }
         }
@@ -57,7 +63,11 @@ const AddProgramForm = ( {program, organization} ) => {
         onSubmit={onSubmitAddProgram}
         validate={(values) => formValidation.validateForm(values)}
         initialValues={{
-            name: program ? program.name + ' copy' : ''
+            name: program ? program.name + ' copy' : '',
+            setup_fee: 100,
+            is_pay_in_advance: false, 
+            invoice_for_awards: false,
+            is_add_default_merchants: false
         }}
     >
     {({ handleSubmit, form, submitting, pristine, values }) => (
@@ -112,7 +122,46 @@ const AddProgramForm = ( {program, organization} ) => {
             </Row>
         </div>
 
-        <button type="submit" className="btn btn-primary account__btn account__btn--small" disabled={loading || pristine || !(values.name && values.type)}>Create Program</button>
+        <Field name="setup_fee">
+        {({ input, meta }) => (
+            <div className="form__form-group">
+                <span className="form__form-group-label">Setup Fee</span>
+                <div className="form__form-group-field">
+                    <div className="form__form-group-row">
+                        <input type="text" {...input} placeholder="Setup Fee" />
+                        {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                    </div>
+                </div>
+            </div>
+        )}
+        </Field>
+        <Row className='w100'>
+          <Col md="6" lg="6" xl="6">
+            <div className="form__form-group">
+                <CheckboxField 
+                    name="is_pay_in_advance"
+                    label="Pay in Advance"
+                />
+            </div>
+          </Col>
+          <Col md="6" lg="6" xl="6">
+            <div className="form__form-group">
+                <CheckboxField 
+                    name="invoice_for_awards"
+                    label="Invoice for awards"
+                />
+            </div>
+          </Col>
+        </Row>
+
+        <div className="form__form-group">
+            <CheckboxField 
+                name="is_add_default_merchants"
+                label="Add default merchants to program"
+            />
+        </div>
+
+        <button type="submit" className="btn btn-primary account__btn account__btn--small" disabled={loading || pristine || !hasValidValues(values)}>Create Program</button>
       </form>
     )}
   </Form>

@@ -66,7 +66,7 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth}) => {
     return (
         <div className="form__form-group">
             {auth?.isSuperAdmin &&
-            <div className="col-md-3 px-0">
+            <div className="col-md-4 px-0 pr-3">
                 <p className="">Organization</p>
                 <div>
                     <Select
@@ -80,7 +80,7 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth}) => {
                     />
                 </div>
             </div>}
-            <div className="col-md-3 px-0">
+            <div className="col-md-4 px-0">
                 <p className="">Program Status</p>
                 <div>
                     <Select
@@ -94,7 +94,7 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth}) => {
                     />
                 </div>
             </div>
-            <div className="col-md-3">
+            <div className="col-md-4">
                 <p className="">Keyword</p>
                 <div>
                     <input 
@@ -105,7 +105,7 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth}) => {
                     />
                 </div>
             </div>
-            <div className="col-md-3 pl-0">
+            <div className="col-md-4 pl-0">
                 <p className="">&nbsp;</p>
                 <div className='flex'>
                     <Button
