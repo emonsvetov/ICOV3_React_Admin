@@ -8,6 +8,8 @@ import {
 import renderDropZoneMultipleField from '@/shared/components/form/DropZoneMultiple';
 import {ORGANIZATION_ID} from '../../../../App/auth';
 import axios from 'axios';
+import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
+import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -24,6 +26,7 @@ const IconUpload = ({ setIcons, toggle, onCancel }) => {
 
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
+  const dispatch = useDispatch()
 
   function handleUpload(values){
 
@@ -34,7 +37,7 @@ const IconUpload = ({ setIcons, toggle, onCancel }) => {
     }
         
     values.files.forEach(element => {
-        data.append('icon[]', element)    
+        data.append('image[]', element)
     });
     setLoading(true)
     axios
@@ -54,7 +57,7 @@ const IconUpload = ({ setIcons, toggle, onCancel }) => {
       }
     })
     .catch((error) => {
-      setError(error.response.data.errors);
+      dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger', 'top'))
       setLoading(false);
     });
   }
@@ -72,10 +75,13 @@ const IconUpload = ({ setIcons, toggle, onCancel }) => {
           <Form onSubmit={onSubmit}>
             {({ handleSubmit, form }) => (
               <form className="form" onSubmit={handleSubmit}>
+                <p>
+                  The images should be jpg, jpeg, gif, png or ico file format with a maximum size of 5 Mb.
+                </p>
+
                 <Field
                   name="files"
                   component={renderDropZoneMultipleField}
-                  
                 />
                 <ButtonToolbar className="form__button-toolbar justify-content-center w100">
                   <Button color="primary" type="submit" disabled={loading}>Submit</Button>
