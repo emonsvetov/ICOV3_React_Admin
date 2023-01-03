@@ -7,9 +7,6 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
 const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
-  const handleHideSidebar = () => {
-    onClick();
-  }
 
   if( !auth ) return 'Loading...'
 

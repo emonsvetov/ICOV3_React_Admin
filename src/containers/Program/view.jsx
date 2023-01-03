@@ -193,7 +193,7 @@ const ProgramView = ( {organization} ) => {
                 </CardBody>
             </Card>
         </Col>
-        <Col md="6" lg="4" xl="4">
+        <Col md="4" lg="4" xl="4">
             <Card>
                 <CardBody>
                     <Row onClick={()=>{history.push(`/program/${id}/subprograms`)}}>
@@ -210,7 +210,7 @@ const ProgramView = ( {organization} ) => {
         </Col>
       </Row>
       <Row>
-        <Col md="6" lg="4" xl="4">
+        <Col md="4" lg="4" xl="4">
             <Card>
                 <CardBody>
                     <Row>
@@ -230,7 +230,7 @@ const ProgramView = ( {organization} ) => {
                 </CardBody>
             </Card>
         </Col>
-        <Col md="6" lg="4" xl="4">
+        <Col md="4" lg="4" xl="4">
             <Card>
                 <CardBody>
                     <Row onClick={()=>{toggle('themesettings')}}>
@@ -240,6 +240,21 @@ const ProgramView = ( {organization} ) => {
                         <Col md={9} className='col-right pl-0'>
                             <h5>Theme Settings</h5>
                             <p>Theme/template related settings</p>
+                        </Col>
+                    </Row>
+                </CardBody>
+            </Card>
+        </Col>
+        <Col md="4" lg="4" xl="4">
+            <Card>
+                <CardBody>
+                    <Row onClick={()=>{toggle('emailtemplate')}}>
+                        <Col md={3} className='col-left'>
+                            <img src={EventsIcon} className="card-img-top" alt="Email Templates" />
+                        </Col>
+                        <Col md={9} className='col-right pl-0'>
+                            <h5>Email Templates</h5>
+                            <p>Manage Program's Email Templates</p>
                         </Col>
                     </Row>
                 </CardBody>

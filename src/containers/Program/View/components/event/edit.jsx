@@ -15,7 +15,7 @@ import renderSelectField from '@/shared/components/form/Select'
 import Tabs from "./Tabs";
 import { fetchEventTypes, fetchEmailTemplates } from '@/shared/apiHelper'
 import { labelizeNamedData, patch4Select } from '@/shared/helpers'
-import{makeFormData} from './common'
+import { makeFormData } from './common'
 
 const fetchEvent = async (oId, pId, eId) => {
   try {
@@ -70,13 +70,17 @@ const Edit = ({ organization }) => {
       .then(evtypes => {
         setEventTypes(labelizeNamedData(evtypes))
       })
-    fetchEmailTemplates('program_event')
-      .then(res => {
-        // console.log(res)
-        setEmailTemplates(labelizeNamedData(res))
-        setTemplateContents(res)
-      })
   }, [])
+  useEffect(() => {
+    if (program?.id) {
+      fetchEmailTemplates(program.organization_id, program.id, 'program_event')
+        .then(res => {
+          // console.log(res)
+          setEmailTemplates(labelizeNamedData(res))
+          setTemplateContents(res)
+        })
+    }
+  }, [program])
 
   useEffect(() => {
     if (organization && programId) {
@@ -98,18 +102,18 @@ const Edit = ({ organization }) => {
   let history = useHistory();
 
   const onSubmit = (values) => {
-    
+
     const eventData = makeFormData(program, values)
 
     //template
 
-    console.log(eventData)
-    return
+    // console.log(eventData)
+    // return
 
     axios
       .put(`/organization/${program.organization_id}/program/${programId}/event/${eventId}`, eventData)
       .then((res) => {
-        //   console.log(res)
+        console.log(res)
         if (res.status == 200) {
           flashSuccess(dispatch, "Event saved!")
           // onStep(0);
@@ -161,19 +165,17 @@ const Edit = ({ organization }) => {
     const targetTemplateName = state.fields["template_name"];
     const v = field.value
 
-    if( v && templateContents.length > 0 )
-    {
-      const template = templateContents.find( current => String(current.id) === String(v) )
-      if( template && template?.id )
-      {
-        targetEmailTemplate.change( template.content );
-        targetTemplateName.change( template.name );
+    if (v && templateContents.length > 0) {
+      const template = templateContents.find(current => String(current.id) === String(v))
+      if (template && template?.id) {
+        targetEmailTemplate.change(template.content);
+        targetTemplateName.change(template.name);
         return;
       }
     }
-    
-    targetEmailTemplate.change( "" );
-    targetTemplateName.change( "" );
+
+    targetEmailTemplate.change("");
+    targetTemplateName.change("");
   }
 
   const onChangeAwardValue = ([field], state, { setIn, changeValue }) => {
@@ -197,21 +199,18 @@ const Edit = ({ organization }) => {
   // console.log(emailTemplates)
   let emailTemplate = emailTemplates.length > 0 ? emailTemplates[0] : null
   let templateContent = templateContents.length > 0 ? templateContents[0] : null
-  if( event.email_template_id )
-  {
-    if(emailTemplates.length > 0)
-    {
-      emailTemplate = emailTemplates.find( template => String(template.value) === String(event.email_template_id))
+  if (event.email_template_id) {
+    if (emailTemplates.length > 0) {
+      emailTemplate = emailTemplates.find(template => String(template.value) === String(event.email_template_id))
     }
 
-    if(templateContents.length > 0)
-    {
-      templateContent = templateContents.find( current => String(current.id) === String(event.email_template_id) )
+    if (templateContents.length > 0) {
+      templateContent = templateContents.find(current => String(current.id) === String(event.email_template_id))
     }
   }
 
   event.awarding_points = parseFloat(event.max_awardable_amount) * parseInt(program.factor_valuation)
-  
+
   // console.log(emailTemplate)
 
   if (event) {
@@ -489,14 +488,14 @@ const Edit = ({ organization }) => {
                                       </div>
                                     )}
                                   </Field> */}
-                                  <Field 
+                                  <Field
                                     name="email_template_id"
                                     options={emailTemplates}
                                     component={renderSelectField}
-                                    initialValue = {emailTemplate} 
+                                    initialValue={emailTemplate}
                                     parse={value => {
-                                        form.mutators.onChangeEmailTemplate(value)
-                                        return value;
+                                      form.mutators.onChangeEmailTemplate(value)
+                                      return value;
                                     }}
                                   />
                                 </div>

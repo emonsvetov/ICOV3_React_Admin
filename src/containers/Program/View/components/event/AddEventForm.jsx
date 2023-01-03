@@ -48,19 +48,22 @@ const AddEventForm = ({onStep, organization, program}) => {
     onStep(2);
   };
 
-  useEffect( () => {
+  useEffect(() => {
     fetchEventTypes()
-    .then( evtypes => {
-      // console.log(evtypes)
-      setEventTypes(labelizeNamedData(evtypes))
-    })
-
-    fetchEmailTemplates('program_event')
-    .then( res => {
-      setEmailTemplates(labelizeNamedData(res))
-      setTemplateContents(res)
-    })
+      .then(evtypes => {
+        setEventTypes(labelizeNamedData(evtypes))
+      })
   }, [])
+  useEffect(() => {
+    if (program?.id) {
+      fetchEmailTemplates(program.organization_id, program.id, 'program_event')
+        .then(res => {
+          // console.log(res)
+          setEmailTemplates(labelizeNamedData(res))
+          setTemplateContents(res)
+        })
+    }
+  }, [program])
 
   const onSubmit = (values) => {
     const eventData = makeFormData(program, values)

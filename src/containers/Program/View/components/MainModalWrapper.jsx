@@ -12,7 +12,7 @@ import EngagementModal from './EngagementModal';
 import AddProgramModal from './AddProgramModal';
 // import EventsModal from './EventsModal';
 import EventsModal from '../components/event/EventsDataModal';
-// import SubProgramsModal from './subprogram/SubProgramsModal'
+import EmailTemplateModal from '../EmailTemplate/IndexDataModal'
 
 const MainModalWrapper = ({organization, data, name, isOpen, setOpen, toggle, theme, rtl}) => {
     const props = {
@@ -51,6 +51,9 @@ const MainModalWrapper = ({organization, data, name, isOpen, setOpen, toggle, th
         }
         {
             name==='themesettings' && <ThemeSettingsModal {...props} />
+        }
+        {
+            name==='emailtemplate' && <EmailTemplateModal {...props} />
         }
         </>
     )
