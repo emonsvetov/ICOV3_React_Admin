@@ -5,35 +5,31 @@ import {IMPORT_LIST_COLUMNS} from "./ImportListColumns"
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import {IMPORT_DATA} from "./MockData";
 
 import {reducer, useEffectToDispatch, fetchApiData, initialState, Sorting} from "@/shared/apiTableHelper"
 
 const queryClient = new QueryClient()
-const ImportData = IMPORT_DATA;
 
 const DataTable = ({organization}) => {
-
-  const fetchData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
-    let tmp = page*pageSize;
-    const data = {
-      results: ImportData.slice(tmp, pageSize+tmp),
-      count: ImportData.length
-    };
-    return data;
-  };
 
   let import_list_columns = [
     ...IMPORT_LIST_COLUMNS,
   ]
   let columns = useMemo(() => import_list_columns, [])
 
-  const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy}, dispatch] =
-    React.useReducer(reducer, initialState);
+  const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy}, dispatch] = React.useReducer(reducer, initialState);
 
   const {isLoading, error, data, isSuccess} = useQuery(
     ['import', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
-    () => fetchData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
+    () => 
+    fetchApiData(
+      {
+        url: `/organization/${organization.id}/import`,
+        page: queryPageIndex,
+        size: queryPageSize,
+        sortby: queryPageSortBy
+      }
+    ),
     {
       keepPreviousData: true,
       staleTime: Infinity,
@@ -94,7 +90,7 @@ const DataTable = ({organization}) => {
   if (isSuccess)
     return (
       <>
-        <div className='table react-table' style={{maxWidth: 800}}>
+        <div className='table react-table'>
           <table {...getTableProps()} className="table">
             <thead>
             {headerGroups.map((headerGroup) => (

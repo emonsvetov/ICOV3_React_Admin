@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import {Card, CardBody, Col, Container, Row} from 'reactstrap';
-import ImportListCard from './components/ImportList';
+import ImportListDataTable from './components/ImportListDataTable';
 
 const ImportList = () => {
   return (
@@ -16,7 +16,13 @@ const ImportList = () => {
         </Col>
       </Row>
       <Row>
-        <ImportListCard />
+        <Col md={12}>
+          <Card>
+            <CardBody>
+              <ImportListDataTable/>
+            </CardBody>
+          </Card>
+        </Col>
       </Row>
     </Container>
 )}

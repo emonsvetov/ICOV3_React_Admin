@@ -1,14 +1,10 @@
 import React, { useState } from "react";
-
-import {  
-  Row,
-  Col,
-  
-} from "reactstrap";
+import { Row,Col} from "reactstrap";
+import {connect} from 'react-redux'
+import {withRouter} from 'react-router-dom'
 
 import axios from "axios";
 import Tabs from "./Tabs";
-
 
 const AddIconForm = ( props ) => {
   
@@ -75,6 +71,6 @@ const AddIconForm = ( props ) => {
       
   );
 };
-
-
-export default AddIconForm;
+export default withRouter(connect((state) => ({
+  organization: state.organization
+}))(AddIconForm));
