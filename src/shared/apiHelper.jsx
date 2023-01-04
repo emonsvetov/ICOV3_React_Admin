@@ -151,3 +151,12 @@ export const fetchProgramTreeForMoving = async (organization_id, program_id) => 
         throw new Error(`API error:${e?.message}`)
     }
 }
+
+export const fetchEventIcons = async(organizationId) => {
+  try {
+      const response = await axios.get(`/organization/${organizationId}/event_icons`);
+      return response.data
+  } catch (e) {
+      throw new Error(`API error:${e?.message}`);
+  }
+};

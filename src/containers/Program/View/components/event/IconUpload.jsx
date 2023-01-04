@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import {connect} from 'react-redux'
+import {withRouter} from 'react-router-dom'
 import PropTypes from 'prop-types';
 
 import { Field, Form } from 'react-final-form';
@@ -6,23 +8,14 @@ import {
   Card, CardBody, Col, Button, ButtonToolbar,
 } from 'reactstrap';
 import renderDropZoneMultipleField from '@/shared/components/form/DropZoneMultiple';
-import {ORGANIZATION_ID} from '../../../../App/auth';
+
 import axios from 'axios';
-import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
-import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
+import { fetchEventIcons } from '@/shared/apiHelper';
+import {useDispatch, flashError, flashSuccess} from "@/shared/components/flash"
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const fetchIcons = async() => {
-  try {
-      const response = await axios.get(`/organization/${ORGANIZATION_ID}/event_icons`);
-      return response.data
-  } catch (e) {
-      throw new Error(`API error:${e?.message}`);
-  }
-};
-
-const IconUpload = ({ setIcons, toggle, onCancel }) => {
+const IconUpload = ({ setIcons, toggle, onCancel, organization }) => {
 
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -35,13 +28,13 @@ const IconUpload = ({ setIcons, toggle, onCancel }) => {
     if(!values.files){
         return
     }
-        
+
     values.files.forEach(element => {
         data.append('image[]', element)
     });
     setLoading(true)
     axios
-    .post(`/organization/${ORGANIZATION_ID}/event_icons`, data,
+    .post(`/organization/${organization.id}/event_icons`, data,
       {
         headers: {
             "Content-type": "multipart/form-data",
@@ -50,14 +43,15 @@ const IconUpload = ({ setIcons, toggle, onCancel }) => {
     )
     .then((res) => {
       if (res.status == 200) { //fetch all on success!
-        fetchIcons()
+        flashSuccess(dispatch, "Icon uploaded!")
+        fetchEventIcons(organization.id)
         .then( response => {
             setIcons(response)
         })
       }
     })
     .catch((error) => {
-      dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger', 'top'))
+      flashError(dispatch, error.response.data)
       setLoading(false);
     });
   }
@@ -101,5 +95,6 @@ const IconUpload = ({ setIcons, toggle, onCancel }) => {
 IconUpload.propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
-
-export default IconUpload;
+export default withRouter(connect((state) => ({
+  organization: state.organization
+}))(IconUpload));

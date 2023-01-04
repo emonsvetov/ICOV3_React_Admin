@@ -10,6 +10,48 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
 
   if( !auth ) return 'Loading...'
 
+  const ProtectedLink = ({type}) => {
+    if( !auth.isSuperAdmin ) return null;
+    switch (type)
+    {
+      case 'merchants':
+        return (
+          <SidebarLink title="Merchants"  icon="store" route="/merchants" />
+        );
+      break;
+      case 'reports':
+        return (
+          <>
+            <SidebarLink title="Cash Deposit" route="/reports/cash-deposit" />
+            <SidebarLink title="Inventory" route="/reports/inventory" />
+            <SidebarLink title="Journal Detailed" route="/reports/journal-detailed" />
+            <SidebarLink title="Points Reserve" route="/reports/points-reserve" />
+            <SidebarLink title="Program Status" route="/reports/program-status" />
+            {/*<SidebarLink title="Supplier Redemption" route="/reports/supplier-redemption" />*/}
+            {/*<SidebarLink title="Points Purchase Summary" route="/reports/points-purchase-summary" />*/}
+          </>
+        )
+      break;
+      case 'roles':
+        return (
+          <SidebarLink title="Roles" icon="user" route="/roles" />
+        )
+      break;
+      case 'permissions':
+        return (
+          <SidebarLink title="Permissions" icon="user" route="/permissions" />
+        )
+      break;
+      case 'physicalorders':
+        return (
+          <SidebarLink title="Physical Orders"  icon="file-empty" route="/physical-orders" />
+        )
+      break;
+      default:
+      break;
+    }
+  }
+
   return (
     <div className="sidebar__content">
       <ul className="sidebar__block">
@@ -20,33 +62,23 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
           <SidebarLink title="All Programs" route="/program" />
           <SidebarLink title="Create Program" route="/program/add" />
         </SidebarCategory>
-        {auth.isSuperAdmin && <SidebarLink title="Merchants"  icon="store" route="/merchants" />}
+        <ProtectedLink type="merchants" />
         <SidebarCategory title="Import" icon="download">
           <SidebarLink title="All Imported Files" route="/import/list" />
-          <SidebarLink title="Settings" route="/import" />
+          <SidebarLink title="Import" route="/import" />
         </SidebarCategory>
         <SidebarCategory title="Reports" icon="book">
-          {auth.isSuperAdmin &&
-            <>
-              <SidebarLink title="Cash Deposit" route="/reports/cash-deposit" />
-              <SidebarLink title="Inventory" route="/reports/inventory" />
-              <SidebarLink title="Journal Detailed" route="/reports/journal-detailed" />
-              <SidebarLink title="Points Reserve" route="/reports/points-reserve" />
-              <SidebarLink title="Program Status" route="/reports/program-status" />
-              {/*<SidebarLink title="Supplier Redemption" route="/reports/supplier-redemption" />*/}
-              {/*<SidebarLink title="Points Purchase Summary" route="/reports/points-purchase-summary" />*/}
-            </>
-          }
+          <ProtectedLink type="reports" />
           <SidebarLink title="Award Detail" route="/reports/award-detail" />
           <SidebarLink title="Inventory Order" route="/reports/inventory-order" />
           <SidebarLink title="Deposit" route="/reports/deposit" />
           <SidebarLink title="Unassigned Program Domains" route="/reports/unassigned-program-domains" />
           <SidebarLink title="Monies Pending Amount" route="/reports/monies-pending-amount" />
         </SidebarCategory>
-        {auth.isSuperAdmin && <SidebarLink title="Roles" icon="user" route="/roles" />}
-        {auth.isSuperAdmin && <SidebarLink title="Permissions" icon="user" route="/permissions" />}
+        <ProtectedLink type="roles" />
+        <ProtectedLink type="permissions" />
         <SidebarLink title="Users" icon="users" route="/users" />
-        {auth.isSuperAdmin && <SidebarLink title="Physical Orders"  icon="file-empty" route="/physical-orders" />}
+        <ProtectedLink type="physicalorders" />
         <SidebarLink title="Domains"  icon="layers" route="/domains" />
       </ul>
       <ul className="sidebar__block">

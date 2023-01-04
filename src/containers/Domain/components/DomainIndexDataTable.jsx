@@ -70,8 +70,7 @@ const DataTable = () => {
   ]
   let columns = useMemo(() => domain_columns, [])
 
-  const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
-    React.useReducer(reducer, initialState);
+  const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] = React.useReducer(reducer, initialState);
 
   const apiUrl = `/organization/${organization.id}/domain`;
   const {isLoading, error, data, isSuccess} = useQuery(
