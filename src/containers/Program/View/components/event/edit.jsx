@@ -154,10 +154,6 @@ const Edit = ({ organization }) => {
     changeValue(state, 'event_icon_id', () => fieldVal.id);
     changeValue(state, fieldName, () => fieldVal);
   }
-  const handleTemplateChange = (selected) => {
-    // setCurrentTemplate(selected.value - 1)
-
-  }
 
   const onChangeEmailTemplate = ([field], state, { setIn, changeValue }) => {
 

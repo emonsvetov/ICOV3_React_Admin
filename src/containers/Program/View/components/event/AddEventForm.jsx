@@ -101,13 +101,22 @@ const AddEventForm = ({onStep, organization, program}) => {
   // }
 
   const onChangeEmailTemplate = ([field], state, { setIn, changeValue }) => {
+
+    const targetEmailTemplate = state.fields["email_template"];
+    const targetTemplateName = state.fields["template_name"];
     const v = field.value
-    if(!v)
-    return;
-    let targetField = state.fields["email_template"];
-    targetField.change( templateContents[v - 1 ].content);
-    targetField = state.fields["template_name"];
-    targetField.change( templateContents[v - 1 ].name);
+
+    if (v && templateContents.length > 0) {
+      const template = templateContents.find(current => String(current.id) === String(v))
+      if (template && template?.id) {
+        targetEmailTemplate.change(template.content);
+        targetTemplateName.change(template.name);
+        return;
+      }
+    }
+
+    targetEmailTemplate.change("");
+    targetTemplateName.change("");
   }
 
   const onChangeAwardValue = ([field], state, { setIn, changeValue }) => {
@@ -124,6 +133,8 @@ const AddEventForm = ({onStep, organization, program}) => {
       field.change(  v / program.factor_valuation );
     }
   }
+
+  let emailTemplate = null
   
   return (
     <>
@@ -377,7 +388,7 @@ const AddEventForm = ({onStep, organization, program}) => {
                             </span>
                             <div className="form__form-group-field">
                             <div className="form__form-group-row">
-                                <Field 
+                                {/* <Field 
                                     name="email_template_id"
                                     options={emailTemplates}
                                     component={renderSelectField}
@@ -385,6 +396,16 @@ const AddEventForm = ({onStep, organization, program}) => {
                                         form.mutators.onChangeEmailTemplate(value)
                                         return value;
                                     }}
+                                /> */}
+                                <Field
+                                  name="email_template_id"
+                                  options={emailTemplates}
+                                  component={renderSelectField}
+                                  initialValue={emailTemplate}
+                                  parse={value => {
+                                    form.mutators.onChangeEmailTemplate(value)
+                                    return value;
+                                  }}
                                 />
                             </div>
                             </div>
