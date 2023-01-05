@@ -26,12 +26,12 @@ const EventsDataModal = ({
   theme,
   rtl,
 }) => {
-    const tableConfig = {
-      isResizable: true,
-      isSortable:false
-    }
+  const tableConfig = {
+    isResizable: true,
+    isSortable:false
+  }
 
-    // console.log(data)
+  // console.log(data)
   
   const [step, setStep] = useState(0);  
   const [loading, setLoading] = useState(false);  
@@ -41,8 +41,8 @@ const EventsDataModal = ({
   const fetchProgramEvents = async(organizationId, programId) => {
     setLoading(true)
     try {
-        const response = await axios.get(`/organization/${organizationId}/program/${programId}/event`);
-        console.log(response)
+        const response = await axios.get(`/organization/${organizationId}/program/${programId}/event?disabled=true`);
+        // console.log(response)
         setProgramEvents(response.data);
         setLoading(false)
     } catch (e) {
