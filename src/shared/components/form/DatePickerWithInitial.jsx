@@ -8,16 +8,14 @@ const RenderDatePicker = ({ dueDate, onChange }) => {
       onChange(date);
   };
   return(
-    <div className="date-picker">
-      <DatePicker
-        dateFormat="MM/dd/yyyy"
-        selected={startDate}
-        onChange={handleChange}
-        popperPlacement="center"
-        dropDownMode="select"
-        className="form__form-group-datepicker"
-      />
-    </div>
+    <DatePicker
+      dateFormat="MM/dd/yyyy"
+      selected={startDate}
+      onChange={handleChange}
+      popperPlacement="center"
+      dropDownMode="select"
+      className="form__form-group-datepicker"
+    />
   )
 }
 

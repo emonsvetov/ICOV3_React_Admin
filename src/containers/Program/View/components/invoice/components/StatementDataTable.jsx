@@ -2,10 +2,10 @@ import {Row, Col} from 'reactstrap';
 import { DebitCredit } from './StatementDebitCredit';
 
 const StatementDataTable = ({statement, loading}) => {
-    console.log(loading)
+    // console.log(loading)
     if( loading ) return <div className='text-center'>Loading...</div>
     if( !statement ) return '';
-    console.log(statement)
+    // console.log(statement)
     const sData = statement
     return (
         <>

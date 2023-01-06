@@ -356,3 +356,19 @@ export const getDefaultTheme = () => {
     return defaultTheme ? defaultTheme : 'theme-dark';
 }
 
+export const getLastMonthRange = () => {
+    // const dt_options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    let dt = new Date()
+    // const offset = dt.getTimezoneOffset()
+    const offset = 0;
+    let end_date = new Date(dt.getTime() - (offset * 60 * 1000))
+    // end_date = end_date.toLocaleDateString("en-US", dt_options)
+    dt.setMonth(dt.getMonth() - 1)
+    let start_date = new Date(dt.getTime() - (offset * 60 * 1000))
+    // start_date = start_date.toLocaleDateString("en-US", dt_options)
+    return {
+      start_date,
+      end_date
+    }
+}
+
