@@ -5,10 +5,11 @@ import DomainProgramsDataTable from './DomainProgramsDataTable';
 import AddProgramToDomain from './AddProgramToDomain';
 
 const DomainPrograms = ( {domain, organization} ) => {
-    const [trigger, setTrigger] = useState( 0 );
-    const [searchTrigger, setSearchTrigger] = useState( 0 );
+    const [trigger, setTrigger] = useState( Math.floor(Date.now() / 1000) );
+    const [searchTrigger, setSearchTrigger] = useState( Math.floor(Date.now() / 1000) );
     if( !organization?.id ) return null
     if( !domain?.id ) return null
+    // console.log(trigger)
     return (
         <>
             <AddProgramToDomain organization={organization} domain={domain} searchTrigger={searchTrigger} setSearchTrigger={setSearchTrigger} setTrigger={setTrigger} />

@@ -1,14 +1,9 @@
 import React from 'react'
 import Select from 'react-select'
 
-const statusOptions = [
-    {'value':'', 'label':'All'},
-    {'value':'Active', 'label':'Active'},
-    {'value':'Inactive', 'label':'Inactive'},
-    {'value':'Pending', 'label':'Pending'},
-]
+import ProgramStatusDropdown from '@/containers/Program/components/ProgramStatusDropdown'
 
-const ProgramFilter = ({onClickFilterCallback}) => {
+const ProgramFilter = ({onClickFilterCallback, organization}) => {
     const [status, setStatus] = React.useState('')
     const [keyword, setKeyword] = React.useState('')
     const onStatusChange = (selectedOption) => {
@@ -24,15 +19,7 @@ const ProgramFilter = ({onClickFilterCallback}) => {
     return (
         <div className="form__form-group">
             <div className="col-md-4 px-0">
-                <Select
-                    value={status}
-                    onChange={onStatusChange}
-                    options={statusOptions}
-                    clearable={false}
-                    className="react-select"
-                    placeholder={statusPlaceholder}
-                    classNamePrefix="react-select"
-                />
+                <ProgramStatusDropdown value={status} onChange={onStatusChange} organization={organization} />
             </div>
             <div className="col-md-4">
                 <div className="">

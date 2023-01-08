@@ -30,13 +30,11 @@ const queryClient = new QueryClient()
 
 const DataTable = ({program, organization}) => {
 
-    // alert(JSON.stringify(organization))
-
     const flashDispatcher = useDispatch()
   
     const [filter, setFilter] = useState({ keyword:'' });
     const [useFilter, setUseFilter] = useState(false);
-    const [trigger, setTrigger] = useState(0);
+    const [trigger, setTrigger] = useState(Math.floor(Date.now() / 1000));
 
     // var [data, setData] = useState([]);
     const [isOpenAdd, setOpenAdd] = useState(false)
@@ -123,6 +121,7 @@ const DataTable = ({program, organization}) => {
   const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] = React.useReducer(reducer, initialState);
 
   const apiUrl = `/organization/${program.organization_id}/program/${program.id}/user`
+  // console.log(apiUrl)
       
   const { isLoading, error, data, isSuccess } = useQuery(
       ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],

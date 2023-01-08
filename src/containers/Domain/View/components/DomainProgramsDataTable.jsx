@@ -10,7 +10,8 @@ import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
-import ProgramFilter  from "./ProgramsFilter";
+import ProgramFilter from '@/containers/Program/components/ProgramsFilter'
+
 
 import {renameChildrenToSubrows} from '@/shared/helpers'
 
@@ -125,6 +126,10 @@ const DomainProgramsDataTable = ( {domain, organization, trigger, setTrigger, se
     }
 
     const onClickRemove = (id) => {
+        if(!window.confirm("Are you sure to remove this program from this domain?"))
+        {
+          return;
+        }
         setLoading( true );
         axios.delete(`/organization/${organization.id}/domain/${domain.id}/program/${id}`)
         .then( (res) => {
@@ -150,8 +155,8 @@ const DomainProgramsDataTable = ( {domain, organization, trigger, setTrigger, se
             <>
                 <span>
                     <Link to="#" onClick={() => onClickRemove(row.original.id)} disabled={loading}>Remove </Link>
-                    <span style={{width:'15px', display: 'inline-block'}}></span>
-                    <Link  to="#" onClick={() => {alert(`Generating...`)}}>Generate Configration </Link>
+                    {/* <span style={{width:'15px', display: 'inline-block'}}></span>
+                    <Link  to="#" onClick={() => {alert(`Generating...`)}}>Generate Configration </Link> */}
                 </span>
             </>
         )
@@ -287,7 +292,7 @@ const DomainProgramsDataTable = ( {domain, organization, trigger, setTrigger, se
                             <form className="form form--horizontal">
                                 <div className="form__form-group pb-4">
                                     <div className="col-md-9 col-lg-9">
-                                        <ProgramFilter onClickFilterCallback={onClickFilterCallback} />
+                                        <ProgramFilter onClickFilterCallback={onClickFilterCallback} organization={organization} useOrg={false} />
                                     </div>
                                 </div>
                             </form>
@@ -412,6 +417,7 @@ const Sorting = ({ column }) => (
   );
 
 const TableWrapper = ({ organization, domain, trigger, setTrigger, setSearchTrigger}) => {
+    // console.log(trigger)
     return (
         <QueryClientProvider client={queryClient}>
             <DomainProgramsDataTable organization={organization} domain={domain} trigger={trigger} setTrigger={setTrigger} setSearchTrigger={setSearchTrigger} />

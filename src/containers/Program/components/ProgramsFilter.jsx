@@ -2,14 +2,15 @@ import React, {useEffect} from 'react'
 import Select from 'react-select'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
 import getOrganizationList from '@/service/getOrganizationList';
-import getProgramStatusList from '@/service/program/getProgramStatusList'
 import {labelizeNamedData} from '@/shared/helpers'
 import {Button} from "reactstrap";
 
-const ProgramFilter = ({onClickFilterCallback, organization, auth}) => {
-    const [statusOptions, setStatusOptions] = React.useState([])
+import ProgramStatusDropdown from './ProgramStatusDropdown'
+
+const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true}) => {
     const [status, setStatus] = React.useState('')
     const [orgOptions, setOrgOptions] = React.useState([])
     const [org, setOrg] = React.useState('')
@@ -34,10 +35,10 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth}) => {
         }
     }
     useEffect(() => {
-        console.log(organization)
+        // console.log(organization)
         if( organization?.id )
         {
-            if( auth?.isSuperAdmin )
+            if( auth && auth?.isSuperAdmin )
             {
                 getOrganizationList()
                 .then(list => {
@@ -46,26 +47,15 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth}) => {
                     )
                 })
             }
-
-            getProgramStatusList( organization.id )
-            .then( list => {
-                setStatusOptions(
-                    [
-                        ...[{'value':'', label: 'All'}], 
-                        ...labelizeNamedData(list, ["status", "status"])
-                    ]
-                )
-            })
         }
     }, [organization, auth])
-    const statusPlaceholder = status ? status : 'All'
     let orgPlaceholder = 'All'
     if (org) {
         orgPlaceholder = orgOptions.filter(o => o.value === org).map(o => o.label)
     }
     return (
         <div className="form__form-group">
-            {auth?.isSuperAdmin &&
+            {useOrg && auth?.isSuperAdmin &&
             <div className="col-md-4 px-0 pr-3">
                 <p className="">Organization</p>
                 <div>
@@ -83,15 +73,7 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth}) => {
             <div className="col-md-4 px-0">
                 <p className="">Program Status</p>
                 <div>
-                    <Select
-                        value={status}
-                        onChange={onStatusChange}
-                        options={statusOptions}
-                        clearable={false}
-                        className="react-select"
-                        placeholder={statusPlaceholder}
-                        classNamePrefix="react-select"
-                    />
+                    <ProgramStatusDropdown value={status} onChange={onStatusChange} organization={organization} />
                 </div>
             </div>
             <div className="col-md-4">
@@ -123,6 +105,19 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth}) => {
         </div>
     )
 }
+
+ProgramFilter.propTypes = {
+  value: PropTypes.string.isRequired,
+  onClickFilterCallback: PropTypes.func.isRequired,
+  organization: PropTypes.object.isRequired,
+  auth: PropTypes.object.isRequired,
+  useOrg: PropTypes.bool
+};
+
+ProgramFilter.defaultProps = {
+  useOrg: true
+};
+
 export default withRouter(connect((state) => ({
     auth: state.auth
 }))(ProgramFilter));
