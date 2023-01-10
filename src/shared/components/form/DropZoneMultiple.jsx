@@ -19,7 +19,7 @@ const DropZoneMultipleField = ({ name, value, onChange, customHeight }) => {
     <div className={`dropzone dropzone--multiple${customHeight ? ' dropzone--custom-height' : ''}`}>
       <Dropzone
         className="dropzone__input"
-        accept="image/jpeg, image/png"
+        accept="image/jpeg, image/png, image/gif"
         name={name}
         onDrop={(filesToUpload) => {
           onDrop(value ? value.concat(filesToUpload) : filesToUpload);
