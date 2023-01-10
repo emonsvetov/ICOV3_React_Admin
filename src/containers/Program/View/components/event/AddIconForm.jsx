@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { Row,Col} from "reactstrap";
-import {connect} from 'react-redux'
-import {withRouter} from 'react-router-dom'
 
 import axios from "axios";
 import Tabs from "./Tabs";
@@ -15,7 +13,7 @@ const AddIconForm = ( props ) => {
     props.onStep(1)
     // if(values.files)
     //   props.setIcon(values.files[0].name)  
-  } 
+  }
 
   const onClickCancel = () => {
     props.onStep(1)
@@ -71,6 +69,4 @@ const AddIconForm = ( props ) => {
       
   );
 };
-export default withRouter(connect((state) => ({
-  organization: state.organization
-}))(AddIconForm));
+export default AddIconForm;

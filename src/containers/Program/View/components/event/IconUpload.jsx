@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import {connect} from 'react-redux'
-import {withRouter} from 'react-router-dom'
 import PropTypes from 'prop-types';
 
 import { Field, Form } from 'react-final-form';
@@ -15,7 +13,7 @@ import {useDispatch, flashError, flashSuccess} from "@/shared/components/flash"
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const IconUpload = ({ setIcons, toggle, onCancel, organization }) => {
+const IconUpload = ({ setIcons, toggle, onCancel, program }) => {
 
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -34,7 +32,7 @@ const IconUpload = ({ setIcons, toggle, onCancel, organization }) => {
     });
     setLoading(true)
     axios
-    .post(`/organization/${organization.id}/event_icons`, data,
+    .post(`/organization/${program.organization_id}/event_icons`, data,
       {
         headers: {
             "Content-type": "multipart/form-data",
@@ -44,7 +42,7 @@ const IconUpload = ({ setIcons, toggle, onCancel, organization }) => {
     .then((res) => {
       if (res.status == 200) { //fetch all on success!
         flashSuccess(dispatch, "Icon uploaded!")
-        fetchEventIcons(organization.id)
+        fetchEventIcons(program.organization_id)
         .then( response => {
             setIcons(response)
         })
@@ -93,8 +91,9 @@ const IconUpload = ({ setIcons, toggle, onCancel, organization }) => {
 };
 
 IconUpload.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
+  setIcons: PropTypes.func.isRequired,
+  toggle: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  program: PropTypes.object.isRequired,
 };
-export default withRouter(connect((state) => ({
-  organization: state.organization
-}))(IconUpload));
+export default IconUpload;

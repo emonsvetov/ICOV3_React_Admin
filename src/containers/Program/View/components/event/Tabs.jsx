@@ -40,10 +40,10 @@ const Tabs = (props) => {
       </Nav>
       <TabContent activeTab={activeTab}>
         <TabPane tabId="1">
-            <IconUpload toggle={toggle} setIcons={setIcons} onCancel={props.onCancel} />
+            <IconUpload toggle={toggle} setIcons={setIcons} onCancel={props.onCancel} program={props.program} />
         </TabPane>
         <TabPane tabId="2">
-          <EventIcons setIcon={setIcon} onCancel={props.onCancel} onSelectIconOK={props.onSelectIconOK} setIcons={setIcons} icons={icons} icon={icon} />
+          <EventIcons setIcon={setIcon} onCancel={props.onCancel} onSelectIconOK={props.onSelectIconOK} setIcons={setIcons} icons={icons} icon={icon} program={props.program} />
         </TabPane>
       </TabContent>
     </div>

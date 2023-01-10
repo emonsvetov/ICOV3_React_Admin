@@ -474,9 +474,6 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                                         dateFormat="MM/dd/yyyy"
                                         selected={from}
                                         onChange={onStartChange}
-                                        popperPlacement="center"
-                                        dropDownMode="select"
-                                        className="form__form-group-datepicker"
                                       />
                                   </div>
                               </div>
@@ -495,9 +492,6 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                                         dateFormat="MM/dd/yyyy"
                                         selected={from}
                                         onChange={onStartChange}
-                                        popperPlacement="center"
-                                        dropDownMode="select"
-                                        className="form__form-group-datepicker"
                                     />
                                 </div>
                             </div>
@@ -512,9 +506,6 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                                         dateFormat="MM/dd/yyyy"
                                         selected={to}
                                         onChange={onEndChange}
-                                        popperPlacement="center"
-                                        dropDownMode="select"
-                                        className="form__form-group-datepicker"
                                     />
                                 </div>
                             </div>

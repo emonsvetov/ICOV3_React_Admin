@@ -1,27 +1,26 @@
 import React, { useEffect } from 'react';
-import {connect} from 'react-redux'
-import {withRouter} from 'react-router-dom'
+import PropTypes from 'prop-types';
 import {Col, Row, ButtonToolbar, Button,} from 'reactstrap';
 import axios from 'axios';
 import TrashIcon from 'mdi-react/TrashOutlineIcon';
 
 import { fetchEventIcons } from '@/shared/apiHelper';
 
-const EventIcons = ({ icon, setIcon, onCancel, onSelectIconOK, icons, setIcons, activePath, activeId, organization }) => {
+const EventIcons = ({ icon, setIcon, onCancel, onSelectIconOK, icons, setIcons, program }) => {
 
   useEffect(() => {
-    if (organization?.id) {
-      fetchEventIcons(organization.id)
+    if (program?.organization_id) {
+      fetchEventIcons(program.organization_id)
         .then(response => {
           setIcons(response)
         })
     }
 
-  }, [organization])
+  }, [program])
 
   const deleteIcon = async (icon) => {
     try {
-      return await axios.delete(`/organization/${organization.id}/event_icons/${icon.id}`);
+      return await axios.delete(`/organization/${program.organization_id}/event_icons/${icon.id}`);
     } catch (e) {
       throw new Error(`API error:${e?.message}`);
     }
@@ -32,7 +31,7 @@ const EventIcons = ({ icon, setIcon, onCancel, onSelectIconOK, icons, setIcons, 
       .then(response => {
         console.log(response.status)
         if (response.status === 200) {
-          fetchEventIcons(organization.id)
+          fetchEventIcons(program.organization_id)
             .then(response => {
               setIcons(response)
             })
@@ -71,6 +70,13 @@ const EventIcons = ({ icon, setIcon, onCancel, onSelectIconOK, icons, setIcons, 
     </Col>
   )
 }
-export default withRouter(connect((state) => ({
-  organization: state.organization
-}))(EventIcons));
+EventIcons.propTypes = {
+  icon: PropTypes.object.isRequired,
+  setIcon: PropTypes.func.isRequired,
+  setIcons: PropTypes.func.isRequired,
+  onSelectIconOK: PropTypes.func.isRequired,
+  icons: PropTypes.array.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  program: PropTypes.object.isRequired,
+};
+export default EventIcons;
