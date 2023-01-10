@@ -18,14 +18,8 @@ const flash = (type = 'warning', dispatch, message) => {
     }
 }
 
-const flashSuccess = (dispatch, message) => {
-    flash('success', dispatch, message)
-}
-
-const flash422 = (dispatch, errors) => {
-    flash('422', dispatch, errors)
-}
-
+const flash422 = (dispatch, errors) =>  flash('422', dispatch, errors)
+const flashSuccess = (dispatch, message) =>  flash('success', dispatch, message)
 const flashError = (dispatch, errors) => flash('errors', dispatch, errors)
 
 export {

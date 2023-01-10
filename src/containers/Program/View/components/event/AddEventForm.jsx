@@ -15,7 +15,7 @@ import axios from "axios";
 import Tabs from "./Tabs";
 import{makeFormData} from './common'
 
-const AddEventForm = ({onStep, organization, program}) => {
+const AddEventForm = ({onStep, program}) => {
   const dispatch = useDispatch()
   // console.log(program)
 
@@ -539,6 +539,7 @@ const AddEventForm = ({onStep, organization, program}) => {
                       activeTab={activeTab}
                       onCancel={() => setOpen(false)}
                       icon={values.icon}
+                      program={program}
                     />
                   </div>
                 </Col>
@@ -554,5 +555,5 @@ const AddEventForm = ({onStep, organization, program}) => {
 export default withRouter(connect((state) => ({
   theme: state.theme,
   rtl: state.rtl,
-  organization: state.organization
+  // organization: state.organization
 }))(AddEventForm));

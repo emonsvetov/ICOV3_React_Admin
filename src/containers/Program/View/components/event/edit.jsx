@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Form, Field } from "react-final-form";
-import Select from "react-select";
 import {
   Modal,
   ModalBody, Row, Col, ButtonToolbar, Button, Card, CardBody, Container
@@ -14,7 +13,7 @@ import axios from "axios";
 import renderSelectField from '@/shared/components/form/Select'
 import Tabs from "./Tabs";
 import { fetchEventTypes, fetchEmailTemplates } from '@/shared/apiHelper'
-import { labelizeNamedData, patch4Select } from '@/shared/helpers'
+import { labelizeNamedData } from '@/shared/helpers'
 import { makeFormData } from './common'
 
 const fetchEvent = async (oId, pId, eId) => {
@@ -26,7 +25,7 @@ const fetchEvent = async (oId, pId, eId) => {
   }
 };
 
-const Edit = ({ organization }) => {
+const Edit = ({organization, theme, rtl}) => {
 
   const { programId, eventId } = useParams();
   const [program, setProgram] = useState(null);
@@ -45,11 +44,6 @@ const Edit = ({ organization }) => {
   const handleCustomTemplate = (value) => {
     setEnableCustomize(value);
   }
-
-  const tabToggle = (tab) => {
-    if (activeTab !== tab) setActiveTab(tab);
-  };
-
 
   const set_path = (icon) => {
     const path = process.env.REACT_APP_API_STORAGE_URL + "/" + icon.path;
@@ -231,6 +225,7 @@ const Edit = ({ organization }) => {
               >
                 {({ handleSubmit, form, submitting, pristine, values }) => (
                   <>
+                    {/* {console.log(values)} */}
                     <form className="form" onSubmit={handleSubmit}>
                       <Row className="w100">
                         <Col md="6" lg="6" xl="6">
@@ -627,6 +622,7 @@ const Edit = ({ organization }) => {
                               activeTab={activeTab}
                               onCancel={() => setOpen(false)}
                               icon={values.icon}
+                              program={program}
                             />
                           </div>
                         </Col>
