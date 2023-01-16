@@ -27,8 +27,8 @@ const THEME_IMAGE = {
     'New' : `${process.env.PUBLIC_URL}/img/theme/New.png`,
 }
 const THEME_OPTIONS = [
-    { value: "Original", label: "Original" },
-    { value: "New", label: "New" },
+    { value: "Original", label: "Clear" },
+    { value: "New", label: "Classic" },
 ];
 
 const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) => {
