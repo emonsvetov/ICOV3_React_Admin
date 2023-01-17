@@ -1,4 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import {
   Modal,
   ModalBody,
@@ -76,6 +79,7 @@ const reducer = (state, { type, payload }) => {
 };
 
 const MerchantsModal = ({ isOpen, setOpen, toggle, theme, rtl, organization, data }) => {
+  if(!organization || !data) return 'loading...'
   return (
     <Modal
       className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`}
@@ -130,8 +134,6 @@ const DataTable = ({ toggle, organization, program }) => {
   const LOGO_PUBLIC_URL = `${process.env.REACT_APP_API_STORAGE_URL}`;
 
   // console.log(program)
-
-  const [loading, setLoading] = useState(false);
   const [relationData, setRelationData] = useState([]);
   const [filter, setFilter] = useState({ keyword: "" });
 
@@ -430,7 +432,7 @@ const DataTable = ({ toggle, organization, program }) => {
           </Col>
         </Row>
 
-        <div className="table react-table merchant-table pt-4">
+        <div className="table merchant-table pt-4">
           <form className="form form--horizontal">
             <div className="form__form-group ">
               <div className="col-md-6 col-lg-6">
@@ -457,7 +459,7 @@ const DataTable = ({ toggle, organization, program }) => {
           </form>
         </div>
 
-        <div className="table react-table">
+        <div className="table">
           <table {...getTableProps()} className="table">
             <thead>
               {headerGroups.map((headerGroup) => (
@@ -530,4 +532,16 @@ const TableWrapper = ({ toggle, organization, program }) => {
   );
 };
 
-export default MerchantsModal;
+MerchantsModal.propTypes = {
+  theme: ThemeProps.isRequired,
+  rtl: RTLProps.isRequired,
+  organization: Object.isRequired,
+  data: Object.isRequired
+};
+
+export default withRouter(connect((state) => ({
+  theme: state.theme,
+  rtl: state.rtl,
+  organization: state.organization,
+  data: state.program
+}))(MerchantsModal));

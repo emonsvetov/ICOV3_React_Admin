@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import { Link, useParams, useHistory } from 'react-router-dom';
 import { Col, Container, Row, Card, CardBody, } from 'reactstrap';
 import MainModalWrapper from './View/components/MainModalWrapper';
-import axios from 'axios'
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { getProgramAction } from '@/redux/actions/programActions';
 
 const PUBLIC_URL = `${process.env.PUBLIC_URL}`;
 const GeneralIcon = `${PUBLIC_URL}/img/icon/general.svg`;
@@ -15,52 +15,33 @@ const EngagementIcon = `${PUBLIC_URL}/img/icon/engagement.svg`;
 const MerchantsIcon = `${PUBLIC_URL}/img/icon/merchants.svg`;
 const EventsIcon = `${PUBLIC_URL}/img/icon/events.svg`;
 
-const ProgramView = ( {organization} ) => {
+const ProgramView = ( {dispatch, organization, program} ) => {
     const { id } = useParams()
-    const [message, setMessage] = useState('')
-    const [data, setData] = useState(null)
     const [modalName, setModalName] = useState(null)
     const [isOpen, setOpen] = useState(false);
     let history = useHistory();
     useEffect(() => {
-        // alert(id)
-        checkFlashMessage()
         if(id && organization?.id)    {
-            const {id: organizationId} = organization //store as 
-            fetchProgramData(organizationId)
+            const {id: organizationId} = organization //store as
+            dispatch(getProgramAction(organizationId, id))
         }
     },[id, organization])
 
-    const fetchProgramData = async(organizationId) => {
-        try {
-            const response = await axios.get(`/organization/${organizationId}/program/${id}`);
-            // console.log(response)
-            setData(response.data)
-        } catch (e) {
-            throw new Error(`API error:${e?.message}`);
-        }
-    };
-    const checkFlashMessage = () => {
-        const params = new URLSearchParams(window.location.search)
-        let message = params.get('message')
-        if( message ) {
-            setMessage(message)
-        }
-    }
     const toggle = (name=null) => {
         if( name ) setModalName(name)
         setOpen(prevState => !prevState)
     }
 
-  if( !data || !organization ) return 'Loading...'
-  const {id: organizationId, name: organizationName} = data.organization
+  if( !program || !organization ) return 'Loading...'
+  
+  const {id: organizationId, name: organizationName} = program.organization
 //   console.log(data)
   return (
     <Container className="program-view">
       <Row>
         <Col md={6}>
           <h3 className="page-title">All Programs</h3>
-          <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/program">Programs</Link> / {data.name}</h3>
+          <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/program">Programs</Link> / {program.name}</h3>
           <p> (Organization: {organizationId} - {organizationName})</p>
         </Col>
         <Col md={6} className='text-right'>
@@ -82,7 +63,7 @@ const ProgramView = ( {organization} ) => {
                     </Row>
                 </CardBody>
             </Card>
-            <MainModalWrapper organization={organization} data={data} name={modalName} isOpen={isOpen} setOpen={setOpen} toggle={toggle} programId={id} />
+            <MainModalWrapper organization={organization} name={modalName} isOpen={isOpen} setOpen={setOpen} toggle={toggle} programId={id} />
         </Col>
         <Col md="6" lg="4" xl="4">
             <Card>
@@ -220,8 +201,8 @@ const ProgramView = ( {organization} ) => {
                         <Col md={9} className='col-right pl-0'>
                             <h5>Domains</h5>
                             {
-                                data.domains.length > 0 && 
-                                data.domains.map( (domain, i) => {
+                                program.domains.length > 0 && 
+                                program.domains.map( (domain, i) => {
                                     return <li key={`domain-list-${i}`}><Link className="" to={`/domains/view/${domain.id}`}>{domain.name}</Link></li>
                                 })
                             }
@@ -267,5 +248,6 @@ const ProgramView = ( {organization} ) => {
 export default withRouter(connect((state) => ({
     theme: state.theme,
     rtl: state.rtl,
-    organization: state.organization
+    organization: state.organization,
+    program: state.program
   }))(ProgramView));

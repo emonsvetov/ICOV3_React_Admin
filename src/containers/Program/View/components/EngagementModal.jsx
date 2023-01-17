@@ -1,15 +1,17 @@
 import React, {useState} from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import CheckboxField from '@/shared/components/form/CheckboxField';
 import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col } from 'reactstrap';
 import { Form } from 'react-final-form';
 import formValidation from "@/shared/validation/program-engagement";
 import axios from 'axios'
-import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
+import {sendFlashMessage} from "@/shared/components/flash";
+import { getProgramAction } from '@/redux/actions/programActions';
 
-const EngagementModal = ({organization, data, isOpen, setOpen, toggle, theme, rtl}) => {
+const EngagementModal = ({dispatch, data, isOpen, toggle, theme, rtl}) => {
     const [loading, setLoading] = useState(false)
-    var [data, setData] = useState(data)
-    const dispatch = useDispatch()
     const onSubmitForm = async values => {
         setLoading(true)
         data  = {...data, ...values}
@@ -18,9 +20,15 @@ const EngagementModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
             const response = await axios.put(`/organization/${data.organization_id}/program/${data.id}`, data);
             // console.log(response)
             setLoading(false)
-            setData( values )
+            // setData( data )
             if( response.status === 200)    {
                 dispatch(sendFlashMessage('Program has been updated', 'alert-success', 'top'))
+                dispatch(
+                  getProgramAction(
+                    data.organization_id, 
+                    data.id
+                  )
+                )
             }
         } catch (e) {
             setLoading(false)
@@ -98,7 +106,7 @@ const EngagementModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField 
-                                name="share_siblings_peer_to_peer"
+                                name="share_siblings_peer2peer"
                                 label="Share sibling's peer to peer"
                             />
                         </div>
@@ -108,7 +116,7 @@ const EngagementModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField 
-                                name="use_hierarchy_p2p"
+                                name="uses_hierarchy_peer2peer"
                                 label="Use hierarchy peer 2 peer"
                             />
                         </div>
@@ -116,7 +124,7 @@ const EngagementModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField 
-                                name="use_p2p"
+                                name="uses_peer2peer"
                                 label="Use peer to peer"
                             />
                         </div>
@@ -142,7 +150,7 @@ const EngagementModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField 
-                                name="managers_can_post_messages"
+                                name="managers_can_post_social_wall_messages"
                                 label="Managers can post messages"
                             />
                         </div>
@@ -168,7 +176,7 @@ const EngagementModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField 
-                                name="use_goal_tracker"
+                                name="uses_goal_tracker"
                                 label="Use goal tracker"
                             />
                         </div>
@@ -219,13 +227,15 @@ const EngagementModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
     </Modal>
     )
 }
-export default EngagementModal;
-// ProgramInfo.propTypes = {
-//     theme: ThemeProps.isRequired,
-//     rtl: RTLProps.isRequired
-// };
-  
-// export default withRouter(connect((state) => ({
-//     theme: state.theme,
-//     rtl: state.rtl
-// }))(ProgramInfo));
+
+EngagementModal.propTypes = {
+  theme: ThemeProps.isRequired,
+  rtl: RTLProps.isRequired,
+  data: Object.isRequired
+};
+
+export default withRouter(connect((state) => ({
+  theme: state.theme,
+  rtl: state.rtl,
+  data: state.program
+}))(EngagementModal));

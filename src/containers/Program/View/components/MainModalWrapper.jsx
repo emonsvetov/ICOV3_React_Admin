@@ -1,7 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import ProgramInfoModal from './ProgramInfoModal';
 import ThemeSettingsModal from './ThemeSettingsModal';
 import MerchantsModal from './MerchantsModal';
@@ -11,15 +8,13 @@ import AwardingPointsModal from './AwardingPointsModal';
 import EngagementModal from './EngagementModal';
 import AddProgramModal from './AddProgramModal';
 // import EventsModal from './EventsModal';
-import EventsModal from '../components/event/EventsDataModal';
+import EventsDataModal from '../components/event/EventsDataModal';
 import EmailTemplateModal from '../EmailTemplate/IndexDataModal'
 
-const MainModalWrapper = ({organization, data, name, isOpen, setOpen, toggle, theme, rtl}) => {
+const MainModalWrapper = ({name, isOpen, setOpen, toggle}) => {
     const props = {
-        data, isOpen, setOpen, toggle, theme, rtl, organization
+        isOpen, setOpen, toggle
     }
-    // console.log(name)
-    if( !organization?.id ) return 'Loading...'
     return (
         <>
         {
@@ -41,7 +36,7 @@ const MainModalWrapper = ({organization, data, name, isOpen, setOpen, toggle, th
             name==='engagement' && <EngagementModal {...props} />
         }
         {
-            name==='events' && <EventsModal {...props} />
+            name==='events' && <EventsDataModal {...props} />
         }
         {
             name==='addprogram' && <AddProgramModal {...props} />
@@ -58,14 +53,5 @@ const MainModalWrapper = ({organization, data, name, isOpen, setOpen, toggle, th
         </>
     )
 }
-
-MainModalWrapper.propTypes = {
-    theme: ThemeProps.isRequired,
-    rtl: RTLProps.isRequired
-};
   
-export default withRouter(connect((state) => ({
-    theme: state.theme,
-    rtl: state.rtl,
-    organization: state.organization
-}))(MainModalWrapper));
+export default MainModalWrapper;

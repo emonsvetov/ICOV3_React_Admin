@@ -1,4 +1,7 @@
 import React, {useState} from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import CheckboxField from '@/shared/components/form/CheckboxField';
 import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
@@ -8,6 +11,7 @@ import MONTHS from "@/shared/json/months.json";
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
 import axios from 'axios'
 import renderSelectField from '@/shared/components/form/Select'
+import { getProgramAction } from '@/redux/actions/programActions';
 
 const prepareForValidation = values => {
     const clean = {
@@ -21,13 +25,11 @@ const getMonthLabelByMonth = number => {
     return MONTHS.find( month => month.number === number)?.label
 }
 
-const AwardingPointsModal = ({organization, data, isOpen, setOpen, toggle, theme, rtl}) => {
+const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, toggle, theme, rtl}) => {
     const [loading, setLoading] = useState(false)
     const [month, setMonth] = useState(null)
     const [DAYS, setDAYS] = useState([])
     var [data, setData] = useState(data)
-
-    const dispatch = useDispatch();
     
     const setDays = (seletedMonth) => {
         setDAYS([])
@@ -55,8 +57,13 @@ const AwardingPointsModal = ({organization, data, isOpen, setOpen, toggle, theme
             const response = await axios.put(`/organization/${data.organization_id}/program/${data.id}`, data);
             // console.log(response)
             setLoading(false)
-            setData( values )
             if( response.status === 200)    {
+                dispatch(
+                  getProgramAction(
+                    data.organization_id, 
+                    data.id
+                  )
+                )
                 dispatch(sendFlashMessage('Program has been updated', 'alert-success'))
             }
         } catch (e) {
@@ -337,13 +344,16 @@ const AwardingPointsModal = ({organization, data, isOpen, setOpen, toggle, theme
     </Modal>
     )
 }
-export default AwardingPointsModal;
-// ProgramInfo.propTypes = {
-//     theme: ThemeProps.isRequired,
-//     rtl: RTLProps.isRequired
-// };
-  
-// export default withRouter(connect((state) => ({
-//     theme: state.theme,
-//     rtl: state.rtl
-// }))(ProgramInfo));
+AwardingPointsModal.propTypes = {
+  theme: ThemeProps.isRequired,
+  rtl: RTLProps.isRequired,
+  organization: Object.isRequired,
+  data: Object.isRequired
+};
+
+export default withRouter(connect((state) => ({
+  theme: state.theme,
+  rtl: state.rtl,
+  organization: state.organization,
+  data: state.program
+}))(AwardingPointsModal));

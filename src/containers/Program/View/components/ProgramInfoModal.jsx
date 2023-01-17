@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
 import axios from 'axios'
-// import {useDispatch} from 'react-redux';
-// import {sendModalFlashMessage} from '@/redux/actions/flashActions';
-// import ModalFlashMessage from "@/shared/components/flash/ModalFlashMessage";
 
-import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
+import {sendFlashMessage} from "@/shared/components/flash";
 import {PROGRAM_TYPES, PROGRAM_STATUSES} from "@/shared/options";
 import {labelizeNamedData, labelizeNamedRow} from '@/shared/helpers'
 
@@ -16,7 +16,7 @@ import renderSelectField from '@/shared/components/form/Select';
 import getStatesByCountry from "@/service/getStatesByCountry";
 import getProgramStatusList from '@/service/program/getProgramStatusList'
 import formValidation from "@/shared/validation/program-info";
-import { useEffect } from 'react';
+import { getProgramAction } from '@/redux/actions/programActions';
 
 const COUNTRY_ID = 223;
 
@@ -26,12 +26,10 @@ const prepareForValidation = values => {
     return {...values, ...clean}
 }
 
-const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) => {
-    const dispatch = useDispatch();
+const ProgramInfo = ({dispatch, organization, isOpen, toggle, data, theme, rtl}) => {
     const [statusOptions, setStatusOptions] = React.useState([])
     const [loading, setLoading] = useState(false)
     const [states, setStates] = useState(null)
-    var [data, setData] = useState(data)
     useEffect( () => {
         if( organization?.id )
         {
@@ -80,8 +78,13 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
             
             setLoading(false)
             // console.log(state_id)
-            setData( {...savedata, ...{state_id, status}} )
             if( response.status === 200)    {
+                dispatch(
+                  getProgramAction(
+                    data.organization_id, 
+                    data.id
+                  )
+                )
                 toggle()
                 dispatch(sendFlashMessage('Program has been updated', 'alert-success', 'top'))
             }
@@ -92,6 +95,7 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
         }
         // setTimeout(alert('Allset'), 2000)
     }
+    if(!data || !organization) return 'loading...'
     // data = patch4Select(data, 'state')
     // console.log(data)
     if( !data.state_id )    {
@@ -441,13 +445,17 @@ const ProgramInfo = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) 
     </Modal>
     )
 }
-export default ProgramInfo;
-// ProgramInfo.propTypes = {
-//     theme: ThemeProps.isRequired,
-//     rtl: RTLProps.isRequired
-// };
+
+ProgramInfo.propTypes = {
+    theme: ThemeProps.isRequired,
+    rtl: RTLProps.isRequired,
+    organization: Object.isRequired,
+    data: Object.isRequired
+};
   
-// export default withRouter(connect((state) => ({
-//     theme: state.theme,
-//     rtl: state.rtl
-// }))(ProgramInfo));
+export default withRouter(connect((state) => ({
+    theme: state.theme,
+    rtl: state.rtl,
+    organization: state.organization,
+    data: state.program
+}))(ProgramInfo));

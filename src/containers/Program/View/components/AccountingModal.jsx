@@ -1,16 +1,17 @@
 import React, {useState} from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import CheckboxField from '@/shared/components/form/CheckboxField';
 import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
 import axios from 'axios'
-import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
+import {sendFlashMessage} from "@/shared/components/flash";
 import formValidation from "@/shared/validation/program-accounting";
+import { getProgramAction } from '@/redux/actions/programActions';
 
-const AccountingModal = ({organization, data, isOpen, setOpen, toggle, theme, rtl}) => {
+const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle, theme, rtl}) => {
     const [loading, setLoading] = useState(false)
-    var [data, setData] = useState(data)
-
-    const dispatch = useDispatch();
 
     const onSubmitForm = async(values) => {
         setLoading(true)
@@ -20,8 +21,13 @@ const AccountingModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
             const response = await axios.put(`/organization/${data.organization_id}/program/${data.id}`, data);
             // console.log(response)
             setLoading(false)
-            setData( values )
             if( response.status === 200)    {
+                dispatch(
+                  getProgramAction(
+                    data.organization_id, 
+                    data.id
+                  )
+                )
                 dispatch(sendFlashMessage('Program has been updated', 'alert-success', 'top'))
             }
         } catch (e) {
@@ -30,6 +36,8 @@ const AccountingModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
             throw new Error(`API error:${e?.message}`);
         }
     }
+    if( !organization || !data) return 'loading...'
+
     return (
     <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={toggle}>
         <Form
@@ -379,13 +387,16 @@ const AccountingModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
     </Modal>
     )
 }
-export default AccountingModal;
-// ProgramInfo.propTypes = {
-//     theme: ThemeProps.isRequired,
-//     rtl: RTLProps.isRequired
-// };
-  
-// export default withRouter(connect((state) => ({
-//     theme: state.theme,
-//     rtl: state.rtl
-// }))(ProgramInfo));
+AccountingModal.propTypes = {
+  theme: ThemeProps.isRequired,
+  rtl: RTLProps.isRequired,
+  organization: Object.isRequired,
+  data: Object.isRequired
+};
+
+export default withRouter(connect((state) => ({
+  theme: state.theme,
+  rtl: state.rtl,
+  organization: state.organization,
+  data: state.program
+}))(AccountingModal));

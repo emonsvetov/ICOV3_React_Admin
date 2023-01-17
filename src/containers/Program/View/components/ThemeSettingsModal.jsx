@@ -1,4 +1,7 @@
 import React, {useEffect, useState, useContext} from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col, Spinner, TabContent, TabPane, Nav, NavItem, NavLink } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
 import axios from 'axios'
@@ -495,13 +498,16 @@ const validate = values => {
     return errors
 }
 
-export default ThemeSettings;
-// ThemeSettings.propTypes = {
-//     theme: ThemeProps.isRequired,
-//     rtl: RTLProps.isRequired
-// };
+ThemeSettings.propTypes = {
+  theme: ThemeProps.isRequired,
+  rtl: RTLProps.isRequired,
+  organization: Object.isRequired,
+  data: Object.isRequired
+};
 
-// export default withRouter(connect((state) => ({
-//     theme: state.theme,
-//     rtl: state.rtl
-// }))(ThemeSettings));
+export default withRouter(connect((state) => ({
+  theme: state.theme,
+  rtl: state.rtl,
+  organization: state.organization,
+  data: state.program
+}))(ThemeSettings));

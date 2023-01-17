@@ -1,5 +1,9 @@
-import React, {useMemo, useState, useEffect} from 'react';
-import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col, ListGroup, ListGroupItem,Card, CardBody  } from 'reactstrap';
+import React, {useState} from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
+import { Modal, ModalBody, Row, Col, ListGroup, ListGroupItem,Card, CardBody  } from 'reactstrap';
+
 // import { Form, Field } from 'react-final-form';
 // import Select from 'react-select';
 import Invoices from './invoice/Invoices';
@@ -28,9 +32,7 @@ const TAB_MENU_LINKS = [
 ]
 
 const InvoiceModal = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) => {
-    const LOGO_PUBLIC_URL = `${process.env.PUBLIC_URL}/img/logo`;
     const [activeTab, setActiveTab] = useState('invoices')
-    // console.log(LOGO_PUBLIC_URL)
 
     const RenderItem = ({item, key}) => {
         return (<ListGroupItem
@@ -87,13 +89,16 @@ const InvoiceModal = ({organization, isOpen, setOpen, toggle, data, theme, rtl})
     )
 }
 
-export default InvoiceModal;
-// ProgramInfo.propTypes = {
-//     theme: ThemeProps.isRequired,
-//     rtl: RTLProps.isRequired
-// };
-  
-// export default withRouter(connect((state) => ({
-//     theme: state.theme,
-//     rtl: state.rtl
-// }))(ProgramInfo));
+InvoiceModal.propTypes = {
+  theme: ThemeProps.isRequired,
+  rtl: RTLProps.isRequired,
+  organization: Object.isRequired,
+  data: Object.isRequired
+};
+
+export default withRouter(connect((state) => ({
+  theme: state.theme,
+  rtl: state.rtl,
+  organization: state.organization,
+  data: state.program
+}))(InvoiceModal));

@@ -1,5 +1,8 @@
 import CreateTableData from "./event/CreateData";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 
 import React, { useMemo, useState, useEffect } from "react";
 import {
@@ -330,21 +333,17 @@ const RenderEventsData = (props) =>{
 
 const EventsModal = ({
   isOpen,
-  setOpen,
   toggle,
   data,
   theme,
   rtl,
 }) => {
 
-
   const [step, setStep] = useState(0);
-  var [data, setData] = useState(data)
 
   const handleStep = (step) =>{
     setStep(step);
   }
-
 
   return (
     <Modal
@@ -371,6 +370,14 @@ const TableWrapper = ({ program, toggle, onStep  }) => {
   );
 };
 
-EventsModal.propTypes = {};
+EventsModal.propTypes = {
+  theme: ThemeProps.isRequired,
+  rtl: RTLProps.isRequired,
+  data: Object.isRequired
+};
 
-export default EventsModal;
+export default withRouter(connect((state) => ({
+  theme: state.theme,
+  rtl: state.rtl,
+  data: state.program
+}))(EventsModal));

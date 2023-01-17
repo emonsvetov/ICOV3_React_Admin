@@ -1,4 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import {
   Modal,
   ModalBody,
@@ -151,8 +154,16 @@ const EmailTemplateDataModal = ({
   );
 };
 
-EmailTemplateDataModal.propTypes = {};
 
+EmailTemplateDataModal.propTypes = {
+  theme: ThemeProps.isRequired,
+  rtl: RTLProps.isRequired,
+  data: Object.isRequired
+};
 
+export default withRouter(connect((state) => ({
+  theme: state.theme,
+  rtl: state.rtl,
+  data: state.program
+}))(EmailTemplateDataModal));
 
-export default EmailTemplateDataModal;

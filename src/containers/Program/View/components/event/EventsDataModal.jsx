@@ -1,4 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import {
   Modal,
   ModalBody,
@@ -18,9 +21,7 @@ import { COLUMNS } from "./columns"
 import axios from 'axios'
 
 const EventsDataModal = ({
-  organization,
   isOpen,
-  setOpen,
   toggle,
   data,
   theme,
@@ -30,8 +31,6 @@ const EventsDataModal = ({
     isResizable: true,
     isSortable:false
   }
-
-  // console.log(data)
   
   const [step, setStep] = useState(0);  
   const [loading, setLoading] = useState(false);  
@@ -106,7 +105,6 @@ const EventsDataModal = ({
     )
   }
   
-  
   return (
     <Modal
       className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`}
@@ -125,8 +123,14 @@ const EventsDataModal = ({
   );
 };
 
-EventsDataModal.propTypes = {};
+EventsDataModal.propTypes = {
+  theme: ThemeProps.isRequired,
+  rtl: RTLProps.isRequired,
+  data: Object.isRequired
+};
 
-
-
-export default EventsDataModal;
+export default withRouter(connect((state) => ({
+  theme: state.theme,
+  rtl: state.rtl,
+  data: state.program
+}))(EventsDataModal));
