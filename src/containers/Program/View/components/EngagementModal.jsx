@@ -64,7 +64,7 @@ const EngagementModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField 
-                                name="share_sibling_leaderboards"
+                                name="share_siblings_leader_board"
                                 label="Share sibling leaderboards"
                             />
                         </div>
@@ -72,7 +72,7 @@ const EngagementModal = ({organization, data, isOpen, setOpen, toggle, theme, rt
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField 
-                                name="use_leaderboards"
+                                name="uses_leaderboards"
                                 label="Use leaderboards"
                             />
                         </div>
