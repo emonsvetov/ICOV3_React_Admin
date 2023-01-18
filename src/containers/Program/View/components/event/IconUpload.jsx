@@ -68,7 +68,7 @@ const IconUpload = ({ setIcons, toggle, onCancel, program }) => {
             {({ handleSubmit, form }) => (
               <form className="form" onSubmit={handleSubmit}>
                 <p>
-                  The images should be jpg, jpeg, gif, png or ico file format with a maximum size of 5 Mb.
+                  The images should be jpg, jpeg, gif, or png file format with a maximum size of 5 Mb.
                 </p>
 
                 <Field
