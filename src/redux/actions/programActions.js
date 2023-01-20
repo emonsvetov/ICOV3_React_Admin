@@ -9,5 +9,8 @@ export const getProgramAction = (organizationId, programId) => {
         .then(program => {
             dispatch(setProgramAction(program))
         })
+        .catch(e => {
+            throw new Error(`API error:${e?.message}`);
+        });
     };
 };
