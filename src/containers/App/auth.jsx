@@ -10,6 +10,10 @@ export const login = data => {
     // return
     localStorage.setItem(AUTH_TOKEN_KEY, data.access_token);
     localStorage.setItem(AUTH_USER_KEY, JSON.stringify(data.user));
+    if(data.programCount)
+    {
+      data.user.organization.programCount = data.programCount
+    }
     localStorage.setItem(AUTH_ORGANIZATION_KEY, JSON.stringify(data.user.organization));
 }
 

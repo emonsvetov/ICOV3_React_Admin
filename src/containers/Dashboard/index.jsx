@@ -15,6 +15,9 @@ import {Link, withRouter} from "react-router-dom";
 import FolderPlusOutlineIcon from "mdi-react/FolderPlusOutlineIcon";
 
 const Dashboard = ({ organization }) => {
+  if( !organization ) return 'loading...'
+  console.log(organization)
+  // organization.programCount = 1
   return (
     <Container className="dashboard">
       <Row>
@@ -22,44 +25,46 @@ const Dashboard = ({ organization }) => {
           <h3 className="page-title">Dashboard</h3>
         </Col>
       </Row>
-
+      { !organization.programCount &&
+      <Row>
+          <Col md={12}>
+              <Card>
+                  <CardBody style={{display:'flex'}}>
+                      <Col md={4}>
+                      </Col>
+                      <Col md={4}>
+                          <div className="pb-4">
+                              <div  className='text-center'><FolderPlusOutlineIcon size={34} color='#70bbfd' /></div>
+                              <h3 className="text-center text-blue font-22">Create a new program</h3>
+                          </div>
+                          <AddProgramForm organization={organization} />
+                      </Col>
+                      <Col md={4}>
+                      </Col>
+                  </CardBody>
+              </Card>
+          </Col>
+      </Row>
+      }
+      { organization.programCount &&
+      <>
         <Row>
-            <Col md={12}>
-                <Card>
-                    <CardBody style={{display:'flex'}}>
-                        <Col md={4}>
-                        </Col>
-                        <Col md={4}>
-                            <div className="pb-4">
-                                <div  className='text-center'><FolderPlusOutlineIcon size={34} color='#70bbfd' /></div>
-                                <h3 className="text-center text-blue font-22">Create a new program</h3>
-                            </div>
-                            <AddProgramForm organization={organization} />
-                        </Col>
-                        <Col md={4}>
-                        </Col>
-                    </CardBody>
-                </Card>
-            </Col>
+          <TotalActivePrograms />
+          {/* <TotalRewardsThisWeek />
+          <TotalRedemptionThisWeek />
+          <NewParticipantInvitesThisWeek /> */}
         </Row>
-      {/*<Row>*/}
-      {/*  <TotalActivePrograms />*/}
-      {/*  <TotalRewardsThisWeek />*/}
-      {/*  <TotalRedemptionThisWeek />*/}
-      {/*  <NewParticipantInvitesThisWeek />*/}
-      {/*</Row>*/}
-      {/*<Row>*/}
-      {/*  <ParticipantInviteAndAcceptWeekView/>*/}
-      {/*  <RedemptionsWeekView />*/}
-      {/*  <TopMerchantsThisWeek />*/}
-      {/*</Row>*/}
+        <Row>
+          {/* <ParticipantInviteAndAcceptWeekView/>
+          <RedemptionsWeekView />
+          <TopMerchantsThisWeek /> */}
+        </Row>
+      </>
+      }
     </Container>
 
   );
 };
-
-
-
 
 Dashboard.propTypes = {
   rtl: RTLProps.isRequired,
