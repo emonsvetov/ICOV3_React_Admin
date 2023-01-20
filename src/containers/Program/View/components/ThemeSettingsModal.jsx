@@ -35,7 +35,7 @@ const THEME_OPTIONS = [
 ];
 
 const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) => {
-    console.log(data);
+    // console.log(data);
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
     const [currentTheme, setCurrentTheme] = useState();
@@ -45,6 +45,7 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
     const onSubmitForm = async (values) => {
         values.resetTheme = resetTheme;
         values.button_corner = sliderValue;
+        values.theme_color = selectedThemeColor;
         values.button_color = selectedColor;
         values.button_bg_color = selectedBGColor;
         values.font_family = fontFamily;
@@ -66,9 +67,12 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
         .then( (res) => {
             // console.log(res)
             toggle();
-            if(res.status == 200)  {
+            if(res.status === 200)  {
                 setTemplate(res.data)
-                dispatch(sendFlashMessage('Program Template updated successfully', 'alert-success'))
+                dispatch(sendFlashMessage('Program Template updated successfully', 'alert-success'));
+                if( !template?.id)  {
+                    window.location.reload();
+                }
             }
         })
         .catch( error => {
@@ -105,6 +109,12 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
             setSliderValue(data);
             // setSliderValue(6);
         }
+    };
+
+    // Theme Color
+    const [selectedThemeColor, setSelectedThemeColor] = useState(null);
+    const updateThemeColorHandler = (e, data) => {
+        setSelectedThemeColor('#'+e.hex);
     };
 
     // Color
@@ -162,6 +172,7 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
         if (template){
           setSliderValue(parseInt(template.button_corner))
           setSelectedColor(template.button_color)
+          setSelectedThemeColor(template.theme_color)
           setSelectedBGColor(template.button_bg_color)
           setFontFamily(template.font_family)
         }
@@ -225,7 +236,7 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                           })}
                           onClick={() => { togglePan('3'); }}
                         >
-                            Buttons wizard
+                            Images setup
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -235,6 +246,17 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                                 currentActiveTab === '4'
                           })}
                           onClick={() => { togglePan('4'); }}
+                        >
+                            Buttons wizard
+                        </NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink
+                          className={classnames({
+                              active:
+                                currentActiveTab === '5'
+                          })}
+                          onClick={() => { togglePan('5'); }}
                         >
                             Font styles
                         </NavLink>
@@ -275,6 +297,28 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                         </Row>
                     </TabPane>
                     <TabPane tabId="2">
+                        <div className="form__form-group">
+                            <span className="form__form-group-label thick">Theme Color</span>
+                            <div className="form__form-group-field flex-column">
+                                <ColorPicker onChange={updateThemeColorHandler} value={selectedThemeColor} />
+                            </div>
+                        </div>
+                        <p>&nbsp;</p>
+                        <Row>
+                            <Col xs="12" md="8" lg="8">
+                                <div className="form__form-group">
+                                    <span className="form__form-group-label thick">Welcome Message</span>
+                                    <div className="form__form-group-field flex-column">
+                                        <Field
+                                          name="welcome_message"
+                                          component={WYSIWYGEditor}
+                                        />
+                                    </div>
+                                </div>
+                            </Col>
+                        </Row>
+                    </TabPane>
+                    <TabPane tabId="3">
                         <Row>
                             <Col xs="12" md="3" lg="3">
                                 <div className="form__form-group">
@@ -379,22 +423,8 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                                 </div>
                             </Col>
                         </Row>
-                        <p>&nbsp;</p>
-                        <Row>
-                            <Col xs="12" md="8" lg="8">
-                                <div className="form__form-group">
-                                    <span className="form__form-group-label thick">Welcome Message</span>
-                                    <div className="form__form-group-field flex-column">
-                                        <Field
-                                          name="welcome_message"
-                                          component={WYSIWYGEditor}
-                                        />
-                                    </div>
-                                </div>
-                            </Col>
-                        </Row>
                     </TabPane>
-                    <TabPane tabId="3">
+                    <TabPane tabId="4">
                         <Row>
                             <Col sm="8">
                                 <div className="form__form-group">
@@ -438,7 +468,7 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                             </Col>
                         </Row>
                     </TabPane>
-                    <TabPane tabId="4">
+                    <TabPane tabId="5">
                         <Row>
                             <Col sm="8">
                                 <div className="form__form-group">
