@@ -81,16 +81,16 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
         <ProtectedLink type="physicalorders" />
         <SidebarLink title="Domains"  icon="layers" route="/domains" />
       </ul>
-      <ul className="sidebar__block">
-        <SidebarCategory title="Choose Theme" icon="layers">
-          <button type="button" className="sidebar__link" onClick={changeToLight}>
-            <p className="sidebar__link-title">Light Theme</p>
-          </button>
-          <button type="button" className="sidebar__link" onClick={changeToDark}>
-            <p className="sidebar__link-title">Dark Theme</p>
-          </button>
-        </SidebarCategory>
-      </ul>
+      {/*<ul className="sidebar__block">*/}
+      {/*  <SidebarCategory title="Choose Theme" icon="layers">*/}
+      {/*    <button type="button" className="sidebar__link" onClick={changeToLight}>*/}
+      {/*      <p className="sidebar__link-title">Light Theme</p>*/}
+      {/*    </button>*/}
+      {/*    <button type="button" className="sidebar__link" onClick={changeToDark}>*/}
+      {/*      <p className="sidebar__link-title">Dark Theme</p>*/}
+      {/*    </button>*/}
+      {/*  </SidebarCategory>*/}
+      {/*</ul>*/}
     </div>
   );
 };
