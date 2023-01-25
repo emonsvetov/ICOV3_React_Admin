@@ -8,7 +8,7 @@ import renderToggleButtonField from "@/shared/components/form/ToggleButton";
 import { useDispatch, flashSuccess, flashError } from "@/shared/components/flash"
 import axios from "axios";
 
-const EditEmailTemplateForm = ({onStep, organization, program, setStep, template, setTrigger}) => {
+const EditEmailTemplate = ({onStep, program, setStep, template, setTrigger}) => {
   const dispatch = useDispatch()
   // console.log(program)
 
@@ -157,6 +157,5 @@ const validate = values => {
 
 export default withRouter(connect((state) => ({
   theme: state.theme,
-  rtl: state.rtl,
-  organization: state.organization
-}))(EditEmailTemplateForm));
+  rtl: state.rtl
+}))(EditEmailTemplate));

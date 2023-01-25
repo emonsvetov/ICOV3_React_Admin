@@ -15,7 +15,9 @@ import FolderMoveOutlineIcon from 'mdi-react/PencilIcon'
 import CloseButton from "@/shared/components/CloseButton";
 import { COLUMNS } from "./columns"
 import axios from 'axios'
-import EditEmailTemplate from './edit'
+import AddEmailTemplate from './AddEmailTemplate'
+import EditEmailTemplate from './EditEmailTemplate'
+import getEmailTemplateTypeList from '@/service/getEmailTemplateTypeList'
 
 const EmailTemplateDataModal = ({
   isOpen,
@@ -34,16 +36,16 @@ const EmailTemplateDataModal = ({
   const [step, setStep] = useState(0);  
   const [loading, setLoading] = useState(false);  
   var [emailTemplates, setEmailTemplates] = useState([])
+  var [templateTypes, setTemplateTypes] = useState([])
   var [template, setTemplate] = useState(null)
   var [trigger, setTrigger] = useState(null)
 
   const fetchProgramEmailTemplates = async(organizationId, programId) => {
     setLoading(true)
     try {
-        console.log("Triggered")
+        // console.log("Triggered")
         const response = await axios.get(`/organization/${organizationId}/program/${programId}/emailtemplate`);
-        setEmailTemplates(response.data);
-        setLoading(false)
+        return response.data;
     } catch (e) {
         throw new Error(`API error:${e?.message}`);
     }
@@ -51,6 +53,15 @@ const EmailTemplateDataModal = ({
 
   useEffect(() => {
     fetchProgramEmailTemplates(data.organization_id, data.id)
+    .then( templates => {
+        setEmailTemplates(templates);
+        getEmailTemplateTypeList(data.organization_id, data.id)
+        .then( templateTypeList => {
+          // console.log(templateTypeList)
+          setTemplateTypes(templateTypeList)
+          setLoading(false)
+        })
+    })
   },[data, trigger])
 
   const RenderActions = ({row}) => {
@@ -137,6 +148,13 @@ const EmailTemplateDataModal = ({
     )
   }
   // console.log(template)
+  const props = {
+    onStep: handleStep,
+    setStep,
+    template,
+    program: data,
+    setTrigger
+  }
   return (
     <Modal
       className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`}
@@ -146,8 +164,9 @@ const EmailTemplateDataModal = ({
       <CloseButton onClick={toggle} />
       <ModalBody className="modal-lg">
         <Col md={12} lg={12}>
-        { step === 0 && <RenderEmailTemplateData programId = {data.id} onStep = { handleStep } />}
-        { step === 1 && template && <EditEmailTemplate onStep={ handleStep } setStep={setStep} template={template} program={data} setTrigger={setTrigger} />}
+        { step === 0 && <RenderEmailTemplateData {...props} />}
+        { step === 1 && template && <EditEmailTemplate  {...props} />}
+        { step === 2 && template && <AddEmailTemplate {...props} />}
         </Col>
       </ModalBody>
     </Modal>
