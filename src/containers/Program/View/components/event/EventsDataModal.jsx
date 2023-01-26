@@ -70,7 +70,7 @@ const EventsDataModal = ({
               <div className="react-table__wrapper">
                 <div className="card__title">
                   <h5 className="bold-text">Events</h5>
-                  <h5 className="subhead">Description</h5>
+                  <h5 className="subhead">Create/View award events</h5>
                 </div>
               </div>
             </Col>
@@ -82,7 +82,7 @@ const EventsDataModal = ({
                     className="mr-3"
                     onClick={toggle}
                   >
-                  Cancel
+                  Close
                   </Button>{" "}
                   <Button
                     type="submit"

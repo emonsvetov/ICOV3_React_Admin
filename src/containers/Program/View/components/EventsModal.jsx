@@ -251,7 +251,7 @@ const RenderEventsData = (props) =>{
             <div className="react-table__wrapper">
               <div className="card__title">
                 <h5 className="bold-text">Events</h5>
-                <h5 className="subhead">Description</h5>
+                <h5 className="subhead">View/Create award events</h5>
               </div>
             </div>
           </Col>
@@ -263,7 +263,7 @@ const RenderEventsData = (props) =>{
                   className="mr-3"
                   onClick={toggle}
                 >
-                Cancel
+                Close
                 </Button>{" "}
                 <Button
                   type="submit"

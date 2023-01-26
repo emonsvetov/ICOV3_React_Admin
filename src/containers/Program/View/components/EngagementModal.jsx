@@ -53,7 +53,7 @@ const EngagementModal = ({dispatch, data, isOpen, toggle, theme, rtl}) => {
                     </Col>
                     <Col md="6" lg="6" xl="6" className='text-right'>
                         <ButtonToolbar className="modal__footer flex justify-content-right w100">
-                            <Button outline color="primary" className="mr-3" onClick={toggle}>Cancel</Button>{' '}
+                            <Button outline color="primary" className="mr-3" onClick={toggle}>Close</Button>{' '}
                             <Button type="submit" disabled={loading} className="btn btn-primary" color="#ffffff">Save</Button>
                         </ButtonToolbar>
                     </Col>

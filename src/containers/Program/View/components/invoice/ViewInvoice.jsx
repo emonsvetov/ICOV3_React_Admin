@@ -1,5 +1,4 @@
-import React, {useState} from 'react';
-import { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Button, ButtonToolbar, Row, Col  } from 'reactstrap';
 import {getInvoice} from '@/service/program/invoice';
 import {getDues} from './helper/getDues'
@@ -7,10 +6,13 @@ import {BillTo} from './components/BillTo'
 import { DebitCredit } from './components/DebitCredit';
 import JournalSummary from './components/JournalSummary';
 import axios from 'axios'
+import {withRouter} from "react-router-dom";
+import {connect} from "react-redux";
 
 const ViewInvoice = (props) => {
     const [loading, setLoading] = useState(true)
     const [invoice, setInvoice] = useState(null)
+    console.log(props)
     useEffect( () => {
             getInvoice(props.program.organization_id, props.program.id, props.invoice.id)
             .then( res => {
@@ -66,13 +68,17 @@ const ViewInvoice = (props) => {
                     >
                     Download Invoice
                     </Button>
-                    <Button
-                    color="primary"
-                    className="mr-3"
-                    onClick={()=>onClickPayInvoice()}
-                    >
-                    Pay Invoice
-                    </Button>
+                    {
+
+                        props.auth?.isSuperAdmin &&
+                        <Button
+                            color="primary"
+                            className="mr-3"
+                            onClick={() => onClickPayInvoice()}
+                        >
+                            Pay Invoice
+                        </Button>
+                    }
                     <Button
                     outline
                     color="primary"
@@ -112,7 +118,7 @@ const ViewInvoice = (props) => {
                             <div>Due Date: </div>
                             <div>{invoice.date_due === invoice.date_end ? 'Due upon receipt' : invoice.date_due}</div>
                         </div>
-                        {invoice.invoice_po_number && 
+                        {invoice.invoice_po_number &&
                         <div className="d-flex justify-content-between">
                             <div>PO Number: </div>
                             <div>{invoice.invoice_po_number}</div>
@@ -181,4 +187,8 @@ const ViewInvoice = (props) => {
         </>
     )
 }
-export default ViewInvoice;
+
+export default withRouter(connect((props) => ({
+    auth: props.auth
+}))(ViewInvoice));
+//export default ViewInvoice;

@@ -10,7 +10,7 @@ const AddProgramModal = ({data, isOpen, toggle, theme, rtl, organization}) => {
     <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={toggle}>
         <ModalBody className='modal-lg'>
             <AddProgramForm organization={organization} program={data} toggle={toggle} />
-            <Button outline color="primary" className="mr-3" onClick={toggle}>Cancel</Button>
+            <Button outline color="primary" className="mr-3" onClick={toggle}>Close</Button>
         </ModalBody>
     </Modal>
     )

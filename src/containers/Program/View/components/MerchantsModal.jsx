@@ -443,7 +443,7 @@ const DataTable = ({ toggle, organization, program }) => {
               <div className="col-md-6 col-lg-6 text-right pr-0">
                 <ButtonToolbar className="modal__footer flex justify-content-right w100">
                   <Button outline color="primary" onClick={toggle}>
-                    Cancel
+                    Close
                   </Button>{" "}
                   <Button
                     disabled={isLoading}

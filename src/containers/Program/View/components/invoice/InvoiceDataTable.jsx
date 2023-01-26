@@ -133,7 +133,7 @@ const InvoiceDataTable = (props) =>{
                 </Col>
                 <Col md="6" lg="6" xl="6">
                     <ButtonToolbar className="modal__footer flex justify-content-right w100">
-                        <Button outline color="primary" className="mr-3" onClick={props.toggle}>Cancel</Button>{' '}
+                        <Button outline color="primary" className="mr-3" onClick={props.toggle}>Close</Button>{' '}
                         {props.program.is_pay_in_advance == 1 && <Button type="submit" 
                             disabled={loading} 
                             className="btn btn-primary" 
