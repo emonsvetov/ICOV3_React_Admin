@@ -15,7 +15,7 @@ const TopbarProfile = () => {
   return (
     <div className="topbar__profile">
       <button type="button" className="topbar__avatar" onClick={setIsCollapsed}>
-        <img className="topbar__avatar-img" src={Ava} alt="avatar" />
+        {/*<img className="topbar__avatar-img" src={Ava} alt="avatar" />*/}
         <p className="topbar__avatar-name">{getAuthUserFullname()}</p>
         <DownIcon className="topbar__icon" />
       </button>

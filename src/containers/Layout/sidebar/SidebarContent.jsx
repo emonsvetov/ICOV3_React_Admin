@@ -62,35 +62,50 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
           <SidebarLink title="All Programs" route="/program" />
           <SidebarLink title="Create Program" route="/program/add" />
         </SidebarCategory>
-        <ProtectedLink type="merchants" />
+        {
+          !auth?.isSuperAdmin &&
+            <ProtectedLink type="merchants"/>
+        }
         <SidebarCategory title="Import" icon="download">
           <SidebarLink title="All Imported Files" route="/import/list" />
           <SidebarLink title="Import" route="/import" />
         </SidebarCategory>
-        <SidebarCategory title="Reports" icon="book">
-          <ProtectedLink type="reports" />
-          <SidebarLink title="Award Detail" route="/reports/award-detail" />
-          <SidebarLink title="Inventory Order" route="/reports/inventory-order" />
-          <SidebarLink title="Deposit" route="/reports/deposit" />
-          <SidebarLink title="Unassigned Program Domains" route="/reports/unassigned-program-domains" />
-          <SidebarLink title="Monies Pending Amount" route="/reports/monies-pending-amount" />
-        </SidebarCategory>
-        <ProtectedLink type="roles" />
-        <ProtectedLink type="permissions" />
+        {
+            !auth?.isSuperAdmin &&
+            <SidebarCategory title="Reports" icon="book">
+              <ProtectedLink type="reports"/>
+              <SidebarLink title="Award Detail" route="/reports/award-detail"/>
+              <SidebarLink title="Inventory Order" route="/reports/inventory-order"/>
+              <SidebarLink title="Deposit" route="/reports/deposit"/>
+              <SidebarLink title="Unassigned Program Domains" route="/reports/unassigned-program-domains"/>
+              <SidebarLink title="Monies Pending Amount" route="/reports/monies-pending-amount"/>
+            </SidebarCategory>
+        }
+        {
+            !auth?.isSuperAdmin &&
+            <ProtectedLink type="roles"/> &&
+          <ProtectedLink type="permissions" />
+        }
         <SidebarLink title="Users" icon="users" route="/users" />
-        <ProtectedLink type="physicalorders" />
+        {
+            !auth?.isSuperAdmin &&
+            <ProtectedLink type="physicalorders"/>
+        }
         <SidebarLink title="Domains"  icon="layers" route="/domains" />
       </ul>
-      <ul className="sidebar__block">
-       <SidebarCategory title="Choose Theme" icon="layers">
-         <button type="button" className="sidebar__link" onClick={changeToLight}>
-           <p className="sidebar__link-title">Light Theme</p>
-         </button>
-         <button type="button" className="sidebar__link" onClick={changeToDark}>
-           <p className="sidebar__link-title">Dark Theme</p>
-         </button>
-       </SidebarCategory>
-      </ul>
+      {
+          !auth?.isSuperAdmin &&
+          <ul className="sidebar__block">
+            <SidebarCategory title="Choose Theme" icon="layers">
+              <button type="button" className="sidebar__link" onClick={changeToLight}>
+                <p className="sidebar__link-title">Light Theme</p>
+              </button>
+              <button type="button" className="sidebar__link" onClick={changeToDark}>
+                <p className="sidebar__link-title">Dark Theme</p>
+              </button>
+            </SidebarCategory>
+          </ul>
+      }
     </div>
   );
 };
