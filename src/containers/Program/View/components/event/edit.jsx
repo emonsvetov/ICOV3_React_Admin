@@ -187,7 +187,7 @@ const Edit = ({organization, theme, rtl}) => {
                               className="mr-3"
                               onClick={onClickCancel}
                             >
-                              Cancel
+                              Close
                             </Button>{" "}
                             <Button
                               type="submit"

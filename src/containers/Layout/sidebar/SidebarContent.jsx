@@ -63,7 +63,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
           <SidebarLink title="Create Program" route="/program/add" />
         </SidebarCategory>
         {
-          !auth?.isSuperAdmin &&
+          auth?.isSuperAdmin &&
             <ProtectedLink type="merchants"/>
         }
         <SidebarCategory title="Import" icon="download">
@@ -71,7 +71,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
           <SidebarLink title="Import" route="/import" />
         </SidebarCategory>
         {
-            !auth?.isSuperAdmin &&
+            auth?.isSuperAdmin &&
             <SidebarCategory title="Reports" icon="book">
               <ProtectedLink type="reports"/>
               <SidebarLink title="Award Detail" route="/reports/award-detail"/>
@@ -82,19 +82,19 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
             </SidebarCategory>
         }
         {
-            !auth?.isSuperAdmin &&
+            auth?.isSuperAdmin &&
             <ProtectedLink type="roles"/> &&
           <ProtectedLink type="permissions" />
         }
         <SidebarLink title="Users" icon="users" route="/users" />
         {
-            !auth?.isSuperAdmin &&
+            auth?.isSuperAdmin &&
             <ProtectedLink type="physicalorders"/>
         }
         <SidebarLink title="Domains"  icon="layers" route="/domains" />
       </ul>
       {
-          !auth?.isSuperAdmin &&
+          auth?.isSuperAdmin &&
           <ul className="sidebar__block">
             <SidebarCategory title="Choose Theme" icon="layers">
               <button type="button" className="sidebar__link" onClick={changeToLight}>
