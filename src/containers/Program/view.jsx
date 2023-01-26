@@ -226,21 +226,6 @@ const ProgramView = ( {dispatch, organization, program} ) => {
                 </CardBody>
             </Card>
         </Col>
-        <Col md="4" lg="4" xl="4">
-            <Card>
-                <CardBody>
-                    <Row onClick={()=>{toggle('emailtemplate')}}>
-                        <Col md={3} className='col-left'>
-                            <img src={EventsIcon} className="card-img-top" alt="Email Templates" />
-                        </Col>
-                        <Col md={9} className='col-right pl-0'>
-                            <h5>Email Templates</h5>
-                            <p>Manage Program's Email Templates</p>
-                        </Col>
-                    </Row>
-                </CardBody>
-            </Card>
-        </Col>
       </Row>
     </Container>
 )}
