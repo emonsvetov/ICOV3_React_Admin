@@ -101,7 +101,7 @@ const AssignRoleModal = ({ program, user, roles, isOpen, toggle, theme, rtl, set
                                     )}
                                 </Field>
                                 <div className='d-flex justify-content-end'>
-                                    <Button className='btn-sm mr-2' color='outline-primary' onClick={toggle}>Cancel</Button><Button className='btn-sm' color='primary' disabled={loading} type='submit'>Submit</Button>
+                                    <Button className='btn-sm mr-2' color='outline-primary' onClick={toggle}>Close</Button><Button className='btn-sm' color='primary' disabled={loading} type='submit'>Submit</Button>
                                 </div>
                             </form>
                         )}

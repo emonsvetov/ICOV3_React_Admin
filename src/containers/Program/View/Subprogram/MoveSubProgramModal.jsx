@@ -100,7 +100,7 @@ const MoveSubProgramModal = ({isOpen, setOpen, toggle, subprogram, organization,
                 {formError && <span className="form__form-group-error">{formError}</span>}
             </ModalBody>
             <ButtonToolbar className="modal__footer flex justify-content-right">
-                <Button outline color="primary" className="mr-3" onClick={toggle}>Cancel</Button>{' '}
+                <Button outline color="primary" className="mr-3" onClick={toggle}>Close</Button>{' '}
                 <Button type="submit" disabled={selected===originalSelected || loading || disableMove} className="btn btn-primary" color="#ffffff" onClick={onClickMoveConfrim}>Confirm</Button>
             </ButtonToolbar>
         </Modal>
