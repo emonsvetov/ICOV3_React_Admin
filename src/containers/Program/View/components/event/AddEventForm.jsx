@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
 import renderSelectField from '@/shared/components/form/Select'
-import {fetchEventTypes, fetchEmailTemplates} from '@/shared/apiHelper'
+import {fetchEventTypes} from '@/shared/apiHelper'
 import {labelizeNamedData} from '@/shared/helpers'
 import { useDispatch, flashSuccess, flashError } from "@/shared/components/flash"
 import axios from "axios";
@@ -21,20 +21,10 @@ const AddEventForm = ({onStep, program}) => {
 
   const [loading, setLoading] = useState(false);
   const [eventTypes, setEventTypes] = useState([]);
-  const [emailTemplates, setEmailTemplates] = useState([]);
-  const [templateContents, setTemplateContents] = useState([]);
-  let [icon, setIcon] = useState(null);
   const [isOpen, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("2");
   const [visibleLedgerCode, setVisibleLedgerCode] = useState(false);
-  const [customEmailTemplate, setEnableCustomize] = useState(false);
-  // const handleTypeChange = (type) => {
-  //   // setEventType(type);
-  // };
 
-  const handleCustomTemplate = (value) =>{
-      setEnableCustomize(value);
-  }
   const set_path = (pickedIcon) => {
     const path = process.env.REACT_APP_API_STORAGE_URL + "/" + pickedIcon.path;
     return path;
@@ -43,31 +33,16 @@ const AddEventForm = ({onStep, program}) => {
     setOpen((prevState) => !prevState);
   };
 
-  const iconToggle = () => {
-    // setIconOpen(prevState => !prevState)
-    onStep(2);
-  };
-
   useEffect(() => {
     fetchEventTypes()
       .then(evtypes => {
         setEventTypes(labelizeNamedData(evtypes))
       })
   }, [])
-  useEffect(() => {
-    if (program?.id) {
-      fetchEmailTemplates(program.organization_id, program.id, 'program_event')
-        .then(res => {
-          // console.log(res)
-          setEmailTemplates(labelizeNamedData(res))
-          setTemplateContents(res)
-        })
-    }
-  }, [program])
 
   const onSubmit = (values) => {
     const eventData = makeFormData(program, values)
-    console.log(eventData)
+    // console.log(eventData)
     // return
     
     axios
@@ -95,30 +70,6 @@ const AddEventForm = ({onStep, program}) => {
     changeValue(state, fieldName, () => fieldVal);
   }
 
-  // function handlePickImage( pickedIcon ) {
-  //   setOpen(false);
-  //   setIcon(pickedIcon);
-  // }
-
-  const onChangeEmailTemplate = ([field], state, { setIn, changeValue }) => {
-
-    const targetEmailTemplate = state.fields["email_template"];
-    const targetTemplateName = state.fields["template_name"];
-    const v = field.value
-
-    if (v && templateContents.length > 0) {
-      const template = templateContents.find(current => String(current.id) === String(v))
-      if (template && template?.id) {
-        targetEmailTemplate.change(template.content);
-        targetTemplateName.change(template.name);
-        return;
-      }
-    }
-
-    targetEmailTemplate.change("");
-    targetTemplateName.change("");
-  }
-
   const onChangeAwardValue = ([field], state, { setIn, changeValue }) => {
     const v = field.target.value
     if( isNaN( v ) ) return;
@@ -133,20 +84,13 @@ const AddEventForm = ({onStep, program}) => {
       field.change(  v / program.factor_valuation );
     }
   }
-
-  let emailTemplate = null
   
   return (
     <>
       <Form
         mutators={{
-          // // expect (field, value) args from the mutator
-          // setValue: ([field, value], state, { changeValue }) => {
-          //   changeValue(state, field, () => value)
-          // }
           onChangeAwardValue,
-          setEventIcon,
-          onChangeEmailTemplate
+          setEventIcon
         }}
         onSubmit={onSubmit}
         validate={(values) => formValidation.validateForm(values)}
@@ -354,108 +298,6 @@ const AddEventForm = ({onStep, program}) => {
                   </div>
                 </Col>
               </Row>
-              
-              <Row>
-                <Col md="6" lg="4" xl="4">
-                  <div className="form__form-group">
-                    <div className="form__form-group-field">
-                      <span
-                        className="form__form-group-label"
-                        style={{ width: "200%" }}
-                      >
-                        Custom Email Template
-                      </span>
-                      <Field
-                        name="custom_email_template"
-                        component={renderToggleButtonField}
-                        parse={value => {
-                            handleCustomTemplate(value)
-                              return value;
-                        }}
-                      />
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-              
-                <Row>
-                {!customEmailTemplate &&
-
-                    <Col md="6" lg="4" xl="4">
-                        <div className="form__form-group">
-                            <span className="form__form-group-label">
-                                Select Email Template
-                            </span>
-                            <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                                {/* <Field 
-                                    name="email_template_id"
-                                    options={emailTemplates}
-                                    component={renderSelectField}
-                                    parse={value => {
-                                        form.mutators.onChangeEmailTemplate(value)
-                                        return value;
-                                    }}
-                                /> */}
-                                <Field
-                                  name="email_template_id"
-                                  options={emailTemplates}
-                                  component={renderSelectField}
-                                  initialValue={emailTemplate}
-                                  parse={value => {
-                                    form.mutators.onChangeEmailTemplate(value)
-                                    return value;
-                                  }}
-                                />
-                            </div>
-                            </div>
-                        </div>
-                    </Col>
-                    
-                }
-                    <Col md="6" lg="4" xl="4">
-                        <div className="form__form-group" style={{display: customEmailTemplate? 'block':'none'}}>
-                            <span className="form__form-group-label">
-                                Template Name
-                            </span>
-                            <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                                <Field
-                                    name="template_name"
-                                    component="input"
-                                    type="text"
-                                    parse={value => {
-                                        form.mutators.onChangeEmailTemplate(value)
-                                        return value;
-                                    }}
-                                />
-                            </div>
-                            </div>
-                        </div>
-                    </Col>
-                    <Col md="12" lg="8" xl="8">
-                        <div className="form__form-group">
-                            <span className="form__form-group-label">
-                                Email Template
-                            </span>
-                            <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                                <Field
-                                    name="email_template"
-                                    component="textarea"
-                                    type="text"
-                                    parse={value => {
-                                        form.mutators.onChangeEmailTemplate(value)
-                                        return value;
-                                    }}
-                                    readOnly={!customEmailTemplate}
-                                />
-                            </div>
-                            </div>
-                        </div>
-                    </Col>
-                </Row>
-              
               <Row>
                 <Col md="6" lg="4" xl="4">
                   <div className="form__form-group">

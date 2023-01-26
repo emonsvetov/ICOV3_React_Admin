@@ -11,10 +11,6 @@ export const makeFormData = (program, values) => {
         award_message_editable,
         event_icon_id,
         event_type_id,
-        email_template_id,
-        template_name,
-        email_template,
-        custom_email_template
     } = values;
 
     eventData.name = name;
@@ -23,14 +19,6 @@ export const makeFormData = (program, values) => {
         eventData.post_to_social_wall = post_to_social_wall;
     }
     eventData.award_message_editable = award_message_editable;
-
-    if (custom_email_template) {
-        eventData.custom_email_template = custom_email_template;
-        eventData.template_name = template_name ? template_name : '';
-        eventData.email_template = email_template ? email_template : '';
-    } else if (email_template_id) {
-        eventData.email_template_id = email_template_id?.value ? email_template_id.value : null;
-    }
 
     eventData.enable = enable ? 1 : 0;
 
