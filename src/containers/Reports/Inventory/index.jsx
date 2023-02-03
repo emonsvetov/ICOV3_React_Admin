@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Col, Container, Row } from 'reactstrap';
+import {Link} from 'react-router-dom';
+import {Col, Container, Row} from 'reactstrap';
 import InventoryIndex from './components/InventoryIndex.jsx';
 
 const Inventory = () => {
@@ -13,9 +13,10 @@ const Inventory = () => {
         </Col>
       </Row>
       <Row>
-        <InventoryIndex />
+        <InventoryIndex/>
       </Row>
     </Container>
-  )}
+  )
+}
 
 export default Inventory;
