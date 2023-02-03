@@ -49,7 +49,7 @@ const Dashboard = ({ organization }) => {
       { organization.programCount &&
       <>
         <Row>
-          <TotalActivePrograms />
+          {/*<TotalActivePrograms />*/}
           {/* <TotalRewardsThisWeek />
           <TotalRedemptionThisWeek />
           <NewParticipantInvitesThisWeek /> */}
