@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Col, Container, Row } from 'reactstrap';
+import {Link} from 'react-router-dom';
+import {Col, Container, Row} from 'reactstrap';
 import InventoryOrderCard from './components/InventoryOrderIndex.jsx';
 
 const InventoryOrder = () => {
@@ -13,9 +13,10 @@ const InventoryOrder = () => {
         </Col>
       </Row>
       <Row>
-        <InventoryOrderCard />
+        <InventoryOrderCard/>
       </Row>
     </Container>
-)}
+  )
+}
 
 export default InventoryOrder;

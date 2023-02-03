@@ -1,27 +1,28 @@
-import { Link } from 'react-router-dom';
-// import {format} from 'date-fns'
+import {Link} from 'react-router-dom';
+import React, {useMemo} from 'react';
 
-import ChevronUpIcon from 'mdi-react/ChevronUpIcon';
-import ChevronRightIcon from 'mdi-react/ChevronRightIcon';
+export const TABLE_COLUMNS = [
 
-// import { ColumnFilter } from "./ColumnFilter"
-
-export const PROGRAM_COLUMNS = [
-    {
-        Header: "Merchant",
-        accessor: "merchant",
-        enableRowSpan: true
-    },
-    {
-        Header: "Denomination",
-        accessor: "denomination",
-    },
-    {
-        Header: "# in Inventory",
-        accessor: "num_in_inventory",
-    },
-    {
-        Header: "2-Week Target",
-        accessor: "two_week_target",
-    },
+  {
+    Header: "Merchant",
+    accessor: "merchant_name",
+    width: 130,
+    rowSpan: 2
+  },
+  {
+    Header: "Denomination",
+    accessor: "denomination",
+    width: 130
+  },
+  {
+    Header: "# in Inventory",
+    accessor: "count",
+    width: 130
+  },
+  {
+    Header: "2-Week Target",
+    accessor: "optimal_value",
+    width: 130
+  },
 ]
+
