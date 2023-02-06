@@ -26,7 +26,7 @@ const Dashboard = ({ organization }) => {
         </Col>
       </Row>
       { !organization.programCount &&
-      <Row>
+      <Row>Participant
           <Col md={12}>
               <Card>
                   <CardBody style={{display:'flex'}}>

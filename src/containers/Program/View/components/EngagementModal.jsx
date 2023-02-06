@@ -49,7 +49,6 @@ const EngagementModal = ({dispatch, data, isOpen, toggle, theme, rtl}) => {
                 <Row className='w100'>
                     <Col md="6" lg="6" xl="6">
                         <h3>Engagement</h3>
-                        <h5 className="colorgrey">Resident Gifts</h5>
                     </Col>
                     <Col md="6" lg="6" xl="6" className='text-right'>
                         <ButtonToolbar className="modal__footer flex justify-content-right w100">
