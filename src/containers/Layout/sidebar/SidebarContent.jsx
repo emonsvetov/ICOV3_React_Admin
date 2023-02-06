@@ -58,10 +58,11 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
         <SidebarLink title="Log Out" icon="exit" route="" onClick={logout} />
       </ul>
       <ul className="sidebar__block">
-        <SidebarCategory title="Program" icon="diamond">
-          <SidebarLink title="All Programs" route="/program" />
-          <SidebarLink title="Create Program" route="/program/add" />
-        </SidebarCategory>
+        <SidebarLink title="Programs" route="/program" icon="diamond" />
+        {/*<SidebarCategory title="Program" icon="diamond">*/}
+        {/*  <SidebarLink title="All Programs" route="/program" />*/}
+        {/*  <SidebarLink title="Create Program" route="/program/add" />*/}
+        {/*</SidebarCategory>*/}
         {
           auth?.isSuperAdmin &&
             <ProtectedLink type="merchants"/>
