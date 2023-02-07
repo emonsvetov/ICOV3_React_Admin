@@ -156,6 +156,16 @@ export const unpatchMedia = ( dataset, fields ) => {
     return dataset
 }
 
+export const removeFields = ( dataset, fields ) => {
+    if( !dataset || !fields ) return dataset;
+    for (const [key, value] of Object.entries(dataset)) {
+        if( inArray(key, fields) )  {
+            delete dataset[key]
+        }
+    }
+    return dataset
+}
+
 export const MERCHANT_MEDIA_FIELDS = ['logo', 'icon', 'large_icon', 'banner']
 
 export const patchMerchantMediaURL = ( merchant ) => {
