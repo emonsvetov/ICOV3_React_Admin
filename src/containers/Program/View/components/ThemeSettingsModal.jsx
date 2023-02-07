@@ -6,8 +6,8 @@ import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col, Spinner
 import { Form, Field } from 'react-final-form';
 import axios from 'axios'
 import renderDropZoneField from '@/shared/components/form/DropZone';
-import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
-import {mapFormDataUploads, unpatchMedia, patchMediaURL} from '@/shared/helpers'
+import {useDispatch, flashSuccess, flashError} from "@/shared/components/flash";
+import {mapFormDataUploads, unpatchMedia, patchMediaURL, removeFields} from '@/shared/helpers'
 import classnames from 'classnames';
 import Slider from "@/shared/components/form/Slider"
 import { ColorPicker } from 'material-ui-color';
@@ -15,6 +15,7 @@ import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 // import Select, { SelectChangeEvent } from '@material-ui/core/Select';
 // import MenuItem from '@material-ui/core/MenuItem';
+import {getThemeByName, resetTheme, getTheme} from '@/service/program/programTheme'
 
 import renderCheckBoxField from '@/shared/components/form/CheckBox';
 import renderSelectField from '@/shared/components/form/Select';
@@ -22,63 +23,93 @@ import renderSelectOptionsField from '@/shared/components/form/SelectOptions';
 
 import WYSIWYGEditor from '@/shared/components/form/WYSIWYGEditor'
 import { THEME_FONT_FAMILIES  } from './ThemeData';
-import {SelectOptionsField} from "../../../../shared/components/form/SelectOptions";
+import { TurnedIn } from '@material-ui/icons';
 
 const MEDIA_FIELDS = ['small_logo', 'big_logo', 'hero_banner', 'slider_01', 'slider_02', 'slider_03']
 const THEME_IMAGE = {
-    'Original' : `${process.env.PUBLIC_URL}/img/theme/Original.png`,
-    'New' : `${process.env.PUBLIC_URL}/img/theme/New.png`,
+    'Clear' : `${process.env.PUBLIC_URL}/img/theme/Original.png`,
+    'Classic' : `${process.env.PUBLIC_URL}/img/theme/New.png`,
 }
 const THEME_OPTIONS = [
-    { value: "Original", label: "Clear" },
-    { value: "New", label: "Classic" },
+    { value: "Clear", label: "Clear" },
+    { value: "Classic", label: "Classic" },
 ];
 
-const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) => {
-    // console.log(data);
+const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
+    // console.log(program.template)
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
     const [currentTheme, setCurrentTheme] = useState();
-    const [resetTheme, setResetTheme] = useState(false);
-    let [template, setTemplate] = useState(null)
-    // console.log(data)
+    let [template, setTemplate] = useState({})
+    // console.log(program)
+    const validate = values => {
+      let errors = {}
+      if( !values.name && !currentTheme )
+      {
+        errors.name = 'Select a theme'
+      }
+      if( !values.big_logo && !template.big_logo )
+      {
+        errors.big_logo = 'Big logo is required'
+      }
+      if( !values.small_logo && !template.small_logo )
+      {
+        errors.small_logo = 'Small logo is required'
+      }
+      if( !values.hero_banner && !template.hero_banner )
+      {
+        errors.hero_banner = 'hero banner is required'
+      }
+      if( !values.slider_01 && !template.slider_01 )
+      {
+        errors.slider_01 = 'Atleast one slider image is required'
+      }
+      if( !fontFamily )
+      {
+        errors.font_family = 'font_family is required'
+      }
+      // console.log(errors)
+      // setError(errors)
+      return errors
+    }
     const onSubmitForm = async (values) => {
-        values.resetTheme = resetTheme;
         values.button_corner = sliderValue;
         values.theme_color = selectedThemeColor;
         values.button_color = selectedColor;
         values.button_bg_color = selectedBGColor;
         values.font_family = fontFamily;
         values.name = currentTheme;
-        // setLoading(true)
+        setLoading(true)
+        values = removeFields(values, ["created_at", "updated_at", "is_active"])
         values = unpatchMedia(values, MEDIA_FIELDS)
-        // console.log(values)
         let formData = mapFormDataUploads( values )
-        // console.log(formData)
-        let saveUrl = `/organization/${data.organization_id}/program/${data.id}/template`;
+        let saveUrl = `/organization/${program.organization_id}/program/${program.id}/template`;
         if( template?.id)  {
             formData.append('_method', 'PUT')
             saveUrl += `/${template.id}`
         }
+        console.log([...formData])
+        // return;
         axios.post(saveUrl, formData, {
             "Content-Type": "multipart/form-data",
             "Access-Control-Allow-Origin": "*"
         })
         .then( (res) => {
             // console.log(res)
-            toggle();
+            // toggle();
             if(res.status === 200)  {
                 setTemplate(res.data)
-                dispatch(sendFlashMessage('Program Template updated successfully', 'alert-success'));
-                if( !template?.id)  {
-                    window.location.reload();
-                }
+                flashSuccess(dispatch, 'Program Template updated successfully');
+                // if( !template?.id)  {
+                //     window.location.reload();
+                // }
+                setLoading(false)
             }
         })
         .catch( error => {
             // console.log(error)
             // console.log(JSON.stringify(error.response.data.errors));
-            dispatch(sendFlashMessage(JSON.stringify(error.response.data.errors), 'alert-danger'))
+            flashError(dispatch, error.response.data.errors)
             // throw new Error(`API error:${e?.message}`);
             setLoading(false)
         })
@@ -139,16 +170,37 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
     const [ stylePath, setStylePath ] = useState("https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900");
 
     const onSelectTheme = (selectedOption) => {
+        // console.log(template)
+        // console.log(selectedOption)
+        // if(template && selectedOption.value !== template.name)
+        // {
+          console.log("Get Theme")
+          getThemeByName(program.organization_id, program.id, selectedOption.value)
+          .then( theme => {
+            setTemplate(theme ? theme : {})
+          })
+        // }
         setCurrentTheme(selectedOption.value);
     };
 
     useEffect(() => {
-        let [option] = THEME_OPTIONS.filter((item) => item.value === template?.name);
-        if (!option){
-            [option] = THEME_OPTIONS.filter((item) => item.value === 'Original');
+        if(program && program?.id)
+        {
+          getTheme(program.organization_id, program.id)
+          .then( theme => {
+            console.log(theme)
+            setTemplate(theme ? theme : {})
+          })
         }
-        setCurrentTheme(option.value);
-    }, [template]);
+    }, [program]);
+
+    // useEffect(() => {
+    //     let [option] = THEME_OPTIONS.filter((item) => item.value === template?.name);
+    //     // if (!option){
+    //     //     [option] = THEME_OPTIONS.filter((item) => item.value === 'Clear');
+    //     // }
+    //     setCurrentTheme(option.value);
+    // }, [template]);
 
     useEffect(() => {
         var head = document.head;
@@ -165,20 +217,44 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
     }, [stylePath]);
 
     useEffect(() => {
-        if (!template && data.template) {
-            setTemplate(data.template)
-        }
-
-        if (template){
+        if ( Object.keys(template).length > 0 ){
+          setCurrentTheme(template.name);
           setSliderValue(parseInt(template.button_corner))
           setSelectedColor(template.button_color)
           setSelectedThemeColor(template.theme_color)
           setSelectedBGColor(template.button_bg_color)
           setFontFamily(template.font_family)
+        } else {
+          // setCurrentTheme('Clear');
+          setSliderValue(parseInt(0))
+          setSelectedColor(null)
+          setSelectedThemeColor(null)
+          setSelectedBGColor(null)
+          setFontFamily(null)
         }
-    }, [template, data])
+    }, [template])
 
     template = patchMediaURL( template, MEDIA_FIELDS )
+
+    const onClickResetTheme = () => {
+      if( window.confirm( 'Are you sure to reset this theme?'))
+      {
+        resetTheme(program.organization_id, program.id, template.id)
+        .then( res => {
+          setTemplate({})
+          // const nextTheme = currentTheme === 'Classic' ? 'Clear' : 'Classic';
+          // getThemeByName(program.organization_id, program.id, nextTheme)
+          // .then( theme => {
+          //   setTemplate(theme ? theme : {})
+          //   setCurrentTheme(nextTheme);
+          // })
+        })
+      }
+    }
+
+    let formError = false;
+
+    // console.log(template)
 
     return (
     <Modal className={`modal-program programTemplateModal modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen}
@@ -194,12 +270,15 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                 <Row className='w100'>
                     <Col md="6" lg="6" xl="6">
                         <h3 style={{"fontWeight": 500}}>Theme Options</h3>
-                        <h5 style={{"fontWeight": 500, color:'#999'}}>{data.name}</h5>
+                        <h5 style={{"fontWeight": 500, color:'#999'}}>{program.name}</h5>
                     </Col>
                     <Col md="6" lg="6" xl="6" className='text-right'>
                         <ButtonToolbar className="modal__footer flex justify-content-right w100">
                             <Button outline color="primary" className="mr-3" onClick={toggle}>Close</Button>{' '}
-                            <Button type="submit" disabled={loading} className="btn btn-primary" color="#ffffff">Save</Button>
+                            {formError = Object.keys(validate(values)).length > 0}
+                            {/* {console.log(formError)} */}
+                            <Button type="submit" disabled={submitting || formError} className="btn btn-primary" color="#ffffff">Save</Button>
+                            {(currentTheme && formError && !submitting && !loading) && <div className="error">Required fields missing</div>}
                         </ButtonToolbar>
                     </Col>
                 </Row>
@@ -267,7 +346,7 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                         <Row>
                             <Col sm="3">
                                 <div className="form__form-group">
-                                    <span className="form__form-group-label thick">Current Theme</span>
+                                    <span className="form__form-group-label thick">Current Theme<span className='error'>*</span></span>
                                     <div className="form__form-group-field flex-column">
                                         <Field
                                           name="name"
@@ -275,11 +354,12 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                                           options={THEME_OPTIONS}
                                           fieldValue={currentTheme}
                                           fieldOnChange={onSelectTheme}
+                                          placeholder={' -- select -- '}
                                         />
                                     </div>
                                     <div>&nbsp;</div>
                                     <div>&nbsp;</div>
-                                    <Button type="submit" onClick={() => setResetTheme(true) } disabled={loading} className="btn btn-primary" color="#ffffff">
+                                    <Button onClick={() => onClickResetTheme() } disabled={loading || !currentTheme || !template?.id} className="btn btn-primary" color="#ffffff">
                                         Reset theme settings to default
                                     </Button>
                                 </div>
@@ -322,7 +402,7 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                         <Row>
                             <Col xs="12" md="3" lg="3">
                                 <div className="form__form-group">
-                                    <span className="form__form-group-label thick">Big Logo</span>
+                                    <span className="form__form-group-label thick">Big Logo</span><span className='error'>*</span>
                                     <div className="form__form-group-field  flex-column">
                                         <Field
                                           name="big_logo"
@@ -339,7 +419,7 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                             </Col>
                             <Col xs="12" md="3" lg="3">
                                 <div className="form__form-group">
-                                    <span className="form__form-group-label thick">Small Logo</span>
+                                    <span className="form__form-group-label thick">Small Logo</span><span className='error'>*</span>
                                     <div className="form__form-group-field flex-column">
                                         <Field
                                           name="small_logo"
@@ -356,7 +436,7 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                             </Col>
                             <Col xs="12" md="6" lg="6">
                                 <div className="form__form-group">
-                                    <span className="form__form-group-label thick">Hero Banner</span>
+                                    <span className="form__form-group-label thick">Hero Banner</span><span className='error'>*</span>
                                     <div className="form__form-group-field  flex-column">
                                         <Field
                                           name="hero_banner"
@@ -372,7 +452,7 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                                 </div>
                             </Col>
                         </Row>
-                        <p className="form__form-group-label thick">Slider Images</p>
+                        <p className="form__form-group-label thick">Slider Images<span className='error'>*</span></p>
                         <Row>
                             <Col xs="12" md="4" lg="4">
                                 <div className="form__form-group">
@@ -472,7 +552,7 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                         <Row>
                             <Col sm="8">
                                 <div className="form__form-group">
-                                    <span className="form__form-group-label thick">Font Type</span>
+                                    <span className="form__form-group-label thick">Font Type</span><span className='error'>*</span>
                                     <div className="form__form-group-field flex-column">
                                         <Autocomplete
                                           className='custom_autocomplete'
@@ -485,6 +565,7 @@ const ThemeSettings = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                                             name='font_family' label="Choose Font" margin="normal"
                                           />}
                                         />
+                                        {!fontFamily && <span class="form__form-group-error">Font family is required</span>}
                                     </div>
                                 </div>
                             </Col>
@@ -523,21 +604,16 @@ const RenderImage = ({src}) => {
     )
 }
 
-const validate = values => {
-    let errors = {}
-    return errors
-}
-
 ThemeSettings.propTypes = {
   theme: ThemeProps.isRequired,
   rtl: RTLProps.isRequired,
   organization: Object.isRequired,
-  data: Object.isRequired
+  program: Object.isRequired
 };
 
 export default withRouter(connect((state) => ({
   theme: state.theme,
   rtl: state.rtl,
   organization: state.organization,
-  data: state.program
+  program: state.program
 }))(ThemeSettings));
