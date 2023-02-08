@@ -182,8 +182,8 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
                                     <img src={InvoiceIcon} className="card-img-top" alt="Invoice and Statement" />
                                 </Col>
                                 <Col md={9} className='col-right pl-0'>
-                                    <h5>Invoice and Statement</h5>
-                                    <p>Create Invoices, view statements and more</p>
+                                    <h5>Account</h5>
+                                    <p>Create Invoices, View statements, Track funds and payments.</p>
                                 </Col>
                             </Row>
                         </CardBody>
@@ -219,7 +219,7 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
                                 toggle('accounting')
                             }}>
                                 <Col md={3} className='col-left'>
-                                    <img src={AccountingIcon} className="card-img-top" alt="Accounting"/>
+                                    <img src={InvoiceIcon} className="card-img-top" alt="Accounting"/>
                                 </Col>
                                 <Col md={9} className='col-right pl-0'>
                                     <h5>Accounting</h5>
@@ -228,8 +228,23 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
                             </Row>
                         </CardBody>
                     </Card>
+                </Col> }
+                <Col md="6" lg="4" xl="4">
+                    <Card>
+                        <CardBody>
+                            <Row onClick={()=>{toggle('digitalmedia')}}>
+                                <Col md={3} className='col-left'>
+                                    <img src={AccountingIcon} className="card-img-top" alt="Digital Media"/>
+                                </Col>
+                                <Col md={9} className='col-right pl-0'>
+                                    <h5>Digital Media</h5>
+                                    <p>Upload brochures, newsletters, videos and more for users to view.</p>
+                                </Col>
+                            </Row>
+                        </CardBody>
+                    </Card>
                 </Col>
-                }
+
                 {/*<Col md="4" lg="4" xl="4">*/}
                 {/*    <Card>*/}
                 {/*        <CardBody>*/}

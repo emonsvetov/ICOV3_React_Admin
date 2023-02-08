@@ -60,7 +60,7 @@ const InvoiceModal = ({organization, isOpen, setOpen, toggle, data, theme, rtl})
                         <Row>
                             <Col md="12" lg="12" xl="12">
                                 <div className="card__title">
-                                    <h3>Invoice and Statement</h3>
+                                    <h3>Invoices and Statements</h3>
                                     <h5 className="colorgrey">{data.name}</h5>
                                 </div>
                             </Col>
