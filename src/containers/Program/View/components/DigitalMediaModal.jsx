@@ -44,7 +44,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
 
     const getData = async ( media_type ) => {
 
-        const url = `/organization/${organization.id}/program/${program.id}/media/${media_type}`;
+        const url = `/organization/${organization.id}/program/${program.id}/media/1`;
 
         try {
             const response = await axios.get(url);
