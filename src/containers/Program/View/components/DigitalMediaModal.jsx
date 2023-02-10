@@ -10,9 +10,8 @@ import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
 import Dropzone from 'react-dropzone-uploader'
 import 'react-dropzone-uploader/dist/styles.css'
 import {isEmpty} from '@/shared/helpers'
+import {Field, Form} from "react-final-form";
 // import {formatBytes, formatDuration} from "react-dropzone-uploader/dist/utils";
-
-const MEDIA_FIELDS = ['media']
 
 const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, theme, rtl}) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -21,7 +20,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
     const [media, setMedia] = useState([]);
     const [mediaTypes, setMediaTypes] = useState([]);
     let [template, setTemplate] = useState(null);
-
+    const [uploadedMeta, setUploadedMeta] = useState([]);
 
     const loadMediTypes = async () => {
         try{
@@ -59,136 +58,8 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
     }
 
 
-    const NoInputLayout = (props) => {
-        const {
-            input,
-            previews,
-            submitButton,
-            dropzoneProps,
-            files,
-            extra: { maxFiles },
-        } = props
-
-        return (
-          <div {...dropzoneProps}>
-              {previews}
-
-              {files.length < maxFiles && input}
-
-              {files.length > 0 && submitButton}
-          </div>
-        )
-    }
-
-    const Input = (props) => {
-        const {
-            className,
-            labelClassName,
-            labelWithFilesClassName,
-            style,
-            labelStyle,
-            labelWithFilesStyle,
-            getFilesFromEvent,
-            accept,
-            multiple,
-            disabled,
-            content,
-            withFilesContent,
-            onFiles,
-            files,
-        } = props
-
-        return (
-          <>
-
-              <label
-                className={files.length > 0 ? labelWithFilesClassName : labelClassName}
-                style={files.length > 0 ? labelWithFilesStyle : labelStyle}
-              >
-                  {files.length > 0 ? withFilesContent : content}
-                  <input
-                    className={className}
-                    style={style}
-                    type="file"
-                    accept={accept}
-                    multiple={multiple}
-                    disabled={disabled}
-                    onChange={async e => {
-                        const target = e.target
-                        const chosenFiles = await getFilesFromEvent(e)
-                        onFiles(chosenFiles)
-                        //@ts-ignore
-                        target.value = null
-                    }}
-                  />
-              </label>
-          </>
-        )
-    }
-
-    const Preview = (props) => {
-        const {
-            className,
-            imageClassName,
-            style,
-            imageStyle,
-            fileWithMeta: { cancel, remove, restart },
-            meta: { name = '', percent = 0, size = 0, previewUrl, status, duration, validationError },
-            isUpload,
-            canCancel,
-            canRemove,
-            canRestart,
-            extra: { minSizeBytes },
-        } = props
-
-        let title = `${name || '?'}, ${size}`
-        if (duration) title = `${title}, ${duration}`
-
-        if (status === 'error_file_size' || status === 'error_validation') {
-            return (
-              <div className={className} style={style}>
-                  <span className="dzu-previewFileNameError">{title}</span>
-                  {status === 'error_file_size' && <span>{size < minSizeBytes ? 'File too small' : 'File too big'}</span>}
-                  {status === 'error_validation' && <span>{String(validationError)}</span>}
-                  {canRemove && <span className="dzu-previewButton" onClick={remove} />}
-              </div>
-            )
-        }
-
-        if (status === 'error_upload_params' || status === 'exception_upload' || status === 'error_upload') {
-            title = `${title} (upload failed)`
-        }
-        if (status === 'aborted') title = `${title} (cancelled)`
-
-        return (
-          <div className={className} style={style}>
-              {previewUrl &&
-                <>
-                <img className={imageClassName} style={imageStyle} src={previewUrl} alt={title} title={title} />
-                    <input type="text" name="name" placeholder="File Name" />
-                </>
-              }
-              {!previewUrl && <span className="dzu-previewFileName">{title}</span>}
-
-              <div className="dzu-previewStatusContainer">
-                  {isUpload && (
-                    <progress max={100} value={status === 'done' || status === 'headers_received' ? 100 : percent} />
-                  )}
-
-                  {status === 'uploading' && canCancel && (
-                    <span className="dzu-previewButton"  onClick={cancel} />
-                  )}
-                  {status !== 'preparing' && status !== 'getting_upload_params' && status !== 'uploading' && canRemove && (
-                    <span className="dzu-previewButton"  onClick={remove} />
-                  )}
-                  {['error_upload_params', 'exception_upload', 'error_upload', 'aborted', 'ready'].includes(status) &&
-                    canRestart && <span className="dzu-previewButton"  onClick={restart} />}
-              </div>
-          </div>
-        )
-    }
-
     useEffect(() => {
+        setUploadedMeta({});
         loadMediTypes();
       }, []);
 
@@ -204,10 +75,6 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
         e.preventDefault();
         alert('Delete');
         console.log('Delete');
-    };
-
-    const onSelectChange = (value) => {
-        getData( value.value );
     };
 
     const handleSubmit = async (files, values ) => {
@@ -234,77 +101,149 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
 
     }
 
-    const modalProps = {
-        isOpen, toggle, setOpen
+    const onSubmit = values => {
+
+    console.log(uploadedMeta);
+    console.log(values);
+    return;
+
+    // let saveUrl = `/organization/${organization.id}/program/${program.id}/digital-media`;
+    // axios.post(saveUrl, {'files': files.map(f => f.meta), 'submit': true})
+    //   .then((res) => {
+    //     console.log(res)
+    //     // toggle();
+    //     if (res.status === 200) {
+    //       // setTemplate(res.data)
+    //       dispatch(sendFlashMessage('Media successfully published', 'alert-success'));
+    //       if (!template?.id) {
+    //         // window.location.reload();
+    //       }
+    //     }
+    //   })
+    //   .catch(error => {
+    //     console.log(error)
+    //     console.log(JSON.stringify(error.response.data.errors));
+    //     dispatch(sendFlashMessage(JSON.stringify(error.response.data.errors), 'alert-danger'))
+    //     // throw new Error(`API error:${e?.message}`);
+    //     setLoading(false)
+    //   })
+
+  }
+
+  const modalProps = {
+    isOpen, toggle, setOpen
+  }
+
+  const handleChangeStatus = ({ meta, file }, status) => {
+        alert(status);
+    if (status === 'done'){
+      setUploadedMeta(meta);
     }
+  }
 
 
     return (
         <Modal className={`modal-program modal-lg`} {...modalProps}>
-            <CloseButton onClick={toggle}/>
-            <ModalBody className='modal-lg'>
-                            <Card>
-                                <CardBody className='pt-0'>
-                                    <Row>
-                                        <Col md="12" lg="12" xl="12">
-                                            <div className="card__title">
-                                                <h3>Upload Digital Media</h3>
-                                                <h5 className="colorgrey">{program.name}</h5>
-                                                <div style={{paddingTop: '25px'}}></div>
-                                                <div>
-                                                    <CreatableSelect
-                                                        name="category"
-                                                        isClearable
-                                                        isDisabled={isLoading}
-                                                        isLoading={isLoading}
-                                                        options={mediaTypes}
-                                                        placeholder='Select or Create a Menu Category'
-                                                        onChange={value =>
-                                                            onSelectChange(value)
-                                                          }
-                                                    />
-                                                </div>
-                                            </div>
-                                        </Col>
-                                    </Row>
-                                    <Row>
+          <CloseButton onClick={toggle}/>
+          <ModalBody className='modal-lg'>
+            <Card>
+              <CardBody className='pt-0'>
+                <Form
+                  onSubmit={onSubmit}
+                  validate={validate}
+                  render={({handleSubmit, form, submitting, pristine, values }) => (
+                    <form className="form" onSubmit={handleSubmit}>
 
-                                        <Col>
-                                            <div className="form__form-group">
-                                                <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
-                                                    <Dropzone
-                                                      getUploadParams={getUploadParams}
-                                                      accept="image/jpeg, image/png, image/gif"
-                                                      // accept="image/*,audio/*,video/*"
-                                                      name="media_upload"
-                                                        onSubmit={handleSubmit}
-                                                      LayoutComponent={NoInputLayout}
-                                                      InputComponent={Input}
-                                                      PreviewComponent={Preview}
-                                                    />
-                                                    {media && media.length > 0
-                                                      && (
-                                                        <div className="dropzone__imgs-wrapper">
-                                                            {media.map((file, i) => (
-                                                              <div className="dropzone__img" key={file.name} style={{ width: `100px`, backgroundImage: `url(${process.env.REACT_APP_API_STORAGE_URL + '/' + file.path})` }}>
-                                                                  <p className="dropzone__img-name">{file.name}</p>
-                                                                  <button className="dropzone__img-delete" type="button" onClick={e => removeFile(i, e)}>
-                                                                      Remove
-                                                                  </button>
-                                                              </div>
-                                                            ))}
-                                                        </div>
-                                                      )}
-                                                </div>
-                                            </div>
-                                        </Col>
+                      <Row>
+                        <Col md="12" lg="12" xl="12">
+                          <div className="card__title">
+                            <h3>Upload Digital Media</h3>
+                            <h5 className="colorgrey">{program.name}</h5>
+                            <div style={{paddingTop: '25px'}}></div>
+                            <div>
+                              <CreatableSelect
+                                name="category"
+                                isClearable
+                                isDisabled={isLoading}
+                                isLoading={isLoading}
+                                options={mediaTypes}
+                                placeholder='Select or Create a Menu Category'
+                                onChange={value =>
+                                    getData(value.value)
+                                  }
+                              />
+                            </div>
+                          </div>
+                        </Col>
+                      </Row>
+                      <Row>
+                          <Col md="6" >
+                            <div className="form__form-group">
+                                <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
+                                     <Dropzone
+                                        getUploadParams={getUploadParams}
+                                        accept="image/jpeg, image/png, image/gif"
+                                        // accept="image/*,audio/*,video/*"
+                                        name="media_upload"
+                                        maxFiles={1}
+                                        onSubmit={false}
+                                        onChangeStatus={handleChangeStatus}
+                                       />
+                                </div>
+                            </div>
+                          </Col>
+                          <Col md="6" >
+                            <div>
+                              <Field name="name">
+                                <div className="form__form-group">
+                                    <div className="form__form-group-field">
+                                      <div className="form__form-group-row">
+                                          <input type="text" value={uploadedMeta?.name} placeholder="File Name"/>
+                                      </div>
+                                    </div>
+                                  </div>
+                              </Field>
+                            </div>
+                          </Col>
+                        </Row>
+                        <Row>
+                            <Col>
+                              <div>
+                                <Button type="submit" disabled={loading} className="btn btn-primary" color="#ffffff">Save</Button>
+                              </div>
+                            </Col>
+                          </Row>
+                        <Row>
+                            <Col>
+                              {media && media.length > 0
+                                && (
+                                  <div className="dropzone__imgs-wrapper">
+                                    {media.map((file, i) => (
+                                      <div className="dropzone__img" key={file.name} style={{
+                                        width: `100px`,
+                                        backgroundImage: `url(${process.env.REACT_APP_API_STORAGE_URL + '/' + file.path})`
+                                      }}>
+                                        <p className="dropzone__img-name">{file.name}</p>
+                                        <button className="dropzone__img-delete" type="button"
+                                                onClick={e => removeFile(i, e)}>
+                                          Remove
+                                        </button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                            </Col>
+                        </Row>
 
-                                    </Row>
-                                </CardBody>
-                            </Card>
-            </ModalBody>
+                    </form>
+                  )}
+                />
+
+              </CardBody>
+            </Card>
+          </ModalBody>
         </Modal>
-    )
+  )
 }
 
 const RenderImage = ({src}) => {
