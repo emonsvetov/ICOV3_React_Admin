@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
 import { RTLProps} from '@/shared/prop-types/ReducerProps';
@@ -9,44 +9,218 @@ import axios from "axios";
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
 import Dropzone from 'react-dropzone-uploader'
 import 'react-dropzone-uploader/dist/styles.css'
-
-
-const options = [
-    {value: "Brochures", label: "Brochures"},
-    {value: "Newsletters", label: "Newsletters"},
-    {value: "Training", label: "Training"},
-    {value: "Videos", label: "Videos"}
-];
+import {isEmpty} from '@/shared/helpers'
+// import {formatBytes, formatDuration} from "react-dropzone-uploader/dist/utils";
 
 const MEDIA_FIELDS = ['media']
 
-const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) => {
+const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, theme, rtl}) => {
     const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
-    let [template, setTemplate] = useState(null)
+    const [media, setMedia] = useState([]);
+    const [mediaTypes, setMediaTypes] = useState([]);
+    let [template, setTemplate] = useState(null);
 
-    const handleSubmit = async (files, values ) => {
-        let formData = new FormData();
-        formData.append('files[]', files.map(f => f.meta));
-        formData.append('_method', 'PUT')
-        for (let key of formData.entries()) {
-            console.log(key[0] + ', ' + key[1]);
+
+    const loadMediTypes = async () => {
+        try{
+            const response=await axios.get(`/digital-medias`);
+            if(response.data.length===0) return {results: [], count: 0}
+
+            let options=[];
+
+            console.log(response.data);
+            response.data.map(row => {
+                options.push({
+                    value: row.program_media_type_id,
+                    label: row.name
+                });
+            })
+            setMediaTypes(options);
+        } catch(e) {
+            throw new Error(`API error:${e?.message}`);
+        }
+    }
+
+    const getData = async ( media_type ) => {
+
+        const url = `/organization/${organization.id}/program/${program.id}/media/${media_type}`;
+
+        try {
+            const response = await axios.get(url);
+
+            const data = response.data;
+            setMedia(data);
+            return data;
+        } catch (e) {
+            throw new Error(`API error:${e?.message}`);
+        }
+    }
+
+
+    const NoInputLayout = (props) => {
+        const {
+            input,
+            previews,
+            submitButton,
+            dropzoneProps,
+            files,
+            extra: { maxFiles },
+        } = props
+
+        return (
+          <div {...dropzoneProps}>
+              {previews}
+
+              {files.length < maxFiles && input}
+
+              {files.length > 0 && submitButton}
+          </div>
+        )
+    }
+
+    const Input = (props) => {
+        const {
+            className,
+            labelClassName,
+            labelWithFilesClassName,
+            style,
+            labelStyle,
+            labelWithFilesStyle,
+            getFilesFromEvent,
+            accept,
+            multiple,
+            disabled,
+            content,
+            withFilesContent,
+            onFiles,
+            files,
+        } = props
+
+        return (
+          <>
+
+              <label
+                className={files.length > 0 ? labelWithFilesClassName : labelClassName}
+                style={files.length > 0 ? labelWithFilesStyle : labelStyle}
+              >
+                  {files.length > 0 ? withFilesContent : content}
+                  <input
+                    className={className}
+                    style={style}
+                    type="file"
+                    accept={accept}
+                    multiple={multiple}
+                    disabled={disabled}
+                    onChange={async e => {
+                        const target = e.target
+                        const chosenFiles = await getFilesFromEvent(e)
+                        onFiles(chosenFiles)
+                        //@ts-ignore
+                        target.value = null
+                    }}
+                  />
+              </label>
+          </>
+        )
+    }
+
+    const Preview = (props) => {
+        const {
+            className,
+            imageClassName,
+            style,
+            imageStyle,
+            fileWithMeta: { cancel, remove, restart },
+            meta: { name = '', percent = 0, size = 0, previewUrl, status, duration, validationError },
+            isUpload,
+            canCancel,
+            canRemove,
+            canRestart,
+            extra: { minSizeBytes },
+        } = props
+
+        let title = `${name || '?'}, ${size}`
+        if (duration) title = `${title}, ${duration}`
+
+        if (status === 'error_file_size' || status === 'error_validation') {
+            return (
+              <div className={className} style={style}>
+                  <span className="dzu-previewFileNameError">{title}</span>
+                  {status === 'error_file_size' && <span>{size < minSizeBytes ? 'File too small' : 'File too big'}</span>}
+                  {status === 'error_validation' && <span>{String(validationError)}</span>}
+                  {canRemove && <span className="dzu-previewButton" onClick={remove} />}
+              </div>
+            )
         }
 
-        let saveUrl = `/organization/${data.organization_id}/program/${data.id}/digitalmedia`;
-        axios.post(saveUrl, formData, {
-            "Content-Type": "multipart/form-data",
-            "Access-Control-Allow-Origin": "*"
-        })
+        if (status === 'error_upload_params' || status === 'exception_upload' || status === 'error_upload') {
+            title = `${title} (upload failed)`
+        }
+        if (status === 'aborted') title = `${title} (cancelled)`
+
+        return (
+          <div className={className} style={style}>
+              {previewUrl &&
+                <>
+                <img className={imageClassName} style={imageStyle} src={previewUrl} alt={title} title={title} />
+                    <input type="text" name="name" placeholder="File Name" />
+                </>
+              }
+              {!previewUrl && <span className="dzu-previewFileName">{title}</span>}
+
+              <div className="dzu-previewStatusContainer">
+                  {isUpload && (
+                    <progress max={100} value={status === 'done' || status === 'headers_received' ? 100 : percent} />
+                  )}
+
+                  {status === 'uploading' && canCancel && (
+                    <span className="dzu-previewButton"  onClick={cancel} />
+                  )}
+                  {status !== 'preparing' && status !== 'getting_upload_params' && status !== 'uploading' && canRemove && (
+                    <span className="dzu-previewButton"  onClick={remove} />
+                  )}
+                  {['error_upload_params', 'exception_upload', 'error_upload', 'aborted', 'ready'].includes(status) &&
+                    canRestart && <span className="dzu-previewButton"  onClick={restart} />}
+              </div>
+          </div>
+        )
+    }
+
+    useEffect(() => {
+        loadMediTypes();
+      }, []);
+
+    const getUploadParams = ({ meta }) => {
+        const headers = {
+            'Authorization': axios.defaults.headers.common['Authorization'],
+        }
+        const fields = {'fileId': meta.id}
+        return { url: axios.defaults.baseURL+`/organization/${organization.id}/program/${program.id}/digital-media`, headers, fields }
+    }
+
+    const removeFile = (index, e) => {
+        e.preventDefault();
+        alert('Delete');
+        console.log('Delete');
+    };
+
+    const onSelectChange = (value) => {
+        getData( value.value );
+    };
+
+    const handleSubmit = async (files, values ) => {
+        let saveUrl = `/organization/${organization.id}/program/${program.id}/digital-media`;
+        axios.post(saveUrl, {'files':files.map(f => f.meta), 'submit': true})
             .then( (res) => {
                  console.log(res)
-                toggle();
+                // toggle();
                 if(res.status === 200)  {
-                    setTemplate(res.data)
+                    // setTemplate(res.data)
                     dispatch(sendFlashMessage('Media successfully published', 'alert-success'));
                     if( !template?.id)  {
-                        window.location.reload();
+                        // window.location.reload();
                     }
                 }
             })
@@ -58,7 +232,6 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, data, theme, 
                 setLoading(false)
             })
 
-        console.log(Object)
     }
 
     const modalProps = {
@@ -76,7 +249,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, data, theme, 
                                         <Col md="12" lg="12" xl="12">
                                             <div className="card__title">
                                                 <h3>Upload Digital Media</h3>
-                                                <h5 className="colorgrey">{data.name}</h5>
+                                                <h5 className="colorgrey">{program.name}</h5>
                                                 <div style={{paddingTop: '25px'}}></div>
                                                 <div>
                                                     <CreatableSelect
@@ -84,8 +257,11 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, data, theme, 
                                                         isClearable
                                                         isDisabled={isLoading}
                                                         isLoading={isLoading}
-                                                        options={options}
+                                                        options={mediaTypes}
                                                         placeholder='Select or Create a Menu Category'
+                                                        onChange={value =>
+                                                            onSelectChange(value)
+                                                          }
                                                     />
                                                 </div>
                                             </div>
@@ -97,9 +273,28 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, data, theme, 
                                             <div className="form__form-group">
                                                 <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
                                                     <Dropzone
-                                                        name="media_upload"
+                                                      getUploadParams={getUploadParams}
+                                                      accept="image/jpeg, image/png, image/gif"
+                                                      // accept="image/*,audio/*,video/*"
+                                                      name="media_upload"
                                                         onSubmit={handleSubmit}
+                                                      LayoutComponent={NoInputLayout}
+                                                      InputComponent={Input}
+                                                      PreviewComponent={Preview}
                                                     />
+                                                    {media && media.length > 0
+                                                      && (
+                                                        <div className="dropzone__imgs-wrapper">
+                                                            {media.map((file, i) => (
+                                                              <div className="dropzone__img" key={file.name} style={{ width: `100px`, backgroundImage: `url(${process.env.REACT_APP_API_STORAGE_URL + '/' + file.path})` }}>
+                                                                  <p className="dropzone__img-name">{file.name}</p>
+                                                                  <button className="dropzone__img-delete" type="button" onClick={e => removeFile(i, e)}>
+                                                                      Remove
+                                                                  </button>
+                                                              </div>
+                                                            ))}
+                                                        </div>
+                                                      )}
                                                 </div>
                                             </div>
                                         </Col>
@@ -137,5 +332,5 @@ DigitalMediaModal.propTypes = {
 export default withRouter(connect((state) => ({
     rtl: state.rtl,
     organization: state.organization,
-    data: state.program
+    program: state.program
 }))(DigitalMediaModal));
