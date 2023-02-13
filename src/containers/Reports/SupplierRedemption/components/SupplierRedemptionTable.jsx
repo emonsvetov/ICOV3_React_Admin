@@ -1,367 +1,293 @@
-import React, {useState, useEffect, useMemo} from "react";
-import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
-import MOCK_DATA from "./MOCK_DATA.json";
-import {PROGRAM_COLUMNS} from "./columns";
-import SortIcon from 'mdi-react/SortIcon';
-import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
-import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
+import React, {useEffect, useMemo, useState, useCallback} from "react";
+import {useExpanded, useFlexLayout, usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
+import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
+import {toCurrency, toPoints} from '@/shared/helpers'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
-import SupplierRedemptionFilter  from "./SupplierRedemptionFilter";
-import { Link } from 'react-router-dom';
-import axios from 'axios'
-import { Col, Row} from 'reactstrap';
-import {renameChildrenToSubrows} from '@/shared/helpers'
+import {Col, Row} from 'reactstrap';
+import {dateStrToYmd} from '@/shared/helpers';
+import {TABLE_COLUMNS} from "./columns";
+
+import {Link, withRouter} from "react-router-dom";
+import {connect} from "react-redux";
+import {
+  reducer,
+  useEffectToDispatch,
+  fetchApiData,
+  fetchApiDataExport,
+  initialState,
+  TableFilter,
+  Sorting
+} from "@/shared/apiTableHelper"
+import axios from "axios";
+import {isEqual, clone} from 'lodash';
+import moment from "moment";
+import SupplierRedemptionFilter from "./SupplierRedemptionFilter";
 
 const queryClient = new QueryClient()
 
-const initialState = {
-    queryPageIndex: 0,
-    queryPageSize: 10,
-    totalCount: null,
-    queryPageFilter:{},
-    queryPageSortBy: [],
-};
+const DataTable = ({organization, merchants}) => {
+  const [filter, setFilter] = useState({merchants: merchants, active: true, reportKey: 'sku_value'});
+  const [useFilter, setUseFilter] = useState(false);
+  const [trigger, setTrigger] = useState(0);
+  const [exportData, setExportData] = useState([]);
+  const [exportHeaders, setExportHeaders] = useState([]);
+  const [exportToCsv, setExportToCsv] = useState(false);
+  const exportLink = React.createRef();
 
-const PAGE_CHANGED = 'PAGE_CHANGED';
-const PAGE_SIZE_CHANGED = 'PAGE_SIZE_CHANGED';
-const PAGE_SORT_CHANGED = 'PAGE_SORT_CHANGED'
-const PAGE_FILTER_CHANGED = 'PAGE_FILTER_CHANGED';
-const TOTAL_COUNT_CHANGED = 'TOTAL_COUNT_CHANGED';
-
-const reducer = (state, { type, payload }) => {
-  switch (type) {
-    case PAGE_CHANGED:
-        return {
-            ...state,
-            queryPageIndex: payload,
-        };
-    case PAGE_SIZE_CHANGED:
-        return {
-            ...state,
-            queryPageSize: payload,
-        };
-    case PAGE_SORT_CHANGED:
-        return {
-            ...state,
-            queryPageSortBy: payload,
-        };
-    case PAGE_FILTER_CHANGED:
-        return {
-            ...state,
-            queryPageFilter: payload,
-        };
-    case TOTAL_COUNT_CHANGED:
-        return {
-            ...state,
-            totalCount: payload,
-        };
-    default:
-      throw new Error(`Unhandled action type: ${type}`);
-  }
-};
-
-const fetchMockData = () => {
-    
-    const data = {
-        results: renameChildrenToSubrows(MOCK_DATA),
-        count: 15
-    };
-    return data;
-};
-
-const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
-    // const offset = page * pageSize;
-    const params = []
-    let paramStr = ''
-    if( pageFilterO ) {
-        if(pageFilterO.status !== 'undefined' && pageFilterO.status) params.push(`status=${pageFilterO.status}`)
-        if(pageFilterO.keyword !== 'undefined' && pageFilterO.keyword) params.push(`keyword=${pageFilterO.keyword}`)
-        // console.log(params)
-        paramStr = params.join('&')
-    }
-    if( pageSortBy.length > 0 ) {
-        const sortParams = pageSortBy[0];
-        const sortyByDir = sortParams.desc ? 'desc' : 'asc'
-        paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
-    }
-    try {
-        const response = await axios.get(
-        `/organization/1/program?page=${page}&limit=${pageSize}&${paramStr}`
-        );
-        // console.log(response)
-        if( response.data.length === 0) return {results:[],count:0}
-        const data = {
-            results: renameChildrenToSubrows(response.data.data),
-            count: response.data.total
-        };
-        // console.log(data)
-        return data;
-    } catch (e) {
-        throw new Error(`API error:${e?.message}`);
-    }
-};
-
-const DataTable = () => {
-  
-    const [filter, setFilter] = useState({from:'', to:''});
-
-    const onClickFilterCallback = (from, to) => {
-        
-        if(filter.from === from && filter.to === to)    {
-            alert('No change in filters')
-            return
-        }
-        setFilter({from, to})
-        
-    }
-
-    const handleDownload = ( ) => {
-        alert('download csv')
-    }
-
-    let program_columns = [
-        ...PROGRAM_COLUMNS, 
-    
-    ]
-    let columns = useMemo( () => program_columns, [])
-
-    const defaultColumn = React.useMemo(
-        () => ({
-          minWidth: 30,
-          width: 150,
-          maxWidth: 400,
-        }),
-        []
-    )
-
-    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
+  const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
     React.useReducer(reducer, initialState);
 
-    const { isLoading, error, data, isSuccess } = useQuery(
-        ['programs', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
-        // () => fetchProgramData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
-        () => fetchMockData(),
-        {
-            keepPreviousData: true,
-            staleTime: Infinity,
-        }
+  const apiUrl = `/organization/${organization.id}/report/supplier-redemption`;
+  const {isLoading, error, data, isSuccess} = useQuery(
+    ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+    () => fetchApiData(
+      {
+        url: apiUrl,
+        page: queryPageIndex,
+        size: queryPageSize,
+        filter,
+        sortby: queryPageSortBy,
+        trigger: queryTrigger
+      }
+    ),
+    {
+      keepPreviousData: true,
+      staleTime: Infinity,
+    }
+  );
+
+  useEffect(() => {
+    if (exportToCsv) {
+      if (exportLink.current) {
+        setExportToCsv(false);
+        exportLink.current.link.click();
+      }
+    }
+  }, [exportLink])
+
+  const download = async (filterValues) => {
+    let tmpFilter = clone(filterValues);
+    tmpFilter.exportToCsv = 1;
+
+    const response = await fetchApiDataExport(
+      {
+        url: apiUrl,
+        filter: tmpFilter,
+        sortby: queryPageSortBy,
+        trigger: queryTrigger
+      }
     );
+    console.log(response)
+    setExportData(response.results);
+    setExportHeaders(response.headers);
+    setExportToCsv(true);
+  }
 
-    const totalPageCount = Math.ceil(totalCount / queryPageSize)
+  let columns = useMemo(() => TABLE_COLUMNS, [])
 
-    // console.log(data)
+  const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        footerGroups,
-        rows,
-        prepareRow,
-        page,
-        pageCount,
-        pageOptions,
-        gotoPage,
-        previousPage,
-        canPreviousPage,
-        nextPage,
-        canNextPage,
-        setPageSize,
-        state: { pageIndex, pageSize, sortBy }
-    } = useTable({
-        columns,
-        data: data ? data.results : [],
-        initialState: {
-            pageIndex: queryPageIndex,
-            pageSize: queryPageSize,
-            sortBy: queryPageSortBy,
-        },
-        manualPagination: true, // Tell the usePagination
-        pageCount: data ? totalPageCount : null,
-        autoResetSortBy: false,
-        autoResetExpanded: false,
-        autoResetPage: false,
-        defaultColumn,
-        
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    footerGroups,
+    rows,
+    prepareRow,
+    rowSpanHeaders,
+    page,
+    pageCount,
+    pageOptions,
+    gotoPage,
+    previousPage,
+    canPreviousPage,
+    nextPage,
+    canNextPage,
+    setPageSize,
+    state: {pageIndex, pageSize, sortBy}
+  } = useTable({
+      columns: columns,
+      data: data ? Object.values(data.results) : [],
+      initialState: {
+        pageIndex: queryPageIndex,
+        pageSize: queryPageSize,
+        sortBy: queryPageSortBy,
+      },
+      manualPagination: true, // Tell the usePagination
+      pageCount: data ? totalPageCount : null,
+      autoResetSortBy: false,
+      autoResetExpanded: false,
+      autoResetPage: false,
+      disableResizing: true,
+      autoResetHiddenColumns: false
     },
     useSortBy,
     useExpanded,
     usePagination,
-    useResizeColumns, 
-    useFlexLayout,
-    );
-    // const [statusFilterValue, setStatusFilterValue] = useState("");
-    const manualPageSize = []
-    
-    React.useEffect(() => {
-        dispatch({ type: PAGE_CHANGED, payload: pageIndex });
-    }, [pageIndex]);
+    useResizeColumns,
+    // useFlexLayout,
+  );
 
-    React.useEffect(() => {
-        // alert(PAGE_SIZE_CHANGED)
-        dispatch({ type: PAGE_SIZE_CHANGED, payload: pageSize });
-        gotoPage(0);
-    }, [pageSize, gotoPage]);
+  const manualPageSize = []
+  useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
 
-    useEffect(() => {
-        dispatch({ type: PAGE_SORT_CHANGED, payload: sortBy });
-        gotoPage(0);
-    }, [sortBy, gotoPage]);
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
-    React.useEffect(() => {
-        // alert(PAGE_FILTER_CHANGED)
-        dispatch({ type: PAGE_FILTER_CHANGED, payload: filter });
-        gotoPage(0);
-    }, [filter, gotoPage]);
+  if (error) {
+    return <p>Error: {JSON.stringify(error)}</p>;
+  }
 
-    React.useEffect(() => {
-        if (data?.count) {
-            dispatch({
-            type: TOTAL_COUNT_CHANGED,
-            payload: data.count,
-            });
-        }
-    }, [data?.count]);
-
-    if (error) {
-        return <p>Error: {JSON.stringify(error)}</p>;
-    }
+  if (isSuccess)
     return (
+      <>
+        <div className='table react-table report-table'>
+          <div className="action-panel">
+            <Row className="mx-0">
+              <Col>
+                <SupplierRedemptionFilter
+                  filter={filter} setFilter={setFilter} useFilter={useFilter} setUseFilter={setUseFilter}
+                  exportData={exportData} exportLink={exportLink} exportHeaders={exportHeaders}
+                  download={download}/>
+              </Col>
+            </Row>
+          </div>
+          {
+            isLoading && <p>Loading...</p>
+          }
+          {
+            isSuccess &&
+            <table {...getTableProps()} className="table">
+              <thead>
+              {headerGroups.map((headerGroup) => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map(column => (
+                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                      {column.render('Header')}
+                      {column.isSorted ? <Sorting column={column}/> : ''}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+              </thead>
+              <tbody className="table table--bordered" {...getTableBodyProps()} >
+              {page.map(row => {
+                prepareRow(row);
+                const subCount = (row.id.match(/\./g) || []).length
+                const subRows = row.subRows;
+
+                const countSubRows = subRows ? subRows.length : 0;
+                const rowSpan = countSubRows ? countSubRows + 1 : 1;
+                return (
+                  <>
+                    <tr {...row.getRowProps()} key={row.id}>
+                      {
+                        row.cells.map(cell => {
+                          // console.log(cell)
+                          const skip = cell.value === 'skip_td';
+                          if (skip) return null;
+                          const paddingLeft = subCount * 20
+                          return <td {...cell.getCellProps()} rowSpan={rowSpan} key={cell.column.id + row.id}>
+                                            <span
+                                              style={cell.column.Header === '#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span>
+                          </td>
+                        })
+                      }
+                    </tr>
+                    {countSubRows > 0 && subRows.map(subRow => {
+                      // console.log(subRow)
+                      prepareRow(subRow);
+                      return (
+                        <tr {...subRow.getRowProps()} key={subRow.id}>
+                          {
+                            subRow.cells.map(subCell => {
+                              // console.log(subCell)
+                              const skip = subCell.value === 'skip_td';
+                              if (skip) return null;
+                              return <td {...subCell.getCellProps()} key={subCell.column.id + subRow.id}>
+                                <span>{subCell.render('Cell')}</span>
+                              </td>
+                            })
+                          }
+                        </tr>
+                      )
+                    })}
+                  </>
+                )
+              })}
+              </tbody>
+              <tfoot>
+              {footerGroups.map((footerGroup) => (
+                <tr {...footerGroup.getFooterGroupProps()}>
+                  {footerGroup.headers.map(column => (
+                    <th {...column.getFooterProps()}>{column.render('Footer')}</th>
+                  ))}
+                </tr>
+              ))}
+              </tfoot>
+            </table>
+          }
+
+          {(rows.length > 0) && (
             <>
-                <div className='table react-table'>
-                    <div className="action-panel">
-                        <Row className="mx-0">
-                            <Col lg={12} md={12} sm={12}>
-                                <SupplierRedemptionFilter onClickFilterCallback={onClickFilterCallback} />
-                            </Col>
-                        </Row>
-                    </div>
-                    {
-                         isLoading && <p>Loading...</p>
-                    }
-                    {
-                    isSuccess && 
-                    <table {...getTableProps()} className="table">
-                        <thead>
-                            {headerGroups.map( (headerGroup) => (
-                                <tr {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map( column => (
-                                        <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                            {column.render('Header')}
-                                            {column.isSorted ? <Sorting column={column} /> : ''}
-                                            <div
-                                                {...column.getResizerProps()}
-                                                className={`resizer ${
-                                                    column.isResizing ? 'isResizing' : ''
-                                                }`}
-                                            />
-                                        </th>
-                                    ))}
-                                </tr>
-                            ))}
-                        </thead>
-                        <tbody className="table table--bordered" {...getTableBodyProps()}>
-                            {page.map( row => {
-                                prepareRow(row);
-                                // console.log(row)
-                                const subCount = (row.id.match(/\./g) || []).length
-                                // const paddingCount = subCount > 0 ? Number(subCount) + 3 : 0;
-                                // console.log(subCount)
-                                return (
-                                    <tr {...row.getRowProps()}>
-                                        {
-                                            row.cells.map( cell => {
-                                                // console.log(cell)
-                                                const paddingLeft = subCount * 20
-                                                return <td {...cell.getCellProps()}><span style={cell.column.Header==='#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span></td>
-                                            })
-                                        }
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                        <tfoot>
-                            {footerGroups.map( (footerGroup) => (
-                                <tr {...footerGroup.getFooterGroupProps()}>
-                                    {footerGroup.headers.map( column => (
-                                        <th {...column.getFooterProps()}>{column.render('Footer')}</th>
-                                    ))}
-                                </tr>
-                            ))}
-                        </tfoot>
-                    </table>
-                    }
-                </div>
-                {(rows.length > 0) && (
-                    <>
-                        <ReactTablePagination
-                        page={page}
-                        gotoPage={gotoPage}
-                        previousPage={previousPage}
-                        nextPage={nextPage}
-                        canPreviousPage={canPreviousPage}
-                        canNextPage={canNextPage}
-                        pageOptions={pageOptions}
-                        pageSize={pageSize}
-                        pageIndex={pageIndex}
-                        pageCount={pageCount}
-                        setPageSize={setPageSize}
-                        manualPageSize={manualPageSize}
-                        dataLength={totalCount}
-                        />
-                        <div className="pagination justify-content-end mt-2">
+              <ReactTablePagination
+                page={page}
+                gotoPage={gotoPage}
+                previousPage={previousPage}
+                nextPage={nextPage}
+                canPreviousPage={canPreviousPage}
+                canNextPage={canNextPage}
+                pageOptions={pageOptions}
+                pageSize={pageSize}
+                pageIndex={pageIndex}
+                pageCount={pageCount}
+                setPageSize={setPageSize}
+                manualPageSize={manualPageSize}
+                dataLength={totalCount}
+              />
+              <div className="pagination justify-content-end mt-2">
                             <span>
                             Go to page:{' '}
-                            <input
+                              <input
                                 type="number"
                                 value={pageIndex + 1}
                                 onChange={(e) => {
-                                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                                gotoPage(page);
+                                  const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                                  gotoPage(page);
                                 }}
-                                style={{ width: '100px' }}
-                            />
+                                style={{width: '100px'}}
+                              />
                             </span>{' '}
-                            <select
-                            value={pageSize}
-                            onChange={(e) => {
-                                setPageSize(Number(e.target.value));
-                            }}
-                            >
-                            {[10, 20, 30, 40, 50].map((pageSize) => (
-                                <option key={pageSize} value={pageSize}>
-                                Show {pageSize}
-                                </option>
-                            ))}
-                            </select>
-                        </div>
-                    </>
-                )}
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                  }}
+                >
+                  {[10, 20, 30, 40, 50].map((pageSize) => (
+                    <option key={pageSize} value={pageSize}>
+                      Show {pageSize}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </>
+          )}
+        </div>
+      </>
     )
 }
 
-const Sorting = ({ column }) => (
-    <span className="react-table__column-header sortable">
-      {column.isSortedDesc === undefined ? (
-        <SortIcon />
-      ) : (
-        <span>
-          {column.isSortedDesc
-            ? <SortAscendingIcon />
-            : <SortDescendingIcon />}
-        </span>
-      )}
-    </span>
-  );
-
-const TableWrapper = () => {
-    return (
-        <QueryClientProvider client={queryClient}>
-            <DataTable />
-        </QueryClientProvider>
-    )
+const TableWrapper = ({organization, merchants}) => {
+  if (!organization) return 'Loading...'
+  return (
+    <QueryClientProvider client={queryClient}>
+      <DataTable organization={organization} merchants={merchants}/>
+    </QueryClientProvider>
+  )
 }
 
-export default TableWrapper;
+export default withRouter(connect((state) => ({
+  organization: state.organization
+}))(TableWrapper));
