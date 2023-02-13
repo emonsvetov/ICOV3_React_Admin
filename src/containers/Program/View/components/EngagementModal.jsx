@@ -60,27 +60,32 @@ const EngagementModal = ({dispatch, data, isOpen, toggle, theme, rtl}) => {
             </ModalHeader>
             <ModalBody className='modal-lg'>
                 <Row>
+                    <Col>
+                        <h4 className="padding-10">Social Wall: </h4>
+                    </Col>
+                </Row>
+                <Row>
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
-                            <CheckboxField 
-                                name="allow_view_leaderboards_not_logged_into"
-                                label="Allow participants to view leaderboards of any program he is not currently logged into"
+                            <CheckboxField
+                                name="uses_social_wall"
+                                label="Enable Social Wall"
                             />
                         </div>
                     </Col>
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
-                            <CheckboxField 
-                                name="share_siblings_leader_board"
-                                label="Share sibling leaderboards"
+                            <CheckboxField
+                                name="allow_hierarchy_to_view_social_wall"
+                                label="Other programs in this hierarchy can view this programs social wall"
                             />
                         </div>
                     </Col>
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
-                            <CheckboxField 
-                                name="uses_leaderboards"
-                                label="Use leaderboards"
+                            <CheckboxField
+                                name="can_view_hierarchy_social_wall"
+                                label="This program can view other programs social wall"
                             />
                         </div>
                     </Col>
@@ -88,7 +93,88 @@ const EngagementModal = ({dispatch, data, isOpen, toggle, theme, rtl}) => {
                 <Row>
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
-                            <CheckboxField 
+                            <CheckboxField
+                                name="managers_can_post_social_wall_messages"
+                                label="Managers can post messages"
+                            />
+                        </div>
+                    </Col>
+                    <Col md="6" lg="4" xl="4">
+                        <div className="form__form-group">
+                            <CheckboxField
+                                name="social_wall_separation"
+                                label="Allow participants to view the social wall of any program he is not currently logged into"
+                            />
+                        </div>
+                    </Col>
+                    <Col md="6" lg="4" xl="4">
+                        <div className="form__form-group">
+                            <CheckboxField
+                                name="remove_social_from_pending_deactivation"
+                                label="Remove Social From Pending Deactivation View"
+                            />
+                        </div>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <h4 className="padding-10">Leaderboards: </h4>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col md="6" lg="4" xl="4">
+                        <div className="form__form-group">
+                            <CheckboxField
+                                name="uses_leaderboards"
+                                label="Enable Leaderboards"
+                            />
+                        </div>
+                    </Col>
+                        <Col md="6" lg="4" xl="4">
+                            <div className="form__form-group">
+                                <CheckboxField
+                                    name="allow_view_leaderboards_not_logged_into"
+                                    label="Allow participants to view leaderboards of any program he is not currently logged into"
+                                />
+                            </div>
+                        </Col>
+                        <Col md="6" lg="4" xl="4">
+                            <div className="form__form-group">
+                                <CheckboxField
+                                    name="share_siblings_leader_board"
+                                    label="Share sibling leaderboards"
+                                />
+                            </div>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col md="6" lg="4" xl="4">
+                            <div className="form__form-group">
+                                <CheckboxField
+                                    name="use_one_leaderboard"
+                                    label="Use one leaderboard"
+                                />
+                            </div>
+                        </Col>
+                    </Row>
+
+                <Row>
+                    <Col>
+                        <h4 className="padding-10">Peer to Peer: </h4>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col md="6" lg="4" xl="4">
+                        <div className="form__form-group">
+                            <CheckboxField
+                                name="uses_peer2peer"
+                                label="Enable Peer to Peer"
+                            />
+                        </div>
+                    </Col>
+                    <Col md="6" lg="4" xl="4">
+                        <div className="form__form-group">
+                            <CheckboxField
                                 name="allow_award_peers_not_logged_into"
                                 label="Allow participants to award peers in any program he is not currently logged into"
                             />
@@ -96,17 +182,9 @@ const EngagementModal = ({dispatch, data, isOpen, toggle, theme, rtl}) => {
                     </Col>
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
-                            <CheckboxField 
+                            <CheckboxField
                                 name="allow_search_peers_not_logged_into"
                                 label="Allow participants to search for peers in any program he is not currently logged into"
-                            />
-                        </div>
-                    </Col>
-                    <Col md="6" lg="4" xl="4">
-                        <div className="form__form-group">
-                            <CheckboxField 
-                                name="share_siblings_peer2peer"
-                                label="Share sibling's peer to peer"
                             />
                         </div>
                     </Col>
@@ -122,79 +200,25 @@ const EngagementModal = ({dispatch, data, isOpen, toggle, theme, rtl}) => {
                     </Col>
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
-                            <CheckboxField 
-                                name="uses_peer2peer"
-                                label="Use peer to peer"
+                            <CheckboxField
+                                name="share_siblings_peer2peer"
+                                label="Share sibling's peer to peer"
                             />
                         </div>
                     </Col>
                 </Row>
+
                 <Row>
-                    <Col md="6" lg="4" xl="4">
-                        <div className="form__form-group">
-                            <CheckboxField 
-                                name="allow_hierarchy_to_view_social_wall"
-                                label="Other programs in this hierarchy can view this programs social wall"
-                            />
-                        </div>
-                    </Col>
-                    <Col md="6" lg="4" xl="4">
-                        <div className="form__form-group">
-                            <CheckboxField 
-                                name="can_view_hierarchy_social_wall"
-                                label="This program can view other programs social wall"
-                            />
-                        </div>
-                    </Col>
-                    <Col md="6" lg="4" xl="4">
-                        <div className="form__form-group">
-                            <CheckboxField 
-                                name="managers_can_post_social_wall_messages"
-                                label="Managers can post messages"
-                            />
-                        </div>
+                    <Col>
+                        <h4 className="padding-10">Goals: </h4>
                     </Col>
                 </Row>
                 <Row>
-                    <Col md="6" lg="4" xl="4">
-                        <div className="form__form-group">
-                            <CheckboxField 
-                                name="social_wall_separation"
-                                label="Allow participants to view the social wall of any program he is not currently logged into"
-                            />
-                        </div>
-                    </Col>
-                    <Col md="6" lg="4" xl="4">
-                        <div className="form__form-group">
-                            <CheckboxField 
-                                name="uses_social_wall"
-                                label="Uses social wall"
-                            />
-                        </div>
-                    </Col>
-                    <Col md="6" lg="4" xl="4">
-                        <div className="form__form-group">
-                            <CheckboxField 
-                                name="uses_goal_tracker"
-                                label="Use goal tracker"
-                            />
-                        </div>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col md="6" lg="4" xl="4">
-                        <div className="form__form-group">
-                            <CheckboxField 
-                                name="use_one_leaderboard"
-                                label="Use one leaderboard"
-                            />
-                        </div>
-                    </Col>
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField
-                              name="remove_social_from_pending_deactivation"
-                              label="Remove Social From Pending Deactivation View"
+                                name="uses_goal_tracker"
+                                label="Enable goal tracker"
                             />
                         </div>
                     </Col>
