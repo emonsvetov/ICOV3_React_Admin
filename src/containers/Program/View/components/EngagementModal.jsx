@@ -224,6 +224,11 @@ const EngagementModal = ({dispatch, data, isOpen, toggle, theme, rtl}) => {
                     </Col>
                 </Row>
                 <Row>
+                    <Col>
+                        <h4 className="padding-10">Other: </h4>
+                    </Col>
+                </Row>
+                <Row>
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField 
