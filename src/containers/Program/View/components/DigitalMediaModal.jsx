@@ -19,8 +19,11 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
     const [loading, setLoading] = useState(false)
     const [media, setMedia] = useState([]);
     const [mediaTypes, setMediaTypes] = useState([]);
+    const [mediaType, setMediaType] = useState('');
     let [template, setTemplate] = useState(null);
     const [uploadedMeta, setUploadedMeta] = useState([]);
+    const [iconMeta, setIconMeta] = useState([]);
+    const [fileName, setFileName] = React.useState("");
 
     const loadMediTypes = async () => {
         try{
@@ -29,7 +32,6 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
 
             let options=[];
 
-            console.log(response.data);
             response.data.map(row => {
                 options.push({
                     value: row.program_media_type_id,
@@ -44,12 +46,13 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
 
     const getData = async ( media_type ) => {
 
-        const url = `/organization/${organization.id}/program/${program.id}/media/1`;
+        const url = `/organization/${organization.id}/program/${program.id}/media/${media_type}`;
 
         try {
             const response = await axios.get(url);
 
             const data = response.data;
+            setMediaType(media_type);
             setMedia(data);
             return data;
         } catch (e) {
@@ -60,6 +63,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
 
     useEffect(() => {
         setUploadedMeta({});
+        setIconMeta({});
         loadMediTypes();
       }, []);
 
@@ -73,12 +77,22 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
 
     const removeFile = (index, e) => {
         e.preventDefault();
-        alert('Delete');
         console.log('Delete');
     };
 
     const handleSubmit = async (files, values ) => {
         let saveUrl = `/organization/${organization.id}/program/${program.id}/digital-media`;
+
+        console.log(uploadedMeta);
+        console.log(fileName);
+        console.log(mediaType);
+        console.log(iconMeta);
+        console.log(files);
+        return;
+
+
+
+
         axios.post(saveUrl, {'files':files.map(f => f.meta), 'submit': true})
             .then( (res) => {
                  console.log(res)
@@ -101,12 +115,6 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
 
     }
 
-    const onSubmit = values => {
-
-    console.log(uploadedMeta);
-    console.log(values);
-    return;
-
     // let saveUrl = `/organization/${organization.id}/program/${program.id}/digital-media`;
     // axios.post(saveUrl, {'files': files.map(f => f.meta), 'submit': true})
     //   .then((res) => {
@@ -128,19 +136,28 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
     //     setLoading(false)
     //   })
 
-  }
-
   const modalProps = {
     isOpen, toggle, setOpen
   }
 
   const handleChangeStatus = ({ meta, file }, status) => {
-        alert(status);
     if (status === 'done'){
+      if(!fileName){
+        setFileName(meta.name.substr(0,meta.name.lastIndexOf('.')));
+      }
       setUploadedMeta(meta);
     }
   }
 
+  const handleUploadIcon= ({ meta, file }, status) => {
+    if (status === 'done'){
+      setIconMeta(meta);
+    }
+  }
+
+  const onChangeFileName = (event) => {
+      setFileName(event.target.value);
+  }
 
     return (
         <Modal className={`modal-program modal-lg`} {...modalProps}>
@@ -149,8 +166,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
             <Card>
               <CardBody className='pt-0'>
                 <Form
-                  onSubmit={onSubmit}
-                  validate={validate}
+                  onSubmit={handleSubmit}
                   render={({handleSubmit, form, submitting, pristine, values }) => (
                     <form className="form" onSubmit={handleSubmit}>
 
@@ -177,7 +193,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                         </Col>
                       </Row>
                       <Row>
-                          <Col md="6" >
+                          <Col md="4" >
                             <div className="form__form-group">
                                 <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
                                      <Dropzone
@@ -185,6 +201,23 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                         accept="image/jpeg, image/png, image/gif"
                                         // accept="image/*,audio/*,video/*"
                                         name="media_upload"
+                                        inputContent="Upload Icon"
+                                        maxFiles={1}
+                                        onSubmit={false}
+                                        onChangeStatus={handleUploadIcon}
+                                       />
+                                </div>
+                            </div>
+                          </Col>
+                          <Col md="4" >
+                            <div className="form__form-group">
+                                <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
+                                     <Dropzone
+                                        getUploadParams={getUploadParams}
+                                        accept="image/jpeg, image/png, image/gif"
+                                        // accept="image/*,audio/*,video/*"
+                                        name="media_upload"
+                                        inputContent="Upload Big Image"
                                         maxFiles={1}
                                         onSubmit={false}
                                         onChangeStatus={handleChangeStatus}
@@ -192,16 +225,20 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                 </div>
                             </div>
                           </Col>
-                          <Col md="6" >
+                          <Col md="4" >
                             <div>
                               <Field name="name">
-                                <div className="form__form-group">
-                                    <div className="form__form-group-field">
-                                      <div className="form__form-group-row">
-                                          <input type="text" value={uploadedMeta?.name} placeholder="File Name"/>
-                                      </div>
+                                {({ input, meta }) => (
+                                  <div className="form__form-group">
+                                    <span className="form__form-group-label">Enter File Name </span>
+                                    <div>
+                                        <input onChange={onChangeFileName}
+                                               style={{borderWidth: 1, borderColor: 'gray'}}
+                                               type="text" value={fileName}
+                                               placeholder="File Name" />
                                     </div>
                                   </div>
+                                )}
                               </Field>
                             </div>
                           </Col>
