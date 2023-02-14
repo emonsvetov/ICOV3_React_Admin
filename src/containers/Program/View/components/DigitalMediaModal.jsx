@@ -24,10 +24,11 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   const [uploadedMeta, setUploadedMeta] = useState({});
   const [iconMeta, setIconMeta] = useState({});
   const [fileName, setFileName] = React.useState("");
+  let [dropZoneKey, setDropZoneKey] = useState(0);
 
   const loadMediTypes = async () => {
     try {
-      const response = await axios.get(`/digital-medias`);
+      const response = await axios.get(`/organization/${organization.id}/program/${program.id}/digital-media-type`);
       if (response.data.length === 0) return {results: [], count: 0}
 
       let options = [];
@@ -46,7 +47,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
 
   const getData = async (media_type) => {
 
-    const url = `/organization/${organization.id}/program/${program.id}/media/${media_type}`;
+    const url = axios.defaults.baseURL + `/organization/${organization.id}/program/${program.id}/media/${media_type}`;
 
     try {
       const response = await axios.get(url);
@@ -77,9 +78,15 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
     }
   }
 
-  const removeFile = (index, e) => {
+  const removeFile = (index, file, e) => {
     e.preventDefault();
-    console.log('Delete');
+
+    const response = axios.delete(
+        `/organization/${organization.id}/program/${program.id}/programMedia/${file.id}/digital-media`
+    );
+
+    const items = media.filter(item => item.id != file.id);
+    setMedia(items);
   };
 
   const handleSubmit = values => {
@@ -95,10 +102,14 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       .then((res) => {
         console.log(res)
         if (res.status === 200) {
-          dispatch(sendFlashMessage('Media successfully published', 'alert-success'));
-          toggle();
-          setUploadedMeta({})
-          setIconMeta({})
+            //dispatch(sendFlashMessage('Media successfully published', 'alert-success'));
+            getData(mediaType);
+            setUploadedMeta({})
+            setIconMeta({})
+            setFileName('');
+            dropZoneKey++;
+            setDropZoneKey( dropZoneKey );
+
         }
       })
       .catch(error => {
@@ -133,6 +144,33 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
     setFileName(event.target.value);
   }
 
+  const selectCreateOption = (inputValue) => {
+
+    let saveUrl = axios.defaults.baseURL +  `/organization/${organization.id}/program/${program.id}/digital-media-type`;
+
+    let data = new FormData();
+    data.append('name', inputValue);
+
+    axios.post(saveUrl, data)
+      .then((res) => {
+        console.log(res)
+        if (res.status === 200) {
+              mediaTypes.push({
+                  value: res.data.program_media_type_id,
+                  label: inputValue
+              });
+              setMediaTypes(mediaTypes);
+        }
+      })
+      .catch(error => {
+        console.log(error)
+        console.log(JSON.stringify(error.response.data.errors));
+        dispatch(sendFlashMessage(JSON.stringify(error.response.data.errors), 'alert-danger'))
+        setLoading(false)
+        throw new Error(`API error:${error?.message}`);
+      });
+  }
+
   return (
     <Modal className={`modal-program modal-lg`} {...modalProps}>
       <CloseButton onClick={toggle}/>
@@ -157,6 +195,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                             isDisabled={isLoading}
                             isLoading={isLoading}
                             options={mediaTypes}
+                            onCreateOption={selectCreateOption}
                             placeholder='Select or Create a Menu Category'
                             onChange={value =>
                               getData(value.value)
@@ -170,7 +209,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                     <Col md="4">
                       <div className="form__form-group">
                         <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
-                          <Dropzone
+                          <Dropzone key={dropZoneKey}
                             getUploadParams={getUploadParams}
                             accept="image/jpeg, image/png, image/gif"
                             // accept="image/*,audio/*,video/*"
@@ -186,7 +225,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                     <Col md="4">
                       <div className="form__form-group">
                         <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
-                          <Dropzone
+                          <Dropzone key={dropZoneKey}
                             getUploadParams={getUploadParams}
                             accept="image/jpeg, image/png, image/gif"
                             // accept="image/*,audio/*,video/*"
@@ -237,7 +276,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                               }}>
                                 <p className="dropzone__img-name">{file.name}</p>
                                 <button className="dropzone__img-delete" type="button"
-                                        onClick={e => removeFile(i, e)}>
+                                        onClick={e => removeFile(i, file, e)}>
                                   Remove
                                 </button>
                               </div>
