@@ -7,6 +7,7 @@ import AccountingModal from './AccountingModal';
 import AwardingPointsModal from './AwardingPointsModal';
 import EngagementModal from './EngagementModal';
 import AddProgramModal from './AddProgramModal';
+import DigitalMediaModal from "./DigitalMediaModal";
 // import EventsModal from './EventsModal';
 import EventsDataModal from '../components/event/EventsDataModal';
 import EmailTemplateModal from '../EmailTemplate/IndexDataModal'
@@ -49,6 +50,9 @@ const MainModalWrapper = ({name, isOpen, setOpen, toggle}) => {
         }
         {
             name==='emailtemplate' && <EmailTemplateModal {...props} />
+        }
+        {
+            name==='digitalmedia' && <DigitalMediaModal {...props} />
         }
         </>
     )
