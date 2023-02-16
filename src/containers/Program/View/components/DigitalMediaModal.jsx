@@ -227,8 +227,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                         <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
                           <Dropzone key={dropZoneKey}
                             getUploadParams={getUploadParams}
-                            accept="image/jpeg, image/png, image/gif"
-                            // accept="image/*,audio/*,video/*"
+                            accept="image/*,audio/*,video/*,application/pdf"
                             name="media_upload"
                             inputContent="Upload Big Image"
                             maxFiles={1}
