@@ -13,6 +13,40 @@ import {isEmpty} from '@/shared/helpers'
 import {Field, Form} from "react-final-form";
 // import {formatBytes, formatDuration} from "react-dropzone-uploader/dist/utils";
 
+const fileTypes = [
+  'application/pdf',
+  'application/msword',
+  'application/vnd.ms-word.document.macroEnabled.12',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-excel',
+  'application/vnd.ms-excel.sheet.macroEnabled.12',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.ms-excel',
+  'application/vnd.ms-excel.sheet.macroEnabled.12',
+  'application/msexcel',
+  'application/x-msexcel',
+  'application/x-ms-excel',
+  'application/x-excel',
+  'application/x-dos_ms_excel',
+  'application/xls',
+  'application/x-xls',
+  'application/x-msi',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.ms-powerpoint',
+  'application/vnd.ms-powerpoint.presentation.macroEnabled.12',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  'text/plain',
+  'text/xml',
+  'application/xml',
+  'text/html',
+  'application/rtf',
+  'text/csv',
+  'application/x-afp',
+  'image/*',
+  'audio/*',
+  'video/*',
+];
+
 const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, theme, rtl}) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
@@ -98,6 +132,8 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
     data.append('name', fileName)
     data.append('mediaType', mediaType)
 
+    console.log(mediaType);
+    return;
     axios.post(saveUrl, data)
       .then((res) => {
         console.log(res)
@@ -119,6 +155,14 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
         setLoading(false)
         throw new Error(`API error:${error?.message}`);
       })
+  }
+
+  const validate = values => {
+    let errors = {}
+    if (!mediaType){
+      errors.category = 'The category field is required.';
+    }
+    return errors
   }
 
   const modalProps = {
@@ -179,6 +223,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
           <CardBody className='pt-0'>
             <Form
               onSubmit={handleSubmit}
+              validate={validate}
               render={({handleSubmit, form, submitting, pristine, values}) => (
                 <form className="form" onSubmit={handleSubmit}>
 
@@ -189,18 +234,30 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                         <h5 className="colorgrey">{program.name}</h5>
                         <div style={{paddingTop: '25px'}}></div>
                         <div>
-                          <CreatableSelect
-                            name="category"
-                            isClearable
-                            isDisabled={isLoading}
-                            isLoading={isLoading}
-                            options={mediaTypes}
-                            onCreateOption={selectCreateOption}
-                            placeholder='Select or Create a Menu Category'
-                            onChange={value =>
-                              getData(value.value)
-                            }
-                          />
+                          <Field name="category">
+                            {({ input, meta }) => (
+                              <div className="form__form-group">
+                                <div className="form__form-group-field">
+                                  <div className="form__form-group-row">
+                                    <CreatableSelect
+                                      name="category"
+                                      isClearable
+                                      isDisabled={isLoading}
+                                      isLoading={isLoading}
+                                      options={mediaTypes}
+                                      onCreateOption={selectCreateOption}
+                                      placeholder='Select or Create a Menu Category'
+                                      onChange={value =>
+                                        getData(value.value)
+                                      }
+                                    />
+                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </Field>
+
                         </div>
                       </div>
                     </Col>
@@ -227,7 +284,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                         <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
                           <Dropzone key={dropZoneKey}
                             getUploadParams={getUploadParams}
-                            accept="image/*,audio/*,video/*,application/pdf"
+                            accept={fileTypes.join(',')}
                             name="media_upload"
                             inputContent="Upload Big Image"
                             maxFiles={1}
@@ -307,10 +364,7 @@ const RenderImage = ({src}) => {
   )
 }
 
-const validate = values => {
-  let errors = {}
-  return errors
-}
+
 
 DigitalMediaModal.propTypes = {
   rtl: RTLProps.isRequired,
