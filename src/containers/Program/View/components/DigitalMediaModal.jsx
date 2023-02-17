@@ -132,8 +132,6 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
     data.append('name', fileName)
     data.append('mediaType', mediaType)
 
-    console.log(mediaType);
-    return;
     axios.post(saveUrl, data)
       .then((res) => {
         console.log(res)
@@ -149,7 +147,6 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
         }
       })
       .catch(error => {
-        console.log(error)
         console.log(JSON.stringify(error.response.data.errors));
         dispatch(sendFlashMessage(JSON.stringify(error.response.data.errors), 'alert-danger'))
         setLoading(false)
