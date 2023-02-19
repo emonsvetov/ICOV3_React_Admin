@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types'
 import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import { Modal, ModalBody, Row, Col, ListGroup, ListGroupItem,Card, CardBody  } from 'reactstrap';
 
@@ -31,7 +32,7 @@ const TAB_MENU_LINKS = [
     }
 ]
 
-const InvoiceModal = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) => {
+const InvoicesModal = ({organization, isOpen, setOpen, toggle, data, theme, rtl}) => {
     const [activeTab, setActiveTab] = useState('invoices')
 
     const RenderItem = ({item, key}) => {
@@ -89,11 +90,12 @@ const InvoiceModal = ({organization, isOpen, setOpen, toggle, data, theme, rtl})
     )
 }
 
-InvoiceModal.propTypes = {
+InvoicesModal.propTypes = {
   theme: ThemeProps.isRequired,
   rtl: RTLProps.isRequired,
-  organization: Object.isRequired,
-  data: Object.isRequired
+  setOpen: PropTypes.func.isRequired,
+  organization: PropTypes.object.isRequired,
+  data: PropTypes.object.isRequired,
 };
 
 export default withRouter(connect((state) => ({
@@ -101,4 +103,4 @@ export default withRouter(connect((state) => ({
   rtl: state.rtl,
   organization: state.organization,
   data: state.program
-}))(InvoiceModal));
+}))(InvoicesModal));
