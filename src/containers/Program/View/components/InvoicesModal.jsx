@@ -40,7 +40,7 @@ const InvoicesModal = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
         className={activeTab === item.value ? 'selected' : ''}
         href="#" 
         tag="a" 
-        key={key} 
+        key={`${key}-renderItem`} 
         onClick={()=>setActiveTab(item.value)}>{item.label}</ListGroupItem>)
     }
 

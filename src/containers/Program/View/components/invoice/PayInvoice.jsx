@@ -98,7 +98,7 @@ const RenderStatement = ({invoice, getAppliedPayment, onKeyUpAppliedPayment}) =>
     html.push(
         <>
             <tr>
-                <td colspan="9"><hr /></td>
+                <td colSpan="9"><hr /></td>
             </tr>
             <tr>
                 <td align="right"><b>Total Balance Due</b></td>
@@ -220,7 +220,7 @@ const PayInvoice = (props) => {
 
     const onClickDisperseCheckAmount = () => {
         let tmpAmountNeedingDispersal = checkAmount;
-        // console.log(invoice)
+        console.log(invoice)
         const statements = invoice.view_params?.invoice?.statements;
         if( statements )    {
             // let total_end_balance = Math.abs(invoice.total_end_balance)
@@ -409,8 +409,8 @@ const PayInvoice = (props) => {
                         </tr>
                         <tr>
                             <td valign="top"><b>Notes:</b></td>
-                            <td valign="top" colspan="2">
-                                <textarea name="notes" rows="6" cols="60" onChange={handleNotes}>{notesRef.current}</textarea>
+                            <td valign="top" colSpan="2">
+                                <textarea name="notes" rows="6" cols="60" onChange={handleNotes} defaultValue={notesRef.current}></textarea>
                             </td>
                             <td valign="bottom">
                                 <Button

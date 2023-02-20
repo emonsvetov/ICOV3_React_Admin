@@ -12,7 +12,7 @@ import {connect} from "react-redux";
 const ViewInvoice = (props) => {
     const [loading, setLoading] = useState(true)
     const [invoice, setInvoice] = useState(null)
-    console.log(props)
+    // console.log(props)
     useEffect( () => {
             getInvoice(props.program.organization_id, props.program.id, props.invoice.id)
             .then( res => {

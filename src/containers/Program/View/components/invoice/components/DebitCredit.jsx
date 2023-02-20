@@ -23,7 +23,7 @@ const RenderItem = ({invoice, row}) => {
             html.push(
                 <tr>
                     <td></td>
-                    <td bgcolor='#dddddd' colspan='4'>Charges</td>
+                    <td bgcolor='#dddddd' colSpan='4'>Charges</td>
                 </tr>
             )
         }
@@ -71,12 +71,12 @@ const RenderItem = ({invoice, row}) => {
         html.push(
             <>
                 <tr>
-                    <td colspan="1" align="right">
+                    <td colSpan="1" align="right">
                         <strong className="invoice-sub-total">
                         {row.info.program_name}
                         </strong>
                     </td>
-                    <td colspan="4" align="right" style={{"borderTop": "thin black dotted","paddingTop": "8px"}}>
+                    <td colSpan="4" align="right" style={{"borderTop": "thin black dotted","paddingTop": "8px"}}>
                     <strong className="invoice-sub-total">${Number(subtotals*-1).toFixed(2)}</strong>
                     </td>
                 </tr>
