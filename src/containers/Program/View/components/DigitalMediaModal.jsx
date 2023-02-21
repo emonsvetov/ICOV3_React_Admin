@@ -324,8 +324,9 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                           <div className="dropzone__imgs-wrapper">
                             {media.map((file, i) => (
                               <div className="dropzone__img" key={file.name} style={{
-                                width: `100px`,
-                                backgroundImage: `url(${process.env.REACT_APP_API_STORAGE_URL + '/' + file.path})`
+                                border: '1px solid grey',
+                                width: `125px`,
+                                backgroundImage: `url(${process.env.REACT_APP_API_STORAGE_URL + '/' + file.icon_path})`
                               }}>
                                 <p className="dropzone__img-name">{file.name}</p>
                                 <button className="dropzone__img-delete" type="button"
