@@ -47,7 +47,8 @@ const PaymentsDataTable = (props) =>{
     const RenderActions = ({row}) => {
         return (
             <>
-                <button className='btn btn-primary btn-xs mb-0' onClick={() => onClickReversePayment(row.original)}>Reverse Payment</button>
+                {props.auth?.isSuperAdmin &&
+                <button className='btn btn-primary btn-xs mb-0' onClick={() => onClickReversePayment(row.original)}>Reverse Payment</button>}
             </>
         )
     }

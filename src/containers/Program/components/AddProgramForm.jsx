@@ -115,7 +115,7 @@ const AddProgramForm = ( {program, organization, auth} ) => {
                     <Field
                         name="type"
                         component={renderRadioButtonField}
-                        label="Resident"
+                        label="Customer"
                         radioValue="Resident"
                     />
                 </Col>

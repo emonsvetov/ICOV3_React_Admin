@@ -7,10 +7,13 @@ import renderSelectField from '@/shared/components/form/Select';
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
 
 import axios from 'axios'
+import {withRouter} from "react-router-dom";
+import {connect} from "react-redux";
 
 
 const Payments = (props) => {
 
+    console.log(props.auth.isSuperAdmin)
     useEffect( () => {
         props.setTrigger(Math.floor(Date.now() / 1000))
     }, [props])
@@ -47,7 +50,7 @@ const Payments = (props) => {
     }
 
     const PaymentInfo = (props) => {
-        
+
         const [loading, setLoading] = useState(true)
         const [paymentKinds, setPaymentKinds] = useState([])
         const [invoices, setInvoices] = useState([])
@@ -126,7 +129,7 @@ const Payments = (props) => {
                         onSubmit={onSubmitPayment}
                         validate={validate}
                         initialValues={{
-                            
+
                         }}
                     >
                     {({ handleSubmit, form, submitting, pristine, values }) => (
@@ -203,7 +206,7 @@ const Payments = (props) => {
                                         </Field>
                                     </Col>
                                 </Row>
-                                
+
                                 <Button type="submit" disabled={submitting} className="btn btn-primary" color="#ffffff">Save Changes</Button>
                             </Card>
                         </form>
@@ -218,11 +221,20 @@ const Payments = (props) => {
 
     return (
         <>
-            <div className='text-right'><Button onClick={() => setShowPaymentInfo( !showPaymentInfo )} className="btn btn-primary btn-sm" color="#ffffff">Make a Payment</Button></div>
+            {props.auth?.isSuperAdmin &&
+            <div className='text-right'>
+                <Button onClick={() => setShowPaymentInfo(!showPaymentInfo)} className="btn btn-primary btn-sm"
+                        color="#ffffff">Make a Payment</Button>
+            </div>
+        }
             {showPaymentInfo && <PaymentInfo {...props}/>}
             <PaymentsDataTable {...props}/>
         </>
     )
 }
 
-export default Payments
+//xport default Payments
+
+export default withRouter(connect((props) => ({
+    auth: props.auth
+}))(Payments));
