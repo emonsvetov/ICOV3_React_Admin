@@ -12,12 +12,13 @@ import arrayMutators from "final-form-arrays"
 
 let config = {
     roleInput:'checkbox',
-    roleField: 'roles'
+    roleField: 'roles',
+    isProgram: true
 }
 
 const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
     const dispatch = useDispatch()
-    const [loading, setLoading] = useState(false)
+    const [saving, setSaving] = useState(false)
     const [roles, setRoles] = useState(null)
 
     React.useEffect( () => {
@@ -26,14 +27,14 @@ const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
     }, [program])
 
     const getRoles = ( organizationId ) => {
-        setLoading(true)
+        setSaving(true)
         fetchRoles( organizationId, true )
         .then( data => {
             if( config.roleInput === 'select')    {
                 data = labelizeNamedData(data);
             }
             setRoles(data);
-            setLoading(false)
+            setSaving(false)
         })
     }
   
@@ -41,42 +42,49 @@ const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
         if( config.roleInput === 'select')    {
             values = unpatchSelect(values, [config.roleField])
         }
+        if(values?.send_invite) {
+          delete values["password"]
+          delete values["password_confirmation"]
+        }
         // console.log(values)
         // return
-        // setLoading(true)
+        // setSaving(true)
         axios.post(`/organization/${program.organization_id}/program/${program.id}/user`, values)
         .then( (res) => {
             // console.log(res)
             if(res.status == 200)  {
-                toggle()
-                setTrigger( Math.floor(Date.now() / 1000) )
-                dispatch(sendFlashMessage("User added successfully!", 'alert-success'))
+                // toggle()
+                // setTrigger( Math.floor(Date.now() / 1000) )
+                // dispatch(sendFlashMessage("User added successfully!", 'alert-success'))
+                // setSaving(false)
             }
         })
         .catch( error => {
             //console.log(error.response.data);
             dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger', 'top'))
-            setLoading(false)
+            setSaving(false)
         })
     }
 
     const validate = async(values) => {
-        // console.log(values)
-        let v1 = await formValidation.validateForm(values)
-
-        v1 = v1 ? v1 : {}
-
-        // if( !values.password )  {
-        //     v1.password = 'Password is required'
-        // }
-        // if( !values.password_confirmation )  {
-        //     v1.password_confirmation = 'Confrim Password is required'
-        // } else 
-        
-        if( values.password && values.password !== values.password_confirmation )  {
-            v1.password_confirmation = 'Passwords do not match'
+        let exclude_fields = []
+        if( values?.send_invite )
+        {
+          exclude_fields.push('password', 'password_confirmation')
         }
-        // console.log(v1)
+        let v1 = await formValidation(exclude_fields).validateForm(values)
+        v1 = v1 ? v1 : {}
+        if( values?.send_invite )
+        {
+          delete v1["password"]
+          delete v1["password_confirmation"]
+        }
+        else 
+        {
+          if( values.password && values.password !== values.password_confirmation )  {
+              v1.password_confirmation = 'Passwords do not match'
+          }
+        }
         return v1
     }
 
@@ -108,7 +116,7 @@ const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
                 <Col md="6" lg="6" xl="6" className='text-right'>
                     <ButtonToolbar className="modal__footer flex justify-content-right w100">
                         <Button outline color="primary" className="mr-3" onClick={toggle}>Close</Button>{' '}
-                        <Button type="submit" disabled={loading} className="btn btn-primary" color="#ffffff">Save</Button>
+                        <Button type="submit" disabled={saving} className="btn btn-primary" color="#ffffff">Save</Button>
                     </ButtonToolbar>
                 </Col>
             </Row>

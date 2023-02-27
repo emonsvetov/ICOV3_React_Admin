@@ -17,7 +17,7 @@ export const USERS_COLUMNS = [
     {
         Header: "Name",
         accessor: "name",
-        Cell: ({ row, value }) => { return <Link reloadDocument target={'_blank'} to={`/users/view/${row.original.id}`}>{value}</Link>},
+        Cell: ({ row, value }) => { return <Link target={'_blank'} to={`/users/view/${row.original.id}`}>{value}</Link>},
     },
     {
         Header: "Email",

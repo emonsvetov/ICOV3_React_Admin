@@ -1,6 +1,4 @@
 import React, {useState, useEffect} from "react";
-import Select from 'react-select'
-import renderDatePickerField from '@/shared/components/form/DatePicker';
 import { Field, Form } from 'react-final-form';
 import { Button, Row, Col } from 'reactstrap';
 import renderSelectField from '@/shared/components/form/Select'
