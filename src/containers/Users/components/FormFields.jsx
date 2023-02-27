@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Field } from 'react-final-form';
 import { Row, Col } from 'reactstrap';
 import Select from 'react-select';
 import { FieldArray } from "react-final-form-arrays"
 import CheckboxGroup from "@/shared/components/form/CheckboxGroup"
+import CheckboxField from '@/shared/components/form/CheckBox';
 
 const FormFields = ({form, values, submitting, pristine, config = {
     roles:[],
@@ -13,9 +14,11 @@ const FormFields = ({form, values, submitting, pristine, config = {
     roleDisable: false,
     isProgram: false
 }}) => {
-
-    // console.log(config)
-    // console.log(values)
+    const [isSendInvite, setIsSendInvite] = useState(false)
+    // console.log(onChangeActive)
+    const onChangeSendInvite = (checked) => {
+      setIsSendInvite(checked)
+    }
     
     return (
         <div className="user-form-fields w100">
@@ -213,7 +216,23 @@ const FormFields = ({form, values, submitting, pristine, config = {
                 </Col>
             </Row>
             <h4 className='mb-2'>Password Settings:</h4>
-            <Row>
+            {(config.isProgram && !values?.id)  &&
+              <div className="form__form-group">
+                  <Field 
+                    name="send_invite"
+                    label="Send Invite"
+                    type="checkbox"
+                    component={ CheckboxField }
+                    parse={ value => {
+                      onChangeSendInvite(value)
+                      return value
+                    }}
+                  />
+                  {isSendInvite &&
+                  <label>User will set password for themselves</label>}
+              </div>
+            }
+            {!isSendInvite && <Row>
                 <Col md="6" lg="4" xl="4">
                     <Field name="password">
                     {({ input, meta }) => (
@@ -244,7 +263,7 @@ const FormFields = ({form, values, submitting, pristine, config = {
                     )}
                     </Field>
                 </Col>
-            </Row>
+            </Row>}
         </div>
     )
 }
