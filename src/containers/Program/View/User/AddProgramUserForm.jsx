@@ -48,15 +48,15 @@ const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
         }
         // console.log(values)
         // return
-        // setSaving(true)
+        setSaving(true)
         axios.post(`/organization/${program.organization_id}/program/${program.id}/user`, values)
         .then( (res) => {
             // console.log(res)
             if(res.status == 200)  {
-                // toggle()
-                // setTrigger( Math.floor(Date.now() / 1000) )
-                // dispatch(sendFlashMessage("User added successfully!", 'alert-success'))
-                // setSaving(false)
+                toggle()
+                setTrigger( Math.floor(Date.now() / 1000) )
+                dispatch(sendFlashMessage("User added successfully!", 'alert-success'))
+                setSaving(false)
             }
         })
         .catch( error => {
