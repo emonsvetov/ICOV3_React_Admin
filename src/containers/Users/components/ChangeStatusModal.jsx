@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import {
@@ -9,24 +9,13 @@ import {
     CardBody,
 } from 'reactstrap';
 import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
-import { Form, Field } from 'react-final-form';
+import { Form } from 'react-final-form';
 import axios from "axios";
-import renderRadioButtonField from '@/shared/components/form/RadioButton';
-import getUserStatuses from '@/service/getUserStatuses';
 import {useDispatch, flashSuccess, flashError} from "@/shared/components/flash"
+import FieldUserStatus from './FieldUserStatus'
 
 const ChangeStatusModal = ({ organization, isOpen, setOpen, toggle, theme, rtl, user, setTrigger }) => {
     const dispatch = useDispatch()
-    const [statuses, setStatuses] = useState([])
-    useEffect(() => {
-        if (organization?.id) {
-            getUserStatuses(organization.id)
-                .then(statuses => {
-                    // console.log(statuses)
-                    setStatuses(statuses)
-                })
-        }
-    }, [organization])
 
     const onSubmitChangeStatus = values => {
         // console.log(values)
@@ -49,21 +38,7 @@ const ChangeStatusModal = ({ organization, isOpen, setOpen, toggle, theme, rtl, 
     const validate = values => {
         return true;
     }
-
-    const RenderStatusList = () => {
-        return statuses.map( (status) => 
-            <Field
-                name="user_status_id"
-                component={renderRadioButtonField}
-                label={status.status}
-                radioValue={String(status.id)}
-                key={`user-status-item-${status.id}`}
-            />
-        )
-    }
-
-    // console.log(user)
-
+    
     return (
         <Modal className={`modal-action modal-md ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={toggle}>
             <Card className='w-100'>
@@ -82,8 +57,7 @@ const ChangeStatusModal = ({ organization, isOpen, setOpen, toggle, theme, rtl, 
                         {({ handleSubmit, form, submitting, pristine, values }) => (
                             <form className="form" onSubmit={handleSubmit}>
                                 <div className="form__form-group label-mb-0">
-                                    <span className="form__form-group-label">User status</span>
-                                    {statuses && <RenderStatusList />}
+                                    <FieldUserStatus />
                                 </div>
                                 <div className='d-flex justify-content-end'>
                                     <Button className='btn-sm mr-2' color='outline-primary' onClick={toggle}>Cancel</Button><Button className='btn-sm' color='primary' type='submit'>Submit</Button>

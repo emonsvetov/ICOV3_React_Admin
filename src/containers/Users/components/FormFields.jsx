@@ -5,6 +5,7 @@ import Select from 'react-select';
 import { FieldArray } from "react-final-form-arrays"
 import CheckboxGroup from "@/shared/components/form/CheckboxGroup"
 import CheckboxField from '@/shared/components/form/CheckBox';
+import FieldUserStatus from './FieldUserStatus'
 
 const FormFields = ({form, values, submitting, pristine, config = {
     roles:[],
@@ -14,6 +15,7 @@ const FormFields = ({form, values, submitting, pristine, config = {
     roleDisable: false,
     isProgram: false
 }}) => {
+  // console.log(values)
     const [isSendInvite, setIsSendInvite] = useState(false)
     // console.log(onChangeActive)
     const onChangeSendInvite = (checked) => {
@@ -54,41 +56,47 @@ const FormFields = ({form, values, submitting, pristine, config = {
                     </Field>
                 </Col>
             </Row>
-            {!config.roleDisable &&
             <Row>
-                <Col md="6" lg="4" xl="4">
-                    <Field name={config.roleField}>
-                    {({ input, meta }) => (
-                        <div className="form__form-group">
-                            <span className="form__form-group-label">Role</span>
-                            <div className="form__form-group-field">
-                                <div className="form__form-group-row">
-                                    {config.roleInput === 'checkbox' && 
-                                        <FieldArray
-                                            component={CheckboxGroup}
-                                            options={config.roles}
-                                            {...input}
-                                        />
-                                    }
-                                    {config.roleInput === 'select' && 
-                                        <Select
-                                            options={config.roles}
-                                            clearable={false}
-                                            className="react-select"
-                                            placeholder={config.rolePlaceholder}
-                                            classNamePrefix="react-select"
-                                            {...input}
-                                        />
-                                    }
-                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                                </div>
-                            </div>
-                            {!config.isProgram && (<em>Program roles to be assigned within a Program</em>)}
-                        </div>
-                    )}
-                    </Field>
-                </Col>
-            </Row>}
+            {!config.roleDisable &&
+              <Col md="6" lg="4" xl="4">
+                  <Field name={config.roleField}>
+                  {({ input, meta }) => (
+                      <div className="form__form-group">
+                          <span className="form__form-group-label">Role</span>
+                          <div className="form__form-group-field">
+                              <div className="form__form-group-row">
+                                  {config.roleInput === 'checkbox' && 
+                                      <FieldArray
+                                          component={CheckboxGroup}
+                                          options={config.roles}
+                                          {...input}
+                                      />
+                                  }
+                                  {config.roleInput === 'select' && 
+                                      <Select
+                                          options={config.roles}
+                                          clearable={false}
+                                          className="react-select"
+                                          placeholder={config.rolePlaceholder}
+                                          classNamePrefix="react-select"
+                                          {...input}
+                                      />
+                                  }
+                                  {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                              </div>
+                          </div>
+                          {!config.isProgram && (<em>Program roles to be assigned within a Program</em>)}
+                      </div>
+                  )}
+                  </Field>
+              </Col>
+            }
+            <Col md="6" lg="4" xl="4">
+              <FieldUserStatus />
+            </Col>
+            </Row>
+            
+
             <Row>
                 <Col md="6" lg="4" xl="4">
                     <Field name="email">
