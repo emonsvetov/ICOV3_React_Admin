@@ -33,7 +33,7 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
 
         fetchUserProgramRoles(program.organization_id, userid, program.id)
         .then( _roles => {
-            console.log(_roles)
+            // console.log(_roles)
             // const _roles = extractRolesFromProgramPermissions(_permissions, program.id);
             setProgramRoles(buildIdArray(_roles))
         })
@@ -114,6 +114,8 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
     }
     
     user = {...user, ...{roles: programRoles}}
+    user.user_status_id = String(user.user_status_id ? user.user_status_id : "")
+    // console.log(user.user_status_id)
     return (
     <Form
         onSubmit={onSubmit}
