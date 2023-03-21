@@ -54,8 +54,6 @@ const ReactTableConstructor = ({
     ...tableOptionalHook,
   );
 
-  console.log(dataLength);
-
   return (
     <div>
       {withSearchEngine && (

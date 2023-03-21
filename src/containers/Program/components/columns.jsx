@@ -29,12 +29,12 @@ export const PROGRAM_COLUMNS = [
                 },
               })}
             >
-              {row.isExpanded ? <ChevronUpIcon /> : <ChevronRightIcon/>}
+              {row.isExpanded ? <ChevronUpIcon className="chevron-expand" /> : <ChevronRightIcon className="chevron-expand" />}
             </span>
         ) : null,
     },
     {
-        Header: "#",
+        Header: "ID",
         accessor: "id",
         Footer:"#",
         disableFilters:true,
@@ -48,26 +48,8 @@ export const PROGRAM_COLUMNS = [
         Cell: ({ row, value }) => { return <Link to={`/program/view/${row.original.id}`}>{value}</Link>},
     },
     {
-        Header: "Corporate entity",
-        accessor: "corporate_entity",
-        Footer:"Corporate entity"
-    },
-    // { 
-    //     Header: "Domain",
-    //     accessor: "date_of_borth",
-    //     Footer:"Date of Birth",
-    //     Cell: ({ value }) => { return format(new Date(value), 'dd/MM/yyyy')},
-    // },
-    {
-        Header: "Domain",
-        accessor: "domain",
-        Footer:"Domain",
-    },
-    {
         Header: "Status",
-        accessor: "status",
-        Footer: "Status",
-        filter: 'equals'
+        accessor: "status_id",
     },
 ]
 

@@ -67,7 +67,7 @@ const ResetPasswordForm = ({onSubmit, errors, loading }) => {
                     <LockOutlineIcon />
                   </div>
                   <div className="form__form-group-row">
-                    <input type="text" {...input} placeholder="Password" />
+                    <input type="password" {...input} placeholder="Password" />
                     {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                   </div>
               </div>
@@ -83,7 +83,7 @@ const ResetPasswordForm = ({onSubmit, errors, loading }) => {
                     <LockOutlineIcon />
                   </div>
                   <div className="form__form-group-row">
-                    <input type="text" {...input} placeholder="Password" />
+                    <input type="password" {...input} placeholder="Password" />
                     {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                   </div>
               </div>

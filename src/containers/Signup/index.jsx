@@ -16,6 +16,21 @@ const Signup = () => {
   const onSubmit = async(values) => {
     // alert("submitted");
     // console.log(values);
+
+  //  try {
+  //     const resp = await axios.post('/organization', {"name": values.organization_name});
+  //     console.log(resp)
+  //   } catch (error) {
+  //     // Handle Error Here
+  //     // alert('NOWHERE')
+  //     console.log(error.response.data.errors);
+  //     setErrors(error.response.data.errors)
+  //     console.log(errors)
+  //   }
+
+  //   return
+
+
     // const data = {
     //   first_name: values.first_name,
     //   last_name: values.last_name,
@@ -24,6 +39,7 @@ const Signup = () => {
     //   password_confirmation: values.password_confirmation,
     // }
     // console.log(data)
+    // return;
 
     // try {
     //   const resp = await axios.post('/organization/1/register', values);
@@ -37,11 +53,13 @@ const Signup = () => {
     // }
 
     setLoading(true)
+    // return;
 
     // const perform = await axios.post('/organization/1/register', values);
-    axios.post('/organization/1/register', values)
+    axios.post('/register', values)
     .then( (res) => {
       // console.log(res)
+      // return;
       // console.log(res.status == 200)
       if(res.status == 200)  {
         // localStorage.setItem("authToken", res.data.access_token);
@@ -71,7 +89,7 @@ const Signup = () => {
               <h4 className="account__subhead subhead">Create an account to continue</h4>
             </div>
             <SignupForm onSubmit={onSubmit} errors={errors} loading={loading} />
-            <div className="account__or">
+            {/* <div className="account__or">
               <p>Or Easily Using</p>
             </div>
             <div className="account__social">
@@ -85,7 +103,7 @@ const Signup = () => {
                 to="/pages/one"
               ><GooglePlusIcon />
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

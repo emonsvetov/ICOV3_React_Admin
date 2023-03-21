@@ -1,0 +1,6 @@
+[
+    {"denomination" : 45, "optimal_amount" : 245},
+    {"denomination" : 47, "optimal_amount" : 135},
+    {"denomination" : 42, "optimal_amount" : 553},
+    {"denomination" : 45, "optimal_amount" : 12}
+    ]

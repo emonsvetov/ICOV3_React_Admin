@@ -1,8 +1,9 @@
 import React from 'react';
 import Dropzone from 'react-dropzone';
 import PropTypes from 'prop-types';
+import { renderComponentField } from '@/shared/components/form/FormField';
 
-const DropZoneMultipleField = ({ name, value, onChange }) => {
+const DropZoneMultipleField = ({ name, value, onChange, customHeight }) => {
   const files = value;
   const onDrop = (onDropFiles) => {
     onChange(onDropFiles.map(fl => Object.assign(fl, {
@@ -15,10 +16,10 @@ const DropZoneMultipleField = ({ name, value, onChange }) => {
   };
 
   return (
-    <div className="dropzone dropzone--multiple">
+    <div className={`dropzone dropzone--multiple${customHeight ? ' dropzone--custom-height' : ''}`}>
       <Dropzone
         className="dropzone__input"
-        accept="image/jpeg, image/png"
+        accept="image/jpeg, image/png, image/gif"
         name={name}
         onDrop={(filesToUpload) => {
           onDrop(value ? value.concat(filesToUpload) : filesToUpload);
@@ -40,7 +41,7 @@ const DropZoneMultipleField = ({ name, value, onChange }) => {
       && (
         <div className="dropzone__imgs-wrapper">
           {files.map((file, i) => (
-            <div className="dropzone__img" key={file.i} style={{ backgroundImage: `url(${file.preview})` }}>
+            <div className="dropzone__img" key={file.name} style={{ backgroundImage: `url(${file.preview})` }}>
               <p className="dropzone__img-name">{file.name}</p>
               <button className="dropzone__img-delete" type="button" onClick={e => removeFile(i, e)}>
                 Remove
@@ -56,6 +57,7 @@ const DropZoneMultipleField = ({ name, value, onChange }) => {
 DropZoneMultipleField.propTypes = {
   onChange: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
+  customHeight: PropTypes.bool,
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.arrayOf(PropTypes.shape({
@@ -65,13 +67,8 @@ DropZoneMultipleField.propTypes = {
   ]).isRequired,
 };
 
-const renderDropZoneMultipleField = ({ input }) => <DropZoneMultipleField {...input} />;
-
-renderDropZoneMultipleField.propTypes = {
-  input: PropTypes.shape({
-    onChange: PropTypes.func,
-    name: PropTypes.string,
-  }).isRequired,
+DropZoneMultipleField.defaultProps = {
+    customHeight: false,
 };
 
-export default renderDropZoneMultipleField;
+export default renderComponentField(DropZoneMultipleField);

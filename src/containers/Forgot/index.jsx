@@ -35,7 +35,7 @@ const Forgot = () => {
 
     axios.post('/password/forgot', values)
     .then( (res) => {
-      console.log(res)
+      // console.log(res)
       // console.log(res.status == 200)
       if(res.status == 200)  {
         // var t = setTimeout(window.location = '/', 500)
@@ -44,7 +44,7 @@ const Forgot = () => {
     })
     .catch( error => {
       // console.log(error.response.data.message);
-      setErrors(error.response.data.message);
+      setErrors(error.response.data);
       setLoading(false)
     })
   }

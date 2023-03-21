@@ -1,7 +1,7 @@
 import axios from "axios";
 const axiosConfig = () => 
 {
-    // axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
+    // axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
     // axios.defaults.headers.common['Authorization'] = 'AUTH TOKEN';
     // axios.defaults.headers.post['Content-Type'] = 'application/json';
     // axios.interceptors.request.use(request => {

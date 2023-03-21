@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo, useReducer} from "react"
+import React, { useState, useEffect, useMemo, useReducer } from "react"
 import { useTable, usePagination, useSortBy } from "react-table"
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import { Link } from 'react-router-dom'
@@ -8,114 +8,80 @@ import SortIcon from 'mdi-react/SortIcon'
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon'
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination'
-import UsersFilter  from "./UsersFilter"
+import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter} from "@/shared/apiTableHelper"
+import UsersFilter from "./UsersFilter"
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
+import ChangeStatusModal from "@/containers/Users/components/ChangeStatusModal"
 
 const queryClient = new QueryClient()
 
-const initialState = {
-    queryPageIndex: 0,
-    queryPageSize: 10,
-    totalCount: 0,
-    queryPageFilter:"",
-    queryPageSortBy: [],
-};
+const DataTable = ({ organization }) => {
 
-const PAGE_CHANGED = 'PAGE_CHANGED'
-const PAGE_SIZE_CHANGED = 'PAGE_SIZE_CHANGED'
-const PAGE_SORT_CHANGED = 'PAGE_SORT_CHANGED'
-const PAGE_FILTER_CHANGED = 'PAGE_FILTER_CHANGED'
-const TOTAL_COUNT_CHANGED = 'TOTAL_COUNT_CHANGED'
+    const [trigger, setTrigger] = useState(0);
+    const [filter, setFilter] = useState({orgId: '', status: '', keyword:'' });
 
-const reducer = (state, { type, payload }) => {
-  switch (type) {
-    case PAGE_CHANGED:
-        return {
-            ...state,
-            queryPageIndex: payload,
-        };
-    case PAGE_SIZE_CHANGED:
-        return {
-            ...state,
-            queryPageSize: payload,
-        };
-    case PAGE_SORT_CHANGED:
-        return {
-            ...state,
-            queryPageSortBy: payload,
-        };
-    case PAGE_FILTER_CHANGED:
-        return {
-            ...state,
-            queryPageFilter: payload,
-        };
-    case TOTAL_COUNT_CHANGED:
-        return {
-            ...state,
-            totalCount: payload,
-        };
-    default:
-      throw new Error(`Unhandled action type: ${type}`)
-  }
-};
-
-const fetchUsersData = async (page, pageSize, pageFilter, pageSortBy) => {
-    let paramStr = ''
-    if( pageFilter.trim().length > 1 ) {
-        paramStr = `&keyword=${pageFilter}`
+    const [isChangeStatusOpen, setChangeStatusOpen] = useState(false)
+    const [user, setUser] = useState(null)
+    const toggleChangeStatus = () => {
+        setChangeStatusOpen(prevState => !prevState)
     }
-    if( pageSortBy.length > 0 ) {
-        const sortParams = pageSortBy[0];
-        const sortyByDir = sortParams.desc ? 'desc' : 'asc'
-        paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
-    }
-    try {
-        const response = await axios.get(
-        `/organization/1/user?page=${page+1}&limit=${pageSize}${paramStr}`
-        );
-        const results = response.data.data;
-        var finalResults = results;
-        if( results )  {
-            finalResults = results.map(item => ({
-                ...item,
-                name: `${item.first_name} ${item.last_name}` || "",
-            }))
+
+    const onClickFilterCallback = (status, keyword, orgId) => {
+        if(filter.status === status && filter.keyword === keyword && filter.orgId === orgId)    {
+            alert('No change in filters')
+            return
         }
-        const data = {
-            results: finalResults,
-            count: response.data.total
-        };
-        return data;
-    } catch (e) {
-        throw new Error(`API error:${e?.message}`)
+        setFilter({status, keyword, orgId});
+        setUseFilter(true);
     }
-}
 
-const DataTable = () => {
-    const [keyword, setKeyword] = useState('');
     const [useFilter, setUseFilter] = useState(false);
-    const onClickFilterCallback = ( filter ) => {
-        if(filter.trim() === "") {
-            alert('Please enter a keyword to search!')
-            return
-        }
-        if(filter === keyword)   {
-            alert('No change in search')
-            return
-        }
-        setUseFilter(true)
-        setKeyword(filter)
-    }
-    
-    let columns = useMemo( () => USERS_COLUMNS, [])
 
-    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
-    useReducer(reducer, initialState);
+    const onClickStatus = user => {
+        setUser(user);
+        toggleChangeStatus()
+    }
+
+    const strShowUserStatus = user => {
+        return user?.status?.status ? <span onClick={() => onClickStatus(user)} className={'link'}>{user.status.status}</span> : (user?.user_status_id ? user.user_status_id : 'unknown')
+    }
+
+    let user_columns = [
+        ...USERS_COLUMNS,
+        ...[{
+            Header: "",
+            accessor: "action",
+            Cell: ({ row }) => <RenderActions row={row} />,
+        }],
+    ]
+
+    user_columns.forEach( (column, i) => {
+        if( column.Header === 'Status')
+        {
+            user_columns[i].Cell =  ({ row, value }) => { return strShowUserStatus(row.original)}
+        }
+    })
+
+    let columns = useMemo(() => user_columns, [])
+
+    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] = React.useReducer(reducer, initialState);
+
+    const apiUrl = `/organization/${organization.id}/user`
 
     const { isLoading, error, data, isSuccess } = useQuery(
-        ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
-        () => fetchUsersData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
+        ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+        () => fetchApiData(
+          {
+              url: apiUrl,
+              page: queryPageIndex,
+              size: queryPageSize,
+              filter: queryPageFilter,
+              sortby: queryPageSortBy,
+              trigger: queryTrigger
+          }),
         {
-            keepPreviousData: false,
+            keepPreviousData: true,
             staleTime: Infinity,
         }
     );
@@ -152,40 +118,12 @@ const DataTable = () => {
         autoResetExpanded: false,
         autoResetPage: false
     },
-    useSortBy,
-    usePagination,
+        useSortBy,
+        usePagination,
     );
     const manualPageSize = []
-    
-    useEffect(() => {
-        dispatch({ type: PAGE_CHANGED, payload: pageIndex });
-    }, [pageIndex]);
 
-    useEffect(() => {
-        dispatch({ type: PAGE_SIZE_CHANGED, payload: pageSize });
-        gotoPage(0);
-    }, [pageSize, gotoPage]);
-
-    useEffect(() => {
-        dispatch({ type: PAGE_SORT_CHANGED, payload: sortBy });
-        gotoPage(0);
-    }, [sortBy, gotoPage]);
-
-    useEffect(() => {
-        if ( useFilter ) {
-            dispatch({ type: PAGE_FILTER_CHANGED, payload: keyword });
-            gotoPage(0);
-        }
-    }, [keyword, gotoPage, useFilter]);
-
-    useEffect(() => {
-        if (data?.count) {
-            dispatch({
-            type: TOTAL_COUNT_CHANGED,
-            payload: data.count,
-            });
-        }
-    }, [data?.count]);
+    useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger} );
 
     if (error) {
         return <p>Error</p>;
@@ -194,59 +132,60 @@ const DataTable = () => {
     if (isLoading) {
         return <p>Loading...</p>;
     }
-    if(isSuccess)
-    return (
+    if (isSuccess)
+        return (
             <>
                 <div className='table react-table'>
                     <form className="form form--horizontal">
                         <div className="form__form-group">
                             <div className="col-md-9 col-lg-9">
-                                <UsersFilter onClickFilterCallback={onClickFilterCallback} defaultKeyword={keyword} />
+                                <UsersFilter onClickFilterCallback={onClickFilterCallback} organization={organization} />
                             </div>
                             <div className="col-md-3 col-lg-3 text-right pr-0">
-                                <Link style={{maxWidth:'200px'}}
-                                className="btn btn-primary account__btn account__btn--small"
-                                to="/users/add"
+                                <Link style={{ maxWidth: '200px' }}
+                                    className="btn btn-primary account__btn account__btn--small"
+                                    to="/users/add"
                                 >Add new user
                                 </Link>
                             </div>
                         </div>
                     </form>
                     {
-                        typeof data?.count === 'undefined' && <p>No results found</p>
+                        (typeof data?.count === 'undefined' || data.count <= 0) && <p>No results found</p>
                     }
-                    {data?.count && 
-                    <>
-                    <table {...getTableProps()} className="table">
-                        <thead>
-                            {headerGroups.map( (headerGroup) => (
-                                <tr {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map( column => (
-                                        <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                            {column.render('Header')}
-                                            {column.isSorted ? <Sorting column={column} /> : ''}
-                                        </th>
+                    {data?.count > 0 &&
+                        <>
+                            <table {...getTableProps()} className="table">
+                                <thead>
+                                    {headerGroups.map((headerGroup) => (
+                                        <tr {...headerGroup.getHeaderGroupProps()}>
+                                            {headerGroup.headers.map(column => (
+                                                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                                    {column.render('Header')}
+                                                    {column.isSorted ? <Sorting column={column} /> : ''}
+                                                </th>
+                                            ))}
+                                        </tr>
                                     ))}
-                                </tr>
-                            ))}
-                        </thead>
-                        <tbody className="table table--bordered" {...getTableBodyProps()}>
-                            {page.map( row => {
-                                prepareRow(row);
-                                return (
-                                    <tr {...row.getRowProps()}>
-                                        {
-                                            row.cells.map( cell => {
-                                                return <td {...cell.getCellProps()}><span>{cell.render('Cell')}</span></td>
-                                            })
-                                        }
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
-                    </>
-                }
+                                </thead>
+                                <tbody className="table table--bordered" {...getTableBodyProps()}>
+                                    {page.map(row => {
+                                        prepareRow(row);
+                                        return (
+                                            <tr {...row.getRowProps()}>
+                                                {
+                                                    row.cells.map(cell => {
+                                                        return <td {...cell.getCellProps()}><span>{cell.render('Cell')}</span></td>
+                                                    })
+                                                }
+                                            </tr>
+                                        )
+                                    })}
+                                </tbody>
+                            </table>
+                            {user && <ChangeStatusModal isOpen={isChangeStatusOpen} setOpen={setChangeStatusOpen} toggle={toggleChangeStatus} setTrigger={setTrigger} user={user} />}
+                        </>
+                    }
                 </div>
                 {(rows.length > 0) && (
                     <>
@@ -267,56 +206,67 @@ const DataTable = () => {
                         />
                         <div className="pagination justify-content-end mt-2">
                             <span>
-                            Go to page:{' '}
-                            <input
-                                type="number"
-                                value={pageIndex + 1}
-                                onChange={(e) => {
-                                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                                gotoPage(page);
-                                }}
-                                style={{ width: '100px' }}
-                            />
+                                Go to page:{' '}
+                                <input
+                                    type="number"
+                                    value={pageIndex + 1}
+                                    onChange={(e) => {
+                                        const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                                        gotoPage(page);
+                                    }}
+                                    style={{ width: '100px' }}
+                                />
                             </span>{' '}
                             <select
-                            value={pageSize}
-                            onChange={(e) => {
-                                setPageSize(Number(e.target.value));
-                            }}
+                                value={pageSize}
+                                onChange={(e) => {
+                                    setPageSize(Number(e.target.value));
+                                }}
                             >
-                            {[10, 20, 30, 40, 50].map((pageSize) => (
-                                <option key={pageSize} value={pageSize}>
-                                Show {pageSize}
-                                </option>
-                            ))}
+                                {[10, 20, 30, 40, 50].map((pageSize) => (
+                                    <option key={pageSize} value={pageSize}>
+                                        Show {pageSize}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                     </>
                 )}
             </>
+        )
+}
+
+const RenderActions = ({ row }) => {
+    return (
+        <>
+            <a href={`/users/view/${row.original.id}`} className="link a" >View</a>{' | '}
+            <a href={`/users/edit/${row.original.id}`} className="link a" >Edit</a>
+        </>
     )
 }
 
 const Sorting = ({ column }) => (
     <span className="react-table__column-header sortable">
-      {column.isSortedDesc === undefined ? (
-        <SortIcon />
-      ) : (
-        <span>
-          {column.isSortedDesc
-            ? <SortAscendingIcon />
-            : <SortDescendingIcon />}
-        </span>
-      )}
+        {column.isSortedDesc === undefined ? (
+            <SortIcon />
+        ) : (
+            <span>
+                {column.isSortedDesc
+                    ? <SortAscendingIcon />
+                    : <SortDescendingIcon />}
+            </span>
+        )}
     </span>
 );
 
-const TableWrapper = () => {
+const TableWrapper = ({ organization }) => {
     return (
         <QueryClientProvider client={queryClient}>
-            <DataTable />
+            {organization?.id && <DataTable organization={organization} />}
         </QueryClientProvider>
     )
 }
 
-export default TableWrapper;
+export default withRouter(connect((state) => ({
+    organization: state.organization
+}))(TableWrapper));

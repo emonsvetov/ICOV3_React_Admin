@@ -62,6 +62,8 @@
 @import './component/load';
 @import './component/customizer';
 @import './component/input.scss';
+@import './component/import-form.scss';
+@import './component/checkbox-hierarchy.scss';
 
 //pages...
 @import 'containers/account';              // pages/account/* (except profile)
@@ -77,6 +79,7 @@
 @import 'containers/project-summary';      // pages/default_pages/project_summary/*
 @import 'containers/documentation';
 @import 'containers/landing';
+@import 'containers/program';
 
 //objects...
 @import 'objects/layout.scss';        // layout settings

@@ -1,9 +1,11 @@
 import React from 'react';
-import { Col, Container, Row } from 'reactstrap';
+import { Col, Container, Row, Card, CardBody } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import AddUser from './Add/components/AddUser';
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
+import AddUserForm from './Add/components/AddUserForm';
 
-const AddUserPage = () => (
+const AddUserPage = ({organization}) => (
   <Container className="dashboard">
     <Row>
       <Col md={12}>
@@ -12,9 +14,16 @@ const AddUserPage = () => (
       </Col>
     </Row>
     <Row>
-      <AddUser />
+      <Col md={12}>
+        <Card>
+          <CardBody style={{display:'flex'}}>
+              <AddUserForm organization={organization} />
+          </CardBody>
+        </Card>
+      </Col>
     </Row>
   </Container>
 );
-
-export default AddUserPage;
+export default withRouter(connect((state) => ({
+  organization: state.organization
+}))(AddUserPage));

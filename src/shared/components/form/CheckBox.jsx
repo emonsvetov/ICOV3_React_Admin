@@ -13,6 +13,7 @@ export const CheckBoxField = ({
   disabled,
   className,
   color,
+  ref
 }) => {
   const CheckboxClass = classNames({
     'checkbox-btn': true,
@@ -31,6 +32,8 @@ export const CheckBoxField = ({
         onChange={onChange}
         checked={checked}
         disabled={disabled}
+        value={checked ? 1 : 0}
+        ref={ref}
       />
       <span
         className="checkbox-btn__checkbox-custom"

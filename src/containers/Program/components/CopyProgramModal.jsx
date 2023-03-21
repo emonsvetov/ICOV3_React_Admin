@@ -15,13 +15,14 @@ const CopyProgramModal = ({isOpen, setOpen, toggle, program, theme, rtl}) => {
     const onSubmitCopyForm = values => {
         setLoading(true)
         if( typeof values.create_as_sub !== 'undefined' && values.create_as_sub )   {
-            sourceProgram.program_id = programId
+            sourceProgram.parent_id = programId
         }
-        delete sourceProgram.id
-        sourceProgram.name = values.name
+        delete sourceProgram.id;
+        delete sourceProgram.status;
+        sourceProgram.name = values.name;
         // alert(values.create_as_sub)
         // alert(JSON.stringify(sourceProgram))
-        axios.post('/organization/1/program', sourceProgram)
+        axios.post(`/organization/${sourceProgram.organization_id}/program`, sourceProgram)
         .then( (res) => {
             if(res.status == 200)  {
                 window.location = '/program?message=Program copied successfully!'
@@ -39,8 +40,11 @@ const CopyProgramModal = ({isOpen, setOpen, toggle, program, theme, rtl}) => {
         }
         return errors;
     }
+
+    if( !program ) return 'Loading...'
+
     return (
-    <Modal className={`modal-program ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={() => setOpen(true)}>
+    <Modal className={`modal-program ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={toggle}>
         <ModalHeader>
             <h3 style={{"font-weight": 500}}>Copy Program</h3>
         </ModalHeader>

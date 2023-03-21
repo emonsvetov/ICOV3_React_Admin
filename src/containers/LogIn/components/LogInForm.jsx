@@ -7,6 +7,7 @@ import EyeIcon from 'mdi-react/EyeIcon';
 import LockOutlineIcon from 'mdi-react/LockOutlineIcon';
 import EmailOutlineIcon from 'mdi-react/EmailOutlineIcon';
 import renderCheckBoxField from '../../../shared/components/form/CheckBox';
+import { ApiErrorMessage } from '@/shared/components/flash';
 import {login} from '../../App/auth';
 
 const axios = require('axios');
@@ -22,7 +23,8 @@ const LogInForm = () => {
 
     axios.post('/login', values)
     .then( (res) => {
-      // console.log(res)
+      // console.log(res);
+      // return;
       // console.log(res.status == 200)
       if(res.status == 200)  {
         login(res.data)
@@ -31,7 +33,7 @@ const LogInForm = () => {
     })
     .catch( error => {
       // console.log(error.response.data.message);
-      setErrors(error.response.data.message);
+      setErrors(error.response.data);
       setLoading(false)
     })
   };
@@ -42,14 +44,8 @@ const LogInForm = () => {
     validate={validate}
     render={({ handleSubmit, form, submitting, pristine, values }) => (
     <form className="form" onSubmit={handleSubmit}>
-      {errors && 
-        <div className="alert alert-danger fade show w100" role="alert">
-          <div className="alert__content">
-            <ul>
-              <li>{errors}</li>
-            </ul>
-          </div>
-        </div>
+      {
+        errors && <ApiErrorMessage className="alert alert-danger fade show w100" errors={errors} />
       }
       <Field name="email">
         {({ input, meta }) => (
@@ -76,7 +72,7 @@ const LogInForm = () => {
                   <LockOutlineIcon />
                 </div>
                 <div className="form__form-group-row">
-                  <input type="text" {...input} placeholder="Password" />
+                  <input type="password" {...input} placeholder="Password" />
                   {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                 </div>
             </div>
@@ -86,7 +82,7 @@ const LogInForm = () => {
           </div>
         )}
       </Field>
-      <div className="form__form-group">
+      {/* <div className="form__form-group">
         <div className="form__form-group-field">
           <Field
             name="remember_me"
@@ -94,7 +90,7 @@ const LogInForm = () => {
             label="Remember me"
           />
         </div>
-      </div>
+      </div> */}
       <button type="submit" className="btn btn-primary account__btn account__btn--small" disabled={loading}>Log In</button>
       {/* <Link className="btn btn-primary account__btn account__btn--small" to="/pages/one">Sign In</Link> */}
       <Link className="btn btn-outline-primary account__btn account__btn--small" to="/signup">Create Account</Link>

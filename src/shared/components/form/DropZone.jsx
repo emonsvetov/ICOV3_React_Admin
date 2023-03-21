@@ -1,9 +1,10 @@
 import React from 'react';
 import Dropzone from 'react-dropzone';
 import PropTypes from 'prop-types';
+import { renderComponentField } from '@/shared/components/form/FormField';
 
 const DropZoneField = ({
-  value, customHeight, name, onChange,
+  value, customHeight, name, onChange, uploadTitle
 }) => {
   const files = value;
   const onDrop = (file) => {
@@ -15,6 +16,20 @@ const DropZoneField = ({
     e.preventDefault();
     onChange(value.filter((val, i) => i !== index));
   };
+
+
+  let showTitle = false;
+  if (uploadTitle?.displayAlways){
+    showTitle = true
+  } else if (!files || files.length === 0) {
+    showTitle = true;
+  }
+  let title = {icon : <span className="lnr lnr-upload" />, text: 'Drop file here to upload'};
+  if (uploadTitle?.type){
+    if(uploadTitle.type === 'short'){
+      title = {icon: <span className="lnr lnr-upload" />, text: ''};
+    }
+  }
 
   return (
     <div className={`dropzone dropzone--single${customHeight ? ' dropzone--custom-height' : ''}`}>
@@ -28,10 +43,10 @@ const DropZoneField = ({
       >
         {({ getRootProps, getInputProps }) => (
           <div {...getRootProps()} className="dropzone__input">
-            {(!files || files.length === 0)
+            {(showTitle)
             && (
               <div className="dropzone__drop-here">
-                <span className="lnr lnr-upload" /> Drop file here to upload
+                {title.icon} {title.text}
               </div>
             )}
             <input {...getInputProps()} />
@@ -68,23 +83,4 @@ DropZoneField.defaultProps = {
   customHeight: false,
 };
 
-const renderDropZoneField = ({ input, customHeight }) => (
-  <DropZoneField
-    {...input}
-    customHeight={customHeight}
-  />
-);
-
-renderDropZoneField.propTypes = {
-  input: PropTypes.shape({
-    name: PropTypes.string,
-    onChange: PropTypes.func,
-  }).isRequired,
-  customHeight: PropTypes.bool,
-};
-
-renderDropZoneField.defaultProps = {
-  customHeight: false,
-};
-
-export default renderDropZoneField;
+export default renderComponentField(DropZoneField);
