@@ -1,6 +1,7 @@
 import React, {useEffect, useState, useContext} from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col, Spinner, TabContent, TabPane, Nav, NavItem, NavLink } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
@@ -13,17 +14,12 @@ import Slider from "@/shared/components/form/Slider"
 import { ColorPicker } from 'material-ui-color';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-// import Select, { SelectChangeEvent } from '@material-ui/core/Select';
-// import MenuItem from '@material-ui/core/MenuItem';
 import {getThemeByName, resetTheme, getTheme} from '@/service/program/programTheme'
 
-import renderCheckBoxField from '@/shared/components/form/CheckBox';
-import renderSelectField from '@/shared/components/form/Select';
 import renderSelectOptionsField from '@/shared/components/form/SelectOptions';
 
 import WYSIWYGEditor from '@/shared/components/form/WYSIWYGEditor'
 import { THEME_FONT_FAMILIES  } from './ThemeData';
-import { TurnedIn } from '@material-ui/icons';
 
 const MEDIA_FIELDS = ['small_logo', 'big_logo', 'hero_banner', 'slider_01', 'slider_02', 'slider_03']
 const THEME_IMAGE = {
@@ -39,7 +35,7 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
     // console.log(program.template)
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
-    const [currentTheme, setCurrentTheme] = useState();
+    const [currentTheme, setCurrentTheme] = useState("");
     let [template, setTemplate] = useState({})
     // console.log(program)
     const validate = values => {
@@ -411,9 +407,9 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                           customHeight
                                           uploadTitle={{type: 'short', displayAlways: true}}
                                         />
-                                        <p className='image-wrap'>
+                                        <div className='image-wrap'>
                                             <RenderImage src={template?.big_logo} />
-                                        </p>
+                                        </div>
                                     </div>
                                 </div>
                             </Col>
@@ -428,9 +424,9 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                           customHeight
                                           uploadTitle={{type: 'short', displayAlways: true}}
                                         />
-                                        <p className='image-wrap'>
+                                        <div className='image-wrap'>
                                             <RenderImage src={template?.small_logo} />
-                                        </p>
+                                        </div>
                                     </div>
                                 </div>
                             </Col>
@@ -445,9 +441,9 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                           customHeight
                                           uploadTitle={{type: 'short', displayAlways: true}}
                                         />
-                                        <p className='image-wrap'>
+                                        <div className='image-wrap'>
                                             <RenderImage src={template?.hero_banner} />
-                                        </p>
+                                        </div>
                                     </div>
                                 </div>
                             </Col>
@@ -464,9 +460,9 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                           customHeight
                                           uploadTitle={{type: 'short', displayAlways: true}}
                                         />
-                                        <p className='image-wrap'>
+                                        <div className='image-wrap'>
                                             <RenderImage src={template?.slider_01} />
-                                        </p>
+                                        </div>
                                     </div>
                                 </div>
                             </Col>
@@ -480,9 +476,9 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                           customHeight
                                           uploadTitle={{type: 'short', displayAlways: true}}
                                         />
-                                        <p className='image-wrap'>
+                                        <div className='image-wrap'>
                                             <RenderImage src={template?.slider_02} />
-                                        </p>
+                                        </div>
                                     </div>
                                 </div>
                             </Col>
@@ -496,9 +492,9 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                           customHeight
                                           uploadTitle={{type: 'short', displayAlways: true}}
                                         />
-                                        <p className='image-wrap'>
+                                        <div className='image-wrap'>
                                             <RenderImage src={template?.slider_03} />
-                                        </p>
+                                        </div>
                                     </div>
                                 </div>
                             </Col>
@@ -565,7 +561,7 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                             name='font_family' label="Choose Font" margin="normal"
                                           />}
                                         />
-                                        {!fontFamily && <span class="form__form-group-error">Font family is required</span>}
+                                        {!fontFamily && <span className="form__form-group-error">Font family is required</span>}
                                     </div>
                                 </div>
                             </Col>
@@ -607,8 +603,8 @@ const RenderImage = ({src}) => {
 ThemeSettings.propTypes = {
   theme: ThemeProps.isRequired,
   rtl: RTLProps.isRequired,
-  organization: Object.isRequired,
-  program: Object.isRequired
+  organization: PropTypes.object,
+  program: PropTypes.object
 };
 
 export default withRouter(connect((state) => ({
