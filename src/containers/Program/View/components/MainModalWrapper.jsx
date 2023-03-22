@@ -11,51 +11,55 @@ import DigitalMediaModal from "./DigitalMediaModal";
 // import EventsModal from './EventsModal';
 import EventsDataModal from '../components/event/EventsDataModal';
 import EmailTemplateModal from '../EmailTemplate/IndexDataModal'
+import ActivateLiveModeProgramModal from "./ActivateLiveModeProgramModal";
 
 const MainModalWrapper = ({name, isOpen, setOpen, toggle}) => {
-    const props = {
-        isOpen, setOpen, toggle
-    }
-    return (
-        <>
-        {
-            name==='general' && <ProgramInfoModal {...props} />
-        }
-        {
-            name==='merchants' && <MerchantsModal {...props} />
-        }
-        {
-            name==='invoices' && <InvoicesModal {...props} />
-        }
-        {
-            name==='accounting' && <AccountingModal {...props} />
-        }
-        {
-            name==='awarding' && <AwardingPointsModal {...props} />
-        }
-        {
-            name==='engagement' && <EngagementModal {...props} />
-        }
-        {
-            name==='events' && <EventsDataModal {...props} />
-        }
-        {
-            name==='addprogram' && <AddProgramModal {...props} />
-        }
-        {
-            name==='users' && <AddProgramModal {...props} />
-        }
-        {
-            name==='themesettings' && <ThemeSettingsModal {...props} />
-        }
-        {
-            name==='emailtemplate' && <EmailTemplateModal {...props} />
-        }
-        {
-            name==='digitalmedia' && <DigitalMediaModal {...props} />
-        }
-        </>
-    )
+  const props = {
+    isOpen, setOpen, toggle
+  }
+  return (
+    <>
+      {
+        name === 'general' && <ProgramInfoModal {...props} />
+      }
+      {
+        name === 'merchants' && <MerchantsModal {...props} />
+      }
+      {
+        name === 'invoices' && <InvoicesModal {...props} />
+      }
+      {
+        name === 'accounting' && <AccountingModal {...props} />
+      }
+      {
+        name === 'awarding' && <AwardingPointsModal {...props} />
+      }
+      {
+        name === 'engagement' && <EngagementModal {...props} />
+      }
+      {
+        name === 'events' && <EventsDataModal {...props} />
+      }
+      {
+        name === 'addprogram' && <AddProgramModal {...props} />
+      }
+      {
+        name === 'users' && <AddProgramModal {...props} />
+      }
+      {
+        name === 'themesettings' && <ThemeSettingsModal {...props} />
+      }
+      {
+        name === 'emailtemplate' && <EmailTemplateModal {...props} />
+      }
+      {
+        name === 'digitalmedia' && <DigitalMediaModal {...props} />
+      }
+      {
+        name === 'activateLiveMode' && <ActivateLiveModeProgramModal {...props} />
+      }
+    </>
+  )
 }
-  
+
 export default MainModalWrapper;

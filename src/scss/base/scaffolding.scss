@@ -21,6 +21,19 @@ ul, ol {
   margin-bottom: 0;
   list-style-image: url('../../shared/img/circle.svg');
 }
+ul.styled_01 {
+  list-style-type: none;
+  li::before {
+    content: url('../../shared/img/circle.svg');
+    position: absolute;
+    left: 15px;
+  }
+  li.hasError::before {
+    content: url('../../shared/img/circle2.svg');
+    position: absolute;
+    left: 15px;
+  }
+}
 
 a {
   color: $color-blue;

@@ -32,6 +32,8 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
         setOpen(prevState => !prevState)
     }
 
+    let showLiveMode = !!(auth?.isSuperAdmin && program?.is_demo);
+
     if( !program || !organization ) return 'Loading...'
 
     const {id: organizationId, name: organizationName} = program.organization
@@ -41,11 +43,17 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
             <Row>
                 <Col md={6}>
                     <h3 className="page-title">All Programs</h3>
-                    <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/program">Programs</Link> / {program.name}</h3>
+                    <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/program">Programs</Link> / {program.name} {!!program.is_demo && <span style={{color: 'red'}}>Demo Mode</span>}</h3>
                     <p> (Organization: {organizationId} - {organizationName})</p>
                 </Col>
                 <Col md={6} className='text-right'>
                     <span style={{maxWidth:'200px'}} className="btn btn-primary account__btn account__btn--small" onClick={()=>toggle('addprogram')}>Add sub program</span>
+                    { showLiveMode &&
+                      <>
+                        &nbsp;&nbsp;
+                        <span style={{maxWidth:'200px'}} className="btn btn-success account__btn account__btn--small" onClick={()=>toggle('activateLiveMode')}>Live Mode</span>
+                      </>
+                    }
                 </Col>
             </Row>
             <Row>
