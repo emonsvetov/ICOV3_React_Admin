@@ -62,11 +62,17 @@ const LiveModeForm = ({program, organization, auth}) => {
         deleted.</p>
       <div>&nbsp;</div>
       <ul className="styled_01">
-        <li className={` ${liveModeData.participants !== 0 ? 'hasError' : ''}`}>
-          Participants: <b>{liveModeData.participants}</b>
+        <li className={` ${liveModeData.users !== 0 ? 'hasError' : ''}`}>
+          Users: <b>{liveModeData.users}</b>
         </li>
         <li className={` ${liveModeData.socialWalls !== 0 ? 'hasError' : ''}`}>
           Social wall: <b>{liveModeData.socialWalls}</b>
+        </li>
+        <li className={` ${liveModeData.invoices !== 0 ? 'hasError' : ''}`}>
+          Invoices: <b>{liveModeData.invoices}</b>
+        </li>
+        <li className={` ${liveModeData.leaderboards !== 0 ? 'hasError' : ''}`}>
+          Leaderboards: <b>{liveModeData.leaderboards}</b>
         </li>
         <li className={` ${liveModeData.budget !== 0 ? 'hasError' : ''}`}>
           Budget: <b>{liveModeData.budget}</b>
