@@ -17,7 +17,7 @@ const queryClient = new QueryClient()
 
 const DataTable = ({merchant}) => {
     
-    const [filter, setFilter] = useState({ keyword:''});
+    const [filter, setFilter] = useState({ keyword:'', type:'available'});
     const [useFilter, setUseFilter] = useState(false);
     const [isOpen, setOpen] = useState(false)
     const [trigger, setTrigger] = useState( 0 );

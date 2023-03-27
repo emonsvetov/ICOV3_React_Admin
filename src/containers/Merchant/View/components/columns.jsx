@@ -133,24 +133,23 @@ export const REDEEMED_GIFT_CODES_COULMNS = [
     {
         Header: "Codes",
         accessor: "code",
-        width: 165,
+        width: 200,
     },
     {
         Header: "Pin",
         accessor: "pin",
-        
+        width: 50,
     },
     {
         Header: "Redemption Value",
         accessor: "redemption_value",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
-        
     },
     {
         Header: "SKU value",
         accessor: "sku_value",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
-        
+        width: 80,
     },
     {
         Header: "Discount Percentage",
@@ -161,6 +160,7 @@ export const REDEEMED_GIFT_CODES_COULMNS = [
         Header: "Cost Basis",
         accessor: "cost_basis",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
+        width: 100,
     },
     {
         Header: "Redemption URL",
@@ -170,16 +170,24 @@ export const REDEEMED_GIFT_CODES_COULMNS = [
         Header: "Redeemed On",
         accessor: "redeemed_on",
         Cell: ({ row, value }) => { return `${value}`},
+        width: 100,
     },
     {
         Header: "Redeemed By",
         accessor: "redeemed_by",
-        
+        width: 100,
     },
     {
         Header: "Test",
         accessor: "test",
-        
+        Cell: ({ row, value }) => { return value == 1 ? 'Yes' : 'No'},
+        width: 50,
+    },
+    {
+        Header: "Redeemed by V2",
+        accessor: "purchased_by_v2",
+        Cell: ({ row, value }) => { return value == 1 ? 'Yes' : 'No'},
+        width: 120,
     },
 ]
 
