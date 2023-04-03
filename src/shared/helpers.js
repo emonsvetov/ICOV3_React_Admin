@@ -363,7 +363,7 @@ export const setDefaultTheme = (theme) => {
 
 export const getDefaultTheme = () => {
     const defaultTheme = localStorage.getItem('defaultTheme');
-    return defaultTheme ? defaultTheme : 'theme-dark';
+    return defaultTheme ? defaultTheme : 'theme-light';
 }
 
 export const getLastMonthRange = () => {
