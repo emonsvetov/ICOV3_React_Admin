@@ -297,6 +297,10 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
         if( options.date ) {
             dataSet.from = dateStrToYmd(reset ? defaultFrom : from)
         }
+
+        if(options.type){
+            dataSet.type = options.type
+        }
         if( options.programs ) {
             dataSet.programs = reset ? [] : clone(selectedPrograms)
         }
@@ -388,6 +392,9 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
         }
         if( options.date ) {
             filters.from = values.from
+        }
+        if( options.type ) {
+            filters.type = values.type
         }
 
         setFilter( filters )
