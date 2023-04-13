@@ -1,8 +1,6 @@
-import { Link } from 'react-router-dom';
+import { useMemo } from 'react';
 
-import React, { useMemo } from 'react';
-
-export const PROGRAM_COLUMNS = [
+export const JOURNAL_DETAILED_COLUMNS = [
     {
         Header: "Program",
         accessor: "name",
@@ -46,80 +44,105 @@ export const PROGRAM_COLUMNS = [
             return <span>{avg}</span>;
           },
     },
-    // {
-    //     Header: "Usage Fee",
-    //     accessor: "usage_fee",
-    //     Footer: (info) => {
-    //         const { rows, flatRows } = info;
-    //         const totalValue = useMemo(
-    //           () => rows.reduce((sum, row) => Number(row.values.usage_fee) + sum, 0),
-    //           [rows],
-    //         );
-    //         return <span>{totalValue}</span>;
-    //       },
-    // },
-    // {
-    //     Header: "Deposit Fee",
-    //     accessor: "deposit_fee",
-    //     Footer: (info) => {
-    //         const { rows, flatRows } = info;
-    //         const totalValue = useMemo(
-    //           () => rows.reduce((sum, row) => Number(row.values.deposit_fee) + sum, 0),
-    //           [rows],
-    //         );
-    //         const avg = Math.round(totalValue / flatRows.length);
-    //         return <span>{avg}</span>;
-    //       },
-    // },
-    // {
-    //     Header: "Transaction Fees",
-    //     accessor: "tx_fee",
-    //     Footer: (info) => {
-    //         const { rows, flatRows } = info;
-    //         const totalValue = useMemo(
-    //           () => rows.reduce((sum, row) => Number(row.values.transaction_fee) + sum, 0),
-    //           [rows],
-    //         );
-    //         return <span>{totalValue}</span>;
-    //       },
-    // },
-    // {
-    //     Header: "Refunded Transaction Fees",
-    //     accessor: "refunded_tx_fee",
-    //     Footer: (info) => {
-    //         const { rows, flatRows } = info;
-    //         const totalValue = useMemo(
-    //           () => rows.reduce((sum, row) => Number(row.values.refunded_tx_fee) + sum, 0),
-    //           [rows],
-    //         );
-    //         return <span>{totalValue}</span>;
-    //       },
-    // },
-    // {
-    //     Header: "Deposits",
-    //     accessor: "deposit",
-    //     Footer: (info) => {
-    //         const { rows, flatRows } = info;
-    //         const totalValue = useMemo(
-    //           () => rows.reduce((sum, row) => Number(row.values.deposit) + sum, 0),
-    //           [rows],
-    //         );
-    //         const avg = Math.round(totalValue / flatRows.length);
-    //         return <span>{avg}</span>;
-    //       },
-    // },
-    // {
-    //     Header: "Points Reclaimed",
-    //     accessor: "point_reclaimed",
-    //     Footer: (info) => {
-    //         const { rows, flatRows } = info;
-    //         const totalValue = useMemo(
-    //           () => rows.reduce((sum, row) => Number(row.values.point_reclaimed) + sum, 0),
-    //           [rows],
-    //         );
-    //         return <span>{totalValue}</span>;
-    //       },
-    // },
+    {
+        Header: "Usage Fee",
+        accessor: "usage_fee",
+        Footer: (info) => {
+            const { rows, flatRows } = info;
+            const totalValue = useMemo(
+              () => rows.reduce((sum, row) => Number(row.values.usage_fee) + sum, 0),
+              [rows],
+            );
+            return <span>{totalValue}</span>;
+          },
+    },
+    {
+        Header: "Deposit Fee",
+        accessor: "deposit_fee",
+        Footer: (info) => {
+            const { rows, flatRows } = info;
+            const totalValue = useMemo(
+              () => rows.reduce((sum, row) => Number(row.values.deposit_fee) + sum, 0),
+              [rows],
+            );
+            const avg = Math.round(totalValue / flatRows.length);
+            return <span>{avg}</span>;
+          },
+    },
+    {
+        Header: "Transaction Fees",
+        accessor: "transaction_fee",
+        Footer: (info) => {
+            const { rows, flatRows } = info;
+            const totalValue = useMemo(
+              () => rows.reduce((sum, row) => Number(row.values.transaction_fee) + sum, 0),
+              [rows],
+            );
+            return <span>{totalValue}</span>;
+          },
+    },
+    {
+        Header: "Refunded Transaction Fees",
+        accessor: "refunded_transaction_fee",
+        Footer: (info) => {
+            const { rows, flatRows } = info;
+            const totalValue = useMemo(
+              () => rows.reduce((sum, row) => Number(row.values.refunded_transaction_fee) + sum, 0),
+              [rows],
+            );
+            return <span>{totalValue}</span>;
+          },
+    },
+    {
+        Header: "Deposits",
+        accessor: "deposits",
+        Footer: (info) => {
+            const { rows, flatRows } = info;
+            const totalValue = useMemo(
+              () => rows.reduce((sum, row) => Number(row.values.deposits) + sum, 0),
+              [rows],
+            );
+            const avg = Math.round(totalValue / flatRows.length);
+            return <span>{avg}</span>;
+          },
+    },
+   {
+        Header: "Points Purchased",
+        accessor: "points_purchased",
+        Footer: (info) => {
+            const { rows, flatRows } = info;
+            const totalValue = useMemo(
+              () => rows.reduce((sum, row) => Number(row.values.points_purchased) + sum, 0),
+              [rows],
+            );
+            return <span>{totalValue}</span>;
+          },
+    },
+    {
+        Header: "Reclaims",
+        accessor: "reclaims",
+        Footer: (info) => {
+            const { rows, flatRows } = info;
+            const totalValue = useMemo(
+              () => rows.reduce((sum, row) => Number(row.values.reclaims) + sum, 0),
+              [rows],
+            );
+            return <span>{totalValue}</span>;
+          },
+    },
+    {
+        Header: "Award Credit Reclaimed",
+        accessor: "award_credit_reclaims",
+        Footer: (info) => {
+            const { rows, flatRows } = info;
+            const totalValue = useMemo(
+              () => rows.reduce((sum, row) => Number(row.values.award_credit_reclaims) + sum, 0),
+              [rows],
+            );
+            return <span>{totalValue}</span>;
+          },
+    },
+    
     // {
     //     Header: "Points Redeemed",
     //     accessor: "point_redeemed",

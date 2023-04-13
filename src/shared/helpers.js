@@ -258,7 +258,7 @@ export function jsdate2ymd(date) {
 }
 export const dateStrToYmd = dateString => {
     let date = new Date( dateString )
-    if( !isValidDateObj() ) return dateString;
+    if( !isValidDateObj(date) ) return dateString;
     return date.toISOString().split('T')[0]
 }
 

@@ -160,3 +160,13 @@ export const fetchEventIcons = async(organizationId) => {
       throw new Error(`API error:${e?.message}`);
   }
 };
+
+export const getAllPrograms = async (organizationId) => {
+  try {
+    const programsApiUrl = `/organization/${organizationId}/program?page=0&limit=9999999999&hierarchy=1&all=1`
+    const response = await axios.get(programsApiUrl);
+    return response.data;
+  } catch (e) {
+    throw new Error(`API error:${e?.message}`);
+  }
+}
