@@ -4,8 +4,8 @@ import classNames from "classnames";
 import {indexOfAll} from '@/shared/helpers'
 
 export const CheckboxHierarchy = ({name, fields, setFields, options, isRoot, isChildren, label, attr}) => {
-
   const [instanceKey, setInstanceKey] = useState(0)
+  const [checked, setChecked] = useState(true)
   const handleReset = () => setInstanceKey(i => i + 1)
 
   const [isVisible, setIsVisible] = useState(false);
@@ -78,6 +78,7 @@ export const CheckboxHierarchy = ({name, fields, setFields, options, isRoot, isC
         });
       }
       setFields(tmpFields);
+      setChecked( !checked )
     }
   }
 
@@ -132,12 +133,9 @@ export const CheckboxHierarchy = ({name, fields, setFields, options, isRoot, isC
 
             <div style={{marginLeft: -6}}><label className="checkbox-btn ">
               <input className="checkbox-btn__checkbox" type="checkbox" onClick={handleReset}
-                     onChange={event => toggleAll(event, options)}/>
+                     onChange={event => toggleAll(event, options)} checked={checked} />
               <span className="checkbox-btn__checkbox-custom">
-                            <svg className="mdi-icon " width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z">
-                              </path>
-                            </svg>
+              <svg class="mdi-icon " width="24" height="24" fill="currentColor" viewBox="0 0 24 24" ><path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"></path></svg>
                         </span>
               <span className="checkbox-btn__label">Select All</span>
             </label></div>

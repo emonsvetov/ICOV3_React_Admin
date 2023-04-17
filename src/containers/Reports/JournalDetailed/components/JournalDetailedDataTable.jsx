@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useMemo} from "react";
-import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
+import { useTable, usePagination, useSortBy, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import {JOURNAL_DETAILED_COLUMNS} from "./columns";
 import { Col, Row} from 'reactstrap';
@@ -39,7 +39,7 @@ const DataTable = ({organization, programs}) => {
 
     const defaultColumn = React.useMemo(
         () => ({
-          maxWidth: 400,
+          maxWidth: 100,
         }),
         []
     )
@@ -118,11 +118,10 @@ const DataTable = ({organization, programs}) => {
         autoResetSortBy: false,
         autoResetExpanded: false,
         autoResetPage: false,
-        defaultColumn,
+        defaultColumn
         
     },
     useSortBy,
-    useExpanded,
     usePagination,
     useResizeColumns, 
     useFlexLayout,
@@ -145,17 +144,22 @@ const DataTable = ({organization, programs}) => {
           <div className="action-panel">
             <Row className="mx-0">
               <Col>
-                <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter}
-                             exportData={exportData} exportLink={exportLink} exportHeaders={exportHeaders}
-                             download={download}
-
-                             config={{
-                               keyword: false,
-                               dateRange: true,
-                               // awardLevels: availableAwardLevels,
-                               programs: true,
-                               exportToCsv: true
-                             }}/>
+                <TableFilter 
+                  filter={filter} 
+                  setFilter={setFilter} 
+                  setUseFilter={setUseFilter}
+                  exportData={exportData} 
+                  exportLink={exportLink} 
+                  exportHeaders={exportHeaders}
+                  download={download}
+                  config={{
+                    keyword: false,
+                    dateRange: true,
+                    // awardLevels: availableAwardLevels,
+                    programs: true,
+                    exportToCsv: true
+                  }}
+                />
               </Col>
             </Row>
             <div style={{clear: 'both'}}>&nbsp;</div>
@@ -166,7 +170,7 @@ const DataTable = ({organization, programs}) => {
           {
             // ref={r => { csvLinkTable = r; }}
             isSuccess &&
-            <table {...getTableProps()} className="table">
+            <table {...getTableProps()} className="table table--bordered">
               <thead>
               {headerGroups.map((headerGroup) => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
