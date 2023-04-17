@@ -72,22 +72,29 @@ export const useEffectToDispatch = (dispatch, {
     }, [pageIndex]);
 
     React.useEffect(() => {
-        // alert(PAGE_SIZE_CHANGED)
-        dispatch({ type: PAGE_SIZE_CHANGED, payload: pageSize });
-        gotoPage(0);
+        if( gotoPage )
+        {
+          dispatch({ type: PAGE_SIZE_CHANGED, payload: pageSize });
+          gotoPage(0);
+        }
     }, [pageSize, gotoPage]);
 
     React.useEffect(() => {
-        dispatch({ type: PAGE_SORT_CHANGED, payload: sortBy });
-        gotoPage(0);
+      if( gotoPage )
+        {
+          dispatch({ type: PAGE_SORT_CHANGED, payload: sortBy });
+          gotoPage(0);
+        }
     }, [sortBy, gotoPage]);
 
     React.useEffect(() => {
-        // alert(useFilter)
+      if( gotoPage )
+      {
         if( useFilter ) {
             dispatch({ type: PAGE_FILTER_CHANGED, payload: filter });
             gotoPage(0);
         }
+      }
     }, [filter, gotoPage, useFilter]);
 
     React.useEffect(() => {
@@ -100,8 +107,11 @@ export const useEffectToDispatch = (dispatch, {
     }, [data?.count]);
 
     React.useEffect(() => {
+      if( gotoPage )
+      {
         dispatch({ type: QUERY_TRIGGER, payload: trigger });
         gotoPage(0);
+      }
     }, [trigger, gotoPage]);
 }
 

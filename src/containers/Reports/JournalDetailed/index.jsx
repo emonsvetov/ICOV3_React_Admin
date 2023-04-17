@@ -1,9 +1,32 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Link } from 'react-router-dom';
-import { Col, Container, Row } from 'reactstrap';
-import JournalDetailedCard from './components/JournalDetailedIndex.jsx';
+import { Col, Container, Row, Card, CardBody } from 'reactstrap';
+import {withRouter} from "react-router-dom";
+import {connect} from "react-redux";
 
-const JournalDetailed = () => {
+import JournalDetailedTable from './components/JournalDetailedDataTable.jsx';
+import { getAllPrograms } from '@/shared/apiHelper.jsx';
+import { isEmpty } from '@/shared/helpers';
+
+const JournalDetailed = ({organization}) => {
+
+  const [defaultPrograms, setDefaultPrograms] = useState([]);
+
+  useEffect(() => {
+    if ( organization?.id ){
+      getAllPrograms( organization.id )
+      .then( response => {
+        const data = response?.data ? response.data : [];
+        const result = data.map(x => x.account_holder_id)
+        setDefaultPrograms(result);
+      })
+    }
+  }, [organization])
+
+  if (isEmpty(defaultPrograms)) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <Container className="dashboard">
       <Row>
@@ -13,9 +36,16 @@ const JournalDetailed = () => {
         </Col>
       </Row>
       <Row>
-        <JournalDetailedCard />
+        <Col md={12}>
+          <Card>
+            <CardBody>
+              <JournalDetailedTable programs={defaultPrograms} />
+            </CardBody>
+          </Card>
+        </Col>
       </Row>
     </Container>
 )}
-
-export default JournalDetailed;
+export default withRouter(connect((state) => ({
+  organization: state.organization
+}))(JournalDetailed));

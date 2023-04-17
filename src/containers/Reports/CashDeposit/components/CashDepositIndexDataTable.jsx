@@ -16,8 +16,7 @@ import {
   TableFilter,
   Sorting
 } from "@/shared/apiTableHelper"
-import axios from "axios";
-import {isEqual, clone} from 'lodash';
+import {clone} from 'lodash';
 import {getFirstDay} from '@/shared/helpers'
 
 const queryClient = new QueryClient()
@@ -30,7 +29,6 @@ const DataTable = ({organization, programs}) => {
   const [exportData, setExportData] = useState([]);
   const [exportHeaders, setExportHeaders] = useState([]);
   const [exportToCsv, setExportToCsv] = useState(false);
-  const [filterValues, setFilterValues] = useState([]);
   const exportLink = React.createRef();
 
   let columns = useMemo(() => TABLE_COLUMNS, [])
@@ -83,7 +81,6 @@ const DataTable = ({organization, programs}) => {
     setExportToCsv(true);
   }
 
-
   const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
   const {
@@ -127,11 +124,6 @@ const DataTable = ({organization, programs}) => {
 
   const manualPageSize = []
   useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
-
-  const availableAwardLevels = [
-    {value: 'default', label: 'Default'},
-    {value: 'ntc', label: 'NTC'}
-  ];
 
   if (error) {
     return <p>Error: {JSON.stringify(error)}</p>;
