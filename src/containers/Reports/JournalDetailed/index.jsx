@@ -5,7 +5,7 @@ import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 
 import JournalDetailedTable from './components/JournalDetailedDataTable.jsx';
-import { getAllPrograms } from '@/shared/apiHelper.jsx';
+import { getPrograms } from '@/shared/apiHelper.jsx';
 import { isEmpty } from '@/shared/helpers';
 
 const JournalDetailed = ({organization}) => {
@@ -14,7 +14,7 @@ const JournalDetailed = ({organization}) => {
 
   useEffect(() => {
     if ( organization?.id ){
-      getAllPrograms( organization.id )
+      getPrograms( organization.id, "minimal=true" )
       .then( response => {
         const data = response?.data ? response.data : [];
         const result = data.map(x => x.account_holder_id)
