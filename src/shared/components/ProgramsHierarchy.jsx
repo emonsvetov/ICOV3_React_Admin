@@ -8,7 +8,7 @@ import { getPrograms } from '@/shared/apiHelper.jsx';
 
 const ProgramsHierarchy = ({organization, selectedPrograms, setSelectedPrograms}) => {
 
-  const [programs, setPrograms] = useState([]);
+  // const [programs, setPrograms] = useState([]);
 
   const fetchProgramData = async (pageFilterO) => {
     const params = []
@@ -20,11 +20,12 @@ const ProgramsHierarchy = ({organization, selectedPrograms, setSelectedPrograms}
       paramStr = params.join('&')
     }
 
-    if(isEmpty(programs) && organization?.id) {
-      getPrograms( organization.id, "minimal=true&limit=9999999999" )
+    if(organization?.id) {
+      return getPrograms( organization.id, "minimal=true&limit=9999999999" )
       .then( response => {
         const data = response?.data ? response.data : [];
-        setPrograms(data);
+        // setPrograms(data);
+        return data;
       })
     }
   };
@@ -39,13 +40,18 @@ const ProgramsHierarchy = ({organization, selectedPrograms, setSelectedPrograms}
     }
   );
 
-  if (programs) {
+  // console.log(data)
+
+  if( !data ) return 'loading...'
+
+  if (data) {
     return (
       <>
+        {isLoading && 'loading...'}
         <CheckboxHierarchy
           name="programs[]"
           attr='account_holder_id'
-          options={programs}
+          options={data}
           fields={selectedPrograms}
           setFields={setSelectedPrograms}
           isRoot={true}
