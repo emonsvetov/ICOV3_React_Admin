@@ -31,40 +31,6 @@ const DataTable = ({organization, programs}) => {
     const [exportHeaders, setExportHeaders] = useState([]);
     const [exportToCsv, setExportToCsv] = useState(false);
     const exportLink = React.createRef();
-   
-    let program_columns = [
-        ...JOURNAL_DETAILED_COLUMNS,
-    ]
-    let columns = useMemo( () => program_columns, [])
-
-    const defaultColumn = React.useMemo(
-        () => ({
-          maxWidth: 100,
-        }),
-        []
-    )
-
-    const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
-    React.useReducer(reducer, initialState);
-
-    const apiUrl = `/organization/${organization.id}/report/journal-detailed`;
-    const {isLoading, error, data, isSuccess} = useQuery(
-      ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
-      () => fetchApiData(
-        {
-          url: apiUrl,
-          page: queryPageIndex,
-          size: queryPageSize,
-          filter,
-          sortby: queryPageSortBy,
-          trigger: queryTrigger
-        }
-      ),
-      {
-        keepPreviousData: true,
-        staleTime: Infinity,
-      }
-    );
 
     useEffect(() => {
       if (exportToCsv) {
@@ -91,6 +57,40 @@ const DataTable = ({organization, programs}) => {
       setExportHeaders(response.headers);
       setExportToCsv(true);
     }
+   
+    let program_columns = [
+        ...JOURNAL_DETAILED_COLUMNS,
+    ]
+    let columns = useMemo( () => program_columns, [])
+
+    const defaultColumn = React.useMemo(
+        () => ({
+          maxWidth: 100,
+        }),
+        []
+    )
+
+    const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
+    React.useReducer(reducer, initialState);
+
+    const apiUrl = `/organization/${organization.id}/report/journal-detailed`;
+    const {isLoading, error, data, isSuccess, isFetched, isFetching} = useQuery(
+      ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+      () => fetchApiData(
+        {
+          url: apiUrl,
+          page: queryPageIndex,
+          size: queryPageSize,
+          filter,
+          sortby: queryPageSortBy,
+          trigger: queryTrigger
+        }
+      ),
+      {
+        keepPreviousData: true,
+        staleTime: Infinity,
+      }
+    );
 
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
@@ -118,7 +118,8 @@ const DataTable = ({organization, programs}) => {
         autoResetSortBy: false,
         autoResetExpanded: false,
         autoResetPage: false,
-        defaultColumn
+        defaultColumn,
+        isPlaceholderData: false
         
     },
     useSortBy,
@@ -136,6 +137,9 @@ const DataTable = ({organization, programs}) => {
     if (isLoading || !organization?.id) {
       return <p>Loading...</p>;
     }
+
+    console.log(isFetching)
+    console.log(isFetched)
 
     if (isSuccess)
     return (
@@ -159,13 +163,14 @@ const DataTable = ({organization, programs}) => {
                     programs: true,
                     exportToCsv: true
                   }}
+                  loading={isLoading || isFetching}
                 />
               </Col>
             </Row>
             <div style={{clear: 'both'}}>&nbsp;</div>
           </div>
           {
-            isLoading && <p>Loading...</p>
+            (isLoading || isFetching) && <p className="text-center">Loading...</p>
           }
           {
             // ref={r => { csvLinkTable = r; }}
