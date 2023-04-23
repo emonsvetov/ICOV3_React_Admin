@@ -1,4 +1,5 @@
 import axios from 'axios'
+export const isEmpty = (object) => { for(var i in object) { return false; } return true; }
 
 export const fetchUser = async (organization_id, id ) => {
     try {
@@ -161,10 +162,14 @@ export const fetchEventIcons = async(organizationId) => {
   }
 };
 
-export const getAllPrograms = async (organizationId) => {
+export const getPrograms = async (organizationId, paramStr = "") => {
   try {
-    const programsApiUrl = `/organization/${organizationId}/program?page=0&limit=9999999999&hierarchy=1&all=1`
-    const response = await axios.get(programsApiUrl);
+    let url = `/organization/${organizationId}/program`
+    if( paramStr !=="" )
+    {
+      url += "?" + paramStr
+    }
+    const response = await axios.get(url);
     return response.data;
   } catch (e) {
     throw new Error(`API error:${e?.message}`);

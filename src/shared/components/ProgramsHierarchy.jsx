@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import CheckboxHierarchy from '@/shared/components/form/CheckboxHierarchy'
-import axios from 'axios'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {useQuery} from "react-query";
-import {FieldArray} from "react-final-form-arrays";
 import {isEmpty} from '@/shared/helpers'
+import { getPrograms } from '@/shared/apiHelper.jsx';
 
-const ProgramsHierarchy = ({defaultPrograms, organization, selectedPrograms, setSelectedPrograms}) => {
-  const [programs, setPrograms] = useState([]);
+const ProgramsHierarchy = ({organization, selectedPrograms, setSelectedPrograms}) => {
+
+  // const [programs, setPrograms] = useState([]);
 
   const fetchProgramData = async (pageFilterO) => {
     const params = []
@@ -19,21 +19,14 @@ const ProgramsHierarchy = ({defaultPrograms, organization, selectedPrograms, set
       // console.log(params)
       paramStr = params.join('&')
     }
-    const apiUrl = `/organization/${organization.id}/program?page=0&limit=9999999999&hierarchy=1`
 
-    if(isEmpty(programs)) {
-      try {
-        const response = await axios.get(
-          apiUrl
-        );
-        // console.log(response);
-        if (response.data.length === 0) return {results: [], count: 0}
-        const data = response.data.data;
-        setPrograms(data);
+    if(organization?.id) {
+      return getPrograms( organization.id, "minimal=true&limit=9999999999" )
+      .then( response => {
+        const data = response?.data ? response.data : [];
+        // setPrograms(data);
         return data;
-      } catch (e) {
-        throw new Error(`API error:${e?.message}`);
-      }
+      })
     }
   };
 
@@ -47,13 +40,18 @@ const ProgramsHierarchy = ({defaultPrograms, organization, selectedPrograms, set
     }
   );
 
-  if (programs) {
+  // console.log(data)
+
+  if( !data ) return 'loading...'
+
+  if (data) {
     return (
       <>
+        {isLoading && 'loading...'}
         <CheckboxHierarchy
           name="programs[]"
           attr='account_holder_id'
-          options={programs}
+          options={data}
           fields={selectedPrograms}
           setFields={setSelectedPrograms}
           isRoot={true}
