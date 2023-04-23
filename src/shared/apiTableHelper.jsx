@@ -259,7 +259,7 @@ export const fetchApiDataExport = async( queryParams )  => {
     }
 };
 
-export const TableFilter = ({ config, filter, setFilter, setUseFilter, download, exportData, exportLink, exportHeaders}) => {
+export const TableFilter = ({ config, filter, setFilter, setUseFilter, download, exportData, exportLink, exportHeaders, loading}) => {
 
     const defaultFilters = {
         keyword: '',
@@ -537,6 +537,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                   onClick={()=>onClickFilter()}
                   className="btn btn-sm btn-primary"
                   color="#ffffff"
+                  disabled={loading}
                 >Filter</Button>
                 <Button
                   onClick={()=>onClickFilter(true)}
@@ -553,6 +554,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                         className="hidden"
                         ref={exportLink}
                         target="_blank"
+                        disabled={loading}
                       />
                   </div>
                 }
