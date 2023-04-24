@@ -44,7 +44,7 @@ const DataTable = ({organization, programs}) => {
     const download = async (filterValues) => {
       let tmpFilter = clone(filterValues);
       tmpFilter.exportToCsv = 1;
-  
+      
       const response = await fetchApiDataExport(
         {
           url: apiUrl,
@@ -137,9 +137,6 @@ const DataTable = ({organization, programs}) => {
     if (isLoading || !organization?.id) {
       return <p>Loading...</p>;
     }
-
-    console.log(isFetching)
-    console.log(isFetched)
 
     if (isSuccess)
     return (

@@ -5,7 +5,7 @@ import {indexOfAll} from '@/shared/helpers'
 
 export const CheckboxHierarchy = ({name, fields, setFields, options, isRoot, isChildren, label, attr}) => {
   const [instanceKey, setInstanceKey] = useState(0)
-  const [checked, setChecked] = useState(true)
+  const [checked, setChecked] = useState(false)
   const handleReset = () => setInstanceKey(i => i + 1)
 
   const [isVisible, setIsVisible] = useState(false);

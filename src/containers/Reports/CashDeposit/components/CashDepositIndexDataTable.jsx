@@ -37,7 +37,7 @@ const DataTable = ({organization, programs}) => {
     React.useReducer(reducer, initialState);
 
   const apiUrl = `/organization/${organization.id}/report/cash-deposit`;
-  const {isLoading, error, data, isSuccess} = useQuery(
+  const {isLoading, error, data, isSuccess, isFetching} = useQuery(
     ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
     () => fetchApiData(
       {
@@ -129,7 +129,7 @@ const DataTable = ({organization, programs}) => {
     return <p>Error: {JSON.stringify(error)}</p>;
   }
 
-  if (isLoading) {
+  if (isLoading || !organization?.id) {
     return <p>Loading...</p>;
   }
 
@@ -156,7 +156,7 @@ const DataTable = ({organization, programs}) => {
             <div style={{clear: 'both'}}>&nbsp;</div>
           </div>
           {
-            isLoading && <p>Loading...</p>
+            (isLoading || isFetching) && <p className="text-center">Loading...</p>
           }
           {
             // ref={r => { csvLinkTable = r; }}
