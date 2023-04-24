@@ -3,8 +3,8 @@ import CheckboxHierarchy from '@/shared/components/form/CheckboxHierarchy'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {useQuery} from "react-query";
-import {isEmpty} from '@/shared/helpers'
-import { getPrograms } from '@/shared/apiHelper.jsx';
+// import {isEmpty} from '@/shared/helpers'
+import { getProgramsHierachy } from '@/shared/apiHelper.jsx';
 
 const ProgramsHierarchy = ({organization, selectedPrograms, setSelectedPrograms}) => {
 
@@ -21,11 +21,9 @@ const ProgramsHierarchy = ({organization, selectedPrograms, setSelectedPrograms}
     }
 
     if(organization?.id) {
-      return getPrograms( organization.id, "minimal=true&limit=9999999999" )
+      return getProgramsHierachy( organization.id )
       .then( response => {
-        const data = response?.data ? response.data : [];
-        // setPrograms(data);
-        return data;
+        return response;
       })
     }
   };

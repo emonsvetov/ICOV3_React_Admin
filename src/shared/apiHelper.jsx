@@ -175,3 +175,13 @@ export const getPrograms = async (organizationId, paramStr = "") => {
     throw new Error(`API error:${e?.message}`);
   }
 }
+
+export const getProgramsHierachy = async (organizationId) => {
+  try {
+    let url = `/organization/${organizationId}/program/hierarchy`
+    const response = await axios.get(url);
+    return response.data;
+  } catch (e) {
+    throw new Error(`API error:${e?.message}`);
+  }
+}
