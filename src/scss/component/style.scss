@@ -402,3 +402,15 @@
 // }
 // .react-select__option{background-color: yellow !important;z-index: 9999 !important;}
 // .user-status-type .form__form-group-row{display: flex;}
+.table--grouped {
+    tr:first-child{
+        th{
+            text-align: center;
+            background-color: #f7f7f7;
+            border: 1px solid #e2e2e2;
+        }
+    }
+    td, th{
+        border: 1px solid #e2e2e2 !important;
+    }
+}
