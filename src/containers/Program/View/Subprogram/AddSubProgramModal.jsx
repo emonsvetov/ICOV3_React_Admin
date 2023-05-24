@@ -50,7 +50,7 @@ const AddSubProgramModal = ({organization, program, isOpen, setOpen, toggle, the
             // console.log(organization)
             fetchProgramFlatListAndDifference(program.organization.id, program.id)
             .then( list => {
-                // console.log(list)
+                console.log(list)
                 if( list?.available )   {
                     setInventory(labelizeNamedData(list.available));
                 }
