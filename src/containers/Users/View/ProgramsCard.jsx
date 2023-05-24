@@ -41,7 +41,7 @@ const ProgramsCard = ( {user}) => {
         // console.log("searching..")
         try {
             const response = await axios.get(
-            `/organization/${user.organization_id}/program?minimal=true&keyword=${queryKeyword}`
+            `/organization/${user.organization_id}/program?minimal=true&paginate=false&keyword=${queryKeyword}`
             );
             return response.data;
         } catch (e) {
