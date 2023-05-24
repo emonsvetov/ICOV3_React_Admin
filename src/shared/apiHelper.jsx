@@ -124,7 +124,7 @@ export const fetchProgramFlatListAndDifference = async (organization_id, program
         );
         const available = response.data;
         if( action == 'move') return available;
-        let url2 = `/organization/${organization_id}/program/${program_id}/subprogram?minimal=true&flatlist=true`
+        let url2 = `/organization/${organization_id}/program/${program_id}/subprogram?paginate=false&minimal=true&flatlist=true`
         const response2 = await axios.get(
             url2
         );
