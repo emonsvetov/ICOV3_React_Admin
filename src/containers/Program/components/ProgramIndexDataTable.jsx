@@ -91,7 +91,9 @@ const DataTable = ({organization}) => {
         setCopyOpen(prevState => !prevState);
     };
     const RenderActions = ({row}) => {
-        console.log(row)
+        if( !row.original.status ) {
+          console.log(row.original)
+        }
         return (
             <>
                 <span>
