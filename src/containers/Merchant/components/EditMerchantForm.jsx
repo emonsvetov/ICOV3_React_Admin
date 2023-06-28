@@ -68,10 +68,9 @@ const EditMerchantForm = () => {
             }
         })
         .catch( error => {
-            console.log(error)
-            // console.log(JSON.stringify(error.response.data.errors));
-            setErrors(error.response.data.errors);
-            dispatch(sendFlashMessage(JSON.stringify(error.response.data.errors), 'alert-danger'))
+            console.log(JSON.stringify(error));
+            // setErrors(error.response.data.errors);
+            // dispatch(sendFlashMessage(JSON.stringify(error.response.data.errors), 'alert-danger'))
             // throw new Error(`API error:${e?.message}`);
             setLoading(false)
         })
