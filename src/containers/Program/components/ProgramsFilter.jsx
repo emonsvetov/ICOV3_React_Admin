@@ -115,7 +115,8 @@ ProgramFilter.propTypes = {
 };
 
 ProgramFilter.defaultProps = {
-  useOrg: true
+  useOrg: true,
+  value:''
 };
 
 export default withRouter(connect((state) => ({

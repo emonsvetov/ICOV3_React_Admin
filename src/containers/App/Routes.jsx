@@ -3,6 +3,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import PublicRoute from './PublicRoute';
 import PrivateRoute from './PrivateRoute';
 import Layout from '../Layout/index';
+import OrgFilter from './OrgFilter';
 import MainWrapper from './MainWrapper';
 import Dashboard from '../Dashboard/index';
 import Import from '../Import';
@@ -208,6 +209,7 @@ const privateRoutes = () => {
     <div>
       <Layout />
       <div className="container__wrap">
+        <OrgFilter />
         <PrivateRoute exact path="/" component={Dashboard} />
         <PrivateRoute path="/pages" component={Pages} />
         <PrivateRoute path="/program" component={Programs} />

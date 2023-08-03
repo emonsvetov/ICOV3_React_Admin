@@ -2,6 +2,8 @@
 export const AUTH_TOKEN_KEY = 'authToken';
 export const AUTH_USER_KEY = 'authUser';
 export const AUTH_ORGANIZATION_KEY = 'authOrganization';
+export const SU_ORGANIZATION_KEY = 'suOrganization';
+export const SU_SELECT_ORGANIZATION_TREE = "suSelectOrganizationTree";
 
 export const ORGANIZATION_ID = 1
 
@@ -30,6 +32,7 @@ export const flushUserSession = () => {
     localStorage.removeItem(AUTH_USER_KEY);
     localStorage.removeItem(AUTH_TOKEN_KEY);
     localStorage.removeItem(AUTH_ORGANIZATION_KEY);
+    localStorage.removeItem(SU_ORGANIZATION_KEY);
 }
 
 export const isAuthenticated = () => {
@@ -74,6 +77,13 @@ export const getOrganization = () => {
     return JSON.parse(localStorage.getItem(AUTH_ORGANIZATION_KEY));
 }
 
+//The organization selection by Super User
+
+export const getSuOrganization = () => {
+  // flushUserSession();
+  return JSON.parse(localStorage.getItem(SU_ORGANIZATION_KEY));
+}
+
 export const getAuthUserFullname = () => {
     const user = getAuthUser();
     // console.log(isVerified())
@@ -89,4 +99,8 @@ export const asyncLocalStorage = {
         await null;
         return localStorage.getItem(key);
     }
+};
+
+export const setSuOrganization = (organization) => {
+  return localStorage.setItem(SU_ORGANIZATION_KEY, JSON.stringify(organization));
 };

@@ -41,18 +41,16 @@ const FormStep1 = ({config, setStep, csvFile, onSelectCsvFile, onclickBack, oncl
                                 </span>
               )}
               <div>&nbsp;</div>
-
-              <div className="form__form-group-row flex-row pt-3">
-                <Button className="btn btn-outline-primary btn-sm" color="#ffffff" disabled={1 == 2}
-                        onClick={onclickBack} style={{}}>Back</Button>
-                <Button className="btn btn-primary btn-sm" color="#ffffff" disabled={!(csvFile instanceof File)} type="submit">Upload</Button>
-                {(csvFile instanceof File) &&  importHeaders && 
-                <Button className="btn btn-primary btn-sm" color="#ffffff" onClick={onclickNext} style={{}}>Next</Button>}
-              </div>
             </div>
           </div>
         )}
       </Field>
+      <div className="form__form-group-row flex-row pt-3">
+        <Button className="btn btn-outline-primary btn-sm" color="#ffffff" disabled={1 == 2} onClick={onclickBack} style={{}}>Back</Button>
+        <Button className="btn btn-primary btn-sm" color="#ffffff" disabled={!(csvFile instanceof File)} type="submit">Upload</Button>
+        {(csvFile instanceof File) &&  importHeaders && 
+        <Button className="btn btn-primary btn-sm" color="#ffffff" onClick={onclickNext} style={{}}>Next</Button>}
+      </div>
     </div>
   )
 }

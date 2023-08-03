@@ -6,9 +6,9 @@ import '../../scss/app.scss';
 import Routes from './Routes';
 import store from './store';
 import ScrollToTop from './ScrollToTop';
-import {getBearer, getOrganization, getAuthUser} from './auth';
+import {getBearer, getOrganization, getSuOrganization, getAuthUser} from './auth';
 import axios from 'axios'
-import {setOrganization} from '@/redux/actions/organizationActions';
+import {setOrganization, setSuOrganization} from '@/redux/actions/organizationActions';
 import {setAuthUser} from '@/redux/actions/userActions';
 import {sendFlashMessage, FlashMessage} from "@/shared/components/flash";
 
@@ -51,6 +51,7 @@ const App = () => {
 
   const setAuthOrganization = () => {
     store.dispatch(setOrganization(getOrganization()))
+    store.dispatch(setSuOrganization(getSuOrganization()))
     store.dispatch(setAuthUser(getAuthUser()))
   }
 
