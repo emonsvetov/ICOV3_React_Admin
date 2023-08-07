@@ -9,9 +9,7 @@ import {mapFormDataUploads, patchMerchantMediaURL, unpatchMerchantFields} from '
 import renderDropZoneField from '@/shared/components/form/DropZone';
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import WYSIWYGEditor from '@/shared/components/form/WYSIWYGEditor'
-import {TOA_OPTIONS} from '@/shared/options'
 import { useParams } from 'react-router-dom'
-
 
 const fetchMerchant = async ( id ) => {
     try {
@@ -27,20 +25,42 @@ const EditMerchantForm = () => {
     const dispatch = useDispatch()
     let { id } = useParams();
 
-    // alert(id)
-
     const [loading, setLoading] = useState(false)
     const [useTango, setUseTango] = useState(false)
+    const [toaOptions, setToaOptions] = useState(false)
+    const [useVirtualInventory, setUseVirtualInventory] = useState(false)
     const [errors, setErrors] = useState(null)
     let [merchant, setMerchant] = useState(null)
     //initialValues={patchMerchantMediaWithURL(merchant, ['logo', 'icon', 'large_icon', 'banner'])}
+
+    const loadTangoApiConfigurations = async () => {
+        try {
+          const response = await axios.get(`/tango-api/index`);
+          if (response.data.length === 0) return [];
+          let options = [];
+          response.data.map(row => {
+            options.push({
+              value: row.id,
+              label: row.name
+            });
+          });
+          return options;
+        } catch (e) {
+          throw new Error(`API error:${e?.message}`);
+        }
+      }
 
     useEffect( ()=>{
         setLoading(true)
         fetchMerchant( id )
         .then( response => {
-            setMerchant(response)
-            setLoading(false)
+            loadTangoApiConfigurations().then( res => {
+                setToaOptions(res);
+                setMerchant(response);
+                setUseTango(response.use_tango_api);
+                setUseVirtualInventory(response.use_virtual_inventory);
+                setLoading(false)
+            })
         })
     }, [id])
 
@@ -48,8 +68,13 @@ const EditMerchantForm = () => {
         setUseTango( !useTango )
     }
 
+    const onChangeUseVirtualInventory = () => {
+        setUseVirtualInventory( !useVirtualInventory )
+    }
+
     const onSubmit = values => {
         values = unpatchMerchantFields(values)
+
         // values = unpatchMerchantMediaURL(values)
         // alert(JSON.stringify(values))
         // return;
@@ -85,8 +110,8 @@ const EditMerchantForm = () => {
     // patchMerchantMediaWithURL()
 
     // console.log(merchant)
+
     merchant = patchMerchantMediaURL( merchant )
-    console.log(merchant)
 
     return (
     <Form
@@ -228,19 +253,75 @@ const EditMerchantForm = () => {
         </Row>
         <Row>
             <Col md="6" lg="6" xl="6">
-                {useTango && 
+                {useTango ? (
                     <div className="form__form-group">
                         <span className="form__form-group-label">Tango Configurations</span>
                         <div className="form__form-group-field">
                             <Field
                                 name="toa_id"
                                 component={renderSelectField}
-                                options={TOA_OPTIONS}
+                                options={toaOptions}
                                 onChange={onChangeUseTangoAPI}
                             />
                         </div>
                     </div>
-                }
+                ) : '' }
+            </Col>
+        </Row>
+        <Row>
+            <Col md="6" lg="6" xl="6">
+                 <div className="form__form-group">
+                        <Field
+                            name="use_virtual_inventory"
+                            label="Use Virtual Inventory"
+                            type="checkbox"
+                            component={CheckboxField}
+                            parse={ value => {
+                                onChangeUseVirtualInventory()
+                                return value
+                            }}
+                        />
+                    </div>
+            </Col>
+        </Row>
+        <Row>
+            <Col md="6" lg="6" xl="6">
+                {useVirtualInventory ? (
+                    <Row>
+                        <Col md="6" lg="6" xl="6">
+                            <Field name="virtual_denominations">
+                                {({input, meta}) => (
+                                    <div className="form__form-group">
+                                        <span className="form__form-group-label">Virtual Denominations</span>
+                                        <div className="form__form-group-field">
+                                            <div className="form__form-group-row">
+                                                <input  type="text" {...input} placeholder=""/>
+                                                {meta.touched && meta.error &&
+                                                <span className="form__form-group-error">{meta.error}</span>}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </Field>
+                        </Col>
+                        <Col md="6" lg="6" xl="6">
+                            <Field name="virtual_discount">
+                                {({input, meta}) => (
+                                    <div className="form__form-group">
+                                        <span className="form__form-group-label">Virtual Discount</span>
+                                        <div className="form__form-group-field">
+                                            <div className="form__form-group-row">
+                                                <input  type="text" {...input} placeholder=""/>
+                                                {meta.touched && meta.error &&
+                                                <span className="form__form-group-error">{meta.error}</span>}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </Field>
+                        </Col>
+                    </Row>
+                ) : '' }
             </Col>
         </Row>
         <Row>

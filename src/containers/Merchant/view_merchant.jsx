@@ -10,6 +10,7 @@ import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import axios from 'axios'
 import MerchantDetails from './View/components/MerchantDetails';
 import AvailableGiftCodes from './View/components/AvailableGiftCodes';
+import VirtualGiftCodes from './View/components/VirtualGiftCodes';
 import RedeemedGiftCodes from './View/components/RedeemedGiftCodes';
 import TransferedGiftCodes from './View/components/TransferedGiftCodes';
 import OptimalAmount from './View/components/OptimalAmount';
@@ -24,6 +25,10 @@ const MERCHANT_MENU_LINKS = [
     {
         value: 'available_gift_codes',
         label: 'Available Gift Codes'
+    },
+    {
+        value: 'virtual_gift_codes',
+        label: 'Virtual Gift Codes'
     },
     {
         value: 'redeemed_gift_codes',
@@ -134,6 +139,7 @@ const ViewMerchant = ( {merchant} ) => {
                             <CardBody className='infoview'>
                                 {selected === 'details' && <MerchantDetails data={merchant}/>}
                                 {selected === 'available_gift_codes' && <AvailableGiftCodes merchant={merchant}  /> }
+                                {selected === 'virtual_gift_codes' && <VirtualGiftCodes merchant={merchant}  /> }
                                 {selected === 'redeemed_gift_codes' && <RedeemedGiftCodes merchant={merchant} /> }
                                 {selected === 'transferred_gift_codes' && <TransferedGiftCodes merchant={merchant} /> }
                                 {selected === 'optimal_amount' && <OptimalAmount merchant={merchant} /> }

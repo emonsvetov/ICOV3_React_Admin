@@ -139,6 +139,34 @@ const MerchantDetails = ( {data} ) => {
         </Row>
         <Row>
             <Col md="4" lg="4" xl="4" sm="4" className='label'>
+                Use Virtual Inventory:
+            </Col>
+            <Col md="8" lg="8" xl="8" sm="8">
+                {answerYesNo(merchant.use_virtual_inventory)}
+            </Col>
+        </Row>
+        {merchant.use_virtual_inventory ? (
+            <Row>
+                <Col md="4" lg="4" xl="4" sm="4" className='label'>
+                    Virtual denominations:
+                </Col>
+                <Col md="8" lg="8" xl="8" sm="8">
+                    {merchant.virtual_denominations}
+                </Col>
+            </Row> ) : ''
+        }
+        {merchant.use_virtual_inventory ? (
+            <Row>
+                <Col md="4" lg="4" xl="4" sm="4" className='label'>
+                    Virtual Discount:
+                </Col>
+                <Col md="8" lg="8" xl="8" sm="8">
+                    {merchant.virtual_discount}
+                </Col>
+            </Row>  ) : ''
+        }
+        <Row>
+            <Col md="4" lg="4" xl="4" sm="4" className='label'>
                 Display Popup:
             </Col>
             <Col md="8" lg="8" xl="8" sm="8">
