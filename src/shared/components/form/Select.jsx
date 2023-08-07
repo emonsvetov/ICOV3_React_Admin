@@ -10,6 +10,13 @@ export const SelectField = React.forwardRef(({
     onChange(selectedOption);
   };
 
+  for (const [key, val] of Object.entries(options)) {
+      if (val.value == value){
+          value = val;
+          break;
+      }
+  }
+
   return (
     <Select
       name={name}

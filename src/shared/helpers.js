@@ -124,7 +124,9 @@ export const mapFormDataUploads = (values, multiple = false) => {
                 value.map( itemValue => {
                     data.append(`${key}[]`, itemValue)
                 })
-            }   else {
+            }   else if (value.value){
+                data.append(key, value.value)
+            } else {
                 data.append(key, value[0])
             }
         }   else {
