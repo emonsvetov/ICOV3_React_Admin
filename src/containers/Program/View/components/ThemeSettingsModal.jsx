@@ -399,6 +399,19 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                 </div>
                             </Col>
                         </Row>
+                        <Row>
+                            <Col xs="12" md="8" lg="8">
+                                <div className="form__form-group">
+                                    <span className="form__form-group-label thick">Paricipant Homepage Message</span>
+                                    <div className="form__form-group-field flex-column">
+                                        <Field
+                                          name="participant_homepage_message"
+                                          component={WYSIWYGEditor}
+                                        />
+                                    </div>
+                                </div>
+                            </Col>
+                        </Row>
                     </TabPane>
                     <TabPane tabId="3">
                         <Row>
