@@ -15,6 +15,7 @@ const EngagementModal = ({dispatch, data, isOpen, toggle, theme, rtl}) => {
     const onSubmitForm = async values => {
         setLoading(true)
         data  = {...data, ...values}
+        // console.log(data);return;
         // alert(JSON.stringify(data))
         try {
             const response = await axios.put(`/organization/${data.organization_id}/program/${data.id}`, data);
@@ -237,8 +238,6 @@ const EngagementModal = ({dispatch, data, isOpen, toggle, theme, rtl}) => {
                             />
                         </div>
                     </Col>
-                </Row>
-                <Row>
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField 
@@ -247,6 +246,24 @@ const EngagementModal = ({dispatch, data, isOpen, toggle, theme, rtl}) => {
                             />
                         </div>
                     </Col>
+                </Row>
+                <Row>
+                  <Col md="6" lg="4" xl="4">
+                      <div className="form__form-group">
+                        <CheckboxField 
+                            name="enable_how_are_you_feeling"
+                            label="How are you feeling"
+                        />
+                      </div>
+                  </Col>
+                  <Col md="6" lg="4" xl="4">
+                      <div className="form__form-group">
+                        <CheckboxField 
+                            name="enable_referrals"
+                            label="Referrals"
+                        />
+                      </div>
+                  </Col>
                 </Row>
             </ModalBody>
         </form>
