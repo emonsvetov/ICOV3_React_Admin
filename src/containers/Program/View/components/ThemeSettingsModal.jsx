@@ -23,6 +23,7 @@ import { THEME_FONT_FAMILIES  } from './ThemeData';
 
 const MEDIA_FIELDS = ['small_logo', 'big_logo', 'hero_banner', 'slider_01', 'slider_02', 'slider_03']
 const THEME_IMAGE = {
+    'Default' : `${process.env.PUBLIC_URL}/img/theme/Original.png`,
     'Clear' : `${process.env.PUBLIC_URL}/img/theme/Original.png`,
     'Classic' : `${process.env.PUBLIC_URL}/img/theme/New.png`,
 }
@@ -35,7 +36,7 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
     // console.log(program.template)
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
-    const [currentTheme, setCurrentTheme] = useState("");
+    const [currentTheme, setCurrentTheme] = useState("Default");
     let [template, setTemplate] = useState({})
     // console.log(program)
     const validate = values => {
@@ -68,6 +69,13 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
       // setError(errors)
       return errors
     }
+    const deleteImage = (name) => {
+      console.log(name)
+      let tmpTemplate = template;
+      tmpTemplate[name] = null
+      // console.log(tmpTemplate)
+      setTemplate(tmpTemplate);
+    } 
     const onSubmitForm = async (values) => {
         values.button_corner = sliderValue;
         values.theme_color = selectedThemeColor;
@@ -84,8 +92,6 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
             formData.append('_method', 'PUT')
             saveUrl += `/${template.id}`
         }
-        console.log([...formData])
-        // return;
         axios.post(saveUrl, formData, {
             "Content-Type": "multipart/form-data",
             "Access-Control-Allow-Origin": "*"
@@ -250,7 +256,7 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
 
     let formError = false;
 
-    // console.log(template)
+    console.log(template)
 
     return (
     <Modal className={`modal-program programTemplateModal modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen}
@@ -273,7 +279,7 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                             <Button outline color="primary" className="mr-3" onClick={toggle}>Close</Button>{' '}
                             {formError = Object.keys(validate(values)).length > 0}
                             {/* {console.log(formError)} */}
-                            <Button type="submit" disabled={submitting || formError} className="btn btn-primary" color="#ffffff">Save</Button>
+                            <Button type="submit" disabled={submitting || formError || currentTheme === 'Default'} className="btn btn-primary" color="#ffffff">Save</Button>
                             {(currentTheme && formError && !submitting && !loading) && <div className="error">Required fields missing</div>}
                         </ButtonToolbar>
                     </Col>
@@ -400,13 +406,13 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                 <div className="form__form-group">
                                     <span className="form__form-group-label thick">Big Logo</span><span className='error'>*</span>
                                     <div className="form__form-group-field  flex-column">
-                                        <Field
+                                        {currentTheme !== 'Default' && <Field
                                           name="big_logo"
                                           component={renderDropZoneField}
                                           multiple={false}
                                           customHeight
                                           uploadTitle={{type: 'short', displayAlways: true}}
-                                        />
+                                        />}
                                         <div className='image-wrap'>
                                             <RenderImage src={template?.big_logo} />
                                         </div>
@@ -417,13 +423,13 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                 <div className="form__form-group">
                                     <span className="form__form-group-label thick">Small Logo</span><span className='error'>*</span>
                                     <div className="form__form-group-field flex-column">
-                                        <Field
+                                    {currentTheme !== 'Default' && <Field
                                           name="small_logo"
                                           component={renderDropZoneField}
                                           multiple={false}
                                           customHeight
                                           uploadTitle={{type: 'short', displayAlways: true}}
-                                        />
+                                        />}
                                         <div className='image-wrap'>
                                             <RenderImage src={template?.small_logo} />
                                         </div>
@@ -434,13 +440,13 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                 <div className="form__form-group">
                                     <span className="form__form-group-label thick">Hero Banner</span><span className='error'>*</span>
                                     <div className="form__form-group-field  flex-column">
-                                        <Field
+                                    {currentTheme !== 'Default' && <Field
                                           name="hero_banner"
                                           component={renderDropZoneField}
                                           multiple={false}
                                           customHeight
                                           uploadTitle={{type: 'short', displayAlways: true}}
-                                        />
+                                        />}
                                         <div className='image-wrap'>
                                             <RenderImage src={template?.hero_banner} />
                                         </div>
@@ -453,15 +459,15 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                             <Col xs="12" md="4" lg="4">
                                 <div className="form__form-group">
                                     <div className="form__form-group-field  flex-column">
-                                        <Field
+                                    {currentTheme !== 'Default' && <Field
                                           name="slider_01"
                                           component={renderDropZoneField}
                                           multiple={false}
                                           customHeight
                                           uploadTitle={{type: 'short', displayAlways: true}}
-                                        />
+                                        />}
                                         <div className='image-wrap'>
-                                            <RenderImage src={template?.slider_01} />
+                                            <RenderImage src={template.slider_01} showDelete={currentTheme != 'Default'}  name='slider_01' dlcb={deleteImage} />
                                         </div>
                                     </div>
                                 </div>
@@ -469,15 +475,15 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                             <Col xs="12" md="4" lg="4">
                                 <div className="form__form-group">
                                     <div className="form__form-group-field  flex-column">
-                                        <Field
+                                    {currentTheme !== 'Default' && <Field
                                           name="slider_02"
                                           component={renderDropZoneField}
                                           multiple={false}
                                           customHeight
                                           uploadTitle={{type: 'short', displayAlways: true}}
-                                        />
+                                        />}
                                         <div className='image-wrap'>
-                                            <RenderImage src={template?.slider_02} />
+                                            <RenderImage src={template?.slider_02} showDelete={currentTheme != 'Default'}  name='slider_02' dlcb={deleteImage} />
                                         </div>
                                     </div>
                                 </div>
@@ -485,15 +491,15 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                             <Col xs="12" md="4" lg="4">
                                 <div className="form__form-group">
                                     <div className="form__form-group-field  flex-column">
-                                        <Field
+                                    {currentTheme !== 'Default' && <Field
                                           name="slider_03"
                                           component={renderDropZoneField}
                                           multiple={false}
                                           customHeight
                                           uploadTitle={{type: 'short', displayAlways: true}}
-                                        />
+                                        />}
                                         <div className='image-wrap'>
-                                            <RenderImage src={template?.slider_03} />
+                                            <RenderImage src={template?.slider_03}  showDelete={currentTheme != 'Default'} name='slider_03' dlcb={deleteImage} />
                                         </div>
                                     </div>
                                 </div>
@@ -507,13 +513,13 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                     <span className="form__form-group-label thick">Shape</span>
                                     <div>&nbsp;</div>
                                     <div className="form__form-group-field flex-column">
-                                        <Slider
+                                    {currentTheme !== 'Default' && <Slider
                                           max={20}
                                           SliderConfig={SliderConfig}
                                           value={sliderValue}
                                           onChange={updateSliderRange}
                                           name='button_corner'
-                                        />
+                                        />}
                                     </div>
                                 </div>
                                 <div className="form__form-group">
@@ -589,14 +595,15 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
     </Modal>
 )}
 
-const RenderImage = ({src}) => {
+const RenderImage = ({src, showDelete = false, name, dlcb }) => {
     if( !src || typeof src === 'undefined' ) return ''
     return (
-        <div className='dropzone-img'>
-            <a href={src} target='_blank' title='View the picture'>
-                <img style={{maxHeight:200}} src={src} />
-            </a>
-        </div>
+      <div className='dropzone-img position-relative'>
+        <a href={src} target='_blank' title='View the picture'>
+          <img style={{maxHeight:200}} src={src} />
+        </a>
+        {(showDelete && dlcb) && <button class="dropzone__img-delete" style={{opacity:1,color:'black',backgroun:'#fff'}} onClick={() => dlcb(name)} type="button">Remove</button>}
+      </div>
     )
 }
 
