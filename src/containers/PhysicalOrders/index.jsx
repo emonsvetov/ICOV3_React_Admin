@@ -8,8 +8,7 @@ import {
   ListGroup,
   ListGroupItem,
 } from "reactstrap";
-import { Link, useParams } from "react-router-dom";
-import axios from "axios";
+import { Link } from "react-router-dom";
 import Cancelled from "./View/components/Cancelled";
 import Pending from "./View/components/Pending";
 import Shipped from "./View/components/Shipped";
@@ -50,13 +49,13 @@ const OrdersIndex = () => {
   //     fetchDomain( id );
   // }, [fetchDomain, id]);
 
-  const RenderItem = ({ item, myKey }) => {
+  const RenderItem = ({ item, mykey }) => {
     return (
       <ListGroupItem
         className={selected === item.value ? "selected" : ""}
         href="#"
         tag="a"
-        key={myKey}
+        key={mykey}
         onClick={() => onClickMenuItem(item)}
       >
         {item.label}
@@ -71,7 +70,7 @@ const OrdersIndex = () => {
           <RenderItem
             item={item}
             key={"menu-item-" + i}
-            myKey={"menu-item-" + i}
+            mykey={"menu-item-" + i}
           />
         ))}
       </ListGroup>
