@@ -1,56 +1,68 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import SidebarLink from './SidebarLink';
-import SidebarCategory from './SidebarCategory';
-import {logout} from '../../App/auth';
-import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
+import React from "react";
+import PropTypes from "prop-types";
+import SidebarLink from "./SidebarLink";
+import SidebarCategory from "./SidebarCategory";
+import { logout } from "../../App/auth";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
 const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
+  if (!auth) return "Loading...";
 
-  if( !auth ) return 'Loading...'
-
-  const ProtectedLink = ({type}) => {
-    if( !auth.isSuperAdmin ) return null;
-    switch (type)
-    {
-      case 'merchants':
+  const ProtectedLink = ({ type }) => {
+    if (!auth.isSuperAdmin) return null;
+    switch (type) {
+      case "merchants":
         return (
-          <SidebarLink title="Merchants"  icon="store" route="/merchants" />
+          <SidebarLink title="Merchants" icon="store" route="/merchants" />
         );
-      break;
-      case 'reports':
+        break;
+      case "reports":
         return (
           <>
             <SidebarLink title="Cash Deposit" route="/reports/cash-deposit" />
             <SidebarLink title="Inventory" route="/reports/inventory" />
-            <SidebarLink title="Journal Detailed" route="/reports/journal-detailed" />
-            <SidebarLink title="Points Reserve" route="/reports/points-reserve" />
-            <SidebarLink title="Program Status" route="/reports/program-status" />
-            <SidebarLink title="Supplier Redemption" route="/reports/supplier-redemption" />
+            <SidebarLink
+              title="Journal Detailed"
+              route="/reports/journal-detailed"
+            />
+            <SidebarLink
+              title="Points Reserve"
+              route="/reports/points-reserve"
+            />
+            <SidebarLink
+              title="Program Status"
+              route="/reports/program-status"
+            />
+            <SidebarLink
+              title="Supplier Redemption"
+              route="/reports/supplier-redemption"
+            />
             {/*<SidebarLink title="Points Purchase Summary" route="/reports/points-purchase-summary" />*/}
           </>
-        )
-      break;
-      case 'roles':
-        return (
-          <SidebarLink title="Roles" icon="user" route="/roles" />
-        )
-      break;
-      case 'permissions':
+        );
+        break;
+      case "roles":
+        return <SidebarLink title="Roles" icon="user" route="/roles" />;
+        break;
+      case "permissions":
         return (
           <SidebarLink title="Permissions" icon="user" route="/permissions" />
-        )
-      break;
-      case 'physicalorders':
+        );
+        break;
+      case "physicalorders":
         return (
-          <SidebarLink title="Physical Orders"  icon="file-empty" route="/physical-orders" />
-        )
-      break;
+          <SidebarLink
+            title="Physical Orders"
+            icon="file-empty"
+            route="/physical-orders"
+          />
+        );
+        break;
       default:
-      break;
+        break;
     }
-  }
+  };
 
   return (
     <div className="sidebar__content">
@@ -63,50 +75,57 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
         {/*  <SidebarLink title="All Programs" route="/program" />*/}
         {/*  <SidebarLink title="Create Program" route="/program/add" />*/}
         {/*</SidebarCategory>*/}
-        {
-          auth?.isSuperAdmin &&
-            <ProtectedLink type="merchants"/>
-        }
+        {auth?.isSuperAdmin && <ProtectedLink type="merchants" />}
         <SidebarCategory title="Import" icon="download">
           <SidebarLink title="All Imported Files" route="/import/list" />
           <SidebarLink title="Import" route="/import" />
         </SidebarCategory>
-        {
-            auth?.isSuperAdmin &&
-            <SidebarCategory title="Reports" icon="book">
-              <ProtectedLink type="reports"/>
-              <SidebarLink title="Award Detail" route="/reports/award-detail"/>
-              <SidebarLink title="Inventory Order" route="/reports/inventory-order"/>
-              <SidebarLink title="Deposit" route="/reports/deposit"/>
-              <SidebarLink title="Unassigned Program Domains" route="/reports/unassigned-program-domains"/>
-              <SidebarLink title="Monies Pending Amount" route="/reports/monies-pending-amount"/>
-            </SidebarCategory>
-        }
-        {
-            auth?.isSuperAdmin &&
-            <ProtectedLink type="roles"/> &&
+        {auth?.isSuperAdmin && (
+          <SidebarCategory title="Reports" icon="book">
+            <ProtectedLink type="reports" />
+            <SidebarLink title="Award Detail" route="/reports/award-detail" />
+            <SidebarLink
+              title="Inventory Order"
+              route="/reports/inventory-order"
+            />
+            <SidebarLink title="Deposit" route="/reports/deposit" />
+            <SidebarLink
+              title="Unassigned Program Domains"
+              route="/reports/unassigned-program-domains"
+            />
+            <SidebarLink
+              title="Monies Pending Amount"
+              route="/reports/monies-pending-amount"
+            />
+          </SidebarCategory>
+        )}
+        {auth?.isSuperAdmin && <ProtectedLink type="roles" /> && (
           <ProtectedLink type="permissions" />
-        }
+        )}
         <SidebarLink title="Users" icon="users" route="/users" />
-        {
-            auth?.isSuperAdmin &&
-            <ProtectedLink type="physicalorders"/>
-        }
-        <SidebarLink title="Domains"  icon="layers" route="/domains" />
+        {auth?.isSuperAdmin && <ProtectedLink type="physicalorders" />}
+        <SidebarLink title="Domains" icon="layers" route="/domains" />
       </ul>
-      {
-          auth?.isSuperAdmin &&
-          <ul className="sidebar__block">
-            <SidebarCategory title="Choose Theme" icon="layers">
-              <button type="button" className="sidebar__link" onClick={changeToLight}>
-                <p className="sidebar__link-title">Light Theme</p>
-              </button>
-              <button type="button" className="sidebar__link" onClick={changeToDark}>
-                <p className="sidebar__link-title">Dark Theme</p>
-              </button>
-            </SidebarCategory>
-          </ul>
-      }
+      {auth?.isSuperAdmin && (
+        <ul className="sidebar__block">
+          <SidebarCategory title="Choose Theme" icon="layers">
+            <button
+              type="button"
+              className="sidebar__link"
+              onClick={changeToLight}
+            >
+              <p className="sidebar__link-title">Light Theme</p>
+            </button>
+            <button
+              type="button"
+              className="sidebar__link"
+              onClick={changeToDark}
+            >
+              <p className="sidebar__link-title">Dark Theme</p>
+            </button>
+          </SidebarCategory>
+        </ul>
+      )}
     </div>
   );
 };
@@ -117,6 +136,8 @@ SidebarContent.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
 
-export default withRouter(connect((state) => ({ 
-  auth: state.auth
-}))(SidebarContent));
+export default withRouter(
+  connect((state) => ({
+    auth: state.auth,
+  }))(SidebarContent)
+);

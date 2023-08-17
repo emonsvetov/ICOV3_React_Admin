@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import { Form, Field } from 'react-final-form';
-import CheckboxField from '@/shared/components/form/CheckBox';
 import { Row, Col, ButtonToolbar, Button, Spinner } from 'reactstrap';
 import formValidation from "@/shared/validation/domain";
 import { Link } from 'react-router-dom'
