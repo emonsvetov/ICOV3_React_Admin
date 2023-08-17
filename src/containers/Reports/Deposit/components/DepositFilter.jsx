@@ -69,7 +69,7 @@ const DepositFilter = ({onClickFilterCallback}) => {
         fetchProgramData()
         .then( response => {
             let temp = [];
-            response.forEach((item, index) => {
+            response.data.forEach((item, index) => {
                 temp.push({value: item.id, label: item.name})
             })
             setData(temp)

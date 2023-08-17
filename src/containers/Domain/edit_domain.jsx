@@ -10,7 +10,7 @@ const EditDomain = ( {organization} ) => (
     <Row>
       <Col md={12}>
         <h3 className="page-title">Domains</h3>
-        <h3 class="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/domains">Domains</Link> / Edit Domain</h3>
+        <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/domains">Domains</Link> / Edit Domain</h3>
       </Col>
     </Row>
     <Row>

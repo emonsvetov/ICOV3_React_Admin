@@ -5,7 +5,7 @@ import formValidation from "@/shared/validation/adduser";
 import axios from 'axios';
 import { fetchRoles } from "@/shared/apiHelper"
 import FormFields from '../../components/FormFields'
-import {unpatchSelect, labelizeNamedData} from '@/shared/helpers'
+import { labelizeNamedData} from '@/shared/helpers'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 

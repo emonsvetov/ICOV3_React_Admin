@@ -9,7 +9,7 @@ const MoniesPendingAmount = () => {
       <Row>
         <Col md={12}>
           <h3 className="page-title">Monies Pending Amount</h3>
-          <h3 class="page-subhead subhead"><Link className="" to="/">Home</Link> / Monies Pending Amount</h3>
+          <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / Monies Pending Amount</h3>
         </Col>
       </Row>
       <Row>

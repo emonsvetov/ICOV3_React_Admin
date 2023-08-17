@@ -17,8 +17,8 @@ import {
   TableFilter,
   Sorting
 } from "@/shared/apiTableHelper"
-import axios from "axios";
-import {isEqual, clone} from 'lodash';
+
+import { clone} from 'lodash';
 
 const queryClient = new QueryClient()
 
