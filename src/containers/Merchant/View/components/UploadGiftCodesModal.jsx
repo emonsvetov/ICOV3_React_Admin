@@ -34,7 +34,7 @@ function myfunc() {
 // console.log(y)
 
 const UploadGiftCodesModal = ({
-    isOpen, toggle, theme, rtl, merchant, setTrigger
+    isOpen, toggle, theme, rtl, merchant, setTrigger, virtual = 0
 }) => {
     const dispatch = useDispatch()
 
@@ -72,9 +72,11 @@ const UploadGiftCodesModal = ({
         // if( !csvFile ){
         //   return;
         // }
+
+        const apiUrl = virtual ? `/merchant/${merchant.id}/giftcode-virtual` : `/merchant/${merchant.id}/giftcode`;
         data.append('file_medium_info', csvFile)
         axios
-        .post(`/merchant/${merchant.id}/giftcode`, data, {
+        .post(apiUrl, data, {
                 headers: {
                     "Content-type": "multipart/form-data",
                 },       
