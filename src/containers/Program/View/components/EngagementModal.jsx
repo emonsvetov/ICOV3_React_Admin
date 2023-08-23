@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { ThemeProps, RTLProps } from "@/shared/prop-types/ReducerProps";
 import CheckboxField from "@/shared/components/form/CheckboxField";
+import CheckBox from "../../../../shared/components/form/CheckBox";
 import {
   Modal,
   ModalBody,
@@ -12,30 +13,37 @@ import {
   Row,
   Col,
 } from "reactstrap";
-import { Form, Field } from "react-final-form";
+import { Form } from "react-final-form";
 import formValidation from "@/shared/validation/program-engagement";
 import axios from "axios";
 import { sendFlashMessage } from "@/shared/components/flash";
 import { getProgramAction } from "@/redux/actions/programActions";
 import Select from "react-select";
 
-
-const EngagementModal = ({ dispatch, data, isOpen, toggle, theme, rtl }) => {
+const EngagementModal = ({
+  dispatch,
+  data,
+  isOpen,
+  toggle,
+  theme,
+  rtl,
+  onChange,
+}) => {
   const [loading, setLoading] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const dropdownOptions = [
-    { value: '1 Year',label: '1 Year',  },
-    { value: '2 Year', label: '2 Year' },
-    { value: '3 Year', label: '3 Year' },
-    { value: '5 Year',label: '5 Year'},
-    { value: '10 Year',  label: '10 Year'},
-    { value: '15 Year', label: '15 Year' },
-    { value: '20 Year',label: '20 Year' },
-    
-  ]
+    { value: "1 Year", label: "1 Year" },
+    { value: "2 Year", label: "2 Year" },
+    { value: "3 Year", label: "3 Year" },
+    { value: "5 Year", label: "5 Year" },
+    { value: "10 Year", label: "10 Year" },
+    { value: "15 Year", label: "15 Year" },
+    { value: "20 Year", label: "20 Year" },
+  ];
 
   const handleCheckboxChange = () => {
+    console.log("sdfsdf");
     setIsChecked(!isChecked);
   };
 
@@ -297,31 +305,18 @@ const EngagementModal = ({ dispatch, data, isOpen, toggle, theme, rtl }) => {
                 </Col>
                 <Col md="6" lg="4" xl="4">
                   <div className="form__form-group">
-                    
-                      <Field
-                        name="milestone_awards"
-                        component="input"
-                        type="checkbox"
-                        style={{ width: '18px', height: '18px' }}
-                        checked={isChecked}
-                        onChange={handleCheckboxChange}
-                      />
-                     <label style={{marginLeft:"5px"}}> Milestone Awards</label>
+                    <CheckBox
+                      checked={isChecked}
+                      name="milestone_awards"
+                      label="Milestone Awards"
+                      onChange={handleCheckboxChange}
+                    />
                     {isChecked && (
-                    //   <select
-                    //     value={selectedValue}
-                    //     onChange={handleDropdownChange}
-                    //   >
-                    //     <option value="">Select an option</option>
-                    //     {dropdownOptions.map((option) => (
-                    //       <option key={option} value={option}>
-                    //         {option}
-                    //       </option>
-                    //     ))}
-                    //   </select>
-                    <Select  value={selectedOption}
-                    onChange={handleChange}
-                    options={dropdownOptions}/>
+                      <Select
+                        value={selectedOption}
+                        onChange={handleChange}
+                        options={dropdownOptions}
+                      />
                     )}
                   </div>
                 </Col>
