@@ -2,22 +2,24 @@ import React, { useState, useEffect } from "react";
 import { Form, Field } from "react-final-form";
 import { Row, Col, ButtonToolbar, Button, Modal, ModalBody } from "reactstrap";
 import { withRouter } from "react-router-dom";
-import { connect } from 'react-redux';
-import Select from "react-select";
-import CheckBox from "../../../../../shared/components/form/CheckBox";
+import { connect } from "react-redux";
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
-import renderSelectField from '@/shared/components/form/Select'
-import {fetchEventTypes} from '@/shared/apiHelper'
-import {labelizeNamedData} from '@/shared/helpers'
-import { useDispatch, flashSuccess, flashError } from "@/shared/components/flash"
+import renderSelectField from "@/shared/components/form/Select";
+import { fetchEventTypes } from "@/shared/apiHelper";
+import { labelizeNamedData } from "@/shared/helpers";
+import {
+  useDispatch,
+  flashSuccess,
+  flashError,
+} from "@/shared/components/flash";
 import axios from "axios";
 import Tabs from "./Tabs";
-import{makeFormData} from './common'
+import { makeFormData } from "./common";
 
-const AddEventForm = ({onStep, program}) => {
-  const dispatch = useDispatch()
+const AddEventForm = ({ onStep, program }) => {
+  const dispatch = useDispatch();
   // console.log(program)
 
   const [loading, setLoading] = useState(false);
@@ -25,9 +27,8 @@ const AddEventForm = ({onStep, program}) => {
   const [isOpen, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("2");
   const [visibleLedgerCode, setVisibleLedgerCode] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(null);
-  const dropdownOptions = [
+  const [selectedMilestone, setselectedMilestone] = useState(null);
+  const milestoneOptions = [
     { value: "1 Year", label: "1 Year" },
     { value: "2 Year", label: "2 Year" },
     { value: "3 Year", label: "3 Year" },
@@ -41,40 +42,35 @@ const AddEventForm = ({onStep, program}) => {
   };
 
   useEffect(() => {
-    fetchEventTypes()
-      .then(evtypes => {
-        setEventTypes(labelizeNamedData(evtypes))
-      })
-  }, [])
+    fetchEventTypes().then((evtypes) => {
+      setEventTypes(labelizeNamedData(evtypes));
+    });
+  }, []);
 
-  const handleCheckboxChange = () => {
-    console.log("sdfsdf");
-    setIsChecked(!isChecked);
+  const handleSelect = (option) => {
+    setselectedMilestone(option.label);
+    console.log(option, "data");
   };
-
-  const handleChange = (selected) => {
-    setSelectedOption(selected);
-    console.log(selected);
-  };
-
-
 
   const onSubmit = (values) => {
-    const eventData = makeFormData(program, values)
+    const eventData = makeFormData(program, values);
     // console.log(eventData)
     // return
-    
+
     axios
-      .post(`/organization/${program.organization_id}/program/${program.id}/event`, eventData)
+      .post(
+        `/organization/${program.organization_id}/program/${program.id}/event`,
+        eventData
+      )
       .then((res) => {
         //   console.log(res)
         if (res.status == 200) {
           // onStep(0);
-          window.location = `/program/view/${program.id}/?message=New event added successfully!`
+          window.location = `/program/view/${program.id}/?message=New event added successfully!`;
         }
       })
       .catch((err) => {
-        flashError(dispatch, err.response.data)
+        flashError(dispatch, err.response.data);
         setLoading(false);
       });
   };
@@ -85,36 +81,32 @@ const AddEventForm = ({onStep, program}) => {
 
   const setEventIcon = ([fieldName, fieldVal], state, { changeValue }) => {
     setOpen(false);
-    changeValue(state, 'event_icon_id', () => fieldVal.id);
+    changeValue(state, "event_icon_id", () => fieldVal.id);
     changeValue(state, fieldName, () => fieldVal);
-  }
+  };
 
   const onChangeAwardValue = ([field], state, { setIn, changeValue }) => {
-    const v = field.target.value
-    if( isNaN( v ) ) return;
-    if(field.target.name === 'max_awardable_amount')  
-    {
+    const v = field.target.value;
+    if (isNaN(v)) return;
+    if (field.target.name === "max_awardable_amount") {
       const field = state.fields["awarding_points"];
-      field.change( program.factor_valuation *  v);
-    }
-    else if(field.target.name === 'awarding_points')  
-    {
+      field.change(program.factor_valuation * v);
+    } else if (field.target.name === "awarding_points") {
       const field = state.fields["max_awardable_amount"];
-      field.change(  v / program.factor_valuation );
+      field.change(v / program.factor_valuation);
     }
-  }
-  
+  };
+
   return (
     <>
       <Form
         mutators={{
           onChangeAwardValue,
-          setEventIcon
+          setEventIcon,
         }}
         onSubmit={onSubmit}
         validate={(values) => formValidation.validateForm(values)}
-        initialValues={{
-        }}
+        initialValues={{}}
       >
         {({ handleSubmit, form, submitting, pristine, values }) => (
           <>
@@ -149,7 +141,9 @@ const AddEventForm = ({onStep, program}) => {
                   <Field name="name">
                     {({ input, meta }) => (
                       <div className="form__form-group">
-                        <span className="form__form-group-label">Event Name</span>
+                        <span className="form__form-group-label">
+                          Event Name
+                        </span>
                         <div className="form__form-group-field">
                           <div className="form__form-group-row">
                             <input
@@ -168,34 +162,23 @@ const AddEventForm = ({onStep, program}) => {
                     )}
                   </Field>
                 </Col>
-                <Col md="6" lg="4" xl="4">
-                  <div className="form__form-group">
-                    <CheckBox
-                      checked={isChecked}
-                      name="milestone_awards"
-                      label="Milestone Awards"
-                      onChange={handleCheckboxChange}
-                    />
-                    {isChecked && (
-                      <Select
-                      styles={{width:"50px"}}
-                        value={selectedOption}
-                        onChange={handleChange}
-                        options={dropdownOptions}
-                      />
-                    )}
-                  </div>
-                </Col>
               </Row>
               <Row>
                 <Col md="6" lg="4" xl="4">
                   <Field name="max_awardable_amount">
                     {({ input, meta }) => (
                       <div className="form__form-group">
-                        <span className="form__form-group-label">Max Awardable Amount</span>
+                        <span className="form__form-group-label">
+                          Max Awardable Amount
+                        </span>
                         <div className="form__form-group-field">
                           <div className="form__form-group-row">
-                            <input onKeyUp={form.mutators.onChangeAwardValue} type="text" {...input} placeholder="Amount" />
+                            <input
+                              onKeyUp={form.mutators.onChangeAwardValue}
+                              type="text"
+                              {...input}
+                              placeholder="Amount"
+                            />
                             {meta.touched && meta.error && (
                               <span className="form__form-group-error">
                                 {meta.error}
@@ -234,31 +217,33 @@ const AddEventForm = ({onStep, program}) => {
                   </Field>
                 </Col>
 
-                {visibleLedgerCode && <Col md="6" lg="4" xl="4">
-                  <Field name="ledger_code">
-                    {({ input, meta }) => (
-                      <div className="form__form-group">
-                        <span className="form__form-group-label">
-                          Ledger Code
-                        </span>
-                        <div className="form__form-group-field">
-                          <div className="form__form-group-row">
-                            <input
-                              type="text"
-                              {...input}
-                              placeholder="Ledger Code"
-                            />
-                            {meta.touched && meta.error && (
-                              <span className="form__form-group-error">
-                                {meta.error}
-                              </span>
-                            )}
+                {visibleLedgerCode && (
+                  <Col md="6" lg="4" xl="4">
+                    <Field name="ledger_code">
+                      {({ input, meta }) => (
+                        <div className="form__form-group">
+                          <span className="form__form-group-label">
+                            Ledger Code
+                          </span>
+                          <div className="form__form-group-field">
+                            <div className="form__form-group-row">
+                              <input
+                                type="text"
+                                {...input}
+                                placeholder="Ledger Code"
+                              />
+                              {meta.touched && meta.error && (
+                                <span className="form__form-group-error">
+                                  {meta.error}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
-                  </Field>
-                </Col>}
+                      )}
+                    </Field>
+                  </Col>
+                )}
               </Row>
               <Row>
                 <Col md="6" lg="4" xl="4">
@@ -286,11 +271,29 @@ const AddEventForm = ({onStep, program}) => {
                     </span>
                     <div className="form__form-group-field">
                       <div className="form__form-group-row">
-                          <Field 
-                                name="event_type_id"
-                                options={eventTypes}
+                        <Field
+                          name="event_type_id"
+                          options={eventTypes}
+                          parse={(value) => {
+                            handleSelect(value);
+                            return value;
+                          }}
+                          placeholder={"Select Event Type"}
+                          component={renderSelectField}
+                        />
+
+                        <div className="form__form-group-field my-4">
+                          <div className="form__form-group-row">
+                            {selectedMilestone === "Milestone Award" && (
+                              <Field
+                                name="milestone_awards"
+                                options={milestoneOptions}
                                 component={renderSelectField}
-                          />
+                                placeholder={"Milestone Awards Year"}
+                              />
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -309,15 +312,16 @@ const AddEventForm = ({onStep, program}) => {
                           <div className="text">
                             {values.icon ? values.icon.name : "+ Add an Icon"}
                           </div>
-                          {values.icon && 
-                          <div className="email_icon">
+                          {values.icon && (
+                            <div className="email_icon">
                               <img src={set_path(values.icon)} alt="icons" />
-                          </div>}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
                     <Field name="event_icon_id">
-                    {({ input, meta }) => (
+                      {({ input, meta }) => (
                         <>
                           <input
                             type="hidden"
@@ -431,8 +435,10 @@ const AddEventForm = ({onStep, program}) => {
   );
 };
 
-export default withRouter(connect((state) => ({
-  theme: state.theme,
-  rtl: state.rtl,
-  // organization: state.organization
-}))(AddEventForm));
+export default withRouter(
+  connect((state) => ({
+    theme: state.theme,
+    rtl: state.rtl,
+    // organization: state.organization
+  }))(AddEventForm)
+);

@@ -13,12 +13,12 @@ import {
   Row,
   Col,
 } from "reactstrap";
-import { Form } from "react-final-form";
+import { Form, Field } from "react-final-form";
 import formValidation from "@/shared/validation/program-engagement";
 import axios from "axios";
 import { sendFlashMessage } from "@/shared/components/flash";
 import { getProgramAction } from "@/redux/actions/programActions";
-import Select from "react-select";
+import renderSelectField from "@/shared/components/form/Select";
 
 const EngagementModal = ({
   dispatch,
@@ -27,12 +27,11 @@ const EngagementModal = ({
   toggle,
   theme,
   rtl,
-  onChange,
 }) => {
   const [loading, setLoading] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(null);
-  const dropdownOptions = [
+  const [isMilestoneChecked, setisMilestoneChecked] = useState(false);
+  const [selectedMilestone, setselectedMilestone] = useState(null);
+  const milestoneOptions = [
     { value: "1 Year", label: "1 Year" },
     { value: "2 Year", label: "2 Year" },
     { value: "3 Year", label: "3 Year" },
@@ -43,13 +42,12 @@ const EngagementModal = ({
   ];
 
   const handleCheckboxChange = () => {
-    console.log("sdfsdf");
-    setIsChecked(!isChecked);
+    setisMilestoneChecked(!isMilestoneChecked);
   };
 
-  const handleChange = (selected) => {
-    setSelectedOption(selected);
-    console.log(selected);
+  const handleMilestoneChange = (selected) => {
+    console.log(selected, "data");
+    setselectedMilestone(selected);
   };
 
   const onSubmitForm = async (values) => {
@@ -290,50 +288,70 @@ const EngagementModal = ({
                 </Col>
               </Row>
               <Row>
-                <Col md="6" lg="4" xl="4">
-                  <div className="form__form-group">
-                    <CheckboxField name="uses_units" label="Uses units" />
-                  </div>
+                <Col md="8" lg="8" xl="8">
+                  <Row>
+                    <Col md="6" lg="6" xl="6">
+                      <div className="form__form-group">
+                        <CheckboxField name="uses_units" label="Uses units" />
+                      </div>
+                    </Col>
+                    <Col md="6" lg="6" xl="6">
+                      <div className="form__form-group">
+                        <CheckboxField
+                          name="enable_how_are_you_feeling"
+                          label="How are you feeling"
+                        />
+                      </div>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md="6" lg="6" xl="6">
+                      <div className="form__form-group">
+                        <CheckboxField
+                          name="allow_multiple_participants_per_unit"
+                          label="Allow multiple participants per unit"
+                        />
+                      </div>
+                    </Col>
+                    <Col md="6" lg="6" xl="6">
+                      <div className="form__form-group">
+                        <CheckboxField
+                          name="enable_referrals"
+                          label="Referrals"
+                        />
+                      </div>
+                    </Col>
+                  </Row>
                 </Col>
-                <Col md="6" lg="4" xl="4">
-                  <div className="form__form-group">
-                    <CheckboxField
-                      name="enable_how_are_you_feeling"
-                      label="How are you feeling"
-                    />
-                  </div>
-                </Col>
-                <Col md="6" lg="4" xl="4">
+                <Col md="4" lg="4" xl="4">
                   <div className="form__form-group">
                     <CheckBox
-                      checked={isChecked}
+                      checked={isMilestoneChecked}
                       name="milestone_awards"
                       label="Milestone Awards"
                       onChange={handleCheckboxChange}
                     />
-                    {isChecked && (
-                      <Select
-                        value={selectedOption}
-                        onChange={handleChange}
-                        options={dropdownOptions}
-                      />
+                    {isMilestoneChecked && (
+                      //   <Select
+                      //   value={selectedMilestone}
+                      //   onChange={handleMilestoneChange}
+                      //   options={ milestoneOptions}
+                      // />
+                      <div className="form__form-group-field">
+                        <div className="form__form-group-row">
+                          <Field
+                            name="milestone_awards"
+                            placeholder={"Milestone Awards Year"}
+                            options={milestoneOptions}
+                            component={renderSelectField}
+                            parse={(value) => {
+                              handleMilestoneChange(value);
+                              return value;
+                            }}
+                          />
+                        </div>
+                      </div>
                     )}
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Col md="6" lg="4" xl="4">
-                  <div className="form__form-group">
-                    <CheckboxField
-                      name="allow_multiple_participants_per_unit"
-                      label="Allow multiple participants per unit"
-                    />
-                  </div>
-                </Col>
-
-                <Col md="6" lg="4" xl="4">
-                  <div className="form__form-group">
-                    <CheckboxField name="enable_referrals" label="Referrals" />
                   </div>
                 </Col>
               </Row>
