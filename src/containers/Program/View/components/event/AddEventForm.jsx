@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Form, Field } from "react-final-form";
 import { Row, Col, ButtonToolbar, Button, Modal, ModalBody } from "reactstrap";
-import { useParams, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
-
+import Select from "react-select";
+import CheckBox from "../../../../../shared/components/form/CheckBox";
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
@@ -24,7 +25,13 @@ const AddEventForm = ({onStep, program}) => {
   const [isOpen, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("2");
   const [visibleLedgerCode, setVisibleLedgerCode] = useState(false);
-
+  const [isChecked, setIsChecked] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const dropdownOptions = [
+    { value: "1 Year", label: "1 Year" },
+    { value: "2 Year", label: "2 Year" },
+    { value: "3 Year", label: "3 Year" },
+  ];
   const set_path = (pickedIcon) => {
     const path = process.env.REACT_APP_API_STORAGE_URL + "/" + pickedIcon.path;
     return path;
@@ -39,6 +46,18 @@ const AddEventForm = ({onStep, program}) => {
         setEventTypes(labelizeNamedData(evtypes))
       })
   }, [])
+
+  const handleCheckboxChange = () => {
+    console.log("sdfsdf");
+    setIsChecked(!isChecked);
+  };
+
+  const handleChange = (selected) => {
+    setSelectedOption(selected);
+    console.log(selected);
+  };
+
+
 
   const onSubmit = (values) => {
     const eventData = makeFormData(program, values)
@@ -148,6 +167,24 @@ const AddEventForm = ({onStep, program}) => {
                       </div>
                     )}
                   </Field>
+                </Col>
+                <Col md="6" lg="4" xl="4">
+                  <div className="form__form-group">
+                    <CheckBox
+                      checked={isChecked}
+                      name="milestone_awards"
+                      label="Milestone Awards"
+                      onChange={handleCheckboxChange}
+                    />
+                    {isChecked && (
+                      <Select
+                      styles={{width:"50px"}}
+                        value={selectedOption}
+                        onChange={handleChange}
+                        options={dropdownOptions}
+                      />
+                    )}
+                  </div>
                 </Col>
               </Row>
               <Row>
