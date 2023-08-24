@@ -292,6 +292,14 @@ export const labelizeNamedData = (data, fields = ["id", "name"]) => {
     return newData;
 }
 
+export const labelizeData = (data) => {
+    let newData = []
+    for( var i in data) {
+        newData.push({label: String(i), value: String(data[i])})
+    }
+    return newData;
+}
+
 export const labelizeNamedRow = (row, fields = ["id", "name"]) => {
     if(typeof row[fields[0]] !== 'undefined' && typeof row[fields[1]] !== 'undefined')
     {

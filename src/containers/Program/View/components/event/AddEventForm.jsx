@@ -8,7 +8,7 @@ import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
 import renderSelectField from "@/shared/components/form/Select";
 import { fetchEventTypes } from "@/shared/apiHelper";
-import { labelizeNamedData } from "@/shared/helpers";
+import { labelizeNamedData, labelizeData } from "@/shared/helpers";
 import {
   useDispatch,
   flashSuccess,
@@ -16,7 +16,8 @@ import {
 } from "@/shared/components/flash";
 import axios from "axios";
 import Tabs from "./Tabs";
-import { makeFormData } from "./common";
+import { makeFormData, } from "./common";
+import {getMilestoneOptions} from '@/shared/apiHelper';
 
 const AddEventForm = ({ onStep, program }) => {
   const dispatch = useDispatch();
@@ -27,12 +28,9 @@ const AddEventForm = ({ onStep, program }) => {
   const [isOpen, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("2");
   const [visibleLedgerCode, setVisibleLedgerCode] = useState(false);
-  const [selectedMilestone, setselectedMilestone] = useState(null);
-  const milestoneOptions = [
-    { value: "1 Year", label: "1 Year" },
-    { value: "2 Year", label: "2 Year" },
-    { value: "3 Year", label: "3 Year" },
-  ];
+  const [selectedMilestone, setSelectedMilestone] = useState(null);
+  const [milestoneOptions, setMilestoneOptions] = useState([]);
+
   const set_path = (pickedIcon) => {
     const path = process.env.REACT_APP_API_STORAGE_URL + "/" + pickedIcon.path;
     return path;
@@ -42,13 +40,17 @@ const AddEventForm = ({ onStep, program }) => {
   };
 
   useEffect(() => {
-    fetchEventTypes().then((evtypes) => {
+    fetchEventTypes(program.organization_id, program.id).then((evtypes) => {
       setEventTypes(labelizeNamedData(evtypes));
     });
+    getMilestoneOptions(program.organization_id, program.id)
+    .then( o => {
+      setMilestoneOptions(labelizeData(o))
+    })
   }, []);
 
   const handleSelect = (option) => {
-    setselectedMilestone(option.label);
+    setSelectedMilestone(option.label);
     console.log(option, "data");
   };
 
@@ -286,10 +288,10 @@ const AddEventForm = ({ onStep, program }) => {
                           <div className="form__form-group-row">
                             {selectedMilestone === "Milestone Award" && (
                               <Field
-                                name="milestone_awards"
+                                name="milestone_award_frequency"
                                 options={milestoneOptions}
                                 component={renderSelectField}
-                                placeholder={"Milestone Awards Year"}
+                                placeholder={"Select Frequency"}
                               />
                             )}
                           </div>

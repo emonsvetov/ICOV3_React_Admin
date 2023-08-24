@@ -71,10 +71,10 @@ export const fetchUserProgramRoles = async(organization_id, user_id, program_id)
     }
 }
 
-export const fetchEventTypes = async() => {
+export const fetchEventTypes = async(organizationId, programId) => {
     try {
         const response = await axios.get(
-        `/eventtype`
+        `/organization/${organizationId}/program/${programId}/eventtype`
         );
         // console.log(response)
         const results = response.data;
@@ -183,5 +183,18 @@ export const getProgramsHierachy = async (organizationId) => {
     return response.data;
   } catch (e) {
     throw new Error(`API error:${e?.message}`);
+  }
+}
+
+export const getMilestoneOptions = async(organizationId, programId) => {
+  try {
+      const response = await axios.get(
+      `/organization/${organizationId}/program/${programId}/eventtype-milestone-frequency`
+      );
+      // console.log(response)
+      const results = response.data;
+      return results;
+  } catch (e) {
+      throw new Error(`API error:${e?.message}`)
   }
 }
