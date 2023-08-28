@@ -11,6 +11,7 @@ export const makeFormData = (program, values) => {
         award_message_editable,
         event_icon_id,
         event_type_id,
+        milestone_award_frequency,
     } = values;
 
     eventData.name = name;
@@ -27,6 +28,7 @@ export const makeFormData = (program, values) => {
     eventData.include_in_budget = 1;
 
     //static
-    eventData.event_type_id = event_type_id.value;
+    eventData.event_type_id = event_type_id?.value ? event_type_id.value : event_type_id;
+    eventData.milestone_award_frequency = milestone_award_frequency?.value ? milestone_award_frequency.value : milestone_award_frequency;
     return eventData
 }

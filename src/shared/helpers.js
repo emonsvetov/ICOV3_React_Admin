@@ -295,7 +295,7 @@ export const labelizeNamedData = (data, fields = ["id", "name"]) => {
 export const labelizeData = (data) => {
     let newData = []
     for( var i in data) {
-        newData.push({label: String(i), value: String(data[i])})
+        newData.push({label: String(data[i]), value: i})
     }
     return newData;
 }
@@ -391,4 +391,11 @@ export const getLastMonthRange = () => {
       end_date
     }
 }
-
+//Get value from either 1. it is number or string, 2. it is key 'value' in an object. Primarily created for handling {label:'',value:''} objects in dropdowns
+export const getValueFromMixed = (value, key = 'value') => {
+    if(typeof value === 'object' && typeof value[key] !== 'undefined')  {
+      return value[key]
+    } else if(typeof value === 'number' || typeof value === 'string')  {
+      return value;
+    }
+}

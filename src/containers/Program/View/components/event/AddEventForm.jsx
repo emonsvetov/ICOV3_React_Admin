@@ -28,7 +28,7 @@ const AddEventForm = ({ onStep, program }) => {
   const [isOpen, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("2");
   const [visibleLedgerCode, setVisibleLedgerCode] = useState(false);
-  const [selectedMilestone, setSelectedMilestone] = useState(null);
+  const [selectedEventType, setSelectedEventType] = useState(null);
   const [milestoneOptions, setMilestoneOptions] = useState([]);
 
   const set_path = (pickedIcon) => {
@@ -40,18 +40,21 @@ const AddEventForm = ({ onStep, program }) => {
   };
 
   useEffect(() => {
-    fetchEventTypes(program.organization_id, program.id).then((evtypes) => {
-      setEventTypes(labelizeNamedData(evtypes));
-    });
-    getMilestoneOptions(program.organization_id, program.id)
-    .then( o => {
-      setMilestoneOptions(labelizeData(o))
-    })
-  }, []);
+    if(program?.organization_id)  {
+      fetchEventTypes(program.organization_id, program.id).then((evtypes) => {
+        setEventTypes(labelizeNamedData(evtypes));
+      });
+      if( program.allow_milestone_award ) {
+        getMilestoneOptions(program.organization_id, program.id)
+        .then( o => {
+          setMilestoneOptions(labelizeData(o))
+        })
+      }
+    }
+  }, [program]);
 
-  const handleSelect = (option) => {
-    setSelectedMilestone(option.label);
-    console.log(option, "data");
+  const handleSelectEventType = (option) => {
+    setSelectedEventType(option.label);
   };
 
   const onSubmit = (values) => {
@@ -277,25 +280,24 @@ const AddEventForm = ({ onStep, program }) => {
                           name="event_type_id"
                           options={eventTypes}
                           parse={(value) => {
-                            handleSelect(value);
+                            handleSelectEventType(value);
                             return value;
                           }}
                           placeholder={"Select Event Type"}
                           component={renderSelectField}
                         />
-
-                        <div className="form__form-group-field my-4">
-                          <div className="form__form-group-row">
-                            {selectedMilestone === "Milestone Award" && (
+                        {selectedEventType === "Milestone Award" && (
+                          <div className="form__form-group-field my-4">
+                            <div className="form__form-group-row">
                               <Field
                                 name="milestone_award_frequency"
                                 options={milestoneOptions}
                                 component={renderSelectField}
                                 placeholder={"Select Frequency"}
                               />
-                            )}
+                            </div>
                           </div>
-                        </div>
+                        )}
                       </div>
                     </div>
                   </div>
