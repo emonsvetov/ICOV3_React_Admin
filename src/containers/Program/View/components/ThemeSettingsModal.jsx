@@ -8,7 +8,7 @@ import { Form, Field } from 'react-final-form';
 import axios from 'axios'
 import renderDropZoneField from '@/shared/components/form/DropZone';
 import {useDispatch, flashSuccess, flashError} from "@/shared/components/flash";
-import {mapFormDataUploads, unpatchMedia, patchMediaURL, removeFields} from '@/shared/helpers'
+import {mapFormDataUploads, unpatchMedia, patchMediaURL, removeFields, isEmpty} from '@/shared/helpers'
 import classnames from 'classnames';
 import Slider from "@/shared/components/form/Slider"
 import { ColorPicker } from 'material-ui-color';
@@ -40,6 +40,7 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
     let [template, setTemplate] = useState({})
     // console.log(program)
     const validate = values => {
+      // console.log(values)
       let errors = {}
       if( !values.name && !currentTheme )
       {
@@ -57,7 +58,7 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
       {
         errors.hero_banner = 'hero banner is required'
       }
-      if( !values.slider_01 && !template.slider_01 )
+      if( isEmpty(values.slider_01) && isEmpty(template.slider_01) )
       {
         errors.slider_01 = 'Atleast one slider image is required'
       }
@@ -70,12 +71,11 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
       return errors
     }
     const deleteImage = (name) => {
-      console.log(name)
-      let tmpTemplate = template;
-      tmpTemplate[name] = null
-      // console.log(tmpTemplate)
-      setTemplate(tmpTemplate);
-    } 
+      setTemplate((prevState) => ({
+        ...prevState,
+        [name]: null,
+      }));
+    }
     const onSubmitForm = async (values) => {
         values.button_corner = sliderValue;
         values.theme_color = selectedThemeColor;
@@ -256,11 +256,12 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
 
     let formError = false;
 
-    console.log(template)
+    // console.log(template.welcome_message = template.welcome_message)
+
+    // console.log(template.slider_01)
 
     return (
-    <Modal className={`modal-program programTemplateModal modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen}
-           toggle={toggle}>
+    <Modal className={`modal-program programTemplateModal modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={toggle}>
         <Form
             onSubmit={onSubmitForm}
             validate={validate}
@@ -615,7 +616,7 @@ const RenderImage = ({src, showDelete = false, name, dlcb }) => {
         <a href={src} target='_blank' title='View the picture'>
           <img style={{maxHeight:200}} src={src} />
         </a>
-        {(showDelete && dlcb) && <button class="dropzone__img-delete" style={{opacity:1,color:'black',backgroun:'#fff'}} onClick={() => dlcb(name)} type="button">Remove</button>}
+        {(showDelete && dlcb) && <button className="dropzone__img-delete" style={{opacity:1,color:'black',backgroun:'#fff'}} onClick={() => dlcb(name)} type="button">Remove</button>}
       </div>
     )
 }
