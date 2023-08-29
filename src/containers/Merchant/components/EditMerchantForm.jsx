@@ -7,7 +7,6 @@ import renderSelectField from '@/shared/components/form/Select';
 import axios from 'axios';
 import {mapFormDataUploads, patchMerchantMediaURL, unpatchMerchantFields} from '@/shared/helpers'
 import renderDropZoneField from '@/shared/components/form/DropZone';
-import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import WYSIWYGEditor from '@/shared/components/form/WYSIWYGEditor'
 import { useParams } from 'react-router-dom'
 
@@ -22,7 +21,6 @@ const fetchMerchant = async ( id ) => {
 
 const EditMerchantForm = () => {
 
-    const dispatch = useDispatch()
     let { id } = useParams();
 
     const [loading, setLoading] = useState(false)

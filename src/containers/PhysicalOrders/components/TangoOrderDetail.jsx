@@ -7,11 +7,6 @@ import formValidation from "@/shared/validation/merchants/addMerchant";
 import axios from 'axios';
 import { useParams, useHistory } from "react-router-dom";
 
-const STATUS = [
-    {label: 'Pending', value: 'pending'},
-    {label: 'Cancelled', value: 'cancelled'},
-    {label: 'Shipped', value: 'shipped'},
-]
 
 const fetchTango = async ( id ) => {
     try {

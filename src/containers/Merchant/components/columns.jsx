@@ -10,7 +10,7 @@ export const COLUMNS = [
     {
         Header: "Logo",
         accessor: "logo",
-        Cell: ({ row, value }) => { return <img className='merchant-index-logo' src={`${process.env.REACT_APP_API_STORAGE_URL}/${value}`} />},
+        Cell: ({ row, value }) => { return <img className='merchant-index-logo' src={`${process.env.REACT_APP_API_STORAGE_URL}/${value}`} alt='merchant-logo'/>},
     },
     {
         Header: "Display",

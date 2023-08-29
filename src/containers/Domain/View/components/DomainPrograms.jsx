@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo} from "react";
+import React, {useState} from "react";
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import DomainProgramsDataTable from './DomainProgramsDataTable';

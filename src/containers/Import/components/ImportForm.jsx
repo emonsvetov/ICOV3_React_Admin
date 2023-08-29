@@ -17,10 +17,6 @@ const isValidResponse = data => {
   return true;
 }
 
-const tableConfig = {
-  isResizable: true,
-  isSortable: false
-}
 
 let config = {
   importType: {

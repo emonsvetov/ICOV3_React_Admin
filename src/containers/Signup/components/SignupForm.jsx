@@ -9,7 +9,7 @@ import LockOutlineIcon from 'mdi-react/LockOutlineIcon';
 import EmailOutlineIcon from 'mdi-react/EmailOutlineIcon';
 import HomeOutlineIcon from 'mdi-react/HomeOutlineIcon';
 
-const required = value => value ? undefined : 'Required';
+
 
 // const renderField = ({ input, label, type, meta: { touched, error, warning } }) => (
 //   <div>

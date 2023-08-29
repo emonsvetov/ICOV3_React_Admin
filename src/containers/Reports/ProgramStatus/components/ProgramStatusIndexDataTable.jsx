@@ -163,11 +163,6 @@ const DataTable = ({ organization }) => {
     trigger,
   });
 
-  const availableAwardLevels = [
-    { value: "default", label: "Default" },
-    { value: "ntc", label: "NTC" },
-  ];
-
   if (error) {
     return <p>Error: {JSON.stringify(error)}</p>;
   }

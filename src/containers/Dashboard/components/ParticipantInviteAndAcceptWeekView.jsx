@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pie, PieChart, ResponsiveContainer } from 'recharts';
-import Panel, { PanelTitle } from '@/shared/components/Panel';
+import Panel from '@/shared/components/Panel';
 
 const data01 = [{ value: 78, fill: '#4ce1b6' },
   { value: 22, fill: '#eeeeee' }];

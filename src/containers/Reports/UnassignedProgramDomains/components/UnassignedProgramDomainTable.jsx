@@ -108,9 +108,6 @@ const DataTable = () => {
         // alert(status, keyword)
     }
 
-    const handleExport = () =>{
-        alert('handle CSV export')
-    }
     
 
     let program_columns = [

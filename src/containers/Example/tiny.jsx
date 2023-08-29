@@ -1,9 +1,8 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import { Form, Field } from 'react-final-form';
 import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/example/example";
-import axios from 'axios';
 import WYSIWYGEditor from './components/WYSIWYGEditor'
 
 const ExampleForm = () => {

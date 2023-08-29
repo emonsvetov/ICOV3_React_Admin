@@ -11,7 +11,7 @@ export const SelectField = React.forwardRef(({
   };
 
   if(options){
-    for (const [key, val] of Object.entries(options)) {
+    for (const [ val] of Object.entries(options)) {
       if (val.value == value){
           value = val;
           break;

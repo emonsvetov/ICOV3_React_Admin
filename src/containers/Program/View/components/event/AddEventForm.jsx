@@ -11,7 +11,6 @@ import { fetchEventTypes } from "@/shared/apiHelper";
 import { labelizeNamedData, labelizeData } from "@/shared/helpers";
 import {
   useDispatch,
-  flashSuccess,
   flashError,
 } from "@/shared/components/flash";
 import axios from "axios";

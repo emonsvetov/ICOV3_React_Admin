@@ -3,15 +3,7 @@ import { connect } from 'react-redux';
 import {Card, CardBody, Col, Container, Row} from 'reactstrap';
 import { RTLProps } from '@/shared/prop-types/ReducerProps';
 import AddProgramForm from '../../containers/Program/components/AddProgramForm';
-import SocialLinks from './components/SocialLinks';
-import RedemptionsWeekView from './components/RedemptionsWeekView';
-import TopMerchantsThisWeek from './components/TopMerchantsThisWeek';
-import TotalActivePrograms from './components/TotalActivePrograms';
-import TotalRewardsThisWeek from './components/TotalRewardsThisWeek';
-import TotalRedemptionThisWeek from './components/TotalRedemptionThisWeek';
-import NewParticipantInvitesThisWeek from './components/NewParticipantInvitesThisWeek';
-import ParticipantInviteAndAcceptWeekView from './components/ParticipantInviteAndAcceptWeekView';
-import {Link, withRouter} from "react-router-dom";
+import { withRouter} from "react-router-dom";
 import FolderPlusOutlineIcon from "mdi-react/FolderPlusOutlineIcon";
 
 const Dashboard = ({ organization }) => {

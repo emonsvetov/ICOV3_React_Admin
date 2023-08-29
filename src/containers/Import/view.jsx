@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link, useParams} from 'react-router-dom';
-import {Card, CardBody, Col, Container, Row} from 'reactstrap';
+import { Col, Container, Row} from 'reactstrap';
 import ImportViewCard from './components/ImportView';
 import {IMPORT_DATA} from "./components/MockData";
 

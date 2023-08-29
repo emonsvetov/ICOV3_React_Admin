@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo} from "react";
+import React, {useState, useMemo} from "react";
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 
@@ -8,7 +8,7 @@ import ReactTablePagination from '@/shared/components/table/components/ReactTabl
 import UploadGiftCodesModal  from "./UploadGiftCodesModal";
 import { Row, Col } from 'reactstrap';
 
-import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter, Sorting} from "@/shared/apiTableHelper"
+import {reducer, useEffectToDispatch, fetchApiData, initialState, Sorting} from "@/shared/apiTableHelper"
 
 const queryClient = new QueryClient()
 

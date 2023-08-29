@@ -90,7 +90,7 @@ const InvoiceDataTable = (props) =>{
         nextPage,
         canNextPage,
         setPageSize,
-        state: { pageIndex, pageSize, sortBy, pageFilter }
+        state: { pageIndex, pageSize, sortBy }
     } = useTable({
         columns,
         data: data ? data.results : [],

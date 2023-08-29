@@ -18,10 +18,7 @@ const AddIconForm = ( props ) => {
   const onClickCancel = () => {
     props.onStep(1)
   };
-
-  const onClickOK = () => {
-    props.onStep(1)
-  };
+  
   function handleUpload(values){
       
     let data = new FormData();

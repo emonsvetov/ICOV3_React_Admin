@@ -95,7 +95,6 @@ const DataTable = ({organization, merchants}) => {
     footerGroups,
     rows,
     prepareRow,
-    rowSpanHeaders,
     page,
     pageCount,
     pageOptions,

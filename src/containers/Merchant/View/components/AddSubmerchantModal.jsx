@@ -6,11 +6,9 @@ import renderSelectField from '@/shared/components/form/Select';
 import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col, Spinner } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
 import axios from 'axios'
-import {patch4Select, flatten} from '@/shared/helpers'
+import { flatten} from '@/shared/helpers'
 
-const SKIP = [
-    {label: '1-800-Flowers', value: '1'}
-]
+
 
 // const skipExisting = (data) => {
 //     let newData = []
@@ -20,9 +18,7 @@ const SKIP = [
 //     return newData;
 // }
 
-const DIRECT_ANSCESTORS  = [
-    {label: 'NONE', value: 'none'},
-]
+
 
 const AddSubmerchantModal = ({isOpen, setOpen, toggle, theme, rtl, merchant, organization, setTrigger}) => {
 
