@@ -57,7 +57,7 @@ const InvoiceDataTable = (props) =>{
 
     const apiUrl = `/organization/${props.program.organization_id}/program/${props.program.id}/invoice`
 
-    const { isLoading, error, data, isSuccess } = useQuery(
+    const { isLoading, error, data } = useQuery(
         ['invoices', apiUrl, queryPageIndex, queryPageSize, queryPageSortBy, queryTrigger],
         () => fetchApiData(
             {

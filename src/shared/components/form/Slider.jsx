@@ -2,8 +2,6 @@ import React from 'react';
 import {Slider, styled} from "@material-ui/core" ;
 import PropTypes from "prop-types";
 import {renderComponentField} from '@/shared/components/form/FormField';
-import {Spinner} from "reactstrap";
-import {Field} from "react-final-form";
 
 const SliderField = ({
                        onChange,

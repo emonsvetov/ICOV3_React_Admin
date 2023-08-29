@@ -5,10 +5,7 @@ import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import {
   Modal,
   ModalBody,
-  ModalHeader,
   Button,
-  Card,
-  CardBody,
   ButtonToolbar,
   Row,
   Col,

@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import CheckboxHierarchy from '@/shared/components/form/CheckboxHierarchy'
 import axios from 'axios'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {useQuery} from "react-query";
-import {FieldArray} from "react-final-form-arrays";
 import {isEmpty} from '@/shared/helpers'
 
 const MerchantsHierarchy = ({defaultMerchants, organization, selectedMerchants, setSelectedMerchants}) => {

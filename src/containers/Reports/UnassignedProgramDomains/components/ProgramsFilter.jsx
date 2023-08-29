@@ -1,6 +1,6 @@
 import React from 'react'
 import { Field, Form } from 'react-final-form';
-import { Button, Row, Col } from 'reactstrap';
+import { Button, Row } from 'reactstrap';
 
 const ProgramFilter = ({onClickFilterCallback}) => {
     

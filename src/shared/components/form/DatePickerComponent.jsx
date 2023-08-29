@@ -1,6 +1,6 @@
 
 import DatePicker from "react-datepicker";
-import {parse, format, isValid, toDate } from "date-fns";
+import { format, isValid } from "date-fns";
 import { isMobileOnly } from 'react-device-detect';
 
 const FieldDatePicker = ({ name, input, input: { value, onChange } }) => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import CheckboxHierarchy from '@/shared/components/form/CheckboxHierarchy'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
@@ -29,7 +29,7 @@ const ProgramsHierarchy = ({organization, selectedPrograms, setSelectedPrograms}
   };
 
   const queryPageFilter = '';
-  const {isLoading, error, data, isSuccess} = useQuery(
+  const {isLoading, data} = useQuery(
     ['programs', queryPageFilter],
     () => fetchProgramData(queryPageFilter),
     {

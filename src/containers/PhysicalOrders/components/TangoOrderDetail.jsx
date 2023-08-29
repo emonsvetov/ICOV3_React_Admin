@@ -5,8 +5,6 @@ import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
 import formValidation from "@/shared/validation/merchants/addMerchant";
 
 import axios from 'axios';
-
-import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import { useParams, useHistory } from "react-router-dom";
 
 const STATUS = [
@@ -25,8 +23,6 @@ const fetchTango = async ( id ) => {
 };
 
 const TangoOrderDetail = () => {
-
-    const dispatch = useDispatch()
     let { id } = useParams();
 
     const [loading, setLoading] = useState(false)

@@ -1,7 +1,4 @@
 import React, {useState} from 'react';
-import { Link } from 'react-router-dom';
-import FacebookIcon from 'mdi-react/FacebookIcon';
-import GooglePlusIcon from 'mdi-react/GooglePlusIcon';
 import SignupForm from './components/SignupForm';
 const IncentcoLogo = `${process.env.PUBLIC_URL}/img/logo-sm.png`;
 
@@ -61,7 +58,7 @@ const Signup = () => {
       // console.log(res)
       // return;
       // console.log(res.status == 200)
-      if(res.status == 200)  {
+      if(res.status === 200)  {
         // localStorage.setItem("authToken", res.data.access_token);
         // localStorage.setItem("authUser", JSON.stringify(res.data.user));
         window.location = '/signup/success'

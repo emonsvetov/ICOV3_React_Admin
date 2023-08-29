@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {Row, Col} from 'reactstrap';
 import {Form, Field} from 'react-final-form';
 import renderRadioButtonField from '@/shared/components/form/RadioButton';
-import CheckboxField from '@/shared/components/form/CheckboxField';
 import formValidation from "@/shared/validation/program-add";
 import axios from 'axios';
 import renderCheckBoxField from '@/shared/components/form/CheckBox';

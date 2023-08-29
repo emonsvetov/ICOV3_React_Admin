@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { Field, Form } from 'react-final-form';
@@ -15,7 +15,6 @@ const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const IconUpload = ({ setIcons, toggle, onCancel, program }) => {
 
-  const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
 

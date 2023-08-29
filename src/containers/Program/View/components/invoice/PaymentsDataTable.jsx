@@ -1,6 +1,5 @@
 import React, {useMemo, useState, useEffect} from 'react';
 import { useTable, useSortBy, usePagination } from "react-table";
-import { Button, ButtonToolbar, Row, Col  } from 'reactstrap';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {reducer, useEffectToDispatch, fetchApiData, initialState, Sorting} from "@/shared/apiTableHelper"
@@ -69,7 +68,7 @@ const PaymentsDataTable = (props) =>{
 
     const apiUrl = `/organization/${props.program.organization_id}/program/${props.program.id}/payments?pays_for_points=1`
 
-    const { isLoading, error, data, isSuccess } = useQuery(
+    const { isLoading, error, data } = useQuery(
         ['invoices', apiUrl, queryPageIndex, queryPageSize, queryPageSortBy, queryTrigger],
         () => fetchApiData(
             {

@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo} from "react";
+import React, {useState, useMemo} from "react";
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import { PROGRAM_COLUMNS } from "./columns"
@@ -8,7 +8,7 @@ import SortDescendingIcon from 'mdi-react/SortDescendingIcon'
 import DeleteIcon from 'mdi-react/DeleteOutlineIcon'
 import RestoreIcon from 'mdi-react/RestoreIcon'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination'
-import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter} from "@/shared/apiTableHelper"
+import {reducer, useEffectToDispatch, fetchApiData, initialState } from "@/shared/apiTableHelper"
 import ProgramFilter  from "./ProgramsFilter"
 import { Link } from 'react-router-dom'
 import axios from 'axios'

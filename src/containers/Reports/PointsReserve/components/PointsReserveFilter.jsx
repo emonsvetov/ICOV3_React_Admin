@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
 import { Field, Form } from 'react-final-form';
-import {Button, Row, Col } from 'reactstrap';
-import DatePicker from 'react-datepicker';
+import {Button, Row } from 'reactstrap';
 import RenderDatePicker from '@/shared/components/form/DatePickerWithInitial';
 
 const getFirstDay = () =>{

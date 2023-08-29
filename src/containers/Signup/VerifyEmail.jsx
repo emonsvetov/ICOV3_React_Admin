@@ -9,7 +9,7 @@ import {
 import axios from 'axios';
 import { Col, Container, Row, Spinner} from 'reactstrap';
 import Alert from '@/shared/components/Alert';
-import {getAuthUser, AUTH_USER_KEY, getToken} from '../App/auth';
+import {getAuthUser, AUTH_USER_KEY} from '../App/auth';
 const TEXT_ALREADY_VERIFIED = 'You have verified your email already';
 const VerifyEmail = () => {
     const [id, setId] = useState(null);

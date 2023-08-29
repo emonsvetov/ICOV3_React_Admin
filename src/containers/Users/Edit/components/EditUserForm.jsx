@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
 import formValidation from "@/shared/validation/adduser";
 import axios from 'axios';
-import {patch4Select, unpatchSelect, labelizeNamedData} from '@/shared/helpers'
+import { unpatchSelect, labelizeNamedData} from '@/shared/helpers'
 import { fetchUser, fetchRoles } from "@/shared/apiHelper"
 import FormFields from '../../components/FormFields'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"

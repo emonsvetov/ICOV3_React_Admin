@@ -16,8 +16,8 @@ import {
   TableFilter,
   Sorting
 } from "@/shared/apiTableHelper"
-import axios from "axios";
-import {isEqual, clone} from 'lodash';
+
+import { clone} from 'lodash';
 
 const queryClient = new QueryClient()
 
@@ -32,7 +32,6 @@ const DataTable = ({organization, programs}) => {
   const [exportData, setExportData] = useState([]);
   const [exportHeaders, setExportHeaders] = useState([]);
   const [exportToCsv, setExportToCsv] = useState(false);
-  const [filterValues, setFilterValues] = useState([]);
   const exportLink = React.createRef();
 
   let columns = useMemo(() => TABLE_COLUMNS, [])

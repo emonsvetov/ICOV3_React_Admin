@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { Modal, ModalBody, Button } from 'reactstrap';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';

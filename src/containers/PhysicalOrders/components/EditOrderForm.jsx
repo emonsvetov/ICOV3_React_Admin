@@ -6,7 +6,6 @@ import formValidation from "@/shared/validation/merchants/addMerchant";
 import renderSelectField from '@/shared/components/form/Select';
 import axios from 'axios';
 import US_STATES from "@/shared/json/usstates.json";
-import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import { useParams, useHistory } from "react-router-dom";
 
 const STATUS = [
@@ -26,7 +25,6 @@ const fetchPhysicalOrder = async ( id ) => {
 
 const EditOrderForm = () => {
 
-    const dispatch = useDispatch()
     let { id } = useParams();
 
     const [loading, setLoading] = useState(false)

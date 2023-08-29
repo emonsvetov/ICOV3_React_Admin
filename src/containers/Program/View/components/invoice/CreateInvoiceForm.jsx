@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Field } from "react-final-form";
-import { Row, Col, ButtonToolbar, Button, Modal, ModalBody } from "reactstrap";
+import { Row, Col, ButtonToolbar, Button } from "reactstrap";
 import { useParams } from "react-router-dom";
 import {labelizeRecursive} from '@/shared/helpers'
 import {useDispatch, sendFlashMessage, ApiErrorMessage} from "@/shared/components/flash"

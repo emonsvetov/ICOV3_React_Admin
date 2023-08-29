@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 
 import React, { useMemo } from 'react';
 
@@ -13,7 +12,7 @@ export const TABLE_COLUMNS = [
         accessor: "total_redemption_value",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.total_redemption_value) + sum, 0),
               [rows],
@@ -27,7 +26,7 @@ export const TABLE_COLUMNS = [
         accessor: "total_premium",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.total_premium) + sum, 0),
               [rows],
@@ -55,7 +54,7 @@ export const TABLE_COLUMNS = [
         accessor: "total_cost_basis",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.total_cost_basis) + sum, 0),
               [rows],

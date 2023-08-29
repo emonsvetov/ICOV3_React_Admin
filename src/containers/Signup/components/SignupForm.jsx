@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
+
 import { Link } from 'react-router-dom';
 import { Form, Field } from 'react-final-form';
 import { Spinner } from 'reactstrap';

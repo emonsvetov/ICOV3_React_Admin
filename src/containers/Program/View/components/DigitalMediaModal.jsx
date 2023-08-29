@@ -2,14 +2,13 @@ import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
 import {RTLProps} from '@/shared/prop-types/ReducerProps';
-import {Modal, ModalBody, Row, Col, ListGroup, ListGroupItem, Card, CardBody, Button} from 'reactstrap';
+import {Modal, ModalBody, Row, Col, Card, CardBody, Button} from 'reactstrap';
 import CloseButton from "@/shared/components/CloseButton";
 import CreatableSelect from "react-select/creatable";
 import axios from "axios";
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
 import Dropzone from 'react-dropzone-uploader'
 import 'react-dropzone-uploader/dist/styles.css'
-import {isEmpty} from '@/shared/helpers'
 import {Field, Form} from "react-final-form";
 // import {formatBytes, formatDuration} from "react-dropzone-uploader/dist/utils";
 
@@ -54,7 +53,6 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   const [media, setMedia] = useState([]);
   const [mediaTypes, setMediaTypes] = useState([]);
   const [mediaType, setMediaType] = useState('');
-  let [template, setTemplate] = useState(null);
   const [uploadedMeta, setUploadedMeta] = useState({});
   const [iconMeta, setIconMeta] = useState({});
   const [fileName, setFileName] = React.useState("");

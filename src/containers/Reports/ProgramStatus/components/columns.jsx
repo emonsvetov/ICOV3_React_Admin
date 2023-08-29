@@ -1,6 +1,5 @@
-import {Link} from 'react-router-dom';
-import React, {useMemo} from 'react';
-import {toCurrency, toPoints} from '@/shared/helpers'
+
+import {toCurrency} from '@/shared/helpers'
 
 export const TABLE_COLUMNS = [
 

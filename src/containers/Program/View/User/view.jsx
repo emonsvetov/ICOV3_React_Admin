@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import { Col, Container, Row, Card, CardBody } from 'reactstrap';
 import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
@@ -26,7 +26,7 @@ const ViewUser = ({organization}) => {
 
     // console.log(organization)
 
-    const { isLoading, error, data, isSuccess, remove } = useQuery(
+    const { isLoading, error, data, isSuccess } = useQuery(
         ['user', id],
         () => fetchUser( id ),
         {
