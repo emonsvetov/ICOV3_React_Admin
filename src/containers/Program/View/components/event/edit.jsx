@@ -11,7 +11,7 @@ import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
 import axios from "axios";
 import renderSelectField from '@/shared/components/form/Select'
-import Tabs from "./Tabs";
+import AddIconTabs from "./AddIconTabs";
 import { fetchEventTypes } from '@/shared/apiHelper'
 import { labelizeNamedData } from '@/shared/helpers'
 import { makeFormData } from './common'
@@ -53,11 +53,13 @@ const Edit = ({organization, theme, rtl}) => {
     }
   };
   useEffect(() => {
-    fetchEventTypes()
+    if( program?.id ){
+    fetchEventTypes(program.organization_id, program.id)
       .then(evtypes => {
         setEventTypes(labelizeNamedData(evtypes))
       })
-  }, [])
+    }
+  }, [program])
 
   useEffect(() => {
     if (organization && programId) {
@@ -79,11 +81,9 @@ const Edit = ({organization, theme, rtl}) => {
   let history = useHistory();
 
   const onSubmit = (values) => {
-
+    // console.log(event)
+    // console.log(values)
     const eventData = makeFormData(program, values)
-
-    // console.log(eventData)
-    // return
 
     axios
       .put(`/organization/${program.organization_id}/program/${programId}/event/${eventId}`, eventData)
@@ -146,7 +146,12 @@ const Edit = ({organization, theme, rtl}) => {
   if (loading || !event) {
     return <p>Loading...</p>;
   }
-  // console.log(event)
+
+  if( event.event_icon && !event.icon)  {
+    console.log('mappingicon')
+    event.icon = event.event_icon
+  }
+  console.log(event)
 
   event.awarding_points = parseFloat(event.max_awardable_amount) * parseInt(program.factor_valuation)
 
@@ -361,7 +366,7 @@ const Edit = ({organization, theme, rtl}) => {
                                   <input
                                     type="hidden"
                                     {...input}
-                                    placeholder="Event Name"
+                                    placeholder="Event Icon"
                                   />
                                   {meta.touched && meta.error && (
                                     <span className="form__form-group-error">
@@ -452,11 +457,11 @@ const Edit = ({organization, theme, rtl}) => {
                             </Col>
                           </Row>
                           <div className="pt-5 tabs">
-                            <Tabs
+                            <AddIconTabs
                               onSelectIconOK={form.mutators.setEventIcon}
                               activeTab={activeTab}
                               onCancel={() => setOpen(false)}
-                              icon={values.icon}
+                              icon={values?.icon ? values.icon : values.event_icon}
                               program={program}
                             />
                           </div>

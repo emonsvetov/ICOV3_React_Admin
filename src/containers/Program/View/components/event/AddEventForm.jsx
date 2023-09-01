@@ -12,7 +12,7 @@ import {fetchEventTypes} from '@/shared/apiHelper'
 import {labelizeNamedData} from '@/shared/helpers'
 import { useDispatch, flashSuccess, flashError } from "@/shared/components/flash"
 import axios from "axios";
-import Tabs from "./Tabs";
+import AddIconTabs from "./AddIconTabs";
 import{makeFormData} from './common'
 
 const AddEventForm = ({onStep, program}) => {
@@ -34,11 +34,13 @@ const AddEventForm = ({onStep, program}) => {
   };
 
   useEffect(() => {
-    fetchEventTypes()
+    if( program?.id ){
+    fetchEventTypes(program.organization_id, program.id)
       .then(evtypes => {
         setEventTypes(labelizeNamedData(evtypes))
       })
-  }, [])
+    }
+  }, [program])
 
   const onSubmit = (values) => {
     const eventData = makeFormData(program, values)
@@ -376,7 +378,7 @@ const AddEventForm = ({onStep, program}) => {
                     </Col>
                   </Row>
                   <div className="pt-5 tabs">
-                    <Tabs
+                    <AddIconTabs
                       onSelectIconOK={form.mutators.setEventIcon}
                       activeTab={activeTab}
                       onCancel={() => setOpen(false)}

@@ -1,4 +1,5 @@
 export const makeFormData = (program, values) => {
+    // console.log(values)
     let eventData = {};
     eventData["organization_id"] = program.organization_id;
     eventData["program_id"] = program.id;
@@ -27,6 +28,26 @@ export const makeFormData = (program, values) => {
     eventData.include_in_budget = 1;
 
     //static
-    eventData.event_type_id = event_type_id.value;
+    eventData.event_type_id = extractEventTypeId(eventData, event_type_id)
     return eventData
+}
+
+const extractEventTypeId = (eventData, selected_event_type_id) => {
+    if(typeof selected_event_type_id === 'object') {
+        if( selected_event_type_id?.value )   {
+            return parseInt(selected_event_type_id.value)
+        }
+    }   else if (typeof selected_event_type_id === 'number' || selected_event_type_id === 'string') {
+        return parseInt(selected_event_type_id)
+    } else if( eventData.event_type_id )   {
+        if(typeof eventData.event_type_id === 'object') {
+            if( eventData.event_type_id?.value )   {
+                return parseInt(eventData.event_type_id.value)
+            }
+        }   else if (typeof eventData.event_type_id === 'number') {
+            return eventData.event_type_id
+        }
+    }   else if (eventData.event_type && typeof eventData.event_type === 'object' && eventData.event_type?.id)    {
+        return eventData.event_type.id
+    }
 }

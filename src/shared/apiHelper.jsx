@@ -71,10 +71,10 @@ export const fetchUserProgramRoles = async(organization_id, user_id, program_id)
     }
 }
 
-export const fetchEventTypes = async() => {
+export const fetchEventTypes = async(oId, pId) => {
     try {
         const response = await axios.get(
-        `/eventtype`
+        `/organization/${oId}/program/${pId}/eventtype`
         );
         // console.log(response)
         const results = response.data;
