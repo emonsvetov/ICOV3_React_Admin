@@ -17,3 +17,9 @@ export const resetTheme = async (organizationId, programId, templateId) => {
     );
     return response.data;
 };
+export const deleteThemeMedia = async (organizationId, programId, templateId, mediaName) => {
+    const response = await axios.delete(
+        `/organization/${organizationId}/program/${programId}/template/${templateId}/media/${mediaName}`
+    );
+    return response.data;
+};
