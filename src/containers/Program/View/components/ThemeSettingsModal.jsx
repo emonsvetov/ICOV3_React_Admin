@@ -14,7 +14,7 @@ import Slider from "@/shared/components/form/Slider"
 import { ColorPicker } from 'material-ui-color';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import {getThemeByName, resetTheme, getTheme} from '@/service/program/programTheme'
+import {getThemeByName, resetTheme, getTheme, deleteThemeMedia} from '@/service/program/programTheme'
 
 import renderSelectOptionsField from '@/shared/components/form/SelectOptions';
 
@@ -71,10 +71,13 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
       return errors
     }
     const deleteImage = (name) => {
-      setTemplate((prevState) => ({
-        ...prevState,
-        [name]: null,
-      }));
+      deleteThemeMedia(program.organization_id, program.id, template.id, name)
+      .then( res => {
+        setTemplate((prevState) => ({
+          ...prevState,
+          [name]: null,
+        }));
+      })
     }
     const onSubmitForm = async (values) => {
         values.button_corner = sliderValue;
