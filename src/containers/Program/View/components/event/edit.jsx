@@ -12,9 +12,10 @@ import renderToggleButtonField from "@/shared/components/form/ToggleButton";
 import axios from "axios";
 import renderSelectField from '@/shared/components/form/Select'
 import AddIconTabs from "./AddIconTabs";
-import { fetchEventTypes } from '@/shared/apiHelper'
+import { fetchEventTypes, getEventLedgerCodes } from '@/shared/apiHelper'
 import { labelizeNamedData } from '@/shared/helpers'
 import { makeFormData } from './common'
+import LedgerCodes from './LedgerCodes';
 
 const fetchEvent = async (oId, pId, eId) => {
   try {
@@ -35,6 +36,7 @@ const Edit = ({organization, theme, rtl}) => {
   const [eventTypes, setEventTypes] = useState([]);
   const [visibleLedgerCode, setVisibleLedgerCode] = useState(false);
   const [activeTab, setActiveTab] = useState('2');
+  const [ledgerCodes, setLedgerCodes] = useState([]);
 
   const dispatch = useDispatch()
 
@@ -52,12 +54,22 @@ const Edit = ({organization, theme, rtl}) => {
       throw new Error(`API error:${e?.message}`);
     }
   };
+  const cb_CodeAction = () => {
+    getListLedgerCodes(program)
+  }
+  const getListLedgerCodes = (program) => {
+    getEventLedgerCodes(program.organization_id, program.id)
+    .then(ledgercodes => {
+      setLedgerCodes(labelizeNamedData(ledgercodes, ["id", "ledger_code"]))
+    })
+  }
   useEffect(() => {
     if( program?.id ){
     fetchEventTypes(program.organization_id, program.id)
       .then(evtypes => {
         setEventTypes(labelizeNamedData(evtypes))
       })
+      getListLedgerCodes(program)
     }
   }, [program])
 
@@ -228,6 +240,23 @@ const Edit = ({organization, theme, rtl}) => {
                               </div>
                             )}
                           </Field>
+                        </Col>
+                        <Col md="6" lg="4" xl="4">
+                          <div className="form__form-group">
+                            <span className="form__form-group-label">
+                              Ledger Code
+                            </span>
+                            <div className="form__form-group-field">
+                              <div className="form__form-group-row">
+                                  <Field 
+                                      name="ledger_code"
+                                      options={ledgerCodes}
+                                      component={renderSelectField}
+                                  />
+                                  <LedgerCodes program={program} cb_CodeAction={cb_CodeAction} />
+                              </div>
+                            </div>
+                          </div>
                         </Col>
                       </Row>
                       <Row>
