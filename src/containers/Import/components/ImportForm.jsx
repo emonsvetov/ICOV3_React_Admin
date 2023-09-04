@@ -184,7 +184,6 @@ const ImportForm = ({ organization }) => {
 
     const formFields = values.fieldsToMap;
 
-    // console.log(formFields)
     let newFormFields = {}
     for (const [formRequest, headerFieldsToMap] of Object.entries(importHeaders.fieldsToMap)) 
     {
@@ -279,8 +278,7 @@ const ImportForm = ({ organization }) => {
     // return newFormFields;
   }
 
-  // function onSubmit( values ) {
-  const onSubmit = async values => {
+  const onSubmit = values => {
     if( step === 1 ) {
       onSubmitStep1( values )
     }
