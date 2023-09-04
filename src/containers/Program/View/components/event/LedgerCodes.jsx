@@ -139,13 +139,14 @@ const LedgerCodesBlock = ({program, cb_CodeAction}) => {
     <div>Loading...</div>
   )
 
-  if ( !ledgerCodes.length > 0 ) return(<div>No ledger code...</div>)
+  
 
   return (
     <Card>
         <CardBody className='pt-0 px-0'>
           <div className="ledgercode__list pt-2">
-            {ledgerCodes.map( lcd => <RenderLedgerCode onDeleteCb={onDeleteCb} key={`${program}-${lcd.id}`} program={program} lcd={lcd} cb_CodeAction={cb_CodeAction} />)}
+            {!ledgerCodes.length > 0 && <div>No ledger code in program. Add one Now!</div>}
+            {ledgerCodes.length > 0 && ledgerCodes.map( lcd => <RenderLedgerCode onDeleteCb={onDeleteCb} key={`${program}-${lcd.id}`} program={program} lcd={lcd} cb_CodeAction={cb_CodeAction} />)}
             <div className="ledgercode__add-btn pt-2">
               <span className="link" onClick={toggleAdd}>Toggle Add Ledger Code</span>
               {add && <AddLedgerCode program={program} onCreateCb={onCreateCb} cb_CodeAction={cb_CodeAction} />}
