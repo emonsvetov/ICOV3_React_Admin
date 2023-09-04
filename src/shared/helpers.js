@@ -115,7 +115,7 @@ export const flatten = (array, prop = 'children') => {
 
 
 export const mapFormDataUploads = (values, multiple = false) => {
-    let data = new FormData()
+    let data = new FormData()   
     for (const [key, value] of Object.entries(values)) {
         // console.log(value)
         // console.log(typeof value)

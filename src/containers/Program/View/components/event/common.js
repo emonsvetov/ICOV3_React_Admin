@@ -12,6 +12,7 @@ export const makeFormData = (program, values) => {
         award_message_editable,
         event_icon_id,
         event_type_id,
+        ledger_code
     } = values;
 
     eventData.name = name;
@@ -29,7 +30,19 @@ export const makeFormData = (program, values) => {
 
     //static
     eventData.event_type_id = extractEventTypeId(eventData, event_type_id)
+    eventData.ledger_code = extractLedgerCode(eventData, ledger_code)
     return eventData
+}
+
+const extractLedgerCode = (eventData, ledger_code )   => {
+    // console.log(ledger_code)
+    if(typeof ledger_code === 'object') {
+        if( ledger_code?.value )   {
+            return parseInt(ledger_code.value)
+        }
+    }  else if( eventData.ledger_code ) {
+        return eventData.ledger_code
+    }
 }
 
 const extractEventTypeId = (eventData, selected_event_type_id) => {
