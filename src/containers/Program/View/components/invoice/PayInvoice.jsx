@@ -249,8 +249,8 @@ const PayInvoice = (props) => {
                     payments: charges
                 })
             })
-            // console.log(tmpAppliedPayments)
-            // console.log(tmpAmountNeedingDispersal)
+            console.log(tmpAppliedPayments)
+            console.log(tmpAmountNeedingDispersal)
             // tmpAppliedPayments = tmpAppliedPayments.filter(elm => elm); //remove empty elements from sparse array
             setAppliedPayments(tmpAppliedPayments)
             setAmountNeedingDispersal(tmpAmountNeedingDispersal)
