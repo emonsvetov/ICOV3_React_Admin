@@ -230,7 +230,8 @@ const PayInvoice = (props) => {
                 // console.log(s.charges)
                 let charges = {}
                 Object.keys(s.charges).forEach(function (journal_event_type){
-                    // console.log(s.charges[journal_event_type]);
+                    console.log(journal_event_type)
+                    console.log(s.charges[journal_event_type]);
                     if( tmpAmountNeedingDispersal >= s.charges[journal_event_type]['due'] )  {
                         charges[journal_event_type] = s.charges[journal_event_type]['due']
                         tmpAmountNeedingDispersal -= s.charges[journal_event_type]['due']
