@@ -230,8 +230,7 @@ const PayInvoice = (props) => {
                 // console.log(s.charges)
                 let charges = {}
                 Object.keys(s.charges).forEach(function (journal_event_type){
-                    console.log(journal_event_type)
-                    console.log(s.charges[journal_event_type]);
+                    // console.log(s.charges[journal_event_type]);
                     if( tmpAmountNeedingDispersal >= s.charges[journal_event_type]['due'] )  {
                         charges[journal_event_type] = s.charges[journal_event_type]['due']
                         tmpAmountNeedingDispersal -= s.charges[journal_event_type]['due']
@@ -250,8 +249,8 @@ const PayInvoice = (props) => {
                     payments: charges
                 })
             })
-            console.log(tmpAppliedPayments)
-            console.log(tmpAmountNeedingDispersal)
+            // console.log(tmpAppliedPayments)
+            // console.log(tmpAmountNeedingDispersal)
             // tmpAppliedPayments = tmpAppliedPayments.filter(elm => elm); //remove empty elements from sparse array
             setAppliedPayments(tmpAppliedPayments)
             setAmountNeedingDispersal(tmpAmountNeedingDispersal)
