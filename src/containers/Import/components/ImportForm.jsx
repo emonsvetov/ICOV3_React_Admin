@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Form } from 'react-final-form';
 import { Row, Col } from 'reactstrap';
 import { connect } from 'react-redux'
@@ -84,6 +84,7 @@ const ImportForm = ({ organization }) => {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const [roles, setRoles] = useState(null)
+  const [saveSettings, setSaveSettings] = useState(false);
 
   const reset = () => {
     setStep(0)
@@ -92,6 +93,7 @@ const ImportForm = ({ organization }) => {
     setImportType('')
     setError(null)
     setLoading(false)
+    setSaveSettings(false)
   }
 
   const onSelectCsvFile = (file) => {
@@ -139,7 +141,7 @@ const ImportForm = ({ organization }) => {
     const prefix = importType.toLowerCase().substring(0, importType.length - 1)
     data.append('upload-file', csvFile)
     const url = `/organization/${organization.id}/${prefix}importheaders`
-    console.log(url)
+    // console.log(url)
     axios
     .post(url, data, {
       headers: {
@@ -152,6 +154,7 @@ const ImportForm = ({ organization }) => {
         flashError(dispatch, "Cannot read or invalid CSV file");
         return;
       }
+      // console.log(res.data)
       setImportHeaders(res.data)
       setStep(2)
     })
@@ -163,22 +166,24 @@ const ImportForm = ({ organization }) => {
   }
 
   const onSubmitStep2 = values => {
+
+    const isSaveSettings = !!values.isSaveSettings;
+    let isAutoImport = false;
+
+    // console.log(values)
     // console.log(importHeaders)
+    // console.log(values.hasOwnProperty("fieldsToMap"))
+    // console.log(csvFile instanceof File)
     if( !values || !importHeaders || !values.hasOwnProperty("fieldsToMap") || !(csvFile instanceof File))
     {
       flashError(dispatch, "Invalid data found")
+      setSaveSettings(false);
       return
     }
     // console.log(values)
 
     const formFields = values.fieldsToMap;
-    // if( importHeaders.CSVheaders.length !== formFields.length )
-    // {
-    //   flashError(dispatch, "Field or map count does not match")
-    //   return
-    // }
-    
-    // console.log(formFields)
+
     let newFormFields = {}
     for (const [formRequest, headerFieldsToMap] of Object.entries(importHeaders.fieldsToMap)) 
     {
@@ -187,13 +192,14 @@ const ImportForm = ({ organization }) => {
       {
         for(const [formFieldName, formFieldValue] of Object.entries(formFields) )
         {
-          if( formFieldValue.value === fieldName)
+          if( formFieldValue && formFieldValue.value === fieldName)
           {
             newFormFields[formRequest][fieldName] = formFieldName;
           }
         }
       }
     }
+    let type = '';
     let setupsFields = {};
     if(values.hasOwnProperty("setups"))
     {
@@ -204,7 +210,12 @@ const ImportForm = ({ organization }) => {
             if( Object.keys(fields).length > 0 )
             {
                 Object.keys(fields).map( (field) => {
-                    setupsFields[formRequest][field]= fields[field].value
+                  if (field === 'type'){
+                    type = fields[field].value;
+                  }
+                    if (fields[field]){
+                      setupsFields[formRequest][field]= fields[field].value
+                    }
                 })
             }
         })
@@ -219,7 +230,14 @@ const ImportForm = ({ organization }) => {
     {
         data.append('setups', JSON.stringify(setupsFields))
     }
-    const url = `/organization/${organization.id}/${prefix}import`
+    let url = `/organization/${organization.id}/${prefix}import`
+    if (isSaveSettings){
+      url = `/organization/${organization.id}/csv-import-setting`
+    } else if (type && type === 'Add and Award Participants') {
+      isAutoImport = true;
+      url = `/organization/${organization.id}/user-auto-import`
+    }
+
     // console.log(url)
     // console.log(JSON.stringify(data))
     // return;
@@ -228,8 +246,7 @@ const ImportForm = ({ organization }) => {
       headers: {
         "Content-type": "multipart/form-data",
       },
-    }
-    )
+    })
     .then((res) => {
     //   console.log(res)
       if ( res.data?.csvImport )
@@ -237,23 +254,31 @@ const ImportForm = ({ organization }) => {
         flashSuccess(dispatch, "Import request added to queue. You will be notified when it is processed.");
         reset();
       }
-      // if (!isValidResponse(res.data)) {
-      //   flashError(dispatch, "Cannot read or invalid CSV file");
-      //   return;
-      // }
-      // setImportHeaders(res.data)
-      // setStep(2)
+      if (isSaveSettings){
+        if ( res.data?.success )
+        {
+          flashSuccess(dispatch, "Settings successfully saved");
+          setSaveSettings(false);
+        }
+      } else if(isAutoImport){
+        console.log(res.data);
+        if ( res.data?.csvImport ) {
+          flashSuccess(dispatch, "Import request added to queue. You will be notified when it is processed.");
+          // reset();
+        }
+      }
     })
     .catch((error) => {
       const errors = error.response.data.errors;
       setError(errors)
+      setSaveSettings(false)
     //   alert(JSON.stringify(errors))
       flashError(dispatch, "There were errors. Scroll down the page to view.");
     });
     // return newFormFields;
   }
 
-  function onSubmit( values ) {
+  const onSubmit = values => {
     if( step === 1 ) {
       onSubmitStep1( values )
     }
@@ -315,8 +340,11 @@ const ImportForm = ({ organization }) => {
                   </Field>
                 </div>}
               {step === 1 && <FormStep1 {...{ config, setStep, csvFile, onSelectCsvFile, onclickBack, onclickNext, importHeaders }} />}
-              {step === 2 && <FormStep2 {...{ config, setStep, csvFile, onclickBack, importHeaders, isValidResponse }} />}
+              {step === 2 && <FormStep2 {...{ config, setStep, csvFile, onclickBack, importHeaders, isValidResponse, setSaveSettings, saveSettings, handleSubmit}} />}
               {error && <ErrorComponentRaw error={error} />}
+
+              {/*<pre>{JSON.stringify(values, 0, 2)}</pre>*/}
+
             </Col>
           </Row>
         </form>
