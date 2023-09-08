@@ -93,9 +93,10 @@ const UploadGiftCodesModal = ({
         })
         .catch((error) => {
             const errors = error.response.data.errors;
-            const csv_errors = errors.file_medium_info;
+            // console.log(errors)
+            const csv_errors = errors?.file_medium_info;
             // console.log(csv_errors)
-            if(typeof csv_errors === 'object')  {
+            if(csv_errors && typeof csv_errors === 'object')  {
                 try{
                     const {columns:csvColumns, rows:csvRows} = makeCsvErrors(csv_errors);
                     setErrorComponent(
@@ -114,6 +115,8 @@ const UploadGiftCodesModal = ({
                 }
 
                 // console.log(csv_errors_json)
+            } else {
+              dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger', 'top'))
             }
             // if( typeof errors)
         });  
