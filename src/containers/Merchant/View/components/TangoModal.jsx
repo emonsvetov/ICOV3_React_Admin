@@ -7,13 +7,12 @@ import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col } from '
 import { sendFlashMessage, ApiErrorMessage } from "@/shared/components/flash"
 
 const saveTangoOrderApi = async(merchantId, toaId, data) => {
-  const response = await axios.put(`/merchant/${merchantId}/toa/${toaId}`, data)
-  return response
+    const response = await axios.put(`/merchant/${merchantId}/toa/${toaId}`, data)
+    return response
 }
 
 //DefaultComponent
 const TangoModal = ({theme, rtl, toaId, toggle, isOpen, merchant, errorDispatcher, successDispatcher}) => {
-  console.log(merchant)
   const [loading, setLoading] = useState(false)
   const [tangoOrdersApi, setTangoOrdersApi] = useState({})
   useEffect( () => {
@@ -25,16 +24,18 @@ const TangoModal = ({theme, rtl, toaId, toggle, isOpen, merchant, errorDispatche
   const validate = values => {
   }
   const onSubmitForm = values => {
-    // setLoading(true)
+    setLoading(true)
     saveTangoOrderApi(merchant.id, toaId, values)
     .then( res => {
-      console.log(res)
-      successDispatcher( "Saved successfully!" )
+      if(res.status === 200)  {
+        successDispatcher( "Saved successfully!" )
+      } else {
+        console.log(res.status)
+      }
       setLoading(false)
     })
-    .catch((err) => {
-      console.log(err)
-      errorDispatcher( err.errors )
+    .catch(error => {
+      errorDispatcher( error.response.data.errors )
       setLoading(false);
     });
   }
