@@ -9,13 +9,13 @@ import renderDropZoneMultipleField from '@/shared/components/form/DropZoneMultip
 
 import axios from 'axios';
 import { fetchEventIcons } from '@/shared/apiHelper';
+import getEventIconsDefault from '@/service/getEventIconsDefault';
 import {useDispatch, flashError, flashSuccess} from "@/shared/components/flash"
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const IconUpload = ({ setIcons, toggle, onCancel, program }) => {
+const UploadIcon = ({ setDefaultIcons, setIcons, toggle, onCancel, program, iconUploadType = 'global' }) => {
 
-  const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
 
@@ -30,6 +30,9 @@ const IconUpload = ({ setIcons, toggle, onCancel, program }) => {
     values.files.forEach(element => {
         data.append('image[]', element)
     });
+    if( iconUploadType )  {
+      data.append('icon_upload_type', iconUploadType)
+    }
     setLoading(true)
     axios
     .post(`/organization/${program.organization_id}/event_icons`, data,
@@ -42,10 +45,17 @@ const IconUpload = ({ setIcons, toggle, onCancel, program }) => {
     .then((res) => {
       if (res.status == 200) { //fetch all on success!
         flashSuccess(dispatch, "Icon uploaded!")
-        fetchEventIcons(program.organization_id)
-        .then( response => {
-            setIcons(response)
-        })
+        if( iconUploadType === 'global')  {
+          getEventIconsDefault(program.organization_id)
+          .then(response => {
+            setDefaultIcons(response)
+          })
+        } else {
+          fetchEventIcons(program.organization_id)
+          .then( response => {
+              setIcons(response)
+          })       
+        }
       }
     })
     .catch((error) => {
@@ -66,7 +76,7 @@ const IconUpload = ({ setIcons, toggle, onCancel, program }) => {
         <CardBody>
           <Form onSubmit={onSubmit}>
             {({ handleSubmit, form }) => (
-              <form className="form" onSubmit={handleSubmit}>
+              <form className="form eventicon-upload" onSubmit={handleSubmit}>
                 <p>
                   The images should be jpg, jpeg, gif, or png file format with a maximum size of 5 Mb.
                 </p>
@@ -90,10 +100,10 @@ const IconUpload = ({ setIcons, toggle, onCancel, program }) => {
   );
 };
 
-IconUpload.propTypes = {
+UploadIcon.propTypes = {
   setIcons: PropTypes.func.isRequired,
   toggle: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
   program: PropTypes.object.isRequired,
 };
-export default IconUpload;
+export default UploadIcon;

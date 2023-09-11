@@ -4,9 +4,23 @@ import {answerYesNo} from '@/shared/helpers'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import axios from 'axios'
 import { Link } from 'react-router-dom'
+import TangoModal from './TangoModal'
 
 const MerchantDetails = ( {data} ) => {
+
     const dispatch = useDispatch()
+
+    //TangoModal BOF
+    let [toaId, setToaId] = useState(null)
+    const [isOpenTangoModal, setOpenTangoModal] = useState(false)
+    const toggleTangoModal = () => {
+      setOpenTangoModal(prevState => !prevState)
+    }
+    const onclickTangoApi = (id) => {
+      setToaId(id)
+      toggleTangoModal()
+    }
+    //TangoModal EOF
 
     const [loading, setLoading] = useState(false)
     let [merchant, setMerchant] = useState(data)
@@ -28,7 +42,7 @@ const MerchantDetails = ( {data} ) => {
             // throw new Error(`API error:${e?.message}`);
         })
     }    
-    
+
     const onClickChangeStatus = (e) => {
         e.preventDefault()
         setLoading( true )
@@ -36,12 +50,13 @@ const MerchantDetails = ( {data} ) => {
         axios.patch(`/merchant/${merchant.id}/status`, {status: newStatus})
         .then( (res) => {
             setLoading( false )
-            console.log(res)
-
             if(res.status == 200)  {
-                setMerchant({...merchant, ...{status: newStatus}})
-                dispatch(sendFlashMessage('Merchant status updated successfully', 'alert-success'))
-                // window.location = `/merchants?message=Merchant deleted successfully!`
+              setMerchant((prevState) => ({
+                ...prevState,
+                ['status']: newStatus,
+              }));
+              dispatch(sendFlashMessage('Merchant status updated successfully', 'alert-success'))
+              // window.location = `/merchants?message=Merchant deleted successfully!`
             }
         })
         .catch( error => {
@@ -102,7 +117,7 @@ const MerchantDetails = ( {data} ) => {
                 Premium:
             </Col>
             <Col md="8" lg="8" xl="8" sm="8">
-                {answerYesNo(merchant.is_permium)}
+                {answerYesNo(merchant.is_premium)}
             </Col>
         </Row>
         <Row>
@@ -137,6 +152,19 @@ const MerchantDetails = ( {data} ) => {
                 {answerYesNo(merchant.use_tango_api)}
             </Col>
         </Row>
+        {
+          merchant.use_tango_api && merchant.tango_orders_api &&
+            <Row>
+              <Col md="4" lg="4" xl="4" sm="4" className='label'>
+                Tango Configuration:
+              </Col>
+              <Col md="8" lg="8" xl="8" sm="8">
+                  <span className='link' onClick={()=>onclickTangoApi(merchant.tango_orders_api.id)}>
+                    {merchant.tango_orders_api.name}
+                  </span>
+              </Col>
+            </Row>
+        }
         <Row>
             <Col md="4" lg="4" xl="4" sm="4" className='label'>
                 Use Virtual Inventory:
@@ -178,7 +206,7 @@ const MerchantDetails = ( {data} ) => {
                 Available Gift Codes:
             </Col>
             <Col md="8" lg="8" xl="8" sm="8">
-                {34}
+                {merchant.available_giftcode_count}
             </Col>
         </Row>                                
         <Row>
@@ -186,7 +214,7 @@ const MerchantDetails = ( {data} ) => {
                 Redeemed Gift Codes:
             </Col>
             <Col md="8" lg="8" xl="8" sm="8">
-                {1234}
+              {merchant.redeemed_giftcode_count}
             </Col>
         </Row>     
         <Row>
@@ -237,6 +265,7 @@ const MerchantDetails = ( {data} ) => {
                 {answerYesNo(merchant.get_gift_codes_from_root)}
             </Col>
         </Row>
+        {toaId && <TangoModal toaId={toaId} isOpen={isOpenTangoModal} toggle={toggleTangoModal} />}
     </>
     )
 }

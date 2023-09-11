@@ -168,7 +168,7 @@ export const REDEEMED_GIFT_CODES_COULMNS = [
     },
     {
         Header: "Redeemed On",
-        accessor: "redeemed_on",
+        accessor: "redemption_datetime",
         Cell: ({ row, value }) => { return `${value}`},
         width: 100,
     },

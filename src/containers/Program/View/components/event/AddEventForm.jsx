@@ -3,21 +3,18 @@ import { Form, Field } from "react-final-form";
 import { Row, Col, ButtonToolbar, Button, Modal, ModalBody } from "reactstrap";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
+import axios from "axios";
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
-import renderSelectField from "@/shared/components/form/Select";
-import { fetchEventTypes } from "@/shared/apiHelper";
 import { labelizeNamedData, labelizeData } from "@/shared/helpers";
-import {
-  useDispatch,
-  flashSuccess,
-  flashError,
-} from "@/shared/components/flash";
-import axios from "axios";
-import Tabs from "./Tabs";
-import { makeFormData, } from "./common";
 import {getMilestoneOptions} from '@/shared/apiHelper';
+import renderSelectField from '@/shared/components/form/Select'
+import {fetchEventTypes, getEventLedgerCodes} from '@/shared/apiHelper'
+import { useDispatch, flashSuccess, flashError } from "@/shared/components/flash"
+import AddIconTabs from "./AddIconTabs";
+import{makeFormData} from './common'
+import LedgerCodes from './LedgerCodes';
 
 const AddEventForm = ({ onStep, program }) => {
   const dispatch = useDispatch();
@@ -27,6 +24,7 @@ const AddEventForm = ({ onStep, program }) => {
   const [eventTypes, setEventTypes] = useState([]);
   const [isOpen, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("2");
+  const [ledgerCodes, setLedgerCodes] = useState([]);
   const [visibleLedgerCode, setVisibleLedgerCode] = useState(false);
   const [selectedEventType, setSelectedEventType] = useState(null);
   const [milestoneOptions, setMilestoneOptions] = useState([]);
@@ -39,6 +37,16 @@ const AddEventForm = ({ onStep, program }) => {
     setOpen((prevState) => !prevState);
   };
 
+  const cb_CodeAction = () => {
+    getListLedgerCodes(program)
+  }
+  const getListLedgerCodes = (program) => {
+    getEventLedgerCodes(program.organization_id, program.id)
+    .then(ledgercodes => {
+      setLedgerCodes(labelizeNamedData(ledgercodes, ["id", "ledger_code"]))
+    })
+  }
+
   useEffect(() => {
     if(program?.organization_id)  {
       fetchEventTypes(program.organization_id, program.id).then((evtypes) => {
@@ -50,6 +58,7 @@ const AddEventForm = ({ onStep, program }) => {
           setMilestoneOptions(labelizeData(o))
         })
       }
+      getListLedgerCodes(program)
     }
   }, [program]);
 
@@ -166,6 +175,23 @@ const AddEventForm = ({ onStep, program }) => {
                       </div>
                     )}
                   </Field>
+                </Col>
+                <Col md="6" lg="4" xl="4">
+                  <div className="form__form-group">
+                    <span className="form__form-group-label">
+                      Ledger Code
+                    </span>
+                    <div className="form__form-group-field">
+                      <div className="form__form-group-row">
+                          <Field 
+                              name="ledger_code"
+                              options={ledgerCodes}
+                              component={renderSelectField}
+                          />
+                          <LedgerCodes program={program} cb_CodeAction={cb_CodeAction} />
+                      </div>
+                    </div>
+                  </div>
                 </Col>
               </Row>
               <Row>
@@ -421,7 +447,7 @@ const AddEventForm = ({ onStep, program }) => {
                     </Col>
                   </Row>
                   <div className="pt-5 tabs">
-                    <Tabs
+                    <AddIconTabs
                       onSelectIconOK={form.mutators.setEventIcon}
                       activeTab={activeTab}
                       onCancel={() => setOpen(false)}

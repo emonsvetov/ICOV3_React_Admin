@@ -8,7 +8,6 @@ import AwardingPointsModal from './AwardingPointsModal';
 import EngagementModal from './EngagementModal';
 import AddProgramModal from './AddProgramModal';
 import DigitalMediaModal from "./DigitalMediaModal";
-// import EventsModal from './EventsModal';
 import EventsDataModal from '../components/event/EventsDataModal';
 import EmailTemplateModal from '../EmailTemplate/IndexDataModal'
 import ActivateLiveModeProgramModal from "./ActivateLiveModeProgramModal";

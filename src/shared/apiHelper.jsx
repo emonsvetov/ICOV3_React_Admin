@@ -71,10 +71,10 @@ export const fetchUserProgramRoles = async(organization_id, user_id, program_id)
     }
 }
 
-export const fetchEventTypes = async(organizationId, programId) => {
+export const fetchEventTypes = async(oId, pId) => {
     try {
         const response = await axios.get(
-        `/organization/${organizationId}/program/${programId}/eventtype`
+        `/organization/${oId}/program/${pId}/eventtype`
         );
         // console.log(response)
         const results = response.data;
@@ -198,3 +198,41 @@ export const getMilestoneOptions = async(organizationId, programId) => {
       throw new Error(`API error:${e?.message}`)
   }
 }
+
+export const getEventLedgerCodes = async(organizationId, programId) => {
+  try {
+      const response = await axios.get(`/organization/${organizationId}/program/${programId}/ledgercode`);
+      // console.log(response)
+      return response.data
+  } catch (e) {
+      throw new Error(`API error:${e?.message}`);
+  }
+};
+
+export const createEventLedgerCode = async(organizationId, programId, data) => {
+  try {
+      const response = await axios.post(`/organization/${organizationId}/program/${programId}/ledgercode`, data);
+      // console.log(response)
+      return response.data
+  } catch (e) {
+      throw new Error(`API error:${e?.message}`);
+  }
+};
+
+export const updateEventLedgerCode = async(organizationId, programId, ledgerCode, data) => {
+  try {
+      const response = await axios.put(`/organization/${organizationId}/program/${programId}/ledgercode/${ledgerCode}`, data);
+      return response.data
+  } catch (e) {
+      throw new Error(`API error:${e?.message}`);
+  }
+};
+
+export const deleteEventLedgerCode = async(organizationId, programId, ledgerCode) => {
+  try {
+      const response = await axios.delete(`/organization/${organizationId}/program/${programId}/ledgercode/${ledgerCode}`);
+      return response.data
+  } catch (e) {
+      throw new Error(`API error:${e?.message}`);
+  }
+};
