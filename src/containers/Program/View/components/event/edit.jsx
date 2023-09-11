@@ -278,6 +278,7 @@ const Edit = ({organization, theme, rtl}) => {
                                   <Field 
                                       name="ledger_code"
                                       options={ledgerCodes}
+                                      isClearable={true}
                                       component={renderSelectField}
                                   />
                                   <LedgerCodes program={program} cb_CodeAction={cb_CodeAction} />
