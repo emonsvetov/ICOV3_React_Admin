@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Form, Field } from "react-final-form";
 import { Row, Col, ButtonToolbar, Button, Modal, ModalBody } from "reactstrap";
-import { useParams, withRouter } from "react-router-dom";
-import { connect } from 'react-redux';
-
+import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import axios from "axios";
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
+import { labelizeNamedData, labelizeData } from "@/shared/helpers";
+import {getMilestoneOptions} from '@/shared/apiHelper';
 import renderSelectField from '@/shared/components/form/Select'
 import {fetchEventTypes, getEventLedgerCodes} from '@/shared/apiHelper'
-import {labelizeNamedData} from '@/shared/helpers'
 import { useDispatch, flashSuccess, flashError } from "@/shared/components/flash"
-import axios from "axios";
 import AddIconTabs from "./AddIconTabs";
 import{makeFormData} from './common'
 import LedgerCodes from './LedgerCodes';
 
-const AddEventForm = ({onStep, program}) => {
-  const dispatch = useDispatch()
+const AddEventForm = ({ onStep, program }) => {
+  const dispatch = useDispatch();
   // console.log(program)
 
   const [loading, setLoading] = useState(false);
@@ -26,6 +26,8 @@ const AddEventForm = ({onStep, program}) => {
   const [activeTab, setActiveTab] = useState("2");
   const [ledgerCodes, setLedgerCodes] = useState([]);
   const [visibleLedgerCode, setVisibleLedgerCode] = useState(false);
+  const [selectedEventType, setSelectedEventType] = useState(null);
+  const [milestoneOptions, setMilestoneOptions] = useState([]);
 
   const set_path = (pickedIcon) => {
     const path = process.env.REACT_APP_API_STORAGE_URL + "/" + pickedIcon.path;
@@ -46,31 +48,43 @@ const AddEventForm = ({onStep, program}) => {
   }
 
   useEffect(() => {
-    if( program?.id ){
-      fetchEventTypes(program.organization_id, program.id)
-      .then(evtypes => {
-        setEventTypes(labelizeNamedData(evtypes))
-      })
+    if(program?.organization_id)  {
+      fetchEventTypes(program.organization_id, program.id).then((evtypes) => {
+        setEventTypes(labelizeNamedData(evtypes));
+      });
+      if( program.allow_milestone_award ) {
+        getMilestoneOptions(program.organization_id, program.id)
+        .then( o => {
+          setMilestoneOptions(labelizeData(o))
+        })
+      }
       getListLedgerCodes(program)
     }
-  }, [program])
+  }, [program]);
+
+  const handleSelectEventType = (option) => {
+    setSelectedEventType(option.label);
+  };
 
   const onSubmit = (values) => {
-    const eventData = makeFormData(program, values)
+    const eventData = makeFormData(program, values);
     // console.log(eventData)
     // return
-    
+
     axios
-      .post(`/organization/${program.organization_id}/program/${program.id}/event`, eventData)
+      .post(
+        `/organization/${program.organization_id}/program/${program.id}/event`,
+        eventData
+      )
       .then((res) => {
         //   console.log(res)
         if (res.status == 200) {
           // onStep(0);
-          window.location = `/program/view/${program.id}/?message=New event added successfully!`
+          window.location = `/program/view/${program.id}/?message=New event added successfully!`;
         }
       })
       .catch((err) => {
-        flashError(dispatch, err.response.data)
+        flashError(dispatch, err.response.data);
         setLoading(false);
       });
   };
@@ -81,36 +95,32 @@ const AddEventForm = ({onStep, program}) => {
 
   const setEventIcon = ([fieldName, fieldVal], state, { changeValue }) => {
     setOpen(false);
-    changeValue(state, 'event_icon_id', () => fieldVal.id);
+    changeValue(state, "event_icon_id", () => fieldVal.id);
     changeValue(state, fieldName, () => fieldVal);
-  }
+  };
 
   const onChangeAwardValue = ([field], state, { setIn, changeValue }) => {
-    const v = field.target.value
-    if( isNaN( v ) ) return;
-    if(field.target.name === 'max_awardable_amount')  
-    {
+    const v = field.target.value;
+    if (isNaN(v)) return;
+    if (field.target.name === "max_awardable_amount") {
       const field = state.fields["awarding_points"];
-      field.change( program.factor_valuation *  v);
-    }
-    else if(field.target.name === 'awarding_points')  
-    {
+      field.change(program.factor_valuation * v);
+    } else if (field.target.name === "awarding_points") {
       const field = state.fields["max_awardable_amount"];
-      field.change(  v / program.factor_valuation );
+      field.change(v / program.factor_valuation);
     }
-  }
-  
+  };
+
   return (
     <>
       <Form
         mutators={{
           onChangeAwardValue,
-          setEventIcon
+          setEventIcon,
         }}
         onSubmit={onSubmit}
         validate={(values) => formValidation.validateForm(values)}
-        initialValues={{
-        }}
+        initialValues={{}}
       >
         {({ handleSubmit, form, submitting, pristine, values }) => (
           <>
@@ -145,7 +155,9 @@ const AddEventForm = ({onStep, program}) => {
                   <Field name="name">
                     {({ input, meta }) => (
                       <div className="form__form-group">
-                        <span className="form__form-group-label">Event Name</span>
+                        <span className="form__form-group-label">
+                          Event Name
+                        </span>
                         <div className="form__form-group-field">
                           <div className="form__form-group-row">
                             <input
@@ -187,10 +199,17 @@ const AddEventForm = ({onStep, program}) => {
                   <Field name="max_awardable_amount">
                     {({ input, meta }) => (
                       <div className="form__form-group">
-                        <span className="form__form-group-label">Max Awardable Amount</span>
+                        <span className="form__form-group-label">
+                          Max Awardable Amount
+                        </span>
                         <div className="form__form-group-field">
                           <div className="form__form-group-row">
-                            <input onKeyUp={form.mutators.onChangeAwardValue} type="text" {...input} placeholder="Amount" />
+                            <input
+                              onKeyUp={form.mutators.onChangeAwardValue}
+                              type="text"
+                              {...input}
+                              placeholder="Amount"
+                            />
                             {meta.touched && meta.error && (
                               <span className="form__form-group-error">
                                 {meta.error}
@@ -229,31 +248,33 @@ const AddEventForm = ({onStep, program}) => {
                   </Field>
                 </Col>
 
-                {visibleLedgerCode && <Col md="6" lg="4" xl="4">
-                  <Field name="ledger_code">
-                    {({ input, meta }) => (
-                      <div className="form__form-group">
-                        <span className="form__form-group-label">
-                          Ledger Code
-                        </span>
-                        <div className="form__form-group-field">
-                          <div className="form__form-group-row">
-                            <input
-                              type="text"
-                              {...input}
-                              placeholder="Ledger Code"
-                            />
-                            {meta.touched && meta.error && (
-                              <span className="form__form-group-error">
-                                {meta.error}
-                              </span>
-                            )}
+                {visibleLedgerCode && (
+                  <Col md="6" lg="4" xl="4">
+                    <Field name="ledger_code">
+                      {({ input, meta }) => (
+                        <div className="form__form-group">
+                          <span className="form__form-group-label">
+                            Ledger Code
+                          </span>
+                          <div className="form__form-group-field">
+                            <div className="form__form-group-row">
+                              <input
+                                type="text"
+                                {...input}
+                                placeholder="Ledger Code"
+                              />
+                              {meta.touched && meta.error && (
+                                <span className="form__form-group-error">
+                                  {meta.error}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
-                  </Field>
-                </Col>}
+                      )}
+                    </Field>
+                  </Col>
+                )}
               </Row>
               <Row>
                 <Col md="6" lg="4" xl="4">
@@ -281,11 +302,28 @@ const AddEventForm = ({onStep, program}) => {
                     </span>
                     <div className="form__form-group-field">
                       <div className="form__form-group-row">
-                          <Field 
-                                name="event_type_id"
-                                options={eventTypes}
+                        <Field
+                          name="event_type_id"
+                          options={eventTypes}
+                          parse={(value) => {
+                            handleSelectEventType(value);
+                            return value;
+                          }}
+                          placeholder={"Select Event Type"}
+                          component={renderSelectField}
+                        />
+                        {selectedEventType === "Milestone Award" && (
+                          <div className="form__form-group-field my-4">
+                            <div className="form__form-group-row">
+                              <Field
+                                name="milestone_award_frequency"
+                                options={milestoneOptions}
                                 component={renderSelectField}
-                          />
+                                placeholder={"Select Frequency"}
+                              />
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -304,15 +342,16 @@ const AddEventForm = ({onStep, program}) => {
                           <div className="text">
                             {values.icon ? values.icon.name : "+ Add an Icon"}
                           </div>
-                          {values.icon && 
-                          <div className="email_icon">
+                          {values.icon && (
+                            <div className="email_icon">
                               <img src={set_path(values.icon)} alt="icons" />
-                          </div>}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
                     <Field name="event_icon_id">
-                    {({ input, meta }) => (
+                      {({ input, meta }) => (
                         <>
                           <input
                             type="hidden"
@@ -426,8 +465,10 @@ const AddEventForm = ({onStep, program}) => {
   );
 };
 
-export default withRouter(connect((state) => ({
-  theme: state.theme,
-  rtl: state.rtl,
-  // organization: state.organization
-}))(AddEventForm));
+export default withRouter(
+  connect((state) => ({
+    theme: state.theme,
+    rtl: state.rtl,
+    // organization: state.organization
+  }))(AddEventForm)
+);
