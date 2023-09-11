@@ -186,6 +186,19 @@ export const getProgramsHierachy = async (organizationId) => {
   }
 }
 
+export const getMilestoneOptions = async(organizationId, programId) => {
+  try {
+      const response = await axios.get(
+      `/organization/${organizationId}/program/${programId}/eventtype-milestone-frequency`
+      );
+      // console.log(response)
+      const results = response.data;
+      return results;
+  } catch (e) {
+      throw new Error(`API error:${e?.message}`)
+  }
+}
+
 export const getEventLedgerCodes = async(organizationId, programId) => {
   try {
       const response = await axios.get(`/organization/${organizationId}/program/${programId}/ledgercode`);

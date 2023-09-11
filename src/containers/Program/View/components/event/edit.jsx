@@ -11,11 +11,14 @@ import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
 import axios from "axios";
 import renderSelectField from '@/shared/components/form/Select'
+
 import AddIconTabs from "./AddIconTabs";
-import { fetchEventTypes, getEventLedgerCodes } from '@/shared/apiHelper'
-import { labelizeNamedData } from '@/shared/helpers'
+import { fetchEventTypes, getEventLedgerCodes, getMilestoneOptions } from '@/shared/apiHelper'
+import { labelizeNamedData, labelizeData, getValueFromMixed } from '@/shared/helpers'
 import { makeFormData } from './common'
 import LedgerCodes from './LedgerCodes';
+
+const selectedEventType = ''
 
 const fetchEvent = async (oId, pId, eId) => {
   try {
@@ -33,9 +36,11 @@ const Edit = ({organization, theme, rtl}) => {
   const [loading, setLoading] = useState(false);
   const [isOpen, setOpen] = useState(false);
   let [event, setEvent] = useState(null);
+  const [eventTypesRaw, setEventTypesRaw] = useState([]);
   const [eventTypes, setEventTypes] = useState([]);
   const [visibleLedgerCode, setVisibleLedgerCode] = useState(false);
   const [activeTab, setActiveTab] = useState('2');
+  const [milestoneOptions, setMilestoneOptions] = useState([]);
   const [ledgerCodes, setLedgerCodes] = useState([]);
 
   const dispatch = useDispatch()
@@ -65,36 +70,58 @@ const Edit = ({organization, theme, rtl}) => {
   }
   useEffect(() => {
     if( program?.id ){
-    fetchEventTypes(program.organization_id, program.id)
-      .then(evtypes => {
-        setEventTypes(labelizeNamedData(evtypes))
-      })
       getListLedgerCodes(program)
     }
   }, [program])
 
   useEffect(() => {
-    if (organization && programId) {
+    if (organization?.id && programId) {
       fetchProgramData(programId)
     }
   }, [programId, organization]);
 
   useEffect(() => {
-    if (program?.id) {
+    if (eventId && program?.id) {
       setLoading(true)
-      fetchEvent(program.organization_id, programId, eventId)
-        .then(res => {
-          setEvent(res)
-          setLoading(false)
-        })
+      fetchEvent(program.organization_id, program.id, eventId)
+      .then(res => {
+        setEvent(res)
+        setLoading(false)
+      })
     }
-  }, [program, programId, eventId]);
+  }, [program, eventId]);
+
+  useEffect( () => {
+    if( event?.id && program?.id ) {
+      fetchEventTypes(organization.id, programId)
+      .then(evtypes => {
+        setEventTypesRaw(evtypes)
+        setEventTypes(labelizeNamedData(evtypes))
+      })
+      if( program.allow_milestone_award ) {
+        getMilestoneOptions(program.organization_id, program.id)
+        .then( o => {
+          setMilestoneOptions(labelizeData(o))
+        })
+      }
+    }
+  }, [event])
 
   let history = useHistory();
 
+  const isMilestoneAward = (event_type_id) => {
+
+    const v = getValueFromMixed(event_type_id)
+    
+    for(var i in eventTypesRaw)  {
+      if( eventTypesRaw[i].type == 'milestone award' && eventTypesRaw[i].id === parseInt(v) ) {
+        return true;
+      }
+    }
+    // return event_type_id === 9;
+  }
+
   const onSubmit = (values) => {
-    // console.log(event)
-    // console.log(values)
     const eventData = makeFormData(program, values)
 
     axios
@@ -163,9 +190,9 @@ const Edit = ({organization, theme, rtl}) => {
     console.log('mappingicon')
     event.icon = event.event_icon
   }
-  console.log(event)
 
   event.awarding_points = parseFloat(event.max_awardable_amount) * parseInt(program.factor_valuation)
+  // event.milestone_award_frequency = event.milestone_award_frequency.toString()
 
   // console.log(emailTemplate)
 
@@ -362,8 +389,19 @@ const Edit = ({organization, theme, rtl}) => {
                                   name="event_type_id"
                                   options={eventTypes}
                                   component={renderSelectField}
-                                  initialValue={eventTypes[event.event_type_id - 1]}
                                 />
+                                {isMilestoneAward(values.event_type_id) && (
+                                  <div className="form__form-group-field my-4">
+                                    <div className="form__form-group-row">
+                                      <Field
+                                        name="milestone_award_frequency"
+                                        options={milestoneOptions}
+                                        component={renderSelectField}
+                                        placeholder={values.milestone_award_frequency ? values.milestone_award_frequency : "Select Frequency"}
+                                      />
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -380,11 +418,11 @@ const Edit = ({organization, theme, rtl}) => {
                                   onClick={() => setOpen(true)}
                                 >
                                   <div className="text">
-                                    {values.icon ? values.icon.name : "+ Add an Icon"}
+                                    {values.event_icon ? values.event_icon.name : "+ Add an Icon"}
                                   </div>
-                                  {values.icon &&
+                                  {values.event_icon &&
                                     <div className="email_icon">
-                                      <img src={set_path(values.icon)} alt="icons" />
+                                      <img src={set_path(values.event_icon)} alt="icons" />
                                     </div>}
                                 </div>
                               </div>
