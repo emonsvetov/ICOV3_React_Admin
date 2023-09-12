@@ -122,8 +122,9 @@ const AddEventForm = ({ onStep, program }) => {
         validate={(values) => formValidation.validateForm(values)}
         initialValues={{}}
       >
-        {({ handleSubmit, form, submitting, pristine, values }) => (
+        {({ handleSubmit, form, submitting, pristine, values, errors }) => (
           <>
+            {JSON.stringify()}
             <form className="form" onSubmit={handleSubmit}>
               <Row className="w100">
                 <Col md="6" lg="6" xl="6">
@@ -148,6 +149,41 @@ const AddEventForm = ({ onStep, program }) => {
                       Save
                     </Button>
                   </ButtonToolbar>
+                </Col>
+              </Row>
+              <Row>
+                <Col md="6" lg="4" xl="4">
+                  <div className="form__form-group">
+                    <span className="form__form-group-label">
+                      Select Event Type
+                    </span>
+                    <div className="form__form-group-field">
+                      <div className="form__form-group-row">
+                        <Field
+                          name="event_type_id"
+                          options={eventTypes}
+                          parse={(value) => {
+                            handleSelectEventType(value);
+                            return value;
+                          }}
+                          placeholder={"Select Event Type"}
+                          component={renderSelectField}
+                        />
+                        {selectedEventType === "Milestone Award" && (
+                          <div className="form__form-group-field my-4">
+                            <div className="form__form-group-row">
+                              <Field
+                                name="milestone_award_frequency"
+                                options={milestoneOptions}
+                                component={renderSelectField}
+                                placeholder={"Select Frequency"}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </Col>
               </Row>
               <Row>
@@ -195,7 +231,7 @@ const AddEventForm = ({ onStep, program }) => {
                   </div>
                 </Col>
               </Row>
-              <Row>
+              { 1 == 1 && <Row>
                 <Col md="6" lg="4" xl="4">
                   <Field name="max_awardable_amount">
                     {({ input, meta }) => (
@@ -215,6 +251,9 @@ const AddEventForm = ({ onStep, program }) => {
                               <span className="form__form-group-error">
                                 {meta.error}
                               </span>
+                            )}
+                            {errors.max_awardable_amountErrors && errors.max_awardable_amountErrors.awardAmountValidator && (
+                             <span>{errors.max_awardable_amountErrorsErrors.awardAmountValidator}</span>
                             )}
                           </div>
                         </div>
@@ -276,7 +315,7 @@ const AddEventForm = ({ onStep, program }) => {
                     </Field>
                   </Col>
                 )}
-              </Row>
+              </Row>}
               <Row>
                 <Col md="6" lg="4" xl="4">
                   <div className="form__form-group">
@@ -291,41 +330,6 @@ const AddEventForm = ({ onStep, program }) => {
                         name="enable"
                         component={renderToggleButtonField}
                       />
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Col md="6" lg="4" xl="4">
-                  <div className="form__form-group">
-                    <span className="form__form-group-label">
-                      Select Event Type
-                    </span>
-                    <div className="form__form-group-field">
-                      <div className="form__form-group-row">
-                        <Field
-                          name="event_type_id"
-                          options={eventTypes}
-                          parse={(value) => {
-                            handleSelectEventType(value);
-                            return value;
-                          }}
-                          placeholder={"Select Event Type"}
-                          component={renderSelectField}
-                        />
-                        {selectedEventType === "Milestone Award" && (
-                          <div className="form__form-group-field my-4">
-                            <div className="form__form-group-row">
-                              <Field
-                                name="milestone_award_frequency"
-                                options={milestoneOptions}
-                                component={renderSelectField}
-                                placeholder={"Select Frequency"}
-                              />
-                            </div>
-                          </div>
-                        )}
-                      </div>
                     </div>
                   </div>
                 </Col>
