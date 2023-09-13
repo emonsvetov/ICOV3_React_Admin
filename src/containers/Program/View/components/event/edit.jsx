@@ -17,6 +17,7 @@ import { fetchEventTypes, getEventLedgerCodes, getMilestoneOptions } from '@/sha
 import { labelizeNamedData, labelizeData, getValueFromMixed } from '@/shared/helpers'
 import { makeFormData } from './common'
 import LedgerCodes from './LedgerCodes';
+import {login} from "../../../../App/auth";
 
 const selectedEventType = ''
 
@@ -35,6 +36,7 @@ const Edit = ({organization, theme, rtl}) => {
   const [program, setProgram] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isOpen, setOpen] = useState(false);
+  const [eventTypeId, setEventTypeId] = useState(false);
   let [event, setEvent] = useState(null);
   const [eventTypesRaw, setEventTypesRaw] = useState([]);
   const [eventTypes, setEventTypes] = useState([]);
@@ -86,6 +88,7 @@ const Edit = ({organization, theme, rtl}) => {
       fetchEvent(program.organization_id, program.id, eventId)
       .then(res => {
         setEvent(res)
+        setEventTypeId(res.event_type_id);
         setLoading(false)
       })
     }
@@ -180,6 +183,10 @@ const Edit = ({organization, theme, rtl}) => {
       const field = state.fields["max_awardable_amount"];
       field.change(v / program.factor_valuation);
     }
+  }
+
+  const onChangeEventType = (value) => {
+    setEventTypeId(value.value);
   }
 
   if (loading || !event) {
@@ -288,51 +295,55 @@ const Edit = ({organization, theme, rtl}) => {
                         </Col>
                       </Row>
                       <Row>
-                        <Col md="6" lg="4" xl="4">
-                          <Field name="max_awardable_amount">
-                            {({ input, meta }) => (
-                              <div className="form__form-group">
-                                <span className="form__form-group-label">Max Awardable Amount</span>
-                                <div className="form__form-group-field">
-                                  <div className="form__form-group-row">
-                                    <input onKeyUp={form.mutators.onChangeAwardValue} type="text" {...input} placeholder="Amount" />
-                                    {meta.touched && meta.error && (
-                                      <span className="form__form-group-error">
-                                        {meta.error}
-                                      </span>
-                                    )}
+                      {eventTypeId != 5 && (
+                        <>
+                          <Col md="6" lg="4" xl="4">
+                            <Field name="max_awardable_amount">
+                              {({ input, meta }) => (
+                                  <div className="form__form-group">
+                                    <span className="form__form-group-label">Max Awardable Amount</span>
+                                    <div className="form__form-group-field">
+                                      <div className="form__form-group-row">
+                                        <input onKeyUp={form.mutators.onChangeAwardValue} type="text" {...input} placeholder="Amount" />
+                                        {meta.touched && meta.error && (
+                                          <span className="form__form-group-error">
+                                            {meta.error}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                              )}
+                            </Field>
+                          </Col>
+                          <Col md="6" lg="4" xl="4">
+                            <Field name="awarding_points">
+                              {({ input, meta }) => (
+                                <div className="form__form-group">
+                                  <span className="form__form-group-label">
+                                    Awarding Points
+                                  </span>
+                                  <div className="form__form-group-field">
+                                    <div className="form__form-group-row">
+                                      <input
+                                        type="text"
+                                        {...input}
+                                        placeholder="Awarding Points"
+                                        onKeyUp={form.mutators.onChangeAwardValue}
+                                      />
+                                      {meta.touched && meta.error && (
+                                        <span className="form__form-group-error">
+                                          {meta.error}
+                                        </span>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            )}
-                          </Field>
-                        </Col>
-                        <Col md="6" lg="4" xl="4">
-                          <Field name="awarding_points">
-                            {({ input, meta }) => (
-                              <div className="form__form-group">
-                                <span className="form__form-group-label">
-                                  Awarding Points
-                                </span>
-                                <div className="form__form-group-field">
-                                  <div className="form__form-group-row">
-                                    <input
-                                      type="text"
-                                      {...input}
-                                      placeholder="Awarding Points"
-                                      onKeyUp={form.mutators.onChangeAwardValue}
-                                    />
-                                    {meta.touched && meta.error && (
-                                      <span className="form__form-group-error">
-                                        {meta.error}
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                          </Field>
-                        </Col>
+                              )}
+                            </Field>
+                          </Col>
+                        </>
+                      )}
 
                         {visibleLedgerCode && <Col md="6" lg="4" xl="4">
                           <Field name="ledger_code">
@@ -390,6 +401,10 @@ const Edit = ({organization, theme, rtl}) => {
                                   name="event_type_id"
                                   options={eventTypes}
                                   component={renderSelectField}
+                                  parse={value => {
+                                      onChangeEventType(value)
+                                      return value;
+                                  }}
                                 />
                                 {isMilestoneAward(values.event_type_id) && (
                                   <div className="form__form-group-field my-4">
