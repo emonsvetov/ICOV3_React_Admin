@@ -31,7 +31,7 @@ export const makeFormData = (program, values) => {
 
     //static
     eventData.event_type_id = extractEventTypeId(eventData, event_type_id)
-    eventData.ledger_code = extractLedgerCode(eventData, ledger_code)
+    eventData.ledger_code = extractLedgerCode(eventData, ledger_code) || null;
     eventData.milestone_award_frequency = milestone_award_frequency?.value ? milestone_award_frequency.value : milestone_award_frequency;
 
     return eventData
