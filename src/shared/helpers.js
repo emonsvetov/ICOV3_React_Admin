@@ -399,3 +399,18 @@ export const getValueFromMixed = (value, key = 'value') => {
       return value;
     }
 }
+
+export const isBadgeAward = ( event_type_id ) => {
+    let type_to_match = event_type_id
+    if( isObject(event_type_id) && typeof event_type_id.value !== 'undefined' ) {
+        type_to_match = event_type_id.value
+    }
+    return type_to_match == 5 //badge
+    || type_to_match == 6 //peer to peer badge
+    || type_to_match == 10 //miglestone badge
+}
+
+export const isMilestoneAward = (event_type_name) => {
+    return event_type_name == "Milestone Badge" //badge
+    || event_type_name == "Milestone Award"
+}

@@ -7,7 +7,7 @@ import axios from "axios";
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
-import { labelizeNamedData, labelizeData } from "@/shared/helpers";
+import { labelizeNamedData, labelizeData, isBadgeAward, isMilestoneAward } from "@/shared/helpers";
 import {getMilestoneOptions} from '@/shared/apiHelper';
 import renderSelectField from '@/shared/components/form/Select'
 import {fetchEventTypes, getEventLedgerCodes} from '@/shared/apiHelper'
@@ -26,7 +26,6 @@ const AddEventForm = ({ onStep, program }) => {
   const [activeTab, setActiveTab] = useState("2");
   const [eventTypeId, setEventTypeId] = useState(false);
   const [ledgerCodes, setLedgerCodes] = useState([]);
-  const [visibleLedgerCode, setVisibleLedgerCode] = useState(false);
   const [selectedEventType, setSelectedEventType] = useState(null);
   const [milestoneOptions, setMilestoneOptions] = useState([]);
 
@@ -154,6 +153,45 @@ const AddEventForm = ({ onStep, program }) => {
               </Row>
               <Row>
                 <Col md="6" lg="4" xl="4">
+                  <div className="form__form-group">
+                    <span className="form__form-group-label">
+                      Select Event Type
+                    </span>
+                    <div className="form__form-group-field">
+                      <div className="form__form-group-row">
+                        <Field
+                          name="event_type_id"
+                          options={eventTypes}
+                          parse={(value) => {
+                            handleSelectEventType(value);
+                            return value;
+                          }}
+                          placeholder={"Select Event Type"}
+                          component={renderSelectField}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+                <Col md="6" lg="4" xl="4">
+                  <div className="form__form-group">
+                    <div className="form__form-group-field">
+                      <span
+                        className="form__form-group-label"
+                        style={{ width: "200%" }}
+                      >
+                        Enable This Event
+                      </span>
+                      <Field
+                        name="enable"
+                        component={renderToggleButtonField}
+                      />
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col md="6" lg="4" xl="4">
                   <Field name="name">
                     {({ input, meta }) => (
                       <div className="form__form-group">
@@ -190,6 +228,7 @@ const AddEventForm = ({ onStep, program }) => {
                               options={ledgerCodes}
                               isClearable={true}
                               component={renderSelectField}
+                              readonly={true}
                           />
                           <LedgerCodes program={program} cb_CodeAction={cb_CodeAction} />
                       </div>
@@ -197,8 +236,8 @@ const AddEventForm = ({ onStep, program }) => {
                   </div>
                 </Col>
               </Row>
+              {!isBadgeAward(eventTypeId) && (
               <Row>
-                {eventTypeId != 5 && (
                   <Col md="6" lg="4" xl="4">
                     <Field name="max_awardable_amount">
                       {({ input, meta }) => (
@@ -225,8 +264,6 @@ const AddEventForm = ({ onStep, program }) => {
                       )}
                     </Field>
                   </Col>
-                )}
-                {eventTypeId != 5 && (
                   <Col md="6" lg="4" xl="4">
                     <Field name="awarding_points">
                       {({ input, meta }) => (
@@ -253,89 +290,29 @@ const AddEventForm = ({ onStep, program }) => {
                       )}
                     </Field>
                   </Col>
-                )}
-
-                {visibleLedgerCode && (
-                  <Col md="6" lg="4" xl="4">
-                    <Field name="ledger_code">
-                      {({ input, meta }) => (
-                        <div className="form__form-group">
-                          <span className="form__form-group-label">
-                            Ledger Code
-                          </span>
-                          <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                              <input
-                                type="text"
-                                {...input}
-                                placeholder="Ledger Code"
-                              />
-                              {meta.touched && meta.error && (
-                                <span className="form__form-group-error">
-                                  {meta.error}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </Field>
-                  </Col>
-                )}
               </Row>
-              <Row>
-                <Col md="6" lg="4" xl="4">
-                  <div className="form__form-group">
-                    <div className="form__form-group-field">
-                      <span
-                        className="form__form-group-label"
-                        style={{ width: "200%" }}
-                      >
-                        Enable This Event
-                      </span>
-                      <Field
-                        name="enable"
-                        component={renderToggleButtonField}
-                      />
-                    </div>
-                  </div>
-                </Col>
-              </Row>
+              )}
+              {isMilestoneAward(selectedEventType) && (
               <Row>
                 <Col md="6" lg="4" xl="4">
                   <div className="form__form-group">
                     <span className="form__form-group-label">
-                      Select Event Type
+                      Select Milestone Frequency
                     </span>
                     <div className="form__form-group-field">
                       <div className="form__form-group-row">
                         <Field
-                          name="event_type_id"
-                          options={eventTypes}
-                          parse={(value) => {
-                            handleSelectEventType(value);
-                            return value;
-                          }}
-                          placeholder={"Select Event Type"}
+                          name="milestone_award_frequency"
+                          options={milestoneOptions}
                           component={renderSelectField}
+                          placeholder={"Select Frequency"}
                         />
-                        {selectedEventType === "Milestone Award" && (
-                          <div className="form__form-group-field my-4">
-                            <div className="form__form-group-row">
-                              <Field
-                                name="milestone_award_frequency"
-                                options={milestoneOptions}
-                                component={renderSelectField}
-                                placeholder={"Select Frequency"}
-                              />
-                            </div>
-                          </div>
-                        )}
                       </div>
                     </div>
                   </div>
                 </Col>
               </Row>
+              )}
               <Row>
                 <Col md="12" lg="8" xl="8">
                   <div className="form__form-group">

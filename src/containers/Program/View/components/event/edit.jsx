@@ -14,12 +14,9 @@ import renderSelectField from '@/shared/components/form/Select'
 
 import AddIconTabs from "./AddIconTabs";
 import { fetchEventTypes, getEventLedgerCodes, getMilestoneOptions } from '@/shared/apiHelper'
-import { labelizeNamedData, labelizeData, getValueFromMixed } from '@/shared/helpers'
+import { labelizeNamedData, labelizeData, getValueFromMixed, isBadgeAward } from '@/shared/helpers'
 import { makeFormData } from './common'
 import LedgerCodes from './LedgerCodes';
-import {login} from "../../../../App/auth";
-
-const selectedEventType = ''
 
 const fetchEvent = async (oId, pId, eId) => {
   try {
@@ -40,7 +37,6 @@ const Edit = ({organization, theme, rtl}) => {
   let [event, setEvent] = useState(null);
   const [eventTypesRaw, setEventTypesRaw] = useState([]);
   const [eventTypes, setEventTypes] = useState([]);
-  const [visibleLedgerCode, setVisibleLedgerCode] = useState(false);
   const [activeTab, setActiveTab] = useState('2');
   const [milestoneOptions, setMilestoneOptions] = useState([]);
   const [ledgerCodes, setLedgerCodes] = useState([]);
@@ -113,9 +109,7 @@ const Edit = ({organization, theme, rtl}) => {
   let history = useHistory();
 
   const isMilestoneAward = (event_type_id) => {
-
     const v = getValueFromMixed(event_type_id)
-    
     for(var i in eventTypesRaw)  {
       if( eventTypesRaw[i].type == 'milestone award' && eventTypesRaw[i].id === parseInt(v) ) {
         return true;
@@ -253,6 +247,44 @@ const Edit = ({organization, theme, rtl}) => {
                       </Row>
                       <Row>
                         <Col md="6" lg="4" xl="4">
+                          <div className="form__form-group">
+                            <span className="form__form-group-label">
+                              Select Event Type
+                            </span>
+                            <div className="form__form-group-field">
+                              <div className="form__form-group-row">
+                                <Field
+                                  name="event_type_id"
+                                  options={eventTypes}
+                                  component={renderSelectField}
+                                  parse={value => {
+                                      onChangeEventType(value)
+                                      return value;
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </Col>
+                        <Col md="6" lg="4" xl="4">
+                          <div className="form__form-group">
+                            <span className="form__form-group-label">
+                              Enable This Event
+                            </span>
+                            <div className="form__form-group-field">
+                              <div className="form__form-group-row">
+                                <Field
+                                  name="enable"
+                                  component={renderToggleButtonField}
+                                  className={'toggle-btn-auto-width'}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md="6" lg="4" xl="4">
                           <Field name="name">
                             {({ input, meta }) => (
                               <div className="form__form-group">
@@ -294,43 +326,16 @@ const Edit = ({organization, theme, rtl}) => {
                           </div>
                         </Col>
                       </Row>
+                      {!isBadgeAward(eventTypeId) && (
                       <Row>
-                      {eventTypeId != 5 && (
-                        <>
-                          <Col md="6" lg="4" xl="4">
-                            <Field name="max_awardable_amount">
-                              {({ input, meta }) => (
-                                  <div className="form__form-group">
-                                    <span className="form__form-group-label">Max Awardable Amount</span>
-                                    <div className="form__form-group-field">
-                                      <div className="form__form-group-row">
-                                        <input onKeyUp={form.mutators.onChangeAwardValue} type="text" {...input} placeholder="Amount" />
-                                        {meta.touched && meta.error && (
-                                          <span className="form__form-group-error">
-                                            {meta.error}
-                                          </span>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </div>
-                              )}
-                            </Field>
-                          </Col>
-                          <Col md="6" lg="4" xl="4">
-                            <Field name="awarding_points">
-                              {({ input, meta }) => (
+                        <Col md="6" lg="4" xl="4">
+                          <Field name="max_awardable_amount">
+                            {({ input, meta }) => (
                                 <div className="form__form-group">
-                                  <span className="form__form-group-label">
-                                    Awarding Points
-                                  </span>
+                                  <span className="form__form-group-label">Max Awardable Amount</span>
                                   <div className="form__form-group-field">
                                     <div className="form__form-group-row">
-                                      <input
-                                        type="text"
-                                        {...input}
-                                        placeholder="Awarding Points"
-                                        onKeyUp={form.mutators.onChangeAwardValue}
-                                      />
+                                      <input onKeyUp={form.mutators.onChangeAwardValue} type="text" {...input} placeholder="Amount" />
                                       {meta.touched && meta.error && (
                                         <span className="form__form-group-error">
                                           {meta.error}
@@ -339,25 +344,23 @@ const Edit = ({organization, theme, rtl}) => {
                                     </div>
                                   </div>
                                 </div>
-                              )}
-                            </Field>
-                          </Col>
-                        </>
-                      )}
-
-                        {visibleLedgerCode && <Col md="6" lg="4" xl="4">
-                          <Field name="ledger_code">
+                            )}
+                          </Field>
+                        </Col>
+                        <Col md="6" lg="4" xl="4">
+                          <Field name="awarding_points">
                             {({ input, meta }) => (
                               <div className="form__form-group">
                                 <span className="form__form-group-label">
-                                  Ledger Code
+                                  Awarding Points
                                 </span>
                                 <div className="form__form-group-field">
                                   <div className="form__form-group-row">
                                     <input
                                       type="text"
                                       {...input}
-                                      placeholder="Ledger Code"
+                                      placeholder="Awarding Points"
+                                      onKeyUp={form.mutators.onChangeAwardValue}
                                     />
                                     {meta.touched && meta.error && (
                                       <span className="form__form-group-error">
@@ -369,60 +372,30 @@ const Edit = ({organization, theme, rtl}) => {
                               </div>
                             )}
                           </Field>
-                        </Col>}
-                      </Row>
-                      <Row>
-                        <Col md="6" lg="4" xl="4">
-                          <div className="form__form-group">
-                            <div className="form__form-group-field">
-                              <span
-                                className="form__form-group-label"
-                                style={{ width: "200%" }}
-                              >
-                                Enable This Event
-                              </span>
-                              <Field
-                                name="enable"
-                                component={renderToggleButtonField}
-                              />
-                            </div>
-                          </div>
                         </Col>
                       </Row>
+                      )}
+                      {isMilestoneAward(values.event_type_id) && (
                       <Row>
                         <Col md="6" lg="4" xl="4">
                           <div className="form__form-group">
                             <span className="form__form-group-label">
-                              Select Event Type
+                              Select Milestone Frequency
                             </span>
                             <div className="form__form-group-field">
                               <div className="form__form-group-row">
                                 <Field
-                                  name="event_type_id"
-                                  options={eventTypes}
+                                  name="milestone_award_frequency"
+                                  options={milestoneOptions}
                                   component={renderSelectField}
-                                  parse={value => {
-                                      onChangeEventType(value)
-                                      return value;
-                                  }}
+                                  placeholder={values.milestone_award_frequency ? values.milestone_award_frequency : "Select Frequency"}
                                 />
-                                {isMilestoneAward(values.event_type_id) && (
-                                  <div className="form__form-group-field my-4">
-                                    <div className="form__form-group-row">
-                                      <Field
-                                        name="milestone_award_frequency"
-                                        options={milestoneOptions}
-                                        component={renderSelectField}
-                                        placeholder={values.milestone_award_frequency ? values.milestone_award_frequency : "Select Frequency"}
-                                      />
-                                    </div>
-                                  </div>
-                                )}
                               </div>
                             </div>
                           </div>
                         </Col>
                       </Row>
+                      )}
                       <Row>
                         <Col md="12" lg="8" xl="8">
                           <div className="form__form-group">
