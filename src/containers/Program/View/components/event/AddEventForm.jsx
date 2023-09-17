@@ -24,6 +24,7 @@ const AddEventForm = ({ onStep, program }) => {
   const [eventTypes, setEventTypes] = useState([]);
   const [isOpen, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("2");
+  const [eventTypeId, setEventTypeId] = useState(false);
   const [ledgerCodes, setLedgerCodes] = useState([]);
   const [visibleLedgerCode, setVisibleLedgerCode] = useState(false);
   const [selectedEventType, setSelectedEventType] = useState(null);
@@ -64,6 +65,7 @@ const AddEventForm = ({ onStep, program }) => {
 
   const handleSelectEventType = (option) => {
     setSelectedEventType(option.label);
+    setEventTypeId(option.value);
   };
 
   const onSubmit = (values) => {
@@ -186,6 +188,7 @@ const AddEventForm = ({ onStep, program }) => {
                           <Field 
                               name="ledger_code"
                               options={ledgerCodes}
+                              isClearable={true}
                               component={renderSelectField}
                           />
                           <LedgerCodes program={program} cb_CodeAction={cb_CodeAction} />
@@ -195,58 +198,62 @@ const AddEventForm = ({ onStep, program }) => {
                 </Col>
               </Row>
               <Row>
-                <Col md="6" lg="4" xl="4">
-                  <Field name="max_awardable_amount">
-                    {({ input, meta }) => (
-                      <div className="form__form-group">
-                        <span className="form__form-group-label">
-                          Max Awardable Amount
-                        </span>
-                        <div className="form__form-group-field">
-                          <div className="form__form-group-row">
-                            <input
-                              onKeyUp={form.mutators.onChangeAwardValue}
-                              type="text"
-                              {...input}
-                              placeholder="Amount"
-                            />
-                            {meta.touched && meta.error && (
-                              <span className="form__form-group-error">
-                                {meta.error}
-                              </span>
-                            )}
+                {eventTypeId != 5 && (
+                  <Col md="6" lg="4" xl="4">
+                    <Field name="max_awardable_amount">
+                      {({ input, meta }) => (
+                        <div className="form__form-group">
+                          <span className="form__form-group-label">
+                            Max Awardable Amount
+                          </span>
+                          <div className="form__form-group-field">
+                            <div className="form__form-group-row">
+                              <input
+                                onKeyUp={form.mutators.onChangeAwardValue}
+                                type="text"
+                                {...input}
+                                placeholder="Amount"
+                              />
+                              {meta.touched && meta.error && (
+                                <span className="form__form-group-error">
+                                  {meta.error}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
-                  </Field>
-                </Col>
-                <Col md="6" lg="4" xl="4">
-                  <Field name="awarding_points">
-                    {({ input, meta }) => (
-                      <div className="form__form-group">
-                        <span className="form__form-group-label">
-                          Awarding Points
-                        </span>
-                        <div className="form__form-group-field">
-                          <div className="form__form-group-row">
-                            <input
-                              type="text"
-                              {...input}
-                              placeholder="Awarding Points"
-                              onKeyUp={form.mutators.onChangeAwardValue}
-                            />
-                            {meta.touched && meta.error && (
-                              <span className="form__form-group-error">
-                                {meta.error}
-                              </span>
-                            )}
+                      )}
+                    </Field>
+                  </Col>
+                )}
+                {eventTypeId != 5 && (
+                  <Col md="6" lg="4" xl="4">
+                    <Field name="awarding_points">
+                      {({ input, meta }) => (
+                        <div className="form__form-group">
+                          <span className="form__form-group-label">
+                            Awarding Points
+                          </span>
+                          <div className="form__form-group-field">
+                            <div className="form__form-group-row">
+                              <input
+                                type="text"
+                                {...input}
+                                placeholder="Awarding Points"
+                                onKeyUp={form.mutators.onChangeAwardValue}
+                              />
+                              {meta.touched && meta.error && (
+                                <span className="form__form-group-error">
+                                  {meta.error}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
-                  </Field>
-                </Col>
+                      )}
+                    </Field>
+                  </Col>
+                )}
 
                 {visibleLedgerCode && (
                   <Col md="6" lg="4" xl="4">
