@@ -17,7 +17,7 @@ export const makeFormData = (program, values) => {
     } = values;
 
     eventData.name = name;
-    eventData.max_awardable_amount = max_awardable_amount;
+    eventData.max_awardable_amount = max_awardable_amount ? max_awardable_amount : 0;
     if (post_to_social_wall) {
         eventData.post_to_social_wall = post_to_social_wall;
     }

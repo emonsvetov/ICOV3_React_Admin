@@ -104,8 +104,6 @@ const EventsDataModal = ({
       </>
     )
   }
-
-  console.log(step)
   
   return (
     <Modal
