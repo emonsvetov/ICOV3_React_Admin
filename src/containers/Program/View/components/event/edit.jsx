@@ -231,8 +231,8 @@ const Edit = ({organization, theme, rtl}) => {
 
   event.awarding_points = parseFloat(event.max_awardable_amount) * parseInt(program.factor_valuation)
   // event.milestone_award_frequency = event.milestone_award_frequency.toString()
-  const textareaValueChange = () => {
-    
+  const textareaValueChange = (e) => {
+      setTextAreaValue(e.value)
   }
   if (event) {
     return (
@@ -643,5 +643,5 @@ const Edit = ({organization, theme, rtl}) => {
 export default withRouter(connect((state) => ({
   theme: state.theme,
   rtl: state.rtl,
-  organization: state.organization,
+  organization: state.organization
 }))(Edit));
