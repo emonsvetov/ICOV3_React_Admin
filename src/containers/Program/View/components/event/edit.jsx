@@ -17,7 +17,6 @@ import { fetchEventTypes, getEventLedgerCodes, getMilestoneOptions } from '@/sha
 import { labelizeNamedData, labelizeData, getValueFromMixed, isBadgeAward } from '@/shared/helpers'
 import { makeFormData } from './common'
 import LedgerCodes from './LedgerCodes';
-import Select from "react-select"
 
 const fetchEvent = async (oId, pId, eId) => {
   try {
@@ -41,40 +40,11 @@ const Edit = ({organization, theme, rtl}) => {
   const [activeTab, setActiveTab] = useState('2');
   const [milestoneOptions, setMilestoneOptions] = useState([]);
   const [ledgerCodes, setLedgerCodes] = useState([]);
-  const [email, setEmail] = useState('');
-  const [emailTemplates, setEmailTemplates] = useState([]);
   const dispatch = useDispatch()
-  const [textareaValue, setTextAreaValue] = useState('')
   const set_path = (icon) => {
     const path = process.env.REACT_APP_API_STORAGE_URL + "/" + icon.path;
     return path;
   }
-
-  const fetchProgramEmailTemplates = async(organizationId, programId) => {
-    setLoading(true)
-    try {
-        const response = await axios.get(`/organization/${organizationId}/program/${programId}/emailtemplate`);
-        return response.data;
-    } catch (e) {
-        throw new Error(`API error:${e?.message}`);
-    }
-  };
-  
-  useEffect(() => {
-    if (program?.organization)
-      fetchProgramEmailTemplates(program.organization.id, programId)
-      .then( (templates, index) => {
-        let tempTemplates=[]
-        templates.map(template => {
-          tempTemplates.push({value:template, label: template.name})
-        })
-        setEmailTemplates(tempTemplates)
-        if (tempTemplates.length > 0) {
-          setEmail(tempTemplates[0]);
-          setTextAreaValue(tempTemplates[0].value.content)
-        }
-      })
-  },[program])
 
   const fetchProgramData = async (id) => {
     try {
@@ -88,11 +58,7 @@ const Edit = ({organization, theme, rtl}) => {
   const cb_CodeAction = () => {
     getListLedgerCodes(program)
   }
-  const onEmailChange = (selectedEmail) => {
-    setEmail(selectedEmail);
-    console.log(selectedEmail);
-    setTextAreaValue(selectedEmail.value.content)
-  }
+
   const getListLedgerCodes = (program) => {
     getEventLedgerCodes(program.organization_id, program.id)
     .then(ledgercodes => {
@@ -225,9 +191,7 @@ const Edit = ({organization, theme, rtl}) => {
 
   event.awarding_points = parseFloat(event.max_awardable_amount) * parseInt(program.factor_valuation)
   // event.milestone_award_frequency = event.milestone_award_frequency.toString()
-  const textareaValueChange = (e) => {
-      setTextAreaValue(e.value)
-  }
+
   if (event) {
     return (
       <Container className="dashboard">
@@ -529,54 +493,7 @@ const Edit = ({organization, theme, rtl}) => {
                           </Field>
                         </Col>
                       </Row>
-                      <Row className="w100">
-                        <Col md="6" lg="6" xl="6">
-                            <span className="form__form-group-label">
-                                Email Template
-                            </span>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col md="6" lg="4" xl="4">
-          
-                              <div className="form__form-group">
-                                <div className="form__form-group-field">
-                                  <div className="form__form-group-row">
-                                      <Select
-                                        value={email}
-                                        onChange={onEmailChange}
-                                        options={emailTemplates}
-                                        clearable = {false}
-                                        className="react-select"
-                                        classNamePrefix="react-select"
-                                      >
 
-                                      </Select>
-                                  </div>
-                                </div>
-                              </div>
-                        </Col>
-                      </Row>
-                    <Row>
-                      <Col md="9" lg="9" xl="9">
-                        <div className="form__form-group">
-                          <span className="form__form-group-label">Content</span>
-                          <div className="form__form-group-field">
-                            <div className="form__form-group-row">
-                                 <div className="form__form-group">
-                                  <div className="form__form-group-field">
-                                    <div className="form__form-group-row">
-                                      <textarea value={textareaValue} readOnly="readonly" onChange={textareaValueChange}>
-
-                                      </textarea>
-                                    </div>
-                                  </div>
-                                </div>
-                            </div>
-                          </div>
-                        </div>
-                      </Col>
-                    </Row>
                     </form>
                     <Modal
                       className={`modal-program-events-icons modal-lg ltr-support`}
