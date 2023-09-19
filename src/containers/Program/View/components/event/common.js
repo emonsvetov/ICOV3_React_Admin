@@ -17,7 +17,7 @@ export const makeFormData = (program, values) => {
     } = values;
 
     eventData.name = name;
-    eventData.max_awardable_amount = max_awardable_amount;
+    eventData.max_awardable_amount = max_awardable_amount ? max_awardable_amount : 0;
     if (post_to_social_wall) {
         eventData.post_to_social_wall = post_to_social_wall;
     }
@@ -31,7 +31,7 @@ export const makeFormData = (program, values) => {
 
     //static
     eventData.event_type_id = extractEventTypeId(eventData, event_type_id)
-    eventData.ledger_code = extractLedgerCode(eventData, ledger_code)
+    eventData.ledger_code = extractLedgerCode(eventData, ledger_code) || null;
     eventData.milestone_award_frequency = milestone_award_frequency?.value ? milestone_award_frequency.value : milestone_award_frequency;
 
     return eventData

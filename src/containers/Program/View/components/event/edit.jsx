@@ -14,11 +14,9 @@ import renderSelectField from '@/shared/components/form/Select'
 
 import AddIconTabs from "./AddIconTabs";
 import { fetchEventTypes, getEventLedgerCodes, getMilestoneOptions } from '@/shared/apiHelper'
-import { labelizeNamedData, labelizeData, getValueFromMixed } from '@/shared/helpers'
+import { labelizeNamedData, labelizeData, getValueFromMixed, isBadgeAward } from '@/shared/helpers'
 import { makeFormData } from './common'
 import LedgerCodes from './LedgerCodes';
-
-const selectedEventType = ''
 
 const fetchEvent = async (oId, pId, eId) => {
   try {
@@ -35,16 +33,14 @@ const Edit = ({organization, theme, rtl}) => {
   const [program, setProgram] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isOpen, setOpen] = useState(false);
+  const [eventTypeId, setEventTypeId] = useState(false);
   let [event, setEvent] = useState(null);
   const [eventTypesRaw, setEventTypesRaw] = useState([]);
   const [eventTypes, setEventTypes] = useState([]);
-  const [visibleLedgerCode, setVisibleLedgerCode] = useState(false);
   const [activeTab, setActiveTab] = useState('2');
   const [milestoneOptions, setMilestoneOptions] = useState([]);
   const [ledgerCodes, setLedgerCodes] = useState([]);
-
   const dispatch = useDispatch()
-
   const set_path = (icon) => {
     const path = process.env.REACT_APP_API_STORAGE_URL + "/" + icon.path;
     return path;
@@ -62,6 +58,7 @@ const Edit = ({organization, theme, rtl}) => {
   const cb_CodeAction = () => {
     getListLedgerCodes(program)
   }
+
   const getListLedgerCodes = (program) => {
     getEventLedgerCodes(program.organization_id, program.id)
     .then(ledgercodes => {
@@ -86,6 +83,7 @@ const Edit = ({organization, theme, rtl}) => {
       fetchEvent(program.organization_id, program.id, eventId)
       .then(res => {
         setEvent(res)
+        setEventTypeId(res.event_type_id);
         setLoading(false)
       })
     }
@@ -110,9 +108,7 @@ const Edit = ({organization, theme, rtl}) => {
   let history = useHistory();
 
   const isMilestoneAward = (event_type_id) => {
-
     const v = getValueFromMixed(event_type_id)
-    
     for(var i in eventTypesRaw)  {
       if( eventTypesRaw[i].type == 'milestone award' && eventTypesRaw[i].id === parseInt(v) ) {
         return true;
@@ -127,7 +123,6 @@ const Edit = ({organization, theme, rtl}) => {
     axios
       .put(`/organization/${program.organization_id}/program/${programId}/event/${eventId}`, eventData)
       .then((res) => {
-        console.log(res)
         if (res.status == 200) {
           flashSuccess(dispatch, "Event saved!")
           // onStep(0);
@@ -182,19 +177,20 @@ const Edit = ({organization, theme, rtl}) => {
     }
   }
 
+  const onChangeEventType = (value) => {
+    setEventTypeId(value.value);
+  }
+
   if (loading || !event) {
     return <p>Loading...</p>;
   }
 
   if( event.event_icon && !event.icon)  {
-    console.log('mappingicon')
     event.icon = event.event_icon
   }
 
   event.awarding_points = parseFloat(event.max_awardable_amount) * parseInt(program.factor_valuation)
   // event.milestone_award_frequency = event.milestone_award_frequency.toString()
-
-  // console.log(emailTemplate)
 
   if (event) {
     return (
@@ -217,7 +213,6 @@ const Edit = ({organization, theme, rtl}) => {
               >
                 {({ handleSubmit, form, submitting, pristine, values }) => (
                   <>
-                    {/* {console.log(values)} */}
                     <form className="form" onSubmit={handleSubmit}>
                       <Row className="w100">
                         <Col md="6" lg="6" xl="6">
@@ -242,6 +237,44 @@ const Edit = ({organization, theme, rtl}) => {
                               Save
                             </Button>
                           </ButtonToolbar>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md="6" lg="4" xl="4">
+                          <div className="form__form-group">
+                            <span className="form__form-group-label">
+                              Select Event Type
+                            </span>
+                            <div className="form__form-group-field">
+                              <div className="form__form-group-row">
+                                <Field
+                                  name="event_type_id"
+                                  options={eventTypes}
+                                  component={renderSelectField}
+                                  parse={value => {
+                                      onChangeEventType(value)
+                                      return value;
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </Col>
+                        <Col md="6" lg="4" xl="4">
+                          <div className="form__form-group">
+                            <span className="form__form-group-label">
+                              Enable This Event
+                            </span>
+                            <div className="form__form-group-field">
+                              <div className="form__form-group-row">
+                                <Field
+                                  name="enable"
+                                  component={renderToggleButtonField}
+                                  className={'toggle-btn-auto-width'}
+                                />
+                              </div>
+                            </div>
+                          </div>
                         </Col>
                       </Row>
                       <Row>
@@ -278,6 +311,7 @@ const Edit = ({organization, theme, rtl}) => {
                                   <Field 
                                       name="ledger_code"
                                       options={ledgerCodes}
+                                      isClearable={true}
                                       component={renderSelectField}
                                   />
                                   <LedgerCodes program={program} cb_CodeAction={cb_CodeAction} />
@@ -286,23 +320,24 @@ const Edit = ({organization, theme, rtl}) => {
                           </div>
                         </Col>
                       </Row>
+                      {!isBadgeAward(eventTypeId) && (
                       <Row>
                         <Col md="6" lg="4" xl="4">
                           <Field name="max_awardable_amount">
                             {({ input, meta }) => (
-                              <div className="form__form-group">
-                                <span className="form__form-group-label">Max Awardable Amount</span>
-                                <div className="form__form-group-field">
-                                  <div className="form__form-group-row">
-                                    <input onKeyUp={form.mutators.onChangeAwardValue} type="text" {...input} placeholder="Amount" />
-                                    {meta.touched && meta.error && (
-                                      <span className="form__form-group-error">
-                                        {meta.error}
-                                      </span>
-                                    )}
+                                <div className="form__form-group">
+                                  <span className="form__form-group-label">Max Awardable Amount</span>
+                                  <div className="form__form-group-field">
+                                    <div className="form__form-group-row">
+                                      <input onKeyUp={form.mutators.onChangeAwardValue} type="text" {...input} placeholder="Amount" />
+                                      {meta.touched && meta.error && (
+                                        <span className="form__form-group-error">
+                                          {meta.error}
+                                        </span>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
                             )}
                           </Field>
                         </Col>
@@ -332,81 +367,29 @@ const Edit = ({organization, theme, rtl}) => {
                             )}
                           </Field>
                         </Col>
-
-                        {visibleLedgerCode && <Col md="6" lg="4" xl="4">
-                          <Field name="ledger_code">
-                            {({ input, meta }) => (
-                              <div className="form__form-group">
-                                <span className="form__form-group-label">
-                                  Ledger Code
-                                </span>
-                                <div className="form__form-group-field">
-                                  <div className="form__form-group-row">
-                                    <input
-                                      type="text"
-                                      {...input}
-                                      placeholder="Ledger Code"
-                                    />
-                                    {meta.touched && meta.error && (
-                                      <span className="form__form-group-error">
-                                        {meta.error}
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                          </Field>
-                        </Col>}
                       </Row>
-                      <Row>
-                        <Col md="6" lg="4" xl="4">
-                          <div className="form__form-group">
-                            <div className="form__form-group-field">
-                              <span
-                                className="form__form-group-label"
-                                style={{ width: "200%" }}
-                              >
-                                Enable This Event
-                              </span>
-                              <Field
-                                name="enable"
-                                component={renderToggleButtonField}
-                              />
-                            </div>
-                          </div>
-                        </Col>
-                      </Row>
+                      )}
+                      {isMilestoneAward(values.event_type_id) && (
                       <Row>
                         <Col md="6" lg="4" xl="4">
                           <div className="form__form-group">
                             <span className="form__form-group-label">
-                              Select Event Type
+                              Select Milestone Frequency
                             </span>
                             <div className="form__form-group-field">
                               <div className="form__form-group-row">
                                 <Field
-                                  name="event_type_id"
-                                  options={eventTypes}
+                                  name="milestone_award_frequency"
+                                  options={milestoneOptions}
                                   component={renderSelectField}
+                                  placeholder={values.milestone_award_frequency ? values.milestone_award_frequency : "Select Frequency"}
                                 />
-                                {isMilestoneAward(values.event_type_id) && (
-                                  <div className="form__form-group-field my-4">
-                                    <div className="form__form-group-row">
-                                      <Field
-                                        name="milestone_award_frequency"
-                                        options={milestoneOptions}
-                                        component={renderSelectField}
-                                        placeholder={values.milestone_award_frequency ? values.milestone_award_frequency : "Select Frequency"}
-                                      />
-                                    </div>
-                                  </div>
-                                )}
                               </div>
                             </div>
                           </div>
                         </Col>
                       </Row>
+                      )}
                       <Row>
                         <Col md="12" lg="8" xl="8">
                           <div className="form__form-group">
@@ -510,6 +493,7 @@ const Edit = ({organization, theme, rtl}) => {
                           </Field>
                         </Col>
                       </Row>
+
                     </form>
                     <Modal
                       className={`modal-program-events-icons modal-lg ltr-support`}
