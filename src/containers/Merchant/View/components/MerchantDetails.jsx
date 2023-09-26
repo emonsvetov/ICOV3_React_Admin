@@ -208,7 +208,15 @@ const MerchantDetails = ( {data} ) => {
             <Col md="8" lg="8" xl="8" sm="8">
                 {merchant.available_giftcode_count}
             </Col>
-        </Row>                                
+        </Row>
+        <Row>
+            <Col md="4" lg="4" xl="4" sm="4" className='label'>
+                Available Test Gift Codes:
+            </Col>
+            <Col md="8" lg="8" xl="8" sm="8">
+                {merchant.available_test_giftcode_count}
+            </Col>
+        </Row>
         <Row>
             <Col md="4" lg="4" xl="4" sm="4" className='label'>
                 Redeemed Gift Codes:
