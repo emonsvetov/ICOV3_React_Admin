@@ -32,7 +32,7 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
         setOpen(prevState => !prevState)
     }
 
-    let showLiveMode = !!(auth?.isSuperAdmin && program?.is_demo);
+    let showLiveMode = !!((auth?.isAdmin || auth?.isSuperAdmin) && program?.is_demo);
 
     if( !program || !organization ) return 'Loading...'
 
