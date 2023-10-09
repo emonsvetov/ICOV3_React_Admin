@@ -63,7 +63,10 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
             is_pay_in_advance: data.is_pay_in_advance,
             country: data.country,
             budget_summary: data.budget_summary,
-            use_budget_cascading: data.use_budget_cascading
+            use_budget_cascading: data.use_budget_cascading,
+            send_balance_threshold_notification: data.send_balance_threshold_notification,
+            balance_threshold: data.balance_threshold,
+            low_balance_email: data.low_balance_email
         }}
         >
         {({ handleSubmit, form, submitting, pristine, values }) => (
@@ -379,7 +382,53 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                         )}
                         </Field>
                     </Col>
-                </Row>       
+                </Row>
+                <Row>
+                    <Col md="12">
+                        <hr/>
+                        <h4 style={{marginBottom: '10px'}}>Balance Notfication</h4>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col md="6" lg="4" xl="4">
+                        <div className="form__form-group">
+                            <CheckboxField
+                              name="send_balance_threshold_notification"
+                              label="Send the Low Deposit Balance Notification"
+                            />
+                        </div>
+                    </Col>
+                    <Col md="6" lg="4" xl="4">
+                        <Field name="balance_threshold">
+                            {({ input, meta }) => (
+                              <div className="form__form-group">
+                                  <span className="form__form-group-label">Balance Threshold</span>
+                                  <div className="form__form-group-field">
+                                      <div className="form__form-group-row">
+                                          <input type="text" {...input} placeholder="" />
+                                          {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                      </div>
+                                  </div>
+                              </div>
+                            )}
+                        </Field>
+                    </Col>
+                    <Col md="6" lg="4" xl="4">
+                        <Field name="low_balance_email">
+                            {({ input, meta }) => (
+                              <div className="form__form-group">
+                                  <span className="form__form-group-label">Low Deposit Balance Email</span>
+                                  <div className="form__form-group-field">
+                                      <div className="form__form-group-row">
+                                          <input type="text" {...input} placeholder="" />
+                                          {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                      </div>
+                                  </div>
+                              </div>
+                            )}
+                        </Field>
+                    </Col>
+                </Row>
             </ModalBody>
         </form>
         )}
