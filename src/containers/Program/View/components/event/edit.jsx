@@ -2,33 +2,54 @@ import React, { useState, useEffect } from "react";
 import { Form, Field } from "react-final-form";
 import {
   Modal,
-  ModalBody, Row, Col, ButtonToolbar, Button, Card, CardBody, Container
+  ModalBody,
+  Row,
+  Col,
+  ButtonToolbar,
+  Button,
+  Card,
+  CardBody,
+  Container,
 } from "reactstrap";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 import { useParams, useHistory, withRouter } from "react-router-dom";
-import { useDispatch, flashSuccess, flashError } from "@/shared/components/flash"
+import {
+  useDispatch,
+  flashSuccess,
+  flashError,
+} from "@/shared/components/flash";
 import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
 import axios from "axios";
-import renderSelectField from '@/shared/components/form/Select'
+import renderSelectField from "@/shared/components/form/Select";
 
 import AddIconTabs from "./AddIconTabs";
-import { fetchEventTypes, getEventLedgerCodes, getMilestoneOptions } from '@/shared/apiHelper'
-import { labelizeNamedData, labelizeData, getValueFromMixed, isBadgeAward } from '@/shared/helpers'
-import { makeFormData } from './common'
-import LedgerCodes from './LedgerCodes';
+import {
+  fetchEventTypes,
+  getEventLedgerCodes,
+  getMilestoneOptions,
+} from "@/shared/apiHelper";
+import {
+  labelizeNamedData,
+  labelizeData,
+  getValueFromMixed,
+  isBadgeAward,
+} from "@/shared/helpers";
+import { makeFormData } from "./common";
+import LedgerCodes from "./LedgerCodes";
 
 const fetchEvent = async (oId, pId, eId) => {
   try {
-    const response = await axios.get(`/organization/${oId}/program/${pId}/event/${eId}`);
+    const response = await axios.get(
+      `/organization/${oId}/program/${pId}/event/${eId}`
+    );
     return response.data;
   } catch (e) {
     throw new Error(`API error:${e?.message}`);
   }
 };
 
-const Edit = ({organization, theme, rtl}) => {
-
+const Edit = ({ organization, theme, rtl }) => {
   const { programId, eventId } = useParams();
   const [program, setProgram] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -37,100 +58,109 @@ const Edit = ({organization, theme, rtl}) => {
   let [event, setEvent] = useState(null);
   const [eventTypesRaw, setEventTypesRaw] = useState([]);
   const [eventTypes, setEventTypes] = useState([]);
-  const [activeTab, setActiveTab] = useState('2');
+  const [activeTab, setActiveTab] = useState("2");
   const [milestoneOptions, setMilestoneOptions] = useState([]);
   const [ledgerCodes, setLedgerCodes] = useState([]);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const set_path = (icon) => {
     const path = process.env.REACT_APP_API_STORAGE_URL + "/" + icon.path;
     return path;
-  }
+  };
 
   const fetchProgramData = async (id) => {
     try {
-      const { id: organizationId } = organization
-      const response = await axios.get(`/organization/${organizationId}/program/${id}`);
-      setProgram(response.data)
+      const { id: organizationId } = organization;
+      const response = await axios.get(
+        `/organization/${organizationId}/program/${id}`
+      );
+      setProgram(response.data);
     } catch (e) {
       throw new Error(`API error:${e?.message}`);
     }
   };
   const cb_CodeAction = () => {
-    getListLedgerCodes(program)
-  }
+    getListLedgerCodes(program);
+  };
 
   const getListLedgerCodes = (program) => {
-    getEventLedgerCodes(program.organization_id, program.id)
-    .then(ledgercodes => {
-      setLedgerCodes(labelizeNamedData(ledgercodes, ["id", "ledger_code"]))
-    })
-  }
+    getEventLedgerCodes(program.organization_id, program.id).then(
+      (ledgercodes) => {
+        setLedgerCodes(labelizeNamedData(ledgercodes, ["id", "ledger_code"]));
+      }
+    );
+  };
   useEffect(() => {
-    if( program?.id ){
-      getListLedgerCodes(program)
+    if (program?.id) {
+      getListLedgerCodes(program);
     }
-  }, [program])
+  }, [program]);
 
   useEffect(() => {
     if (organization?.id && programId) {
-      fetchProgramData(programId)
+      fetchProgramData(programId);
     }
   }, [programId, organization]);
 
   useEffect(() => {
     if (eventId && program?.id) {
-      setLoading(true)
-      fetchEvent(program.organization_id, program.id, eventId)
-      .then(res => {
-        setEvent(res)
+      setLoading(true);
+      fetchEvent(program.organization_id, program.id, eventId).then((res) => {
+        setEvent(res);
         setEventTypeId(res.event_type_id);
-        setLoading(false)
-      })
+        setLoading(false);
+      });
     }
   }, [program, eventId]);
 
-  useEffect( () => {
-    if( event?.id && program?.id ) {
-      fetchEventTypes(organization.id, programId)
-      .then(evtypes => {
-        setEventTypesRaw(evtypes)
-        setEventTypes(labelizeNamedData(evtypes))
-      })
-      if( program.allow_milestone_award ) {
-        getMilestoneOptions(program.organization_id, program.id)
-        .then( o => {
-          setMilestoneOptions(labelizeData(o))
-        })
+  useEffect(() => {
+    if (event?.id && program?.id) {
+      fetchEventTypes(organization.id, programId).then((evtypes) => {
+        setEventTypesRaw(evtypes);
+        setEventTypes(labelizeNamedData(evtypes));
+      });
+      if (program.allow_milestone_award) {
+        getMilestoneOptions(program.organization_id, program.id).then((o) => {
+          setMilestoneOptions(labelizeData(o));
+        });
       }
     }
-  }, [event])
+  }, [event]);
 
   let history = useHistory();
 
   const isMilestoneAward = (event_type_id) => {
-    const v = getValueFromMixed(event_type_id)
-    for(var i in eventTypesRaw)  {
-      if( eventTypesRaw[i].type == 'milestone award' && eventTypesRaw[i].id === parseInt(v) ) {
+    const v = getValueFromMixed(event_type_id);
+
+    for (var i in eventTypesRaw) {
+      if (
+        (eventTypesRaw[i].type == "milestone award" &&
+          eventTypesRaw[i].id === parseInt(v)) ||
+        (eventTypesRaw[i].type === "milestone badge" &&
+          eventTypesRaw[i].id === parseInt(v))
+      ) {
         return true;
       }
     }
     // return event_type_id === 9;
-  }
+  };
 
   const onSubmit = (values) => {
-    const eventData = makeFormData(program, values)
+    const eventData = makeFormData(program, values);
 
     axios
-      .put(`/organization/${program.organization_id}/program/${programId}/event/${eventId}`, eventData)
+      .put(
+        `/organization/${program.organization_id}/program/${programId}/event/${eventId}`,
+        eventData
+      )
       .then((res) => {
         if (res.status == 200) {
-          flashSuccess(dispatch, "Event saved!")
+          flashSuccess(dispatch, "Event saved!");
           // onStep(0);
           // window.location = `/program/view/${programId}/?message=Event ${eventId} Updated successfully!`
         }
       })
       .catch((err) => {
-        flashError(dispatch, err.response.data)
+        flashError(dispatch, err.response.data);
         setLoading(false);
       });
 
@@ -152,44 +182,44 @@ const Edit = ({organization, theme, rtl}) => {
 
   const onClickCancel = () => {
     history.goBack();
-  }
+  };
 
   const toggle = () => {
-    setOpen(prevState => !prevState)
-  }
+    setOpen((prevState) => !prevState);
+  };
 
   const setEventIcon = ([fieldName, fieldVal], state, { changeValue }) => {
     setOpen(false);
-    changeValue(state, 'event_icon_id', () => fieldVal.id);
+    changeValue(state, "event_icon_id", () => fieldVal.id);
     changeValue(state, fieldName, () => fieldVal);
-  }
+  };
 
   const onChangeAwardValue = ([field], state, { setIn, changeValue }) => {
-    const v = field.target.value
+    const v = field.target.value;
     if (isNaN(v)) return;
-    if (field.target.name === 'max_awardable_amount') {
+    if (field.target.name === "max_awardable_amount") {
       const field = state.fields["awarding_points"];
       field.change(program.factor_valuation * v);
-    }
-    else if (field.target.name === 'awarding_points') {
+    } else if (field.target.name === "awarding_points") {
       const field = state.fields["max_awardable_amount"];
       field.change(v / program.factor_valuation);
     }
-  }
+  };
 
   const onChangeEventType = (value) => {
     setEventTypeId(value.value);
-  }
+  };
 
   if (loading || !event) {
     return <p>Loading...</p>;
   }
 
-  if( event.event_icon && !event.icon)  {
-    event.icon = event.event_icon
+  if (event.event_icon && !event.icon) {
+    event.icon = event.event_icon;
   }
 
-  event.awarding_points = parseFloat(event.max_awardable_amount) * parseInt(program.factor_valuation)
+  event.awarding_points =
+    parseFloat(event.max_awardable_amount) * parseInt(program.factor_valuation);
   // event.milestone_award_frequency = event.milestone_award_frequency.toString()
 
   if (event) {
@@ -197,7 +227,7 @@ const Edit = ({organization, theme, rtl}) => {
       <Container className="dashboard">
         <Col md={12}>
           <Card>
-            <CardBody style={{ display: 'flex' }}>
+            <CardBody style={{ display: "flex" }}>
               <Form
                 mutators={{
                   // // expect (field, value) args from the mutator
@@ -205,7 +235,7 @@ const Edit = ({organization, theme, rtl}) => {
                   //   changeValue(state, field, () => value)
                   // }
                   onChangeAwardValue,
-                  setEventIcon
+                  setEventIcon,
                 }}
                 onSubmit={onSubmit}
                 validate={(values) => formValidation.validateForm(values)}
@@ -251,9 +281,9 @@ const Edit = ({organization, theme, rtl}) => {
                                   name="event_type_id"
                                   options={eventTypes}
                                   component={renderSelectField}
-                                  parse={value => {
-                                      onChangeEventType(value)
-                                      return value;
+                                  parse={(value) => {
+                                    onChangeEventType(value);
+                                    return value;
                                   }}
                                 />
                               </div>
@@ -270,7 +300,7 @@ const Edit = ({organization, theme, rtl}) => {
                                 <Field
                                   name="enable"
                                   component={renderToggleButtonField}
-                                  className={'toggle-btn-auto-width'}
+                                  className={"toggle-btn-auto-width"}
                                 />
                               </div>
                             </div>
@@ -282,7 +312,9 @@ const Edit = ({organization, theme, rtl}) => {
                           <Field name="name">
                             {({ input, meta }) => (
                               <div className="form__form-group">
-                                <span className="form__form-group-label">Event Name</span>
+                                <span className="form__form-group-label">
+                                  Event Name
+                                </span>
                                 <div className="form__form-group-field">
                                   <div className="form__form-group-row">
                                     <input
@@ -308,28 +340,40 @@ const Edit = ({organization, theme, rtl}) => {
                             </span>
                             <div className="form__form-group-field">
                               <div className="form__form-group-row">
-                                  <Field 
-                                      name="ledger_code"
-                                      options={ledgerCodes}
-                                      isClearable={true}
-                                      component={renderSelectField}
-                                  />
-                                  <LedgerCodes program={program} cb_CodeAction={cb_CodeAction} />
+                                <Field
+                                  name="ledger_code"
+                                  options={ledgerCodes}
+                                  isClearable={true}
+                                  component={renderSelectField}
+                                />
+                                <LedgerCodes
+                                  program={program}
+                                  cb_CodeAction={cb_CodeAction}
+                                />
                               </div>
                             </div>
                           </div>
                         </Col>
                       </Row>
                       {!isBadgeAward(eventTypeId) && (
-                      <Row>
-                        <Col md="6" lg="4" xl="4">
-                          <Field name="max_awardable_amount">
-                            {({ input, meta }) => (
+                        <Row>
+                          <Col md="6" lg="4" xl="4">
+                            <Field name="max_awardable_amount">
+                              {({ input, meta }) => (
                                 <div className="form__form-group">
-                                  <span className="form__form-group-label">Max Awardable Amount</span>
+                                  <span className="form__form-group-label">
+                                    Max Awardable Amount
+                                  </span>
                                   <div className="form__form-group-field">
                                     <div className="form__form-group-row">
-                                      <input onKeyUp={form.mutators.onChangeAwardValue} type="text" {...input} placeholder="Amount" />
+                                      <input
+                                        onKeyUp={
+                                          form.mutators.onChangeAwardValue
+                                        }
+                                        type="text"
+                                        {...input}
+                                        placeholder="Amount"
+                                      />
                                       {meta.touched && meta.error && (
                                         <span className="form__form-group-error">
                                           {meta.error}
@@ -338,57 +382,63 @@ const Edit = ({organization, theme, rtl}) => {
                                     </div>
                                   </div>
                                 </div>
-                            )}
-                          </Field>
-                        </Col>
-                        <Col md="6" lg="4" xl="4">
-                          <Field name="awarding_points">
-                            {({ input, meta }) => (
-                              <div className="form__form-group">
-                                <span className="form__form-group-label">
-                                  Awarding Points
-                                </span>
-                                <div className="form__form-group-field">
-                                  <div className="form__form-group-row">
-                                    <input
-                                      type="text"
-                                      {...input}
-                                      placeholder="Awarding Points"
-                                      onKeyUp={form.mutators.onChangeAwardValue}
-                                    />
-                                    {meta.touched && meta.error && (
-                                      <span className="form__form-group-error">
-                                        {meta.error}
-                                      </span>
-                                    )}
+                              )}
+                            </Field>
+                          </Col>
+                          <Col md="6" lg="4" xl="4">
+                            <Field name="awarding_points">
+                              {({ input, meta }) => (
+                                <div className="form__form-group">
+                                  <span className="form__form-group-label">
+                                    Awarding Points
+                                  </span>
+                                  <div className="form__form-group-field">
+                                    <div className="form__form-group-row">
+                                      <input
+                                        type="text"
+                                        {...input}
+                                        placeholder="Awarding Points"
+                                        onKeyUp={
+                                          form.mutators.onChangeAwardValue
+                                        }
+                                      />
+                                      {meta.touched && meta.error && (
+                                        <span className="form__form-group-error">
+                                          {meta.error}
+                                        </span>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            )}
-                          </Field>
-                        </Col>
-                      </Row>
+                              )}
+                            </Field>
+                          </Col>
+                        </Row>
                       )}
                       {isMilestoneAward(values.event_type_id) && (
-                      <Row>
-                        <Col md="6" lg="4" xl="4">
-                          <div className="form__form-group">
-                            <span className="form__form-group-label">
-                              Select Milestone Frequency
-                            </span>
-                            <div className="form__form-group-field">
-                              <div className="form__form-group-row">
-                                <Field
-                                  name="milestone_award_frequency"
-                                  options={milestoneOptions}
-                                  component={renderSelectField}
-                                  placeholder={values.milestone_award_frequency ? values.milestone_award_frequency : "Select Frequency"}
-                                />
+                        <Row>
+                          <Col md="6" lg="4" xl="4">
+                            <div className="form__form-group">
+                              <span className="form__form-group-label">
+                                Select Milestone Frequency
+                              </span>
+                              <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                  <Field
+                                    name="milestone_award_frequency"
+                                    options={milestoneOptions}
+                                    component={renderSelectField}
+                                    placeholder={
+                                      values.milestone_award_frequency
+                                        ? values.milestone_award_frequency
+                                        : "Select Frequency"
+                                    }
+                                  />
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </Col>
-                      </Row>
+                          </Col>
+                        </Row>
                       )}
                       <Row>
                         <Col md="12" lg="8" xl="8">
@@ -401,12 +451,18 @@ const Edit = ({organization, theme, rtl}) => {
                                   onClick={() => setOpen(true)}
                                 >
                                   <div className="text">
-                                    {values.event_icon ? values.event_icon.name : "+ Add an Icon"}
+                                    {values.event_icon
+                                      ? values.event_icon.name
+                                      : "+ Add an Icon"}
                                   </div>
-                                  {values.event_icon &&
+                                  {values.event_icon && (
                                     <div className="email_icon">
-                                      <img src={set_path(values.event_icon)} alt="icons" />
-                                    </div>}
+                                      <img
+                                        src={set_path(values.event_icon)}
+                                        alt="icons"
+                                      />
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -493,7 +549,6 @@ const Edit = ({organization, theme, rtl}) => {
                           </Field>
                         </Col>
                       </Row>
-
                     </form>
                     <Modal
                       className={`modal-program-events-icons modal-lg ltr-support`}
@@ -512,7 +567,9 @@ const Edit = ({organization, theme, rtl}) => {
                               onSelectIconOK={form.mutators.setEventIcon}
                               activeTab={activeTab}
                               onCancel={() => setOpen(false)}
-                              icon={values?.icon ? values.icon : values.event_icon}
+                              icon={
+                                values?.icon ? values.icon : values.event_icon
+                              }
                               program={program}
                             />
                           </div>
@@ -530,8 +587,10 @@ const Edit = ({organization, theme, rtl}) => {
   }
 };
 
-export default withRouter(connect((state) => ({
-  theme: state.theme,
-  rtl: state.rtl,
-  organization: state.organization
-}))(Edit));
+export default withRouter(
+  connect((state) => ({
+    theme: state.theme,
+    rtl: state.rtl,
+    organization: state.organization,
+  }))(Edit)
+);
