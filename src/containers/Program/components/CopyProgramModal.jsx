@@ -19,6 +19,7 @@ const CopyProgramModal = ({isOpen, setOpen, toggle, program, theme, rtl}) => {
         }
         delete sourceProgram.id;
         delete sourceProgram.status;
+        delete sourceProgram.account_holder_id;
         sourceProgram.name = values.name;
         // alert(values.create_as_sub)
         // alert(JSON.stringify(sourceProgram))
