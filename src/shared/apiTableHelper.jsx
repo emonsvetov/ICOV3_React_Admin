@@ -283,8 +283,8 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
     const [from, setFrom] = React.useState( finalFilter.from )
     const [to, setTo] = React.useState( finalFilter.to )
     const [awardLevels, setAwardLevels] = React.useState(finalFilter.awardLevels);
-    const [selectedPrograms, setSelectedPrograms] = useState(filter.programs ? filter.programs : []);
-    const [selectedMerchants, setSelectedMerchants] = useState(filter.merchants ? filter.merchants : []);
+    const [selectedPrograms, setSelectedPrograms] = useState(filter?.programs ? filter.programs : []);
+    const [selectedMerchants, setSelectedMerchants] = useState(filter?.merchants ? filter.merchants : []);
 
     const onKeywordChange = (e) => {
         setKeyword( e.target.value )
