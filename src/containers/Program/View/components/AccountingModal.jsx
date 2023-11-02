@@ -21,19 +21,32 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
             const response = await axios.put(`/organization/${data.organization_id}/program/${data.id}`, data);
             // console.log(response)
             setLoading(false)
-            if( response.status === 200)    {
+            if (response.status === 200) {
                 dispatch(
-                  getProgramAction(
-                    data.organization_id, 
-                    data.id
-                  )
+                    getProgramAction(
+                        data.organization_id,
+                        data.id
+                    )
                 )
                 dispatch(sendFlashMessage('Program has been updated', 'alert-success', 'top'))
             }
-        } catch (e) {
+        } catch(error) {
             setLoading(false)
-            dispatch(sendFlashMessage('Program could not be updated', 'alert-danger', 'top'))
-            throw new Error(`API error:${e?.message}`);
+            let errMessage = '';
+            if (error.response) {
+                let tmp = [];
+                if (error.response.data && error.response.data.errors) {
+                    errMessage = Object.keys(error.response.data.errors).map(key =>
+                        error.response.data.errors[key]
+                    )
+                }
+            } else if (error.request) {
+                errMessage = error.request;
+            } else if (error.message)  {
+                errMessage = error.message;
+            }
+            errMessage = JSON.stringify(errMessage);
+            dispatch(sendFlashMessage('Program could not be updated.' + ' ' + errMessage, 'alert-danger', 'top'))
         }
     }
     if( !organization || !data) return 'loading...'
