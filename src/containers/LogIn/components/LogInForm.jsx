@@ -21,7 +21,7 @@ const LogInForm = () => {
   const onSubmit = async values => {
 
 
-    console.log(values)
+    // console.log(values)
     axios.post('/login', values)
     .then( (res) => {
       // console.log(res);
@@ -55,6 +55,7 @@ const LogInForm = () => {
         }
       } catch (error) {
           // Handle error
+          setErrors(error.response.data);
       }
   };
 
