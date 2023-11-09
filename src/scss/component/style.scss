@@ -58,6 +58,13 @@
 .container .card-body form .row{width:100%;}
 .react-select {height: 32px;}
 .infoview > .row{margin-bottom: 15px;}
+.infoview > .tabContent > .tabPane > .row{margin-bottom: 15px;}
+.infoview {
+    .nav-tabs .nav-link {
+        margin-bottom: 0px;
+        cursor: pointer;
+    }
+}
 
 //add-event
 .table .resizable-table th:first-child, .table .resizable-table td:first-child {
