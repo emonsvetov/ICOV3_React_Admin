@@ -53,7 +53,7 @@ const DataTable = ({program, organization}) => {
     const toggleChangeStatus = () => {
         setChangeStatusOpen(prevState => !prevState)
     }
-    const onClickViewUser = ( user_id ) => {
+    const onClickEditUser = ( user_id ) => {
         toggleEdit();
         selectUser(user_id);
     }
@@ -77,7 +77,8 @@ const DataTable = ({program, organization}) => {
     const RenderActions = ({row}) => {
         return (
             <>
-                <span onClick={()=>onClickViewUser(row.original.id)} className="link a" >View</span>{' | '}
+                <Link className="link a" to={`/program/${program.id}/user/view/${row.original.id}`}>View</Link>{' | '}
+                <span onClick={()=>onClickEditUser(row.original.id)} className="link a" >Edit</span>{' | '}
                 <span onClick={()=>onClickRemoveUser(row.original.id)} className="link a" >Unassign</span>
             </>
         )

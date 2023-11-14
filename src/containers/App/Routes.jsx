@@ -27,7 +27,8 @@ import Pokemon from '../Program/components/pokemon';
 // import Merchant from '../Program/View/components/Merchant';
 import SubProgram from '../Program/View/Subprogram';
 import ProgramUsers from '../Program/View/User';
-import ProgramUser from '../Program/View/User/view';
+import ProgramUser from '../Program/View/User/edit';
+import ProgramViewUser from '../Program/View/User/view';
 
 import UsersIndex from '../Users/index';
 import AddUser from '../Users/add_user';
@@ -97,6 +98,7 @@ const Programs = () => (
     {/* <Route exact path="/program/:programId/merchants" component={Merchant} /> */}
     <Route exact path="/program/:programId/subprograms" component={SubProgram} />
     <Route exact path="/program/:programId/users" component={ProgramUsers} />
+    <Route exact path="/program/:programId/user/view/:userId" component={ProgramViewUser} />
     <Route exact path="/program/:programId/user/:userId" component={ProgramUser} />
     {/* <Route path="/program/dashboard" component={ProgramDashboard} /> */}
   </Switch>
