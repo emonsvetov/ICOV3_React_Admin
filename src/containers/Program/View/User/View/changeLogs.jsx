@@ -27,7 +27,7 @@ const ProgramViewUserChangeLogs = ({organization, program, user}) => {
 
     let {programId, userId} = useParams();
 
-    let columns = useMemo(() => GIFT_CODES_REDEEMED_COLUMNS, [])
+    let columns = useMemo(() => CHANGE_LOGS_COLUMNS, [])
 
     const defaultColumn = React.useMemo(
         () => ({
@@ -222,7 +222,7 @@ const Sorting = ({column}) => (
 export default ProgramViewUserChangeLogs;
 
 
-export const GIFT_CODES_REDEEMED_COLUMNS = [
+export const CHANGE_LOGS_COLUMNS = [
     {
         Header: "Name",
         accessor: "name"

@@ -184,7 +184,7 @@ const ProgramViewUser = ({organization}) => {
                                     <TabPane tabId="4">
                                         {
                                             currentActiveTab != 4 ? 'Loading...' :
-                                                <ProgramViewUserGiftCodesRedeemed user={data} organization={organization}
+                                                <ProgramViewUserChangeLogs user={data} organization={organization}
                                                                         program={program}/>
                                         }
                                     </TabPane>
