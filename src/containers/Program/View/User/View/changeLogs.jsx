@@ -19,7 +19,7 @@ import {toCurrency, toPoints} from '@/shared/helpers'
 
 const queryClient = new QueryClient()
 
-const ProgramViewUserHistory = ({organization, program, user}) => {
+const ProgramViewUserChangeLogs = ({organization, program, user}) => {
 
     const [filter, setFilter] = useState({keyword: ''});
     const [useFilter, setUseFilter] = useState(false);
@@ -27,7 +27,7 @@ const ProgramViewUserHistory = ({organization, program, user}) => {
 
     let {programId, userId} = useParams();
 
-    let columns = useMemo(() => HISTORY_COLUMNS, [])
+    let columns = useMemo(() => GIFT_CODES_REDEEMED_COLUMNS, [])
 
     const defaultColumn = React.useMemo(
         () => ({
@@ -45,7 +45,7 @@ const ProgramViewUserHistory = ({organization, program, user}) => {
         queryTrigger
     }, dispatch] = React.useReducer(reducer, initialState);
 
-    const apiUrl = `/organization/${program.organization_id}/program/${program.id}/user/${user.id}/history`
+    const apiUrl = `/organization/${program.organization_id}/program/${program.id}/user/${user.id}/change-logs`
     const {isLoading, error, data, isSuccess} = useQuery(
         ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
         () => fetchApiData(
@@ -219,40 +219,40 @@ const Sorting = ({column}) => (
   </span>
 );
 
-export default ProgramViewUserHistory;
+export default ProgramViewUserChangeLogs;
 
 
-export const HISTORY_COLUMNS = [
+export const GIFT_CODES_REDEEMED_COLUMNS = [
     {
         Header: "Name",
-        accessor: "event_name",
+        accessor: "name"
     },
     {
-        Header: "Notes",
-        accessor: "event_notes",
+        Header: "Email",
+        accessor: "email"
     },
     {
-        Header: "Debit",
-        accessor: "is_credit",
-        Cell: ({row, value}) => value ? 'yes' : '',
+        Header: "Type",
+        accessor: "type"
     },
     {
-        Header: "Credit",
-        accessor: "is_credit2",
-        Cell: ({row, value}) => !value ? 'yes' : '',
+        Header: "Old Value",
+        accessor: "old_user_status_label"
     },
     {
-        Header: "Transaction Date",
-        accessor: "event_date"
+        Header: "New Value",
+        accessor: "new_user_status_label"
     },
     {
-        Header: "Amount",
-        accessor: "amount",
-        Cell: ({ row, value }) => { return toPoints(value); },
+        Header: "Technical Reason",
+        accessor: "technical_reason"
     },
     {
-        Header: "Event Total",
-        accessor: "event_total",
-        Cell: ({ row, value }) => { return toPoints(value); },
+        Header: "Updated By",
+        accessor: "updated_by"
+    },
+    {
+        Header: "Updated At",
+        accessor: "updated_at"
     },
 ]

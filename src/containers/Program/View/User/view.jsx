@@ -11,6 +11,7 @@ import classnames from "classnames";
 import ProgramViewUserProfile from "./View/profile";
 import ProgramViewUserHistory from "./View/history";
 import ProgramViewUserGiftCodesRedeemed from "./View/giftCodesRedeemed";
+import ProgramViewUserChangeLogs from "./View/changeLogs";
 
 const queryClient = new QueryClient()
 
@@ -95,15 +96,13 @@ const ProgramViewUser = ({organization}) => {
                 </Row>
                 <Row>
                     <Col md={12}>
-
-
                         <EditProgramUserModal organization={organization} program={program} userid={userId}
                                               isOpen={isOpenEdit} setOpen={setOpenEdit} toggle={toggleEdit}
                                               setTrigger={setTrigger}/>
                         <Card>
                             <CardBody className='infoview'>
                                 <Row>
-                                    <Col md="6" lg="6" xl="6">
+                                    <Col md="7" >
                                         <Nav tabs>
                                             <NavItem>
                                                 <NavLink
@@ -144,9 +143,22 @@ const ProgramViewUser = ({organization}) => {
                                                     Gift Codes Redeemed
                                                 </NavLink>
                                             </NavItem>
+                                            <NavItem>
+                                                <NavLink
+                                                    className={classnames({
+                                                        active:
+                                                            currentActiveTab === '4'
+                                                    })}
+                                                    onClick={() => {
+                                                        togglePan('4');
+                                                    }}
+                                                >
+                                                    Change Logs
+                                                </NavLink>
+                                            </NavItem>
                                         </Nav>
                                     </Col>
-                                    <Col md="6" lg="6" xl="6" className="text-right">
+                                    <Col md="5"  className="text-right">
                                         <Link className="" onClick={toggleEdit} to="#">Edit</Link>
                                     </Col>
                                 </Row>
@@ -156,17 +168,25 @@ const ProgramViewUser = ({organization}) => {
                                                                 program={program}/>
                                     </TabPane>
                                     <TabPane tabId="2">
-                                        <ProgramViewUserHistory user={data} organization={organization}
-                                                                program={program}/>
-                                        {/*{*/}
-                                        {/*    currentActiveTab != 2 ? 'Loading...' :*/}
-                                        {/*        <ProgramViewUserHistory user={data} organization={organization}*/}
-                                        {/*                                program={program}/>*/}
-                                        {/*}*/}
+                                        {
+                                            currentActiveTab != 2 ? 'Loading...' :
+                                                <ProgramViewUserHistory user={data} organization={organization}
+                                                                        program={program}/>
+                                        }
                                     </TabPane>
                                     <TabPane tabId="3">
-                                        <ProgramViewUserGiftCodesRedeemed data={data} organization={organization}
-                                                                          program={program}/>
+                                        {
+                                            currentActiveTab != 3 ? 'Loading...' :
+                                                <ProgramViewUserGiftCodesRedeemed user={data} organization={organization}
+                                                                        program={program}/>
+                                        }
+                                    </TabPane>
+                                    <TabPane tabId="4">
+                                        {
+                                            currentActiveTab != 4 ? 'Loading...' :
+                                                <ProgramViewUserGiftCodesRedeemed user={data} organization={organization}
+                                                                        program={program}/>
+                                        }
                                     </TabPane>
                                 </TabContent>
                             </CardBody>
