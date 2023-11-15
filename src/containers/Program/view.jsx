@@ -199,26 +199,21 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
                 </Col>
             </Row>
             <Row>
-                {/*<Col md="4" lg="4" xl="4">*/}
-                {/*    <Card>*/}
-                {/*        <CardBody>*/}
-                {/*            <Row>*/}
-                {/*                <Col md={3} className='col-left'>*/}
-                {/*                    <img src={EventsIcon} className="card-img-top" alt="Domains" />*/}
-                {/*                </Col>*/}
-                {/*                <Col md={9} className='col-right pl-0'>*/}
-                {/*                    <h5>Domains</h5>*/}
-                {/*                    {*/}
-                {/*                        program.domains.length > 0 && */}
-                {/*                        program.domains.map( (domain, i) => {*/}
-                {/*                            return <li key={`domain-list-${i}`}><Link className="" to={`/domains/view/${domain.id}`}>{domain.name}</Link></li>*/}
-                {/*                        })*/}
-                {/*                    }*/}
-                {/*                </Col>*/}
-                {/*            </Row>*/}
-                {/*        </CardBody>*/}
-                {/*    </Card>*/}
-                {/*</Col>*/}
+            <Col md="4" lg="4" xl="4">
+                <Card>
+                    <CardBody>
+                        <Row onClick={()=>{toggle('domains')}}>
+                            <Col md={3} className='col-left'>
+                                <img src={EventsIcon} className="card-img-top" alt="Domains" />
+                            </Col>
+                            <Col md={9} className='col-right pl-0'>
+                                <h5>Domains</h5>
+                                <p>Domain settings.</p>
+                            </Col>
+                        </Row>
+                    </CardBody>
+                </Card>
+            </Col>
 
                 {auth?.isSuperAdmin && <Col md="6" lg="4" xl="4">
                     <Card>
