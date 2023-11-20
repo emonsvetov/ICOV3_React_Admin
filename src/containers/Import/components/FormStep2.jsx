@@ -29,11 +29,12 @@ const FormStep2 = ({ config, csvFile, setCsvFile, onclickBack, importHeaders, is
             }
             for (const [name] of Object.entries(fields)) {
                 // console.log(name)
-                newOption.options.push({ label: name, value: name })
+                newOption.options.push({ label: name, value: key+name })
             }
 
             newOptions.push(newOption)
         }
+        // console.log(newOptions)
         return newOptions;
     }
 

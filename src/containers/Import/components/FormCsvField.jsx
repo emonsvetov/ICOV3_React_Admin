@@ -18,7 +18,7 @@ const FormCsvField = ({field, fieldsToMap, savedSettings, typeChanged}) => {
         Object.keys(savedSettings['field_mapping']).map((item, index) => {
           Object.keys(savedSettings['field_mapping'][item]).map((subItem, subIndex) => {
             if (savedSettings['field_mapping'][item][subItem] === field) {
-              let result = {"value": subItem, "label": subItem};
+              let result = {"value": item+subItem, "label": subItem};
               setSelected(result)
               inputRef.current.selectOption(result)
             }
