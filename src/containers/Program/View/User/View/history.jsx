@@ -91,6 +91,7 @@ const ProgramViewUserHistory = ({organization, program, user}) => {
                 sortBy: queryPageSortBy,
             },
             manualPagination: true, // Tell the usePagination
+            manualSortBy: true,
             pageCount: data ? totalPageCount : 0,
             autoResetSortBy: false,
             autoResetExpanded: false,
