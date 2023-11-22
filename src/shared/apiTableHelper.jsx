@@ -545,21 +545,18 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                   color="#ffffff"
                 >Reset</Button>
                 {options.exportToCsv &&
-                    <>
-            <span
-                className="btn btn-sm btn-primary mr-2 text-white pointer"
-                onClick={() => { download(filter) }}
-            >Export to CSV</span>
-                        <CSVLink
-                            data={exportData}
-                            headers={exportHeaders}
-                            filename="report.csv"
-                            className="hidden"
-                            ref={exportLink}
-                            target="_blank"
-                            disabled={loading}
-                        />
-                    </>
+                  <div>
+                      <span className="text-blue pointer mr-2" onClick={() => {download(filter)}}>Export to CSV</span>
+                      <CSVLink
+                        data={exportData}
+                        headers={exportHeaders}
+                        filename="report.csv"
+                        className="hidden"
+                        ref={exportLink}
+                        target="_blank"
+                        disabled={loading}
+                      />
+                  </div>
                 }
             </Col>
         </Row>
