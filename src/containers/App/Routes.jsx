@@ -75,6 +75,7 @@ import {
   ProgramStatus,
   SupplierRedemption,
   Deposit,
+  ParticipantStatusSummary,
   UnassignedProgramDomains,
   MoniesPendingAmount
  } from '../Reports';
@@ -175,6 +176,7 @@ const Reports = () => (
     <Route exact path="/reports/program-status" component={ProgramStatus} />
     <Route exact path="/reports/supplier-redemption" component={SupplierRedemption} />
     <Route exact path="/reports/deposit" component={Deposit} />
+    <Route exact path="/reports/participant-status-summary" component={ParticipantStatusSummary} />
     <Route exact path="/reports/unassigned-program-domains" component={UnassignedProgramDomains} />
     <Route exact path="/reports/monies-pending-amount" component={MoniesPendingAmount} />
   </Switch>
