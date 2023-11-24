@@ -3,7 +3,7 @@ import {useExpanded,  usePagination, useResizeColumns, useSortBy, useTable} from
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {Col, Row} from 'reactstrap';
-import {withRouter} from "react-router-dom";
+
 import {TABLE_COLUMNS} from "./columns";
 
 import {connect} from "react-redux";
@@ -29,6 +29,7 @@ const DataTable = ({organization, programs}) => {
     reportKey: 'sku_value',
     programId: 1
   });
+  
   const [useFilter, setUseFilter] = useState(false);
   const [trigger, setTrigger] = useState(0);
   const [exportData, setExportData] = useState([]);
@@ -249,6 +250,33 @@ const DataTable = ({organization, programs}) => {
                 manualPageSize={manualPageSize}
                 dataLength={totalCount}
               />
+              <div className="pagination justify-content-end mt-2">
+                                <span>
+                                Go to page:{' '}
+                                <input
+                                    type="number"
+                                    value={pageIndex + 1}
+                                    onChange={(e) => {
+                                    const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                                    gotoPage(page);
+                                    }}
+                                    style={{ width: '100px' }}
+                                />
+                                </span>{" "}
+                                <select
+                                className="ml-2"
+                                value={pageSize}
+                                onChange={(e) => {
+                                    setPageSize(Number(e.target.value));
+                                }}
+                                >
+                                {[10, 20, 30, 40, 50].map((pageSize) => (
+                                    <option key={pageSize} value={pageSize}>
+                                    Show {pageSize}
+                                    </option>
+                                ))}
+                                </select>
+                            </div>
             </>
           )}
         </div>
@@ -257,7 +285,7 @@ const DataTable = ({organization, programs}) => {
 }
 
 const TableWrapper = ({organization, programs}) => {
-  if (!organization ) return 'Loading...'
+  if (!organization || !programs ) return 'Loading...'
   return (
     <QueryClientProvider client={queryClient}>
       <DataTable organization={organization}  programs={programs}/>
