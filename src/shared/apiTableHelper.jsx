@@ -21,49 +21,49 @@ const PAGE_FILTER_CHANGED = 'PAGE_FILTER_CHANGED';
 const TOTAL_COUNT_CHANGED = 'TOTAL_COUNT_CHANGED';
 
 export const reducer = (state, { type, payload }) => {
-  switch (type) {
-    case PAGE_CHANGED:
-        return {
-            ...state,
-            queryPageIndex: payload,
-        };
-    case PAGE_SIZE_CHANGED:
-        return {
-            ...state,
-            queryPageSize: payload,
-        };
-    case PAGE_SORT_CHANGED:
-        return {
-            ...state,
-            queryPageSortBy: payload,
-        };
-    case PAGE_FILTER_CHANGED:
-        return {
-            ...state,
-            queryPageFilter: payload,
-        };
-    case TOTAL_COUNT_CHANGED:
-        return {
-            ...state,
-            totalCount: payload,
-        };
-    case QUERY_TRIGGER:
-        return {
-            ...state,
-            queryTrigger: payload,
-        };
-    default:
-      throw new Error(`Unhandled action type: ${type}`);
-  }
+    switch (type) {
+        case PAGE_CHANGED:
+            return {
+                ...state,
+                queryPageIndex: payload,
+            };
+        case PAGE_SIZE_CHANGED:
+            return {
+                ...state,
+                queryPageSize: payload,
+            };
+        case PAGE_SORT_CHANGED:
+            return {
+                ...state,
+                queryPageSortBy: payload,
+            };
+        case PAGE_FILTER_CHANGED:
+            return {
+                ...state,
+                queryPageFilter: payload,
+            };
+        case TOTAL_COUNT_CHANGED:
+            return {
+                ...state,
+                totalCount: payload,
+            };
+        case QUERY_TRIGGER:
+            return {
+                ...state,
+                queryTrigger: payload,
+            };
+        default:
+            throw new Error(`Unhandled action type: ${type}`);
+    }
 };
 
 export const useEffectToDispatch = (dispatch, {
-    pageIndex = 0, 
-    pageSize, 
-    gotoPage, 
-    sortBy, 
-    filter, 
-    data, 
+    pageIndex = 0,
+    pageSize,
+    gotoPage,
+    sortBy,
+    filter,
+    data,
     useFilter,
     trigger = 0
 }) => {
@@ -74,44 +74,44 @@ export const useEffectToDispatch = (dispatch, {
     React.useEffect(() => {
         if( gotoPage )
         {
-          dispatch({ type: PAGE_SIZE_CHANGED, payload: pageSize });
-          gotoPage(0);
+            dispatch({ type: PAGE_SIZE_CHANGED, payload: pageSize });
+            gotoPage(0);
         }
     }, [pageSize, gotoPage]);
 
     React.useEffect(() => {
-      if( gotoPage )
+        if( gotoPage )
         {
-          dispatch({ type: PAGE_SORT_CHANGED, payload: sortBy });
-          gotoPage(0);
+            dispatch({ type: PAGE_SORT_CHANGED, payload: sortBy });
+            gotoPage(0);
         }
     }, [sortBy, gotoPage]);
 
     React.useEffect(() => {
-      if( gotoPage )
-      {
-        if( useFilter ) {
-            dispatch({ type: PAGE_FILTER_CHANGED, payload: filter });
-            gotoPage(0);
+        if( gotoPage )
+        {
+            if( useFilter ) {
+                dispatch({ type: PAGE_FILTER_CHANGED, payload: filter });
+                gotoPage(0);
+            }
         }
-      }
     }, [filter, gotoPage, useFilter]);
 
     React.useEffect(() => {
         if (data?.count) {
             dispatch({
-            type: TOTAL_COUNT_CHANGED,
-            payload: data.count,
+                type: TOTAL_COUNT_CHANGED,
+                payload: data.count,
             });
         }
     }, [data?.count]);
 
     React.useEffect(() => {
-      if( gotoPage )
-      {
-        dispatch({ type: QUERY_TRIGGER, payload: trigger });
-        gotoPage(0);
-      }
+        if( gotoPage )
+        {
+            dispatch({ type: QUERY_TRIGGER, payload: trigger });
+            gotoPage(0);
+        }
     }, [trigger, gotoPage]);
 }
 
@@ -245,7 +245,7 @@ export const fetchApiDataExport = async( queryParams )  => {
     }
     try {
         const response = await axios.get(
-          `${options.url}?${paramStr}`
+            `${options.url}?${paramStr}`
         );
         if( response.data.length === 0) return {results:[], count:0}
         const data = {
@@ -415,148 +415,151 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
             <Col md={8} lg={8} sm={8} className="table-filter-form-fields">
                 <div>
                     {options.awardLevels &&
-                      <div className="table-filter-form-col table-filter-form-col1 float-filter" style={{paddingTop: 4}}>
-                          <div className="">
+                        <div className="table-filter-form-col table-filter-form-col1 float-filter" style={{paddingTop: 4}}>
+                            <div className="">
                               <span className="form__form-group-label" onClick={awardLevelAll}
                                     style={{cursor: 'pointer'}}
                               >View for Award Level</span>
-                              <div className="form__form-group-field">
-                                  <div className="form__form-group-row">
-                                      <MultipleSelectField
-                                        name="view_for_award_level"
-                                        options={options.awardLevels}
-                                        type="native"
-                                        setValue={setAwardLevels}
-                                        fieldValue={awardLevels}
-                                      />
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
+                                <div className="form__form-group-field">
+                                    <div className="form__form-group-row">
+                                        <MultipleSelectField
+                                            name="view_for_award_level"
+                                            options={options.awardLevels}
+                                            type="native"
+                                            setValue={setAwardLevels}
+                                            fieldValue={awardLevels}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     }
                     {options.programs &&
-                      <div className="table-filter-form-col table-filter-form-col1 float-filter" style={{paddingTop: 4}}>
-                          <div className="form__form-group">
-                              <div className="form__form-group-field">
-                                  <div className="form__form-group-row">
-                                      <ProgramsHierarchy
-                                        defaultPrograms={options.programs}
-                                        selectedPrograms={selectedPrograms}
-                                        setSelectedPrograms={setSelectedPrograms}
-                                      />
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
+                        <div className="table-filter-form-col table-filter-form-col1 float-filter" style={{paddingTop: 4}}>
+                            <div className="form__form-group">
+                                <div className="form__form-group-field">
+                                    <div className="form__form-group-row">
+                                        <ProgramsHierarchy
+                                            defaultPrograms={options.programs}
+                                            selectedPrograms={selectedPrograms}
+                                            setSelectedPrograms={setSelectedPrograms}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     }
                     {options.merchants &&
-                      <div className="table-filter-form-col table-filter-form-col1 float-filter" style={{paddingTop: 4}}>
-                          <div className="form__form-group">
-                              <div className="form__form-group-field">
-                                  <div className="form__form-group-row">
-                                      <MerchantsHierarchy
-                                        defaultMerchants={options.merchants}
-                                        selectedMerchants={selectedMerchants}
-                                        setSelectedMerchants={setSelectedMerchants}
-                                      />
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
+                        <div className="table-filter-form-col table-filter-form-col1 float-filter" style={{paddingTop: 4}}>
+                            <div className="form__form-group">
+                                <div className="form__form-group-field">
+                                    <div className="form__form-group-row">
+                                        <MerchantsHierarchy
+                                            defaultMerchants={options.merchants}
+                                            selectedMerchants={selectedMerchants}
+                                            setSelectedMerchants={setSelectedMerchants}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     }
-                {options.keyword &&
-                    <div className="table-filter-form-col table-filter-form-col1">
-                        <div className="form__form-group">
-                            <div className="form__form-group-field">
-                                <div className="form__form-group-row">
-                                    <input
-                                        value={keyword}
-                                        onChange={onKeywordChange}
-                                        type="text"
-                                        placeholder={`Search ${options.label}`}
-                                    />
+                    {options.keyword &&
+                        <div className="table-filter-form-col table-filter-form-col1">
+                            <div className="form__form-group">
+                                <div className="form__form-group-field">
+                                    <div className="form__form-group-row">
+                                        <input
+                                            value={keyword}
+                                            onChange={onKeywordChange}
+                                            type="text"
+                                            placeholder={`Search ${options.label}`}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                }
-                {options.date &&
-                      <>
-                      <div className="table-filter-form-col table-filter-form-col2 float-filter">
-                          <div className="form__form-group">
-                              <span className="form__form-group-label">Through&nbsp;Date</span>
-                              <div className="form__form-group-field">
-                                  <div className="form__form-group-row">
-                                      <DatePicker
-                                        dateFormat="MM/dd/yyyy"
-                                        selected={from}
-                                        onChange={onStartChange}
-                                      />
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      </>
-                }
-                {options.dateRange &&
-                  <>
-                    <div className="table-filter-form-col table-filter-form-col2 float-filter">
-                        <div className="form__form-group">
-                            <span className="form__form-group-label">From</span>
-                            <div className="form__form-group-field">
-                                <div className="form__form-group-row">
-                                    <DatePicker
-                                        dateFormat="MM/dd/yyyy"
-                                        selected={from}
-                                        onChange={onStartChange}
-                                    />
+                    }
+                    {options.date &&
+                        <>
+                            <div className="table-filter-form-col table-filter-form-col2 float-filter">
+                                <div className="form__form-group">
+                                    <span className="form__form-group-label">Through&nbsp;Date</span>
+                                    <div className="form__form-group-field">
+                                        <div className="form__form-group-row">
+                                            <DatePicker
+                                                dateFormat="MM/dd/yyyy"
+                                                selected={from}
+                                                onChange={onStartChange}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div className="table-filter-form-col table-filter-form-col2 float-filter">
-                        <div className="form__form-group">
-                            <span className="form__form-group-label">To</span>
-                            <div className="form__form-group-field">
-                                <div className="form__form-group-row">
-                                    <DatePicker
-                                        dateFormat="MM/dd/yyyy"
-                                        selected={to}
-                                        onChange={onEndChange}
-                                    />
+                        </>
+                    }
+                    {options.dateRange &&
+                        <>
+                            <div className="table-filter-form-col table-filter-form-col2 float-filter">
+                                <div className="form__form-group">
+                                    <span className="form__form-group-label">From</span>
+                                    <div className="form__form-group-field">
+                                        <div className="form__form-group-row">
+                                            <DatePicker
+                                                dateFormat="MM/dd/yyyy"
+                                                selected={from}
+                                                onChange={onStartChange}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                  </>
-                }
+                            <div className="table-filter-form-col table-filter-form-col2 float-filter">
+                                <div className="form__form-group">
+                                    <span className="form__form-group-label">To</span>
+                                    <div className="form__form-group-field">
+                                        <div className="form__form-group-row">
+                                            <DatePicker
+                                                dateFormat="MM/dd/yyyy"
+                                                selected={to}
+                                                onChange={onEndChange}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    }
                 </div>
             </Col>
             <Col className="align-items-center max-height-32px pl-1">
                 <Button
-                  onClick={()=>onClickFilter()}
-                  className="btn btn-sm btn-primary"
-                  color="#ffffff"
-                  disabled={loading}
+                    onClick={()=>onClickFilter()}
+                    className="btn btn-sm btn-primary"
+                    color="#ffffff"
+                    disabled={loading}
                 >Filter</Button>
                 <Button
-                  onClick={()=>onClickFilter(true)}
-                  className="btn btn-sm btn-primary"
-                  color="#ffffff"
+                    onClick={()=>onClickFilter(true)}
+                    className="btn btn-sm btn-primary"
+                    color="#ffffff"
                 >Reset</Button>
                 {options.exportToCsv &&
-                  <div>
-                      <span className="text-blue pointer mr-2" onClick={() => {download(filter)}}>Export to CSV</span>
-                      <CSVLink
-                        data={exportData}
-                        headers={exportHeaders}
-                        filename="report.csv"
-                        className="hidden"
-                        ref={exportLink}
-                        target="_blank"
-                        disabled={loading}
-                      />
-                  </div>
+                    <>
+            <span
+                className="btn btn-sm btn-primary mr-2 text-white pointer"
+                onClick={() => { download(filter) }}
+            >Export to CSV</span>
+                        <CSVLink
+                            data={exportData}
+                            headers={exportHeaders}
+                            filename="report.csv"
+                            className="hidden"
+                            ref={exportLink}
+                            target="_blank"
+                            disabled={loading}
+                        />
+                    </>
                 }
             </Col>
         </Row>
@@ -609,12 +612,12 @@ const makeCsvColumns = (row) => {
 export const Sorting = ({ column }) => (
     <span className="react-table__column-header sortable">
       {column.isSortedDesc === undefined ? (
-        <SortIcon />
+          <SortIcon />
       ) : (
-        <span>
+          <span>
           {column.isSortedDesc
-            ? <SortAscendingIcon />
-            : <SortDescendingIcon />}
+              ? <SortAscendingIcon />
+              : <SortDescendingIcon />}
         </span>
       )}
     </span>
