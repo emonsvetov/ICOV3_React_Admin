@@ -196,7 +196,8 @@ export const fetchApiData = async( queryParams )  => {
         if( response.data.length === 0) return {results:[], count:0}
         const data = {
             results: response.data.data,
-            count: response.data.total
+            count: response.data.total,
+            config: response.data.config ? response.data.config : [],
         };
         // console.log(data)
         return data;
