@@ -185,16 +185,20 @@ const ImportForm = ({ organization }) => {
     const formFields = values.fieldsToMap;
 
     let newFormFields = {}
-    for (const [formRequest, headerFieldsToMap] of Object.entries(importHeaders.fieldsToMap)) 
+    for (const [formRequest, headerFieldsToMap] of Object.entries(importHeaders.fieldsToMap))
     {
       newFormFields[formRequest] = {}
-      for (const [fieldName] of Object.entries(headerFieldsToMap)) 
+      for (const [fieldName] of Object.entries(headerFieldsToMap))
       {
         for(const [formFieldName, formFieldValue] of Object.entries(formFields) )
         {
-          if( formFieldValue && formFieldValue.value === fieldName)
-          {
-            newFormFields[formRequest][fieldName] = formFieldName;
+          if( formFieldValue){
+            let tmpFormRequest = formFieldValue.value.slice(0, formRequest.length);
+            let tmpFormFieldValue = formFieldValue.value.slice(formRequest.length);
+            if( tmpFormRequest && tmpFormFieldValue && tmpFormFieldValue === fieldName)
+            {
+              newFormFields[tmpFormRequest][fieldName] = formFieldName;
+            }
           }
         }
       }

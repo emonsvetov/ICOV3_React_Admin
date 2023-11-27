@@ -11,3 +11,5 @@ export { default as SupplierRedemption } from './SupplierRedemption';
 export { default as UnassignedProgramDomains } from './UnassignedProgramDomains';
 export { default as MoniesPendingAmount } from './MoniesPendingAmount';
 export { default as ExpirePoints } from './ExpirePoints';
+export {default as ParticipantStatusSummary} from "./ParticipantStatusSummary"
+

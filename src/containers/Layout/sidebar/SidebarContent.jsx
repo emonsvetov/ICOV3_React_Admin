@@ -81,6 +81,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
               <SidebarLink title="Deposit" route="/reports/deposit"/>
               <SidebarLink title="Unassigned Program Domains" route="/reports/unassigned-program-domains"/>
               <SidebarLink title="Monies Pending Amount" route="/reports/monies-pending-amount"/>
+              <SidebarLink title="Participant Status Summary" route="/reports/participant-status-summary"/>
             </SidebarCategory>
         }
         {
