@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react'
+import {Field} from "react-final-form";
 import MerchantsHierarchy from '@/shared/components/MerchantsHierarchy'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import PropTypes from 'prop-types'
 
 import {Button, Col, Row} from "reactstrap";
 import DatePicker from "react-datepicker";
@@ -10,9 +10,10 @@ import {CSVLink} from "react-csv";
 import {getFirstDay} from '@/shared/helpers'
 import {dateStrToYmd} from '@/shared/helpers';
 import {isEqual, clone} from 'lodash';
-import {Field} from "react-final-form";
 import {CheckBoxField} from '@/shared/components/form/CheckBox';
 import RadioButtonField from '@/shared/components/form/RadioButton';
+import CodeSelectField from '@/shared/components/form/Select';
+
 
 const defaultFrom = getFirstDay()
 const defaultTo = new Date()
@@ -33,14 +34,21 @@ const SupplierRedemptionFilter = (
     'exportToCsv': true,
     'active': true,
     'reportKey': true,
+    'codes': true,
   }
   const [from, setFrom] = React.useState(defaultFrom)
   const [to, setTo] = React.useState(defaultTo)
+  const [code, setCode] = React.useState('')
   const [active, setActive] = React.useState(true)
   const [reportKey, setReportKey] = React.useState('sku_value')
   const [selectedMerchants, setSelectedMerchants] = useState(filter.merchants ? filter.merchants : []);
   const finalFilter = {...filter}
-
+  const [selectedValue, setSelectedValue] = useState("0");
+  const codes = [
+    { value: "", label: "All Codes" },
+    { value: "0", label: "Real Codes" },
+    { value: "1", label: "Virtual Codes" }
+  ];
   const onClickFilter = (reset = false, exportToCsv = 0) => {
     let dataSet = {}
     if (options.dateRange) {
@@ -57,6 +65,9 @@ const SupplierRedemptionFilter = (
       dataSet.reportKey = reset ? 'sku_value' : reportKey
     }
 
+    if (options.codes) {
+      dataSet.codes = code
+    }
 
     onClickFilterCallback(dataSet)
     if (reset) {
@@ -93,6 +104,12 @@ const SupplierRedemptionFilter = (
       }
     }
 
+    if (options.codes) {
+      if (finalFilter.codes !== values.codes) {
+        change = true
+      }
+    }
+
     if (!change) {
       alert('No change in filters')
       setUseFilter(false)
@@ -120,10 +137,12 @@ const SupplierRedemptionFilter = (
     if (options.reportKey) {
       filters.reportKey = values.reportKey
     }
+    if (options.codes) {
+      filters.codes = values.codes
+    }
 
     setFilter(filters)
     setUseFilter(true)
-    console.log(filters)
   }
 
   const onStartChange = (value) => {
@@ -192,6 +211,22 @@ const SupplierRedemptionFilter = (
               </div>
             </>
           }
+          <div className="table-filter-form-col table-filter-form-col float-filter">
+            <div className="form__form-group">
+              <span className="form__form-group-label">Show</span>
+              <div style={{width: '130px'}} className="form__form-group-field">
+                <CodeSelectField
+                    name="code"
+                    label="Select a Code"
+                    value={code}
+                    options={codes}
+                    onChange={(val) => {
+                      setCode(val.value)
+                    }}
+                />
+              </div>
+            </div>
+          </div>
           <div className="clearfix">&nbsp;</div>
           <div className="clearfix">&nbsp;</div>
           {options.active &&
