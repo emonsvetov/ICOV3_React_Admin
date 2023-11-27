@@ -76,7 +76,8 @@ import {
   SupplierRedemption,
   Deposit,
   UnassignedProgramDomains,
-  MoniesPendingAmount
+  MoniesPendingAmount,
+  ExpirePoints
  } from '../Reports';
 
 import TreeView from '../TreeViewBasic';
@@ -177,6 +178,7 @@ const Reports = () => (
     <Route exact path="/reports/deposit" component={Deposit} />
     <Route exact path="/reports/unassigned-program-domains" component={UnassignedProgramDomains} />
     <Route exact path="/reports/monies-pending-amount" component={MoniesPendingAmount} />
+    <Route exact path="/reports/expire-points" component={ExpirePoints} />
   </Switch>
 );
 

@@ -28,6 +28,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
             <SidebarLink title="Points Reserve" route="/reports/points-reserve" />
             <SidebarLink title="Program Status" route="/reports/program-status" />
             <SidebarLink title="Supplier Redemption" route="/reports/supplier-redemption" />
+            <SidebarLink title="Expire Points" route="/reports/expire-points" />
             {/*<SidebarLink title="Points Purchase Summary" route="/reports/points-purchase-summary" />*/}
           </>
         )
