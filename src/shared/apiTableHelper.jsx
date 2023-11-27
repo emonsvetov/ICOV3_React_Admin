@@ -268,6 +268,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
     }
 
     const finalFilter = {...defaultFilters, ...filter}
+    let finalFilterPrograms = clone(filter.programs)
 
     const defaultConfig = {
         label:'term',
@@ -350,7 +351,8 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
         }
 
         if(options.programs) {
-            if(!isEqual(finalFilter.programs, values.programs))   {
+            if(!isEqual(finalFilterPrograms, values.programs))   {
+                finalFilterPrograms = clone(values.programs);
                 change = true
             }
         }
@@ -583,7 +585,7 @@ export const makeCsvErrors = (csv_errors) => {
                 // console.log( key + ": " + row[key]);
                 // console.log(csvErrors[i][key])
                 if( csvErrors[i] && typeof csvErrors[i][key] !== 'undefined' )  {
-                    csvRows[i][key] += `<span class="csv-row-error">${csvErrors[i][key]}</span>`;
+                    csvRows[i][key] += `<span className="csv-row-error">${csvErrors[i][key]}</span>`;
                 }
             }
         })
