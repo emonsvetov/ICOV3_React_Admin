@@ -296,41 +296,45 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
         setTo(  value )
     }
     const onClickFilter = (reset = false, exportToCsv = 0) => {
-        let dataSet = {}
-        if( options.keyword ) {
-            dataSet.keyword = reset ? '' : keyword
-        }
-        if( options.dateRange ) {
-            dataSet.from = dateStrToYmd(reset ? defaultFrom : from)
-            dataSet.to = dateStrToYmd(reset ? defaultTo : to)
-        }
-        if( options.date ) {
-            dataSet.from = dateStrToYmd(reset ? defaultFrom : from)
+        let dataSet = {};
+
+        if (options.keyword) {
+            dataSet.keyword = reset ? '' : keyword;
         }
 
-        if(options.type){
-            dataSet.type = options.type
+        if (options.dateRange) {
+            dataSet.from = dateStrToYmd(reset ? defaultFrom : from);
+            dataSet.to = dateStrToYmd(reset ? defaultTo : to);
         }
-        if( options.programs ) {
-            dataSet.programs = reset ? [] : clone(selectedPrograms)
+
+        else if (options.date) {
+            dataSet.from = dateStrToYmd(reset ? defaultFrom : from);
         }
-        if( options.merchants ) {
-            dataSet.merchants = reset ? [] : clone(selectedMerchants)
+
+        if (options.type) {
+            dataSet.type = options.type;
         }
-        if( options.awardLevels ) {
-            dataSet.awardLevels = reset ? [] : clone(awardLevels)
+        if (options.programs) {
+            dataSet.programs = reset ? [] : clone(selectedPrograms);
         }
-        onClickFilterCallback( dataSet )
-        if( reset ) {
-            setKeyword('')
-            setFrom( defaultFrom )
-            setTo( defaultTo )
+        if (options.merchants) {
+            dataSet.merchants = reset ? [] : clone(selectedMerchants);
+        }
+        if (options.awardLevels) {
+            dataSet.awardLevels = reset ? [] : clone(awardLevels);
+        }
+
+        onClickFilterCallback(dataSet);
+
+        if (reset) {
+            setKeyword('');
+            setFrom(defaultFrom);
+            setTo(defaultTo);
             setSelectedPrograms([]);
             setSelectedMerchants([]);
             setAwardLevels([]);
         }
-    }
-
+    };
     const awardLevelAll = () => {
         let all = options.awardLevels.map(award => award.value);
         if (isEqual(awardLevels, all)){
