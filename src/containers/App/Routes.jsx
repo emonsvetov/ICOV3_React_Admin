@@ -13,7 +13,7 @@ import LogIn from '../LogIn/index';
 import Signup from '../Signup/index';
 import SignupSuccess from '../Signup/SignupSuccess';
 import VerifyEmail from '../Signup/VerifyEmail';
-
+import DepositTransfer from "../Reports/DepositTransfer"
 import Forgot from '../Forgot/index';
 import CheckYourEmail from '../Forgot/CheckYourEmail';
 import ForgotSuccess from '../Forgot/ForgotSuccess';
@@ -76,6 +76,7 @@ import {
   SupplierRedemption,
   Deposit,
   ParticipantStatusSummary,
+  ParticipantAccountSummary,
   UnassignedProgramDomains,
   MoniesPendingAmount,
   ExpirePoints
@@ -177,7 +178,9 @@ const Reports = () => (
     <Route exact path="/reports/program-status" component={ProgramStatus} />
     <Route exact path="/reports/supplier-redemption" component={SupplierRedemption} />
     <Route exact path="/reports/deposit" component={Deposit} />
+    <Route exact path="/reports/deposit-transfer" component={DepositTransfer} />
     <Route exact path="/reports/participant-status-summary" component={ParticipantStatusSummary} />
+    <Route exact path="/reports/participant-account-summary" component={ParticipantAccountSummary} />
     <Route exact path="/reports/unassigned-program-domains" component={UnassignedProgramDomains} />
     <Route exact path="/reports/monies-pending-amount" component={MoniesPendingAmount} />
     <Route exact path="/reports/expire-points" component={ExpirePoints} />
