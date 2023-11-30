@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-import React from 'react';
-import { Col, Container, Row, Card, CardBody } from 'reactstrap';
-import { Link, useParams } from 'react-router-dom'
-=======
 import React, {useEffect, useState} from 'react';
 import {Col, Container, Row, Card, CardBody, NavItem, NavLink, Nav, TabPane, Button, TabContent} from 'reactstrap';
 import {Link, useParams} from 'react-router-dom'
->>>>>>> qa
 import axios from 'axios'
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import {connect} from 'react-redux'
@@ -58,19 +52,10 @@ const ProgramViewUser = ({organization}) => {
         }
     };
 
-<<<<<<< HEAD
-    let { id } = useParams();
 
-    // console.log(organization)
-
-    const { isLoading, error, data, isSuccess } = useQuery(
-        ['user', id],
-        () => fetchUser( id ),
-=======
     const {isLoading, error, data, refetch, isSuccess, remove} = useQuery(
         ['user', userId],
         () => fetchUser(userId),
->>>>>>> qa
         {
             keepPreviousData: false,
             staleTime: Infinity,

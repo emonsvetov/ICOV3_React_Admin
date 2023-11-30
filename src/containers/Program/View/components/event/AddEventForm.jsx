@@ -7,20 +7,9 @@ import axios from "axios";
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
-<<<<<<< HEAD
-import renderSelectField from "@/shared/components/form/Select";
-import { fetchEventTypes } from "@/shared/apiHelper";
-import { labelizeNamedData, labelizeData } from "@/shared/helpers";
-import {
-  useDispatch,
-  flashError,
-} from "@/shared/components/flash";
-import axios from "axios";
-import Tabs from "./Tabs";
-import { makeFormData, } from "./common";
-=======
+
 import { labelizeNamedData, labelizeData, isBadgeAward, isMilestoneAward } from "@/shared/helpers";
->>>>>>> qa
+
 import {getMilestoneOptions} from '@/shared/apiHelper';
 import renderSelectField from '@/shared/components/form/Select'
 import {fetchEventTypes, getEventLedgerCodes} from '@/shared/apiHelper'

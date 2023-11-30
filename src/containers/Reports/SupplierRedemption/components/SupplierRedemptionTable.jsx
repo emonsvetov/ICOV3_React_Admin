@@ -1,18 +1,9 @@
-<<<<<<< HEAD
-import React, {useEffect, useMemo, useState } from "react";
-=======
 import React, {useEffect, useState} from "react";
->>>>>>> qa
 import {useExpanded, usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {Col, Row} from 'reactstrap';
-<<<<<<< HEAD
-import {TABLE_COLUMNS} from "./columns";
-=======
 import {TABLE_COLUMNS,tableColumns} from "./columns";
->>>>>>> qa
-
 import { withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {
@@ -23,11 +14,7 @@ import {
   initialState,
   Sorting
 } from "@/shared/apiTableHelper"
-<<<<<<< HEAD
 import { clone} from 'lodash';
-=======
-import {isEqual, clone} from 'lodash';
->>>>>>> qa
 import SupplierRedemptionFilter from "./SupplierRedemptionFilter";
 
 const queryClient = new QueryClient()

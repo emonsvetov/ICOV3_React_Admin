@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {useExpanded, usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
+import {useExpanded, usePagination, useResizeColumns, useSortBy, useTable, useFlexLayout} from "react-table";
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {Col, Row} from 'reactstrap';
@@ -14,7 +14,7 @@ import {
   fetchApiDataExport,
   initialState,
   TableFilter,
-  Sorting
+  Sorting,
 } from "@/shared/apiTableHelper"
 
 import { clone} from 'lodash';
