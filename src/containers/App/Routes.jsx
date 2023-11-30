@@ -79,7 +79,8 @@ import {
   ParticipantAccountSummary,
   UnassignedProgramDomains,
   MoniesPendingAmount,
-  ExpirePoints
+  ExpirePoints,
+  ExpireMonies
  } from '../Reports';
 
 import TreeView from '../TreeViewBasic';
@@ -184,6 +185,7 @@ const Reports = () => (
     <Route exact path="/reports/unassigned-program-domains" component={UnassignedProgramDomains} />
     <Route exact path="/reports/monies-pending-amount" component={MoniesPendingAmount} />
     <Route exact path="/reports/expire-points" component={ExpirePoints} />
+    <Route exact path="/reports/expire-monies" component={ExpireMonies} />
   </Switch>
 );
 
