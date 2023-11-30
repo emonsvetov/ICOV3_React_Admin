@@ -87,7 +87,7 @@ const EditMerchantForm = () => {
         .then( (res) => { 
             // console.log(res)
             if(res.status == 200)  {
-                window.location = `/merchants?message=Merchant updated successfully!`
+                window.location = `/merchants/view/${merchant.id}?message=Merchant updated successfully!`
             }
         })
         .catch( error => {

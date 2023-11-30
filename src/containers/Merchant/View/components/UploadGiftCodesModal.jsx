@@ -29,7 +29,7 @@ import COLUMNS from './columns/upload_gift_codes_columns'
 // console.log(y)
 
 const UploadGiftCodesModal = ({
-    isOpen, toggle, theme, rtl, merchant, setTrigger
+    isOpen, toggle, theme, rtl, merchant, setTrigger, virtual = 0
 }) => {
     const dispatch = useDispatch()
 
@@ -67,9 +67,11 @@ const UploadGiftCodesModal = ({
         // if( !csvFile ){
         //   return;
         // }
+
+        const apiUrl = virtual ? `/merchant/${merchant.id}/giftcode-virtual` : `/merchant/${merchant.id}/giftcode`;
         data.append('file_medium_info', csvFile)
         axios
-        .post(`/merchant/${merchant.id}/giftcode`, data, {
+        .post(apiUrl, data, {
                 headers: {
                     "Content-type": "multipart/form-data",
                 },       
@@ -86,9 +88,10 @@ const UploadGiftCodesModal = ({
         })
         .catch((error) => {
             const errors = error.response.data.errors;
-            const csv_errors = errors.file_medium_info;
+            // console.log(errors)
+            const csv_errors = errors?.file_medium_info;
             // console.log(csv_errors)
-            if(typeof csv_errors === 'object')  {
+            if(csv_errors && typeof csv_errors === 'object')  {
                 try{
                     const {columns:csvColumns, rows:csvRows} = makeCsvErrors(csv_errors);
                     setErrorComponent(
@@ -107,6 +110,8 @@ const UploadGiftCodesModal = ({
                 }
 
                 // console.log(csv_errors_json)
+            } else {
+              dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger', 'top'))
             }
             // if( typeof errors)
         });  

@@ -3,15 +3,17 @@ import {
   Nav, NavItem, NavLink, TabContent, TabPane 
 } from 'reactstrap';
 import classnames from 'classnames';
-import IconUpload from './IconUpload';
-import EventIcons from './EventIcons';
+import UploadIcon from './icon/UploadIcon';
+import ListIcons from './icon/ListIcons';
 
-const Tabs = (props) => {
+const AddIconTabs = (props) => {
   
   const [activeTab, setActiveTab] = useState(props.activeTab);
 
   const [icon, setIcon] = useState(props.icon) //for selected icon
   const [icons, setIcons] = useState([])
+  const [defaultIcons, setDefaultIcons] = useState([]);
+  const [iconUploadType, setIconUploadType] = useState('global')
 
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -25,7 +27,7 @@ const Tabs = (props) => {
             className={classnames({ active: activeTab === '1' })}
             onClick={() => toggle('1')}
           >
-            Upload Files
+            Upload Icon
           </NavLink>
         </NavItem>
         <NavItem>
@@ -40,14 +42,14 @@ const Tabs = (props) => {
       </Nav>
       <TabContent activeTab={activeTab}>
         <TabPane tabId="1">
-            <IconUpload toggle={toggle} setIcons={setIcons} onCancel={props.onCancel} program={props.program} />
+            <UploadIcon toggle={toggle} defaultIcons={defaultIcons} setDefaultIcons={setDefaultIcons} setIcons={setIcons} onCancel={props.onCancel} program={props.program} iconUploadType={iconUploadType} />
         </TabPane>
         <TabPane tabId="2">
-          <EventIcons setIcon={setIcon} onCancel={props.onCancel} onSelectIconOK={props.onSelectIconOK} setIcons={setIcons} icons={icons} icon={icon} program={props.program} />
+          <ListIcons setIcon={setIcon} onCancel={props.onCancel} onSelectIconOK={props.onSelectIconOK} setIcons={setIcons} defaultIcons={defaultIcons} setDefaultIcons={setDefaultIcons} icons={icons} icon={icon} program={props.program} setActiveTab={setActiveTab} setIconUploadType={setIconUploadType} />
         </TabPane>
       </TabContent>
     </div>
   );
 };
 
-export default Tabs;
+export default AddIconTabs;

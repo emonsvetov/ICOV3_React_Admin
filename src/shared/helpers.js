@@ -115,7 +115,7 @@ export const flatten = (array, prop = 'children') => {
 
 
 export const mapFormDataUploads = (values, multiple = false) => {
-    let data = new FormData()
+    let data = new FormData()   
     for (const [key, value] of Object.entries(values)) {
         // console.log(value)
         // console.log(typeof value)
@@ -295,7 +295,7 @@ export const labelizeNamedData = (data, fields = ["id", "name"]) => {
 export const labelizeData = (data) => {
     let newData = []
     for( var i in data) {
-        newData.push({label: String(i), value: String(data[i])})
+        newData.push({label: String(data[i]), value: i})
     }
     return newData;
 }
@@ -346,7 +346,7 @@ export const toCurrency = (numberString) => {
 
 export const toPoints = (numberString) => {
     let locale = 'en-US';
-    let options = {style: 'decimal', minimumFractionDigits: 3, maximumFractionDigits: 3};
+    let options = {style: 'decimal', minimumFractionDigits: 0, maximumFractionDigits: 3};
     let formatter = new Intl.NumberFormat(locale, options);
     let number = formatter.format(numberString);
     return number.toString().replace(/\./g, ",");
@@ -391,4 +391,26 @@ export const getLastMonthRange = () => {
       end_date
     }
 }
+//Get value from either 1. it is number or string, 2. it is key 'value' in an object. Primarily created for handling {label:'',value:''} objects in dropdowns
+export const getValueFromMixed = (value, key = 'value') => {
+    if(typeof value === 'object' && typeof value[key] !== 'undefined')  {
+      return value[key]
+    } else if(typeof value === 'number' || typeof value === 'string')  {
+      return value;
+    }
+}
 
+export const isBadgeAward = ( event_type_id ) => {
+    let type_to_match = event_type_id
+    if( isObject(event_type_id) && typeof event_type_id.value !== 'undefined' ) {
+        type_to_match = event_type_id.value
+    }
+    return type_to_match == 5 //badge
+    || type_to_match == 6 //peer to peer badge
+    || type_to_match == 10 //miglestone badge
+}
+
+export const isMilestoneAward = (event_type_name) => {
+    return event_type_name == "Milestone Badge" //badge
+    || event_type_name == "Milestone Award"
+}

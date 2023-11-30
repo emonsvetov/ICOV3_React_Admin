@@ -101,7 +101,7 @@ const DataTable = ({organization}) => {
                     <span style={{width:'15px', display: 'inline-block'}}></span>
                     <ContentCopyIcon onClick={() => onClickStartCopyProgram(row.original)} />
                     <span style={{width:'15px', display: 'inline-block'}}></span>
-                    {row.original.status.status !== 'Deleted' ? <DeleteIcon onClick={(e) => {if(window.confirm('Are you sure to delete this program?')){onClickDeleteProgram(e, row.original)}}} /> : <RestoreIcon onClick={() => onClickRestoreProgram(row.original)} />}
+                    {row.original.status?.status !== 'Deleted' ? <DeleteIcon onClick={(e) => {if(window.confirm('Are you sure to delete this program?')){onClickDeleteProgram(e, row.original)}}} /> : <RestoreIcon onClick={() => onClickRestoreProgram(row.original)} />}
                 </span>
             </>
         )

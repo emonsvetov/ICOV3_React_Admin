@@ -132,7 +132,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
 
     axios.post(saveUrl, data)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         if (res.status === 200) {
             //dispatch(sendFlashMessage('Media successfully published', 'alert-success'));
             getData(mediaType);
@@ -192,7 +192,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
 
     axios.post(saveUrl, data)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         if (res.status === 200) {
               mediaTypes.push({
                   value: res.data.program_media_type_id,

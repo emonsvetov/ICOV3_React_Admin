@@ -87,9 +87,9 @@ const InsertIconModal = ({isOpen, theme, rtl}) => {
     return (
         <Col md={12} lg={12}>
             <Row className="w100">
-            <Col md="6" lg="6" xl="6">
-                <h3>Insert Icon</h3>
-            </Col>
+              <Col md="6" lg="6" xl="6">
+                  <h3>Insert Iconx</h3>
+              </Col>
             </Row>
             <div className="pt-5 tabs">
                 <div className="tabs__wrap">

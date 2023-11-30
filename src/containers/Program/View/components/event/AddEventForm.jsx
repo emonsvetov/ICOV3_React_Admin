@@ -3,9 +3,11 @@ import { Form, Field } from "react-final-form";
 import { Row, Col, ButtonToolbar, Button, Modal, ModalBody } from "reactstrap";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
+import axios from "axios";
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
+<<<<<<< HEAD
 import renderSelectField from "@/shared/components/form/Select";
 import { fetchEventTypes } from "@/shared/apiHelper";
 import { labelizeNamedData, labelizeData } from "@/shared/helpers";
@@ -16,7 +18,16 @@ import {
 import axios from "axios";
 import Tabs from "./Tabs";
 import { makeFormData, } from "./common";
+=======
+import { labelizeNamedData, labelizeData, isBadgeAward, isMilestoneAward } from "@/shared/helpers";
+>>>>>>> qa
 import {getMilestoneOptions} from '@/shared/apiHelper';
+import renderSelectField from '@/shared/components/form/Select'
+import {fetchEventTypes, getEventLedgerCodes} from '@/shared/apiHelper'
+import { useDispatch, flashSuccess, flashError } from "@/shared/components/flash"
+import AddIconTabs from "./AddIconTabs";
+import{makeFormData} from './common'
+import LedgerCodes from './LedgerCodes';
 
 const AddEventForm = ({ onStep, program }) => {
   const dispatch = useDispatch();
@@ -26,8 +37,9 @@ const AddEventForm = ({ onStep, program }) => {
   const [eventTypes, setEventTypes] = useState([]);
   const [isOpen, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("2");
-  const [visibleLedgerCode, setVisibleLedgerCode] = useState(false);
-  const [selectedMilestone, setSelectedMilestone] = useState(null);
+  const [eventTypeId, setEventTypeId] = useState(false);
+  const [ledgerCodes, setLedgerCodes] = useState([]);
+  const [selectedEventType, setSelectedEventType] = useState(null);
   const [milestoneOptions, setMilestoneOptions] = useState([]);
 
   const set_path = (pickedIcon) => {
@@ -38,19 +50,34 @@ const AddEventForm = ({ onStep, program }) => {
     setOpen((prevState) => !prevState);
   };
 
-  useEffect(() => {
-    fetchEventTypes(program.organization_id, program.id).then((evtypes) => {
-      setEventTypes(labelizeNamedData(evtypes));
-    });
-    getMilestoneOptions(program.organization_id, program.id)
-    .then( o => {
-      setMilestoneOptions(labelizeData(o))
+  const cb_CodeAction = () => {
+    getListLedgerCodes(program)
+  }
+  const getListLedgerCodes = (program) => {
+    getEventLedgerCodes(program.organization_id, program.id)
+    .then(ledgercodes => {
+      setLedgerCodes(labelizeNamedData(ledgercodes, ["id", "ledger_code"]))
     })
-  }, []);
+  }
 
-  const handleSelect = (option) => {
-    setSelectedMilestone(option.label);
-    console.log(option, "data");
+  useEffect(() => {
+    if(program?.organization_id)  {
+      fetchEventTypes(program.organization_id, program.id).then((evtypes) => {
+        setEventTypes(labelizeNamedData(evtypes));
+      });
+      if( program.allow_milestone_award ) {
+        getMilestoneOptions(program.organization_id, program.id)
+        .then( o => {
+          setMilestoneOptions(labelizeData(o))
+        })
+      }
+      getListLedgerCodes(program)
+    }
+  }, [program]);
+
+  const handleSelectEventType = (option) => {
+    setSelectedEventType(option.label);
+    setEventTypeId(option.value);
   };
 
   const onSubmit = (values) => {
@@ -139,6 +166,45 @@ const AddEventForm = ({ onStep, program }) => {
               </Row>
               <Row>
                 <Col md="6" lg="4" xl="4">
+                  <div className="form__form-group">
+                    <span className="form__form-group-label">
+                      Select Event Type
+                    </span>
+                    <div className="form__form-group-field">
+                      <div className="form__form-group-row">
+                        <Field
+                          name="event_type_id"
+                          options={eventTypes}
+                          parse={(value) => {
+                            handleSelectEventType(value);
+                            return value;
+                          }}
+                          placeholder={"Select Event Type"}
+                          component={renderSelectField}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </Col>
+                <Col md="6" lg="4" xl="4">
+                  <div className="form__form-group">
+                    <div className="form__form-group-field">
+                      <span
+                        className="form__form-group-label"
+                        style={{ width: "200%" }}
+                      >
+                        Enable This Event
+                      </span>
+                      <Field
+                        name="enable"
+                        component={renderToggleButtonField}
+                      />
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col md="6" lg="4" xl="4">
                   <Field name="name">
                     {({ input, meta }) => (
                       <div className="form__form-group">
@@ -163,75 +229,42 @@ const AddEventForm = ({ onStep, program }) => {
                     )}
                   </Field>
                 </Col>
+                <Col md="6" lg="4" xl="4">
+                  <div className="form__form-group">
+                    <span className="form__form-group-label">
+                      Ledger Code
+                    </span>
+                    <div className="form__form-group-field">
+                      <div className="form__form-group-row">
+                          <Field 
+                              name="ledger_code"
+                              options={ledgerCodes}
+                              isClearable={true}
+                              component={renderSelectField}
+                              readonly={true}
+                          />
+                          <LedgerCodes program={program} cb_CodeAction={cb_CodeAction} />
+                      </div>
+                    </div>
+                  </div>
+                </Col>
               </Row>
+              {!isBadgeAward(eventTypeId) && (
               <Row>
-                <Col md="6" lg="4" xl="4">
-                  <Field name="max_awardable_amount">
-                    {({ input, meta }) => (
-                      <div className="form__form-group">
-                        <span className="form__form-group-label">
-                          Max Awardable Amount
-                        </span>
-                        <div className="form__form-group-field">
-                          <div className="form__form-group-row">
-                            <input
-                              onKeyUp={form.mutators.onChangeAwardValue}
-                              type="text"
-                              {...input}
-                              placeholder="Amount"
-                            />
-                            {meta.touched && meta.error && (
-                              <span className="form__form-group-error">
-                                {meta.error}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </Field>
-                </Col>
-                <Col md="6" lg="4" xl="4">
-                  <Field name="awarding_points">
-                    {({ input, meta }) => (
-                      <div className="form__form-group">
-                        <span className="form__form-group-label">
-                          Awarding Points
-                        </span>
-                        <div className="form__form-group-field">
-                          <div className="form__form-group-row">
-                            <input
-                              type="text"
-                              {...input}
-                              placeholder="Awarding Points"
-                              onKeyUp={form.mutators.onChangeAwardValue}
-                            />
-                            {meta.touched && meta.error && (
-                              <span className="form__form-group-error">
-                                {meta.error}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </Field>
-                </Col>
-
-                {visibleLedgerCode && (
                   <Col md="6" lg="4" xl="4">
-                    <Field name="ledger_code">
+                    <Field name="max_awardable_amount">
                       {({ input, meta }) => (
                         <div className="form__form-group">
                           <span className="form__form-group-label">
-                            Ledger Code
+                            Max Awardable Amount
                           </span>
                           <div className="form__form-group-field">
                             <div className="form__form-group-row">
                               <input
+                                onKeyUp={form.mutators.onChangeAwardValue}
                                 type="text"
                                 {...input}
-                                placeholder="Ledger Code"
+                                placeholder="Amount"
                               />
                               {meta.touched && meta.error && (
                                 <span className="form__form-group-error">
@@ -244,62 +277,55 @@ const AddEventForm = ({ onStep, program }) => {
                       )}
                     </Field>
                   </Col>
-                )}
+                  <Col md="6" lg="4" xl="4">
+                    <Field name="awarding_points">
+                      {({ input, meta }) => (
+                        <div className="form__form-group">
+                          <span className="form__form-group-label">
+                            Awarding Points
+                          </span>
+                          <div className="form__form-group-field">
+                            <div className="form__form-group-row">
+                              <input
+                                type="text"
+                                {...input}
+                                placeholder="Awarding Points"
+                                onKeyUp={form.mutators.onChangeAwardValue}
+                              />
+                              {meta.touched && meta.error && (
+                                <span className="form__form-group-error">
+                                  {meta.error}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </Field>
+                  </Col>
               </Row>
-              <Row>
-                <Col md="6" lg="4" xl="4">
-                  <div className="form__form-group">
-                    <div className="form__form-group-field">
-                      <span
-                        className="form__form-group-label"
-                        style={{ width: "200%" }}
-                      >
-                        Enable This Event
-                      </span>
-                      <Field
-                        name="enable"
-                        component={renderToggleButtonField}
-                      />
-                    </div>
-                  </div>
-                </Col>
-              </Row>
+              )}
+              {isMilestoneAward(selectedEventType) && (
               <Row>
                 <Col md="6" lg="4" xl="4">
                   <div className="form__form-group">
                     <span className="form__form-group-label">
-                      Select Event Type
+                      Select Milestone Frequency
                     </span>
                     <div className="form__form-group-field">
                       <div className="form__form-group-row">
                         <Field
-                          name="event_type_id"
-                          options={eventTypes}
-                          parse={(value) => {
-                            handleSelect(value);
-                            return value;
-                          }}
-                          placeholder={"Select Event Type"}
+                          name="milestone_award_frequency"
+                          options={milestoneOptions}
                           component={renderSelectField}
+                          placeholder={"Select Frequency"}
                         />
-
-                        <div className="form__form-group-field my-4">
-                          <div className="form__form-group-row">
-                            {selectedMilestone === "Milestone Award" && (
-                              <Field
-                                name="milestone_award_frequency"
-                                options={milestoneOptions}
-                                component={renderSelectField}
-                                placeholder={"Select Frequency"}
-                              />
-                            )}
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </div>
                 </Col>
               </Row>
+              )}
               <Row>
                 <Col md="12" lg="8" xl="8">
                   <div className="form__form-group">
@@ -418,7 +444,7 @@ const AddEventForm = ({ onStep, program }) => {
                     </Col>
                   </Row>
                   <div className="pt-5 tabs">
-                    <Tabs
+                    <AddIconTabs
                       onSelectIconOK={form.mutators.setEventIcon}
                       activeTab={activeTab}
                       onCancel={() => setOpen(false)}

@@ -55,7 +55,6 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
         // return;
         try {
             const response = await axios.put(`/organization/${data.organization_id}/program/${data.id}`, data);
-            // console.log(response)
             setLoading(false)
             if( response.status === 200)    {
                 dispatch(
@@ -89,7 +88,6 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
         // alert(data.expiration_rule_id)
         initialValues = {...initialValues, ...parsedValues}
     }
-    // console.log(initialValues)
     return (
     <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={toggle}>
         <Form
@@ -162,29 +160,34 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                         </div>
                     </Col>
                 </Row>
-                <h5 className="thick size16 mb-4">Points Settings</h5>
+                <h5 className="thick size16 mb-4">Points Expiration Rules:</h5>
                 <Row>
-                    <Col md="6" lg="4" xl="4">
-                        <div className="form__form-group">
-                            <Field
+                    <Col md="6" >
+                        <Field
                                 name="expiration_rule_id"
                                 component={renderRadioButtonField}
-                                label="End of year"
-                                radioValue="1"
+                                label="End of Next Year"
+                                radioValue={Number('1')}
                                 value={data.expiration_rule_id}
                             />
-                        </div>
-                    </Col>
-                    <Col md="6" lg="4" xl="4">
-                        <div className="form__form-group">
-                            <Field
+                        <h5 className="colorgrey label-margin-left">Expiration date is the end of the following year</h5>
+                        <Field
                                 name="expiration_rule_id"
                                 component={renderRadioButtonField}
-                                label="Two years"
-                                radioValue="2"
+                                label="2 Years"
+                                radioValue={Number('2')}
                                 value={data.expiration_rule_id}
                             />
-                        </div>
+                        <h5 className="colorgrey label-margin-left">Expiration date is the end of the next following year</h5>
+                        <Field
+                                name="expiration_rule_id"
+                                component={renderRadioButtonField}
+                                label="Custom (not implemented)"
+                                radioValue={Number('3')}
+                                disabled={true}
+                                value={data.expiration_rule_id}
+                            />
+                        <h5 className="colorgrey label-margin-left">Expiration date is user specified</h5>
                     </Col>
                 </Row>
                 <Row>

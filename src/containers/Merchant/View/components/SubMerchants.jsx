@@ -117,7 +117,7 @@ const DataTable = ({merchant}) => {
         )
     }
 
-    const fetchMerchantData = async (page, pageSize, pageFilterO = null, pageSortBy, queryTrigger) => {
+    const fetchMerchantData = async (apiUrl, page, pageSize, pageFilterO = null, pageSortBy, queryTrigger) => {
         // const offset = page * pageSize;
         console.log('first')
         const params = [`trigger=${queryTrigger}`]
@@ -133,7 +133,7 @@ const DataTable = ({merchant}) => {
         }
         try {
             const response = await axios.get(
-            `/merchant/${merchant.id}/submerchant?page=${page}&limit=${pageSize}&${paramStr}`
+            apiUrl + `?page=${page}&limit=${pageSize}&${paramStr}`
             );
             // console.log(response)
             if( response.data.length === 0) return {results:[],count:0}
@@ -153,9 +153,10 @@ const DataTable = ({merchant}) => {
     const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] = 
     React.useReducer(reducer, initialState);
 
+    const apiUrl = `/merchant/${merchant.id}/submerchant`;
     const { isLoading, error, data, isSuccess } = useQuery(
-        ['submerchants', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
-        () => fetchMerchantData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger),
+        ['submerchants', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+        () => fetchMerchantData(apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger),
         {
             keepPreviousData: true,
             staleTime: Infinity,

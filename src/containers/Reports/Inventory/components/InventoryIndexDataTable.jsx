@@ -98,10 +98,11 @@ const DataTable = ({organization, merchants}) => {
         let innerObject = Object.keys(item.on_hand);
         for (let innerKey in innerObject) {
           let innerItem = innerObject[innerKey];
-          tmpColumns.push(
+            let headerValue = parseInt(innerItem, 10);
+            tmpColumns.push(
             {
               id: "on_hand" + innerKey,
-              Header: "$" + innerItem,
+              Header: "$" + headerValue,
               accessor: (row) => { return row.on_hand[innerItem]; },
               width: 100
             },
@@ -242,8 +243,9 @@ const DataTable = ({organization, merchants}) => {
   if (isSuccess)
     return (
       <>
-        <div className='table react-table report-table'>
-          <div className="action-panel">
+      <div style={{ width: '90%', overflowX: 'auto', margin: 'auto' }}>
+        <div className='table react-table report-table'style={{ minHeight: '10px' }}>
+          <div className="action-panel"style={{ paddingBottom: '35px' }}>
             <Row className="mx-0">
               <Col>
                 <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter}
@@ -261,6 +263,7 @@ const DataTable = ({organization, merchants}) => {
             </Row>
             <div style={{clear: 'both'}}>&nbsp;</div>
           </div>
+        </div>
           {
             isLoading && <p>Loading...</p>
           }

@@ -20,7 +20,7 @@ const LiveModeForm = ({program, organization, auth}) => {
 
   useEffect(() => {
     if (organization && program && isEmpty(liveModeData)) {
-      prepareLiveMode(3, 22)
+      prepareLiveMode(organization.id, program.id)
         .then(p => {
           setLiveModeData(p)
         })

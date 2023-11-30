@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Row, Col, Button } from 'reactstrap';
 import { Field } from 'react-final-form';
 import SwitchField from '@/shared/components/form/Switch';
 import Select from "react-select";
 import FormCsvField from "./FormCsvField";
 import SetupFields from "./SetupFields";
+import getCsvImportSettings from '@/service/getCsvImportSettings';
+import {withRouter} from "react-router-dom";
+import {connect} from "react-redux";
 
-const FormStep2 = ({ config, csvFile, setCsvFile, onclickBack, importHeaders, isValidResponse }) => {
+const FormStep2 = ({ config, csvFile, setCsvFile, onclickBack, importHeaders, isValidResponse, setSaveSettings, saveSettings, handleSubmit, organization }) => {
     const [checked, setChecked] = useState(false);
-    // console.log(importHeaders)
+    const [savedSettings, setSavedSettings] = useState([]);
+    const [typeChanged, setTypeChanged] = useState(false);
+    const [customSubmit, setCustomSubmit] = useState(false);
     const switchHandler = () => {
         setChecked(!checked);
     };
@@ -23,13 +28,38 @@ const FormStep2 = ({ config, csvFile, setCsvFile, onclickBack, importHeaders, is
             }
             for (const [name] of Object.entries(fields)) {
                 // console.log(name)
-                newOption.options.push({ label: name, value: name })
+                newOption.options.push({ label: name, value: key+name })
             }
 
             newOptions.push(newOption)
         }
+        // console.log(newOptions)
         return newOptions;
     }
+
+    useEffect(() => {
+        if(saveSettings){
+            handleSubmit();
+        }
+    }, [saveSettings]);
+
+    useEffect(() => {
+        if(customSubmit){
+            handleSubmit();
+        }
+    }, [customSubmit]);
+
+    useEffect(() => {
+        if (organization?.id) {
+            if (typeChanged !== false){
+                getCsvImportSettings(organization.id, typeChanged)
+                  .then(data => {
+                      setSavedSettings(data);
+                      setTypeChanged(false);
+                  })
+            }
+        }
+    }, [organization, typeChanged, savedSettings])
 
     if (!importHeaders) return 'Loading...'
     const fieldsToMap = makeOptions(importHeaders.fieldsToMap);
@@ -38,7 +68,8 @@ const FormStep2 = ({ config, csvFile, setCsvFile, onclickBack, importHeaders, is
         <div className="form-step2">
             <div className="form__form-group">
                 {importHeaders.hasOwnProperty("setups") &&
-                    <SetupFields setups={importHeaders.setups} />
+                    <SetupFields setups={importHeaders.setups} setupsFull={importHeaders.setupsFull} setTypeChanged={setTypeChanged}
+                                 savedSettings={savedSettings} typeChanged={typeChanged} />
                 }
                 {importHeaders.hasOwnProperty("Userroles") && <Row>
                     <Col md="3">
@@ -81,14 +112,29 @@ const FormStep2 = ({ config, csvFile, setCsvFile, onclickBack, importHeaders, is
                         <Row>
                             <Col md="12"><h4 className='mb-3'>Field Mapping</h4></Col>
                         </Row>
-                        {importHeaders.CSVheaders.map((field, index) => <div key={index}><FormCsvField {... { field, fieldsToMap }} /></div>)}
+                        {importHeaders.CSVheaders.map((field, index) => <div key={index}><FormCsvField {... { field, fieldsToMap, savedSettings, typeChanged }} /></div>)}
                         <br />
                     </>
                 }
+                <Field
+                  name="isSaveSettings"
+                  component="input"
+                  type="hidden"
+                  placeholder="Last Name"
+                  initialValue={saveSettings}
+                />
                 <div className="form__form-group-field flex-column">
                     <div className="form__form-group-row flex-row pt-3">
                         <Button className="btn btn-outline-primary btn-sm" color="#ffffff" disabled={1 == 2} onClick={onclickBack} style={{}}>Back</Button>
-                        <Button className="btn btn-primary btn-sm" color="#ffffff" disabled={1 == 2} type="submit" style={{}}>Import</Button>
+                        <Button onClick={(e) => {
+                            e.preventDefault();
+                            setSaveSettings(true);
+                        }} className="btn btn-primary btn-sm" color="#ffffff" type="submit" style={{}}>Save Settings</Button>
+                        <Button onClick={(e) => {
+                            // e.preventDefault();
+                            setSaveSettings(false);
+                            // setCustomSubmit(true);
+                        }} className="btn btn-primary btn-sm" color="#ffffff" disabled={1 == 2} type="submit" style={{}}>Import</Button>
                     </div>
                 </div>
             </div>
@@ -96,5 +142,7 @@ const FormStep2 = ({ config, csvFile, setCsvFile, onclickBack, importHeaders, is
     )
 }
 
-export default FormStep2;
+export default withRouter(connect((state) => ({
+    organization: state.organization
+}))(FormStep2));
 

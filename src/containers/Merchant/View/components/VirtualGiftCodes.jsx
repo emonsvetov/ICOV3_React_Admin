@@ -213,7 +213,7 @@ const DataTable = ({merchant}) => {
                         </div>
                     </>
                 )}
-                <UploadGiftCodesModal isOpen={isOpen} toggle={toggle} data={data} setTrigger={setTrigger} />
+                <UploadGiftCodesModal isOpen={isOpen} toggle={toggle} data={data} setTrigger={setTrigger} virtual={1} />
             </>
     )
 }

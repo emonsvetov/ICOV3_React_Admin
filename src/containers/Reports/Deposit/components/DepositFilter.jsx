@@ -10,7 +10,6 @@ const fetchProgramData = async () => {
         const response = await axios.get(
         `/organization/1/program?minimal=true&sortby=name`
         );
-        console.log(response.data)
         return response.data;
     } catch (e) {
         throw new Error(`API error:${e?.message}`);
@@ -69,7 +68,7 @@ const DepositFilter = ({onClickFilterCallback}) => {
         fetchProgramData()
         .then( response => {
             let temp = [];
-            response.forEach((item, index) => {
+            response.data.forEach((item, index) => {
                 temp.push({value: item.id, label: item.name})
             })
             setData(temp)

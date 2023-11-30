@@ -3,12 +3,12 @@ import ProgramInfoModal from './ProgramInfoModal';
 import ThemeSettingsModal from './ThemeSettingsModal';
 import MerchantsModal from './MerchantsModal';
 import InvoicesModal from './InvoicesModal';
+import DomainsModal from './DomainsModal';
 import AccountingModal from './AccountingModal';
 import AwardingPointsModal from './AwardingPointsModal';
 import EngagementModal from './EngagementModal';
 import AddProgramModal from './AddProgramModal';
 import DigitalMediaModal from "./DigitalMediaModal";
-// import EventsModal from './EventsModal';
 import EventsDataModal from '../components/event/EventsDataModal';
 import EmailTemplateModal from '../EmailTemplate/IndexDataModal'
 import ActivateLiveModeProgramModal from "./ActivateLiveModeProgramModal";
@@ -27,6 +27,9 @@ const MainModalWrapper = ({name, isOpen, setOpen, toggle}) => {
       }
       {
         name === 'invoices' && <InvoicesModal {...props} />
+      }
+      {
+        name === 'domains' && <DomainsModal {...props} />
       }
       {
         name === 'accounting' && <AccountingModal {...props} />

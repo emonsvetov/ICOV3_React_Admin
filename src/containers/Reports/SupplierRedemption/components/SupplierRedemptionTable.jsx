@@ -1,9 +1,17 @@
+<<<<<<< HEAD
 import React, {useEffect, useMemo, useState } from "react";
+=======
+import React, {useEffect, useState} from "react";
+>>>>>>> qa
 import {useExpanded, usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {Col, Row} from 'reactstrap';
+<<<<<<< HEAD
 import {TABLE_COLUMNS} from "./columns";
+=======
+import {TABLE_COLUMNS,tableColumns} from "./columns";
+>>>>>>> qa
 
 import { withRouter} from "react-router-dom";
 import {connect} from "react-redux";
@@ -15,7 +23,11 @@ import {
   initialState,
   Sorting
 } from "@/shared/apiTableHelper"
+<<<<<<< HEAD
 import { clone} from 'lodash';
+=======
+import {isEqual, clone} from 'lodash';
+>>>>>>> qa
 import SupplierRedemptionFilter from "./SupplierRedemptionFilter";
 
 const queryClient = new QueryClient()
@@ -27,12 +39,19 @@ const DataTable = ({organization, merchants}) => {
   const [exportData, setExportData] = useState([]);
   const [exportHeaders, setExportHeaders] = useState([]);
   const [exportToCsv, setExportToCsv] = useState(false);
+  const [columns, setColumns] = useState(TABLE_COLUMNS);
   const exportLink = React.createRef();
 
   const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
     React.useReducer(reducer, initialState);
 
   const apiUrl = `/organization/${organization.id}/report/supplier-redemption`;
+
+    const handleDataSuccess = (resultData) => {
+        const col = tableColumns(resultData.config)
+        setColumns(col);
+    };
+
   const {isLoading, error, data, isSuccess} = useQuery(
     ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
     () => fetchApiData(
@@ -44,11 +63,11 @@ const DataTable = ({organization, merchants}) => {
         sortby: queryPageSortBy,
         trigger: queryTrigger
       }
-    ),
-    {
-      keepPreviousData: true,
-      staleTime: Infinity,
-    }
+    ), {
+          keepPreviousData: true,
+          staleTime: Infinity,
+          onSuccess: handleDataSuccess,
+      }
   );
 
   useEffect(() => {
@@ -63,7 +82,6 @@ const DataTable = ({organization, merchants}) => {
   const download = async (filterValues) => {
     let tmpFilter = clone(filterValues);
     tmpFilter.exportToCsv = 1;
-
     const response = await fetchApiDataExport(
       {
         url: apiUrl,
@@ -72,13 +90,10 @@ const DataTable = ({organization, merchants}) => {
         trigger: queryTrigger
       }
     );
-    console.log(response)
     setExportData(response.results);
     setExportHeaders(response.headers);
     setExportToCsv(true);
   }
-
-  let columns = useMemo(() => TABLE_COLUMNS, [])
 
   const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
@@ -153,75 +168,77 @@ const DataTable = ({organization, merchants}) => {
           }
           {
             isSuccess &&
-            <table {...getTableProps()} className="table">
-              <thead>
-              {headerGroups.map((headerGroup) => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map(column => (
-                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                      {column.render('Header')}
-                      {column.isSorted ? <Sorting column={column}/> : ''}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-              </thead>
-              <tbody className="table table--bordered" {...getTableBodyProps()} >
-              {page.map(row => {
-                prepareRow(row);
-                const subCount = (row.id.match(/\./g) || []).length
-                const subRows = row.subRows;
+              <div style={{height: '500px', overflowY: 'auto'}}>
+                  <table {...getTableProps()} className="table">
+                      <thead>
+                      {headerGroups.map((headerGroup) => (
+                          <tr {...headerGroup.getHeaderGroupProps()}>
+                              {headerGroup.headers.map(column => (
+                                  <th {...column.getHeaderProps(column.getSortByToggleProps())} style={{minWidth:Number(column.render('width'))}}>
+                                      {column.render('Header')}
+                                      {column.isSorted ? <Sorting column={column}/> : ''}
+                                  </th>
+                              ))}
+                          </tr>
+                      ))}
+                      </thead>
+                      <tbody className="table table--bordered" {...getTableBodyProps()} >
+                      {page.map(row => {
+                          prepareRow(row);
+                          const subCount = (row.id.match(/\./g) || []).length
+                          const subRows = row.subRows;
 
-                const countSubRows = subRows ? subRows.length : 0;
-                const rowSpan = countSubRows ? countSubRows + 1 : 1;
-                return (
-                  <>
-                    <tr {...row.getRowProps()} key={row.id}>
-                      {
-                        row.cells.map(cell => {
-                          // console.log(cell)
-                          const skip = cell.value === 'skip_td';
-                          if (skip) return null;
-                          const paddingLeft = subCount * 20
-                          return <td {...cell.getCellProps()} rowSpan={rowSpan} key={cell.column.id + row.id}>
+                          const countSubRows = subRows ? subRows.length : 0;
+                          const rowSpan = countSubRows ? countSubRows + 1 : 1;
+                          return (
+                              <>
+                                  <tr {...row.getRowProps()} key={row.id}>
+                                      {
+                                          row.cells.map(cell => {
+                                              const skip = cell.value === 'skip_td';
+                                              if (skip) return null;
+                                              const paddingLeft = subCount * 20
+                                              return <td {...cell.getCellProps()} rowSpan={rowSpan}
+                                                         key={cell.column.id + row.id}>
                                             <span
-                                              style={cell.column.Header === '#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span>
-                          </td>
-                        })
-                      }
-                    </tr>
-                    {countSubRows > 0 && subRows.map(subRow => {
-                      // console.log(subRow)
-                      prepareRow(subRow);
-                      return (
-                        <tr {...subRow.getRowProps()} key={subRow.id}>
-                          {
-                            subRow.cells.map(subCell => {
-                              // console.log(subCell)
-                              const skip = subCell.value === 'skip_td';
-                              if (skip) return null;
-                              return <td {...subCell.getCellProps()} key={subCell.column.id + subRow.id}>
-                                <span>{subCell.render('Cell')}</span>
-                              </td>
-                            })
-                          }
-                        </tr>
-                      )
-                    })}
-                  </>
-                )
-              })}
-              </tbody>
-              <tfoot>
-              {footerGroups.map((footerGroup) => (
-                <tr {...footerGroup.getFooterGroupProps()}>
-                  {footerGroup.headers.map(column => (
-                    <th {...column.getFooterProps()}>{column.render('Footer')}</th>
-                  ))}
-                </tr>
-              ))}
-              </tfoot>
-            </table>
+                                                style={cell.column.Header === '#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span>
+                                              </td>
+                                          })
+                                      }
+                                  </tr>
+                                  {countSubRows > 0 && subRows.map(subRow => {
+                                      prepareRow(subRow);
+                                      return (
+                                          <tr {...subRow.getRowProps()} key={subRow.id}>
+                                              {
+                                                  subRow.cells.map(subCell => {
+                                                      // console.log(subCell)
+                                                      const skip = subCell.value === 'skip_td';
+                                                      if (skip) return null;
+                                                      return <td {...subCell.getCellProps()}
+                                                                 key={subCell.column.id + subRow.id}>
+                                                          <span>{subCell.render('Cell')}</span>
+                                                      </td>
+                                                  })
+                                              }
+                                          </tr>
+                                      )
+                                  })}
+                              </>
+                          )
+                      })}
+                      </tbody>
+                      <tfoot>
+                      {footerGroups.map((footerGroup) => (
+                          <tr {...footerGroup.getFooterGroupProps()}>
+                              {footerGroup.headers.map(column => (
+                                  <th {...column.getFooterProps()}>{column.render('Footer')}</th>
+                              ))}
+                          </tr>
+                      ))}
+                      </tfoot>
+                  </table>
+              </div>
           }
 
           {(rows.length > 0) && (
