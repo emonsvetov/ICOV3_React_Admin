@@ -179,7 +179,7 @@ export const REDEEMED_GIFT_CODES_COULMNS = [
     },
     {
         Header: "Test",
-        accessor: "test",
+        accessor: "medium_info_is_test",
         Cell: ({ row, value }) => { return value == 1 ? 'Yes' : 'No'},
         width: 50,
     },
