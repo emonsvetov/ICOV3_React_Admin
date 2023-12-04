@@ -55,7 +55,41 @@ const DataTable = ({organization, merchants}) => {
       staleTime: Infinity,
     }
   );
+    function objectToCSV(data) {
+        const csvRows = data.map(row =>
+            Object.values(row).map(value => JSON.stringify(value, replacer)).join(',')
+        );
 
+        return csvRows.join('\r\n');
+
+        function replacer(key, value) {
+            return value === null || value === undefined ? '' : value;
+        }
+    }
+
+    const download = async (filterValues) => {
+        let tmpFilter = {...filterValues, exportToCsv: 1};
+
+        const response = await fetchApiDataExport({
+            url: apiUrl,
+            filter: tmpFilter,
+            sortby: queryPageSortBy,
+            trigger: queryTrigger
+        });
+
+        if (response.results && Array.isArray(response.results.data)) {
+            const csvData = objectToCSV(response.results.data);
+            if (csvData) {
+                setExportData(csvData);
+                setExportHeaders(Object.keys(response.results.data[0]));
+                setExportToCsv(true);
+            } else {
+                console.error('Failed to serialize data for CSV export');
+            }
+        } else {
+            console.error('Data is not an array:', response.results);
+        }
+    };
   useEffect(() => {
     if (exportToCsv) {
       if (exportLink.current) {
@@ -65,22 +99,7 @@ const DataTable = ({organization, merchants}) => {
     }
   }, [exportLink])
 
-  const download = async (filterValues) => {
-    let tmpFilter = clone(filterValues);
-    tmpFilter.exportToCsv = 1;
 
-    const response = await fetchApiDataExport(
-      {
-        url: apiUrl,
-        filter: tmpFilter,
-        sortby: queryPageSortBy,
-        trigger: queryTrigger
-      }
-    );
-    setExportData(response.results);
-    setExportHeaders(response.headers);
-    setExportToCsv(true);
-  }
 
   let columns = useMemo(() => TABLE_COLUMNS, [])
 
@@ -129,7 +148,7 @@ const DataTable = ({organization, merchants}) => {
     useExpanded,
     usePagination,
     useResizeColumns,
-    // useFlexLayout,
+    useFlexLayout,
   );
 
   const manualPageSize = []
@@ -155,11 +174,11 @@ const DataTable = ({organization, merchants}) => {
                            download={download}
 
                            config={{
-                             keyword: false,
-                             dateRange: false,
-                             date: false,
-                             merchants: false,
-                             exportToCsv: true
+                               keyword: false,
+                               dateRange: false,
+                               date: true,
+                               merchants: true,
+                               exportToCsv: true
                            }}/>
             </Col>
           </Row>
@@ -184,52 +203,25 @@ const DataTable = ({organization, merchants}) => {
               </tr>
             ))}
             </thead>
-            <tbody className="table table--bordered" {...getTableBodyProps()} >
-            {page.map(row => {
-              prepareRow(row);
-              const subCount = (row.id.match(/\./g) || []).length
-              const subRows = row.subRows;
-
-              const countSubRows = subRows ? subRows.length : 0;
-              const rowSpan = countSubRows ? countSubRows + 1 : 1;
-              return (
-                <>
-                  <tr {...row.getRowProps()} key={row.id}>
-                    {
-                      row.cells.map(cell => {
-                        // console.log(cell)
-                        const skip = cell.value === 'skip_td';
-                        if (skip) return null;
-                        const paddingLeft = subCount * 20
-                        return <td {...cell.getCellProps()} rowSpan={rowSpan} key={cell.column.id + row.id}>
-                                            <span
-                                              style={cell.column.Header === '#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span>
-                        </td>
-                      })
-                    }
-                  </tr>
-                  {countSubRows > 0 && subRows.map(subRow => {
-                    // console.log(subRow)
-                    prepareRow(subRow);
-                    return (
-                      <tr {...subRow.getRowProps()} key={subRow.id}>
-                        {
-                          subRow.cells.map(subCell => {
-                            // console.log(subCell)
-                            const skip = subCell.value === 'skip_td';
-                            if (skip) return null;
-                            return <td {...subCell.getCellProps()} key={subCell.column.id + subRow.id}>
-                                <span>{subCell.render('Cell')}</span>
-                            </td>
-                          })
-                        }
+              <tbody className="table table--bordered" {...getTableBodyProps()}>
+              {page.map(row => {
+                  prepareRow(row);
+                  const subCount = (row.id.match(/\./g) || []).length
+                  return (
+                      <tr {...row.getRowProps()}>
+                          {
+                              row.cells.map(cell => {
+                                  // console.log(cell)
+                                  const paddingLeft = subCount * 20
+                                  return <td {...cell.getCellProps()}><span
+                                      style={cell.column.Header === '#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span>
+                                  </td>
+                              })
+                          }
                       </tr>
-                    )
-                  })}
-                </>
-              )
-            })}
-            </tbody>
+                  )
+              })}
+              </tbody>
             <tfoot>
             {footerGroups.map((footerGroup) => (
               <tr {...footerGroup.getFooterGroupProps()}>

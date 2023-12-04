@@ -176,6 +176,20 @@ export const getPrograms = async (organizationId, paramStr = "") => {
   }
 }
 
+export const getAllPrograms = async (paramStr = "") => {
+    try {
+        let url = `/programs-all`
+        if( paramStr !=="" )
+        {
+            url += "?" + paramStr
+        }
+        const response = await axios.get(url);
+        return response.data;
+    } catch (e) {
+        throw new Error(`API error:${e?.message}`);
+    }
+}
+
 export const getProgramsHierachy = async (organizationId) => {
   try {
     let url = `/organization/${organizationId}/program/hierarchy`

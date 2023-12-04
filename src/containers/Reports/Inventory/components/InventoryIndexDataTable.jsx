@@ -65,22 +65,41 @@ const DataTable = ({organization, merchants}) => {
     }
   }, [exportLink])
 
-  const download = async (filterValues) => {
-    let tmpFilter = clone(filterValues);
-    tmpFilter.exportToCsv = 1;
+    function objectToCSV(data) {
+        const csvRows = data.map(row =>
+            Object.values(row).map(value => JSON.stringify(value, replacer)).join(',')
+        );
 
-    const response = await fetchApiDataExport(
-      {
-        url: apiUrl,
-        filter: tmpFilter,
-        sortby: queryPageSortBy,
-        trigger: queryTrigger
-      }
-    );
-    setExportData(response.results);
-    setExportHeaders(response.headers);
-    setExportToCsv(true);
-  }
+        return csvRows.join('\r\n');
+
+        function replacer(key, value) {
+            return value === null || value === undefined ? '' : value;
+        }
+    }
+
+    const download = async (filterValues) => {
+        let tmpFilter = {...filterValues, exportToCsv: 1};
+
+        const response = await fetchApiDataExport({
+            url: apiUrl,
+            filter: tmpFilter,
+            sortby: queryPageSortBy,
+            trigger: queryTrigger
+        });
+
+        if (response.results && Array.isArray(response.results.data)) {
+            const csvData = objectToCSV(response.results.data);
+            if (csvData) {
+                setExportData(csvData);
+                setExportHeaders(Object.keys(response.results.data[0]));
+                setExportToCsv(true);
+            } else {
+                console.error('Failed to serialize data for CSV export');
+            }
+        } else {
+            console.error('Data is not an array:', response.results);
+        }
+    };
 
   const updateColumns = useCallback((data) => {
     if (data) {
@@ -101,10 +120,11 @@ const DataTable = ({organization, merchants}) => {
         let innerObject = Object.keys(item.on_hand);
         for (let innerKey in innerObject) {
           let innerItem = innerObject[innerKey];
-          tmpColumns.push(
+            let headerValue = parseInt(innerItem, 10);
+            tmpColumns.push(
             {
               id: "on_hand" + innerKey,
-              Header: "$" + innerItem,
+              Header: "$" + headerValue,
               accessor: (row) => { return row.on_hand[innerItem]; },
               width: 100
             },
@@ -245,8 +265,9 @@ const DataTable = ({organization, merchants}) => {
   if (isSuccess)
     return (
       <>
-        <div className='table react-table report-table'>
-          <div className="action-panel">
+      <div style={{ width: '90%', overflowX: 'auto', margin: 'auto' }}>
+        <div className='table react-table report-table'style={{ minHeight: '10px' }}>
+          <div className="action-panel"style={{ paddingBottom: '35px' }}>
             <Row className="mx-0">
               <Col>
                 <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter}
@@ -264,6 +285,7 @@ const DataTable = ({organization, merchants}) => {
             </Row>
             <div style={{clear: 'both'}}>&nbsp;</div>
           </div>
+        </div>
           {
             isLoading && <p>Loading...</p>
           }

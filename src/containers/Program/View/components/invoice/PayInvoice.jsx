@@ -220,7 +220,6 @@ const PayInvoice = (props) => {
 
     const onClickDisperseCheckAmount = () => {
         let tmpAmountNeedingDispersal = checkAmount;
-        // console.log(invoice)
         const statements = invoice.view_params?.invoice?.statements;
         if( statements )    {
             // let total_end_balance = Math.abs(invoice.total_end_balance)
