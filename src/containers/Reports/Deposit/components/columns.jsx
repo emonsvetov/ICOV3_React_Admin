@@ -24,7 +24,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "monies_deposited",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(4)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.monies_deposited) + sum, 0),
               [rows],
@@ -37,7 +37,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "deposit_fee",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(4)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.deposit_fee) + sum, 0),
               [rows],

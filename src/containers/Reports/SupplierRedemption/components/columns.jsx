@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 
 import React from 'react';
 
@@ -6,6 +5,7 @@ export const TABLE_COLUMNS = [
     {
         Header: "Merchant",
         accessor: "name",
+
         Footer: "Total",
     },
 ];

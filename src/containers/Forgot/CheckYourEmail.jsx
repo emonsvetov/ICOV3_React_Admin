@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 const IncentcoLogo = `${process.env.PUBLIC_URL}/img/logo-sm.png`;
 
 const CheckYourEmail = () => (

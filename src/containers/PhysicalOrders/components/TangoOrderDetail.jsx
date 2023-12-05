@@ -5,15 +5,8 @@ import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
 import formValidation from "@/shared/validation/merchants/addMerchant";
 
 import axios from 'axios';
-
-import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import { useParams, useHistory } from "react-router-dom";
 
-const STATUS = [
-    {label: 'Pending', value: 'pending'},
-    {label: 'Cancelled', value: 'cancelled'},
-    {label: 'Shipped', value: 'shipped'},
-]
 
 const fetchTango = async ( id ) => {
     try {
@@ -25,8 +18,6 @@ const fetchTango = async ( id ) => {
 };
 
 const TangoOrderDetail = () => {
-
-    const dispatch = useDispatch()
     let { id } = useParams();
 
     const [loading, setLoading] = useState(false)

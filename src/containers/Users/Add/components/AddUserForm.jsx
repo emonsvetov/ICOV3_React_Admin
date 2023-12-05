@@ -5,7 +5,7 @@ import formValidation from "@/shared/validation/adduser";
 import axios from 'axios';
 import { fetchRoles } from "@/shared/apiHelper"
 import FormFields from '../../components/FormFields'
-import {unpatchSelect, labelizeNamedData} from '@/shared/helpers'
+import { labelizeNamedData} from '@/shared/helpers'
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 
@@ -15,7 +15,6 @@ let config = {
 }
 const AddUserForm = ({organization}) => {
     const dispatch = useDispatch()
-    const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false)
     const [roles, setRoles] = useState(null)
 
@@ -49,7 +48,7 @@ const AddUserForm = ({organization}) => {
         axios.put(`/organization/${organization.id}/users/create`, values)
         .then( (res) => {
             // console.log(res)
-            if(res.status == 200)  {
+            if(res.status === 200)  {
                 window.location = `/users/?message=User saved successfully`
             }
         })

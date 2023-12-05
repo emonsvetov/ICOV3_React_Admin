@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
+
 import { Link } from 'react-router-dom';
 import { Form, Field } from 'react-final-form';
 import { Spinner } from 'reactstrap';
@@ -9,7 +9,7 @@ import LockOutlineIcon from 'mdi-react/LockOutlineIcon';
 import EmailOutlineIcon from 'mdi-react/EmailOutlineIcon';
 import HomeOutlineIcon from 'mdi-react/HomeOutlineIcon';
 
-const required = value => value ? undefined : 'Required';
+
 
 // const renderField = ({ input, label, type, meta: { touched, error, warning } }) => (
 //   <div>

@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Form, Field } from 'react-final-form';
-import EyeIcon from 'mdi-react/EyeIcon';
 // import KeyVariantIcon from 'mdi-react/KeyVariantIcon';
 import LockOutlineIcon from 'mdi-react/LockOutlineIcon';
 import EmailOutlineIcon from 'mdi-react/EmailOutlineIcon';
-import renderCheckBoxField from '../../../shared/components/form/CheckBox';
 import { ApiErrorMessage } from '@/shared/components/flash';
 import {login} from '../../App/auth';
 

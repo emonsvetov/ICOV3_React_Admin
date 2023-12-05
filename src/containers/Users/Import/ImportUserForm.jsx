@@ -14,7 +14,7 @@ let config = {
 }
 const AddUserForm = ({organization}) => {
     const dispatch = useDispatch()
-    const [error, setError] = useState(false)
+    
     const [loading, setLoading] = useState(false)
     const [roles, setRoles] = useState(null)
 

@@ -160,7 +160,7 @@ export const unpatchMedia = ( dataset, fields ) => {
 
 export const removeFields = ( dataset, fields ) => {
     if( !dataset || !fields ) return dataset;
-    for (const [key, value] of Object.entries(dataset)) {
+    for (const [key] of Object.entries(dataset)) {
         if( inArray(key, fields) )  {
             delete dataset[key]
         }

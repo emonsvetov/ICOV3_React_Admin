@@ -1,17 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {Row, Col} from 'reactstrap';
-import {Form, Field} from 'react-final-form';
-import renderRadioButtonField from '@/shared/components/form/RadioButton';
-import CheckboxField from '@/shared/components/form/CheckboxField';
-import formValidation from "@/shared/validation/program-add";
+import {Form} from 'react-final-form';
 import axios from 'axios';
 import {isEmpty} from '@/shared/helpers'
 
 const LiveModeForm = ({program, organization, auth}) => {
-
-  const [programBalance, setProgramBalance] = useState(0);
-  const [participantPointsBalance, setParticipantPointsBalance] = useState(2000);
-  const [programInvoices, setProgramInvoices] = useState(0);
   const [errors, setErrors] = useState(null);
   const [loading, setLoading] = useState(false);
   const [liveModeData, setLiveModeData] = useState([]);

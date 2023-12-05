@@ -1,6 +1,5 @@
 import React from 'react';
-import {Card, CardBody, Col, Row} from 'reactstrap';
-import {IMPORT_DATA} from "./MockData"
+import {Card, CardBody, Col} from 'reactstrap';
 import ErrorsTable from "./ErrorsTable";
 
 const ImportView = ({item}) => {

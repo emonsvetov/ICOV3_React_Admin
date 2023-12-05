@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Field } from "react-final-form";
-import { Row, Col, ButtonToolbar, Button, Modal, ModalBody } from "reactstrap";
-import { useParams } from "react-router-dom";
+import { Row, Col, ButtonToolbar, Button } from "reactstrap";
 import {labelizeRecursive} from '@/shared/helpers'
 import {useDispatch, sendFlashMessage, ApiErrorMessage} from "@/shared/components/flash"
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
@@ -37,8 +36,6 @@ const CreateInvoiceForm = (props) => {
   };
   
   // console.log(props)
-
-  const programId = useParams();
 
 
   useEffect( () => {

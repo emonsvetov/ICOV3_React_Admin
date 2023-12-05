@@ -1,9 +1,7 @@
-import React, {useEffect, useState} from 'react'
-import {Field} from "react-final-form";
+import React, {useState} from 'react'
 import MerchantsHierarchy from '@/shared/components/MerchantsHierarchy'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-
 import {Button, Col, Row} from "reactstrap";
 import DatePicker from "react-datepicker";
 import {CSVLink} from "react-csv";

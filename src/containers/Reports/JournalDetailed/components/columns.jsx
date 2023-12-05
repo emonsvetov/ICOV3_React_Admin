@@ -1,5 +1,5 @@
 const footerRenderer  = (info, field) => {
-  const { rows, flatRows } = info;
+  const { rows } = info;
   const totalValue = rows.reduce((sum, row) => Number(row.values[field]) + sum, 0)
   return <span>{totalValue}</span>;
 }

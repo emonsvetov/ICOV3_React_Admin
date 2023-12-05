@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo} from "react";
+import React, {useState, useMemo} from "react";
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 
@@ -6,7 +6,6 @@ import {REDEEMED_GIFT_CODES_COULMNS}  from "./columns";
 
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import UploadGiftCodesModal  from "./UploadGiftCodesModal";
-import axios from 'axios'
 import { Row, Col } from 'reactstrap';
 
 import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter, Sorting} from "@/shared/apiTableHelper"

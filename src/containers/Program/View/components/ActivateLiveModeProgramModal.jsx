@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import { Modal, ModalBody, Button } from 'reactstrap';
+import React from 'react';
+import { Modal, ModalBody } from 'reactstrap';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import LiveModeForm from '../../components/LiveModeForm';

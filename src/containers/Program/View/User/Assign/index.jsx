@@ -8,8 +8,6 @@ import ReactTablePagination from '@/shared/components/table/components/ReactTabl
 import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter} from "@/shared/apiTableHelper"
 import { fetchRoles } from "@/shared/apiHelper"
 import AssignRoleModal from "./AssignRoleModal"
-
-import axios from "axios";
 import {
     Container,
     Card,

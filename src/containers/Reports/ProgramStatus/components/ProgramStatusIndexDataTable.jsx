@@ -1,13 +1,20 @@
-import React, {useEffect, useMemo, useState} from "react";
-import {useExpanded, useFlexLayout, usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
-import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
-import {TABLE_COLUMNS} from "./columns";
-import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
-import {Col, Row} from 'reactstrap';
-import {getFirstDay} from '@/shared/helpers'
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  useExpanded,
+  useFlexLayout,
+  usePagination,
+  useResizeColumns,
+  useSortBy,
+  useTable,
+} from "react-table";
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import { TABLE_COLUMNS } from "./columns";
+import ReactTablePagination from "@/shared/components/table/components/ReactTablePagination";
+import { Col, Row } from "reactstrap";
+import { getFirstDay } from "@/shared/helpers";
 
-import {withRouter} from "react-router-dom";
-import {connect} from "react-redux";
+import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
 import {
   reducer,
   useEffectToDispatch,
@@ -15,43 +22,63 @@ import {
   fetchApiDataExport,
   initialState,
   TableFilter,
-  Sorting
-} from "@/shared/apiTableHelper"
-import axios from "axios";
-import {isEqual, clone} from 'lodash';
+  Sorting,
+} from "@/shared/apiTableHelper";
 
-const queryClient = new QueryClient()
+import { clone } from "lodash";
 
-const DataTable = ({organization}) => {
+const queryClient = new QueryClient();
+
+const DataTable = ({ organization }) => {
   const defaultFrom = getFirstDay();
-  const [filter, setFilter] = useState({programs: [], awardLevels: [], from: defaultFrom, to: new Date()});
+  const [filter, setFilter] = useState({
+    programs: [],
+    awardLevels: [],
+    from: defaultFrom,
+    to: new Date(),
+  });
   const [useFilter, setUseFilter] = useState(false);
   const [trigger, setTrigger] = useState(0);
   const [exportData, setExportData] = useState([]);
   const [exportHeaders, setExportHeaders] = useState([]);
   const [exportToCsv, setExportToCsv] = useState(false);
-  const [filterValues, setFilterValues] = useState([]);
   const exportLink = React.createRef();
 
-  let columns = useMemo(() => TABLE_COLUMNS, [])
+  let columns = useMemo(() => TABLE_COLUMNS, []);
 
   initialState.queryPageSize = 999999999;
-  const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
-    React.useReducer(reducer, initialState);
+  const [
+    {
+      queryPageIndex,
+      queryPageSize,
+      totalCount,
+      queryPageFilter,
+      queryPageSortBy,
+      queryTrigger,
+    },
+    dispatch,
+  ] = React.useReducer(reducer, initialState);
 
   const apiUrl = `/organization/${organization.id}/report/portfolio-status-report-new`;
-  const {isLoading, error, data, isSuccess} = useQuery(
-    ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
-    () => fetchApiData(
-      {
+  const { isLoading, error, data, isSuccess } = useQuery(
+    [
+      "",
+      apiUrl,
+      queryPageIndex,
+      queryPageSize,
+      queryPageFilter,
+      queryPageSortBy,
+      queryTrigger,
+    ],
+    () =>
+      fetchApiData({
         url: apiUrl,
         page: queryPageIndex,
         size: queryPageSize,
         filter,
         sortby: queryPageSortBy,
-        trigger: queryTrigger
-      }
-    ),
+        trigger: queryTrigger,
+      }),
     {
       keepPreviousData: true,
       staleTime: Infinity,
@@ -65,27 +92,24 @@ const DataTable = ({organization}) => {
         exportLink.current.link.click();
       }
     }
-  }, [exportLink])
+  }, [exportLink]);
 
   const download = async (filterValues) => {
     let tmpFilter = clone(filterValues);
     tmpFilter.exportToCsv = 1;
 
-    const response = await fetchApiDataExport(
-      {
-        url: apiUrl,
-        filter: tmpFilter,
-        sortby: queryPageSortBy,
-        trigger: queryTrigger
-      }
-    );
+    const response = await fetchApiDataExport({
+      url: apiUrl,
+      filter: tmpFilter,
+      sortby: queryPageSortBy,
+      trigger: queryTrigger,
+    });
     setExportData(response.results);
     setExportHeaders(response.headers);
     setExportToCsv(true);
-  }
+  };
 
-
-  const totalPageCount = Math.ceil(totalCount / queryPageSize)
+  const totalPageCount = Math.ceil(totalCount / queryPageSize);
 
   const {
     getTableProps,
@@ -103,8 +127,9 @@ const DataTable = ({organization}) => {
     nextPage,
     canNextPage,
     setPageSize,
-    state: {pageIndex, pageSize, sortBy}
-  } = useTable({
+    state: { pageIndex, pageSize, sortBy },
+  } = useTable(
+    {
       columns,
       data: data ? data.results : [],
       initialState: {
@@ -117,22 +142,26 @@ const DataTable = ({organization}) => {
       autoResetSortBy: false,
       autoResetExpanded: false,
       autoResetPage: false,
-      disableResizing: true
+      disableResizing: true,
     },
     useSortBy,
     useExpanded,
     usePagination,
     useResizeColumns,
-    useFlexLayout,
+    useFlexLayout
   );
 
-  const manualPageSize = []
-  useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
-
-  const availableAwardLevels = [
-    {value: 'default', label: 'Default'},
-    {value: 'ntc', label: 'NTC'}
-  ];
+  const manualPageSize = [];
+  useEffectToDispatch(dispatch, {
+    pageIndex,
+    pageSize,
+    gotoPage,
+    sortBy,
+    filter,
+    data,
+    useFilter,
+    trigger,
+  });
 
   if (error) {
     return <p>Error: {JSON.stringify(error)}</p>;
@@ -145,73 +174,89 @@ const DataTable = ({organization}) => {
   if (isSuccess)
     return (
       <>
-        <div className='table react-table report-table'>
+        <div className="table react-table report-table">
           <div className="action-panel">
             <Row className="mx-0">
               <Col>
-                <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter}
-                             exportData={exportData} exportLink={exportLink} exportHeaders={exportHeaders}
-                             download={download}
-
-                             config={{
-                               keyword: false,
-                               dateRange: true,
-                               exportToCsv: true
-                             }}/>
+                <TableFilter
+                  filter={filter}
+                  setFilter={setFilter}
+                  setUseFilter={setUseFilter}
+                  exportData={exportData}
+                  exportLink={exportLink}
+                  exportHeaders={exportHeaders}
+                  download={download}
+                  config={{
+                    keyword: false,
+                    dateRange: true,
+                    exportToCsv: true,
+                  }}
+                />
               </Col>
             </Row>
-            <div className='cleafix'>&nbsp;</div>
+            <div className="cleafix">&nbsp;</div>
           </div>
-          {
-            isLoading && <p>Loading...</p>
-          }
-          {
-            isSuccess &&
+          {isLoading && <p>Loading...</p>}
+          {isSuccess && (
             <table {...getTableProps()} className="table">
               <thead>
-              {headerGroups.map((headerGroup) => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map(column => (
-                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                      {column.render('Header')}
-                      {column.isSorted ? <Sorting column={column}/> : ''}
-                    </th>
-                  ))}
-                </tr>
-              ))}
+                {headerGroups.map((headerGroup) => (
+                  <tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map((column) => (
+                      <th
+                        {...column.getHeaderProps(
+                          column.getSortByToggleProps()
+                        )}
+                      >
+                        {column.render("Header")}
+                        {column.isSorted ? <Sorting column={column} /> : ""}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
               </thead>
               <tbody className="table table--bordered" {...getTableBodyProps()}>
-              {page.map(row => {
-                prepareRow(row);
-                const subCount = (row.id.match(/\./g) || []).length
-                return (
-                  <tr {...row.getRowProps()}>
-                    {
-                      row.cells.map(cell => {
+                {page.map((row) => {
+                  prepareRow(row);
+                  const subCount = (row.id.match(/\./g) || []).length;
+                  return (
+                    <tr {...row.getRowProps()}>
+                      {row.cells.map((cell) => {
                         // console.log(cell)
-                        const paddingLeft = subCount * 20
-                        return <td {...cell.getCellProps()}><span
-                          style={cell.column.Header === '#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span>
-                        </td>
-                      })
-                    }
-                  </tr>
-                )
-              })}
+                        const paddingLeft = subCount * 20;
+                        return (
+                          <td {...cell.getCellProps()}>
+                            <span
+                              style={
+                                cell.column.Header === "#"
+                                  ? { paddingLeft: `${paddingLeft}px` }
+                                  : null
+                              }
+                            >
+                              {cell.render("Cell")}
+                            </span>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
               </tbody>
               <tfoot>
-              {footerGroups.map((footerGroup) => (
-                <tr {...footerGroup.getFooterGroupProps()}>
-                  {footerGroup.headers.map(column => (
-                    <th {...column.getFooterProps()}>{column.render('Footer')}</th>
-                  ))}
-                </tr>
-              ))}
+                {footerGroups.map((footerGroup) => (
+                  <tr {...footerGroup.getFooterGroupProps()}>
+                    {footerGroup.headers.map((column) => (
+                      <th {...column.getFooterProps()}>
+                        {column.render("Footer")}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
               </tfoot>
             </table>
-          }
+          )}
 
-          {(rows.length > 0) && (
+          {rows.length > 0 && (
             <>
               <ReactTablePagination
                 page={page}
@@ -229,18 +274,20 @@ const DataTable = ({organization}) => {
                 dataLength={totalCount}
               />
               <div className="pagination justify-content-end mt-2">
-                            <span>
-                            Go to page:{' '}
-                              <input
-                                type="number"
-                                value={pageIndex + 1}
-                                onChange={(e) => {
-                                  const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                                  gotoPage(page);
-                                }}
-                                style={{width: '100px'}}
-                              />
-                            </span>{' '}
+                <span>
+                  Go to page:{" "}
+                  <input
+                    type="number"
+                    value={pageIndex + 1}
+                    onChange={(e) => {
+                      const page = e.target.value
+                        ? Number(e.target.value) - 1
+                        : 0;
+                      gotoPage(page);
+                    }}
+                    style={{ width: "100px" }}
+                  />
+                </span>{" "}
                 <select
                   value={pageSize}
                   onChange={(e) => {
@@ -258,18 +305,20 @@ const DataTable = ({organization}) => {
           )}
         </div>
       </>
-    )
-}
+    );
+};
 
-const TableWrapper = ({organization}) => {
-  if (!organization) return 'Loading...'
+const TableWrapper = ({ organization }) => {
+  if (!organization) return "Loading...";
   return (
     <QueryClientProvider client={queryClient}>
-      <DataTable organization={organization}/>
+      <DataTable organization={organization} />
     </QueryClientProvider>
-  )
-}
+  );
+};
 
-export default withRouter(connect((state) => ({
-  organization: state.organization
-}))(TableWrapper));
+export default withRouter(
+  connect((state) => ({
+    organization: state.organization,
+  }))(TableWrapper)
+);

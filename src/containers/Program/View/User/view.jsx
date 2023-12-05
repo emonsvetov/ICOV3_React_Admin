@@ -52,6 +52,7 @@ const ProgramViewUser = ({organization}) => {
         }
     };
 
+
     const {isLoading, error, data, refetch, isSuccess, remove} = useQuery(
         ['user', userId],
         () => fetchUser(userId),

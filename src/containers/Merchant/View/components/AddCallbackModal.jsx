@@ -5,8 +5,6 @@ import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import renderSelectField from '@/shared/components/form/Select';
 import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
-import axios from 'axios'
-import ReactTableBase from '@/shared/components/table/ReactTableBase';
 import formValidation from "@/shared/validation/program-accounting";
 
 const TYPES = [
@@ -31,12 +29,7 @@ const CONTENT_TYPES = [
 const AddCallbackModal = ({data, isOpen, setOpen, toggle, theme, rtl}) => {
     const [loading, setLoading] = useState(false)
 
-    
-    const submit = (file) => {
-        // const file = csvFile;
-        const reader = new FileReader();
 
-    }
 
     const onSubmit = values => {
     

@@ -1,9 +1,9 @@
-import React, {useEffect, useState, useContext} from 'react';
+import React, {useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
-import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col, Spinner, TabContent, TabPane, Nav, NavItem, NavLink } from 'reactstrap';
+import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col, TabContent, TabPane, Nav, NavItem, NavLink } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
 import axios from 'axios'
 import renderDropZoneField from '@/shared/components/form/DropZone';

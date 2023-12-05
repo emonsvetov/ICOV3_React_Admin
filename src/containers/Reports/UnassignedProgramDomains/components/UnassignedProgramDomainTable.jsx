@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useMemo} from "react";
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
-import MOCK_DATA from "./MOCK_DATA.json";
 import {PROGRAM_COLUMNS} from "./columns";
 import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
@@ -109,9 +108,6 @@ const DataTable = () => {
         // alert(status, keyword)
     }
 
-    const handleExport = () =>{
-        alert('handle CSV export')
-    }
     
 
     let program_columns = [

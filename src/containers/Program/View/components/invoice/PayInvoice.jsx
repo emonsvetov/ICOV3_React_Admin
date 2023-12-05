@@ -7,7 +7,6 @@ import {getDues} from './helper/getDues'
 import JournalSummary from './components/JournalSummary';
 import AlertModalWrapper from "@/shared/components/modal/alertModal/AlertModalWrapper"
 
-import axios from 'axios'
 
 const RenderPayments = ({invoice}) => {
     if( !invoice.view_params?.payments || invoice.view_params.payments.length <= 0) return null;
@@ -125,7 +124,6 @@ const PayInvoice = (props) => {
     const notesRef = useRef(`Payment Posting Date: ${dt_today}\nCheck/REF#:`);
 
     const [loading, setLoading] = useState(true)
-    const [prev, setPrev] = useState(props.invoice)
     const [invoice, setInvoice] = useState(null)
     const [checkAmount, setCheckAmount] = useState(0.00)
     const [amountNeedingDispersal, setAmountNeedingDispersal] = useState(0.00)

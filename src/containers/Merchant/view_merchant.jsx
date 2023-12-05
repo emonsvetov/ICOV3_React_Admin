@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import { Col, Container, Row, Card, CardBody, ListGroup, ListGroupItem } from 'reactstrap';
 import { Link, useParams } from 'react-router-dom'
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import {useDispatch} from 'react-redux';
 import {setMerchant} from '@/redux/actions/merchantActions';

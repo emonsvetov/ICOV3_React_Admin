@@ -1,13 +1,11 @@
-import React, {useEffect, useMemo, useState, useCallback} from "react";
-import {useExpanded, useFlexLayout, usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
+import React, {useEffect, useMemo, useState} from "react";
+import {useExpanded, usePagination, useResizeColumns, useSortBy, useTable, useFlexLayout} from "react-table";
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
-import {toCurrency, toPoints} from '@/shared/helpers'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {Col, Row} from 'reactstrap';
-import {dateStrToYmd} from '@/shared/helpers';
 import {TABLE_COLUMNS} from "./columns";
 
-import {Link, withRouter} from "react-router-dom";
+import { withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {
   reducer,
@@ -16,11 +14,11 @@ import {
   fetchApiDataExport,
   initialState,
   TableFilter,
-  Sorting
+  Sorting,
 } from "@/shared/apiTableHelper"
-import axios from "axios";
-import {isEqual, clone} from 'lodash';
-import moment from "moment";
+
+import { clone} from 'lodash';
+
 
 const queryClient = new QueryClient()
 
@@ -31,7 +29,6 @@ const DataTable = ({organization, merchants}) => {
   const [exportData, setExportData] = useState([]);
   const [exportHeaders, setExportHeaders] = useState([]);
   const [exportToCsv, setExportToCsv] = useState(false);
-  const [filterValues, setFilterValues] = useState([]);
   const exportLink = React.createRef();
 
   const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
@@ -117,7 +114,6 @@ const DataTable = ({organization, merchants}) => {
     footerGroups,
     rows,
     prepareRow,
-    rowSpanHeaders,
     page,
     pageCount,
     pageOptions,

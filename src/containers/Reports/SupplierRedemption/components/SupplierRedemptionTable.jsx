@@ -4,7 +4,6 @@ import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {Col, Row} from 'reactstrap';
 import {TABLE_COLUMNS,tableColumns} from "./columns";
-
 import { withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {
@@ -13,10 +12,9 @@ import {
   fetchApiData,
   fetchApiDataExport,
   initialState,
-  TableFilter,
   Sorting
 } from "@/shared/apiTableHelper"
-import {isEqual, clone} from 'lodash';
+import { clone} from 'lodash';
 import SupplierRedemptionFilter from "./SupplierRedemptionFilter";
 
 const queryClient = new QueryClient()

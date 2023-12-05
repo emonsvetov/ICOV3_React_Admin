@@ -1,15 +1,9 @@
-import React, {useState, useEffect, useMemo} from "react";
+import React, {useState, useMemo} from "react";
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import { COLUMNS } from "./columns";
-import SortIcon from 'mdi-react/SortIcon';
-import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
-import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
-import MerchantsFilter  from "./MerchantsFilter";
 import { Link } from 'react-router-dom';
-import axios from 'axios'
-import {renameChildrenToSubrows} from '@/shared/helpers'
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import {
@@ -59,7 +53,6 @@ const DataTable = ({organization}) => {
         getTableProps,
         getTableBodyProps,
         headerGroups,
-        footerGroups,
         rows,
         prepareRow,
         page,

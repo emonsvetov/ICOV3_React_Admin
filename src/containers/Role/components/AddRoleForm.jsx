@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { Form, Field } from 'react-final-form';
 import { FieldArray } from "react-final-form-arrays";
 import arrayMutators from "final-form-arrays";
-import {inArray, isEmpty} from '@/shared/helpers';
+import { isEmpty} from '@/shared/helpers';
 import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
 import axios from 'axios';
 

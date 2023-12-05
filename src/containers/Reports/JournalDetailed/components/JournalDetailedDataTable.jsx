@@ -74,7 +74,7 @@ const DataTable = ({organization, programs}) => {
     React.useReducer(reducer, initialState);
 
     const apiUrl = `/organization/${organization.id}/report/journal-detailed`;
-    const {isLoading, error, data, isSuccess, isFetched, isFetching} = useQuery(
+    const {isLoading, error, data, isSuccess, isFetching} = useQuery(
       ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
       () => fetchApiData(
         {

@@ -3,7 +3,7 @@ import { Row, Col, ButtonToolbar, Button } from 'reactstrap';
 import { Form, Field } from 'react-final-form';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { useParams, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import formValidation from "@/shared/validation/domain";
 import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 import {useDispatch, sendFlashMessage} from "@/shared/components/flash"

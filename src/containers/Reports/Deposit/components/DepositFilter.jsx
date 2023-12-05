@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { Field, Form } from 'react-final-form';
-import { Button, Row, Col } from 'reactstrap';
+import { Button, Row } from 'reactstrap';
 import renderSelectField from '@/shared/components/form/Select'
 import axios from 'axios'
 import RenderDatePicker from '@/shared/components/form/DatePickerWithInitial';

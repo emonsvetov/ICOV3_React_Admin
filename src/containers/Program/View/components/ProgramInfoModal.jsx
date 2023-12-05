@@ -7,7 +7,7 @@ import { Form, Field } from 'react-final-form';
 import axios from 'axios'
 
 import {sendFlashMessage} from "@/shared/components/flash";
-import {PROGRAM_TYPES, PROGRAM_STATUSES} from "@/shared/options";
+import {PROGRAM_TYPES} from "@/shared/options";
 import {labelizeNamedData, labelizeNamedRow} from '@/shared/helpers'
 
 import renderCheckBoxField from '@/shared/components/form/CheckBox';
@@ -58,8 +58,6 @@ const ProgramInfo = ({dispatch, organization, isOpen, toggle, data, theme, rtl})
         if(values?.state_id?.value) {
             values.address.state_id =  values.state_id.value
         }
-        const state_id = values["state_id"];
-        const status = values["status"];
         // console.log(status)
         delete values["state_id"];
         

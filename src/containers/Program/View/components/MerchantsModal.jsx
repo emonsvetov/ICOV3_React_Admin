@@ -227,7 +227,7 @@ const DataTable = ({ toggle, organization, program }) => {
       accessor: "logo",
       Cell: ({ row, value }) => {
         return (
-          <img className="merchant_icon" src={`${LOGO_PUBLIC_URL}/${value}`} />
+          <img className="merchant_icon" src={`${LOGO_PUBLIC_URL}/${value}`} alt="merchant-icon" />
         );
       },
     },

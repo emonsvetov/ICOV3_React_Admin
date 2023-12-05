@@ -230,7 +230,7 @@ const MerchantDetails = ( {data} ) => {
                 Logo:
             </Col>
             <Col md="8" lg="8" xl="8" sm="8">
-                <img className='merchant-index-logo' src={`${process.env.REACT_APP_API_STORAGE_URL}/${merchant.logo}`} />
+                <img className='merchant-index-logo' src={`${process.env.REACT_APP_API_STORAGE_URL}/${merchant.logo}`} alt='logo-img'/>
             </Col>
         </Row>
         <Row>
@@ -238,7 +238,7 @@ const MerchantDetails = ( {data} ) => {
                 Icon:
             </Col>
             <Col md="8" lg="8" xl="8" sm="8">
-                <img className='merchant-index-logo' src={`${process.env.REACT_APP_API_STORAGE_URL}/${merchant.icon}`} />
+                <img className='merchant-index-logo' src={`${process.env.REACT_APP_API_STORAGE_URL}/${merchant.icon}`} alt='icon-img' />
             </Col>
         </Row>
         <Row>
@@ -246,7 +246,7 @@ const MerchantDetails = ( {data} ) => {
                 Large Icon:
             </Col>
             <Col md="8" lg="8" xl="8" sm="8">
-            {merchant.large_icon && <img className='merchant-index-logo' src={`${process.env.REACT_APP_API_STORAGE_URL}/${merchant.large_icon}`} />}
+            {merchant.large_icon && <img className='merchant-index-logo' src={`${process.env.REACT_APP_API_STORAGE_URL}/${merchant.large_icon}`} alt='icon-img' />}
             </Col>
         </Row>
         <Row>
@@ -254,7 +254,7 @@ const MerchantDetails = ( {data} ) => {
                 Banner:
             </Col>
             <Col md="8" lg="8" xl="8" sm="8">
-                {merchant.banner && <img className='merchant-index-logo' src={`${process.env.REACT_APP_API_STORAGE_URL}/${merchant.banner}`} />}
+                {merchant.banner && <img className='merchant-index-logo' src={`${process.env.REACT_APP_API_STORAGE_URL}/${merchant.banner}`}  alt='banner-img'/>}
             </Col>
         </Row>
         <Row>

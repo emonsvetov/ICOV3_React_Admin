@@ -8,7 +8,7 @@ import { Form, Field } from 'react-final-form';
 import formValidation from "@/shared/validation/program-awarding";
 import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import MONTHS from "@/shared/json/months.json";
-import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
+import { sendFlashMessage} from "@/shared/components/flash";
 import axios from 'axios'
 import renderSelectField from '@/shared/components/form/Select'
 import { getProgramAction } from '@/redux/actions/programActions';

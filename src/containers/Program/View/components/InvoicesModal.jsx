@@ -77,10 +77,10 @@ const InvoicesModal = ({organization, isOpen, setOpen, toggle, data, theme, rtl}
                         </Row>
                         <Row>
                             <Col md={12} className={'py-4'}>
-                                {activeTab == 'invoices' && <Invoices {...componentProps}  />}
-                                {activeTab == 'payments' && <PaymentsTabContent {...componentProps}  />}
-                                {activeTab == 'statement' && <StatementTabContent {...componentProps}  />}
-                                {activeTab == 'transfermonies' && <TransferMoniesTabContent {...componentProps}  />}
+                                {activeTab === 'invoices' && <Invoices {...componentProps}  />}
+                                {activeTab === 'payments' && <PaymentsTabContent {...componentProps}  />}
+                                {activeTab === 'statement' && <StatementTabContent {...componentProps}  />}
+                                {activeTab === 'transfermonies' && <TransferMoniesTabContent {...componentProps}  />}
                             </Col>
                         </Row>
                     </CardBody>

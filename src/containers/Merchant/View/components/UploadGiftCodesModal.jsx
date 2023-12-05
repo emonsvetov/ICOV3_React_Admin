@@ -1,4 +1,4 @@
-import React, {useState, useMemo, useEffect} from "react";
+import React, {useState, useMemo} from "react";
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
@@ -20,12 +20,7 @@ import {
   } from "reactstrap";
 import COLUMNS from './columns/upload_gift_codes_columns'
 
-function myfunc() {
-    return {
-        x:10,
-        y:20
-    }
-}
+
 
 // const {x:mx, y:my} = myfunc()
 // console.log(mx)

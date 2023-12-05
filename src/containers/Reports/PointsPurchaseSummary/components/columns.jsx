@@ -44,7 +44,7 @@ export const PROGRAM_COLUMNS = [
         Header: "Eligible Participants",
         accessor: "eligible_participants",
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.eligible_participants) + sum, 0),
               [rows],
@@ -57,7 +57,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "jan",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.jan) + sum, 0),
               [rows],
@@ -70,7 +70,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "feb",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.feb) + sum, 0),
               [rows],
@@ -83,7 +83,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "mar",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.mar) + sum, 0),
               [rows],
@@ -96,7 +96,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "apr",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.apr) + sum, 0),
               [rows],
@@ -109,7 +109,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "may",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.may) + sum, 0),
               [rows],
@@ -122,7 +122,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "jun",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.jun) + sum, 0),
               [rows],
@@ -135,7 +135,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "jul",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.jul) + sum, 0),
               [rows],
@@ -148,7 +148,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "aug",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.aug) + sum, 0),
               [rows],
@@ -161,7 +161,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "sep",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.sep) + sum, 0),
               [rows],
@@ -174,7 +174,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "oct",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.oct) + sum, 0),
               [rows],
@@ -187,7 +187,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "nov",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.nov) + sum, 0),
               [rows],
@@ -200,7 +200,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "dec",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.dec) + sum, 0),
               [rows],
@@ -213,7 +213,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "ytd",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.ytd) + sum, 0),
               [rows],
@@ -240,7 +240,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "avg_per_month",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.avg_per_month) + sum, 0),
               [rows],
@@ -253,7 +253,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "monthly_target",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.monthly_target) + sum, 0),
               [rows],
@@ -266,7 +266,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "annual_target",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
-            const { rows, flatRows } = info;
+            const { rows } = info;
             const totalValue = useMemo(
               () => rows.reduce((sum, row) => Number(row.values.annual_target) + sum, 0),
               [rows],

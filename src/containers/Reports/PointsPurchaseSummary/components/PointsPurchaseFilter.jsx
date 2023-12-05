@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { Field, Form } from 'react-final-form';
-import { Button, Row, Col } from 'reactstrap';
+import { Button, Row } from 'reactstrap';
 import renderSelectField from '@/shared/components/form/Select'
 import renderCheckBoxField from '@/shared/components/form/CheckBox';
 import MerchantTreeView from "../../components/MerchantTreeView";

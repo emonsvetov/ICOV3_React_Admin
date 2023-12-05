@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useMemo, useReducer } from "react"
+import React, { useState, useMemo } from "react"
 import { useTable, usePagination, useSortBy } from "react-table"
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
 import { USERS_COLUMNS } from "./columns"
 import SortIcon from 'mdi-react/SortIcon'
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon'
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination'
-import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter} from "@/shared/apiTableHelper"
+import {reducer, useEffectToDispatch, fetchApiData, initialState } from "@/shared/apiTableHelper"
 import UsersFilter from "./UsersFilter"
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
