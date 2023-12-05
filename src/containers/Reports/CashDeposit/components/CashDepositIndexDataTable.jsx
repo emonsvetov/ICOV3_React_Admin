@@ -17,7 +17,7 @@ import {
   Sorting
 } from "@/shared/apiTableHelper"
 import {clone} from 'lodash';
-import {getFirstDay} from '@/shared/helpers'
+import {getFirstDay, formatCurrency} from '@/shared/helpers'
 
 const queryClient = new QueryClient()
 
@@ -76,7 +76,15 @@ const DataTable = ({organization, programs}) => {
         trigger: queryTrigger
       }
     );
-    setExportData(response.results);
+
+    const formattedExportData = response.results.map((row) => {
+      return Object.keys(row).reduce((acc, key) => {
+        acc[key] = formatCurrency(row[key]);
+        return acc;
+      }, {});
+    });
+
+    setExportData(formattedExportData);
     setExportHeaders(response.headers);
     setExportToCsv(true);
   }
