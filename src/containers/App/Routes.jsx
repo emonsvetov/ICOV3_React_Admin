@@ -77,6 +77,7 @@ import {
   Deposit,
   ParticipantStatusSummary,
   ParticipantAccountSummary,
+  ParticipantAccountSubProgram,
   UnassignedProgramDomains,
   MoniesPendingAmount,
   ExpirePoints,
@@ -181,6 +182,7 @@ const Reports = () => (
     <Route exact path="/reports/deposit" component={Deposit} />
     <Route exact path="/reports/deposit-transfer" component={DepositTransfer} />
     <Route exact path="/reports/participant-status-summary" component={ParticipantStatusSummary} />
+    <Route exact path="/reports/participant-account-subprogram" component={ParticipantAccountSubProgram} />
     <Route exact path="/reports/participant-account-summary" component={ParticipantAccountSummary} />
     <Route exact path="/reports/unassigned-program-domains" component={UnassignedProgramDomains} />
     <Route exact path="/reports/monies-pending-amount" component={MoniesPendingAmount} />
