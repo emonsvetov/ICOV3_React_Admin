@@ -12,18 +12,27 @@ import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
 import axios from 'axios'
 import renderSelectField from '@/shared/components/form/Select'
 import { getProgramAction } from '@/redux/actions/programActions';
+import {isEqual, clone} from 'lodash';
 
 const prepareForValidation = values => {
+    // console.log(values)
     const clean = {
         annual_expire_day: values?.annual_expire_day?.value,
-        annual_expire_month: values?.annual_expire_month?.number
+        custom_expire_units: values?.custom_expire_units?.value,
+        annual_expire_month: values?.annual_expire_month?.value
     }
     return {...values, ...clean}
 }
 
+
 const getMonthLabelByMonth = number => {
     return MONTHS.find( month => month.number === number)?.label
 }
+
+const CUSTOM_UNITS = [];
+CUSTOM_UNITS.push({label: 'DAY', value: 'DAY'})
+CUSTOM_UNITS.push({label: 'MONTH', value: 'MONTH'})
+CUSTOM_UNITS.push({label: 'YEAR', value: 'YEAR'})
 
 const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, toggle, theme, rtl}) => {
     const [loading, setLoading] = useState(false)
@@ -41,6 +50,12 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
         setDAYS(days)
     }
     const handleMonthChange = (selectedMonth) => {
+        if( typeof selectedMonth !== 'object' || !selectedMonth) return;
+        let tmpData = clone(data);
+        tmpData.expiration_rule_id = 5;
+        tmpData.annual_expire_month = selectedMonth.number;
+        setData(tmpData);
+
         // alert(JSON.stringify(selectedMonth))
         setMonth(selectedMonth)
         setDays(selectedMonth)
@@ -64,6 +79,7 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                   )
                 )
                 dispatch(sendFlashMessage('Program has been updated', 'alert-success'))
+                window.location.reload();
             }
         } catch (e) {
             setLoading(false)
@@ -167,7 +183,7 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                                 name="expiration_rule_id"
                                 component={renderRadioButtonField}
                                 label="End of Next Year"
-                                radioValue={Number('1')}
+                                radioValue={Number('3')}
                                 value={data.expiration_rule_id}
                             />
                         <h5 className="colorgrey label-margin-left">Expiration date is the end of the following year</h5>
@@ -175,90 +191,102 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                                 name="expiration_rule_id"
                                 component={renderRadioButtonField}
                                 label="2 Years"
-                                radioValue={Number('2')}
+                                radioValue={Number('7')}
                                 value={data.expiration_rule_id}
                             />
                         <h5 className="colorgrey label-margin-left">Expiration date is the end of the next following year</h5>
                         <Field
                                 name="expiration_rule_id"
                                 component={renderRadioButtonField}
-                                label="Custom (not implemented)"
-                                radioValue={Number('3')}
-                                disabled={true}
+                                label="Custom"
+                                radioValue={Number('4')}
                                 value={data.expiration_rule_id}
                             />
                         <h5 className="colorgrey label-margin-left">Expiration date is user specified</h5>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col md="6" lg="4" xl="4">
-                        <Field name="custom_expire_offset">
-                        {({ input, meta }) => (
-                            <div className="form__form-group">
-                                <span className="form__form-group-label">Custom expiration offset</span>
-                                <div className="form__form-group-field">
-                                    <div className="form__form-group-row">
-                                        <input type="number" {...input} placeholder="Custom expiration offset" />
-                                        {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+
+                        <Row className="label-margin-left">
+                            <Col md="6" >
+                                <Field name="custom_expire_offset">
+                                    {({ input, meta }) => (
+                                        <div className="form__form-group">
+                                            <span className="form__form-group-label">Custom expiration offset</span>
+                                            <div className="form__form-group-field">
+                                                <div className="form__form-group-row">
+                                                    <input type="number" {...input} placeholder="Custom expiration offset" />
+                                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </Field>
+                            </Col>
+                            <Col md="6">
+                                <div className="form__form-group">
+                                    <span className="form__form-group-label">Custom expiration units</span>
+                                    <div className="form__form-group-field">
+                                        <div className="form__form-group-row">
+                                            <Field
+                                                name="custom_expire_units"
+                                                component={renderSelectField}
+                                                options={CUSTOM_UNITS}
+                                                placeholder={''}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )}
-                        </Field>
-                    </Col>
-                    <Col md="6" lg="4" xl="4">
-                        <Field name="custom_expire_units">
-                        {({ input, meta }) => (
-                            <div className="form__form-group">
-                                <span className="form__form-group-label">Custom expiration units</span>
-                                <div className="form__form-group-field">
-                                    <div className="form__form-group-row">
-                                        <input type="text" {...input} placeholder="Custom expiration units" />
-                                        {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                            </Col>
+                        </Row>
+
+                        <Field
+                            name="expiration_rule_id"
+                            component={renderRadioButtonField}
+                            label="Annual"
+                            radioValue={Number('5')}
+                            value={data.expiration_rule_id}
+                        />
+                        <h5 className="colorgrey label-margin-left">Expiration date a specified Month and Day each year.</h5>
+                        <Row className="label-margin-left">
+                            <Col md="6" lg="4" xl="4">
+                                <div className="form__form-group">
+                                    <span className="form__form-group-label">Month</span>
+                                    <div className="form__form-group-field">
+                                        <div className="form__form-group-row">
+                                            <Field
+                                                name="annual_expire_month"
+                                                options={MONTHS}
+                                                // onChange={handleMonthChange}
+                                                placeholder={"Month"}
+                                                component={renderSelectField}
+                                                parse={value => {
+                                                    handleMonthChange(value)
+                                                    return value;
+                                                }}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )}
-                        </Field>
+                            </Col>
+                            <Col md="6" lg="4" xl="4">
+                                <div className="form__form-group">
+                                    <span className="form__form-group-label">Day</span>
+                                    <div className="form__form-group-field">
+                                        <div className="form__form-group-row">
+                                            <Field
+                                                name="annual_expire_day"
+                                                component={renderSelectField}
+                                                options={DAYS}
+                                                placeholder={'Day'}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </Col>
+                        </Row>
+
                     </Col>
                 </Row>
-                <Row>
-                    <Col md="6" lg="4" xl="4">
-                        <div className="form__form-group">
-                            <span className="form__form-group-label">Month</span>
-                            <div className="form__form-group-field">
-                                <div className="form__form-group-row">
-                                    <Field 
-                                        name="annual_expire_month"
-                                        options={MONTHS}
-                                        // onChange={handleMonthChange}
-                                        placeholder={"Month"}
-                                        component={renderSelectField}
-                                        parse={value => {
-                                            handleMonthChange(value)
-                                            return value;
-                                        }}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </Col>
-                    <Col md="6" lg="4" xl="4">
-                        <div className="form__form-group">
-                            <span className="form__form-group-label">Day</span>
-                            <div className="form__form-group-field">
-                                <div className="form__form-group-row">
-                                    <Field
-                                        name="annual_expire_day"
-                                        component={renderSelectField}
-                                        options={DAYS}
-                                        placeholder={'Day'}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </Col>
-                </Row>
+
+
                 <Row>
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
