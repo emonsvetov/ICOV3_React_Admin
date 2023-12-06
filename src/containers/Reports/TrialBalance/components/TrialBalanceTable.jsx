@@ -1,122 +1,273 @@
-import React, { useEffect, useMemo } from "react";
-import { useTable, useSortBy, usePagination } from "react-table";
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
-import axios from "axios";
-import { TABLE_COLUMNS } from "./columns";
+import React, {useEffect, useMemo, useState} from "react";
+import {useExpanded,  usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
+import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
-import { withRouter } from "react-router-dom";
-import { connect } from "react-redux";
+import {Col, Row} from 'reactstrap';
 
-const fetchApiData = async (url, page, size) => {
-    const params = { page, size };
-    const response = await axios.get(url, { params });
-    return response.data;
-};
+import {TABLE_COLUMNS} from "./columns";
 
-const queryClient = new QueryClient();
+import {connect} from "react-redux";
+import {
+    reducer,
+    useEffectToDispatch,
+    fetchApiData,
+    fetchApiDataExport,
+    initialState,
 
-function reducer(state, action) {
-    switch (action.type) {
-        case 'SET_PAGE_INDEX':
-            return { ...state, pageIndex: action.pageIndex };
-        case 'SET_PAGE_SIZE':
-            return { ...state, pageSize: action.pageSize };
-        default:
-            return state;
-    }
-}
+    Sorting
+} from "@/shared/apiTableHelper"
 
-const DataTable = ({ organizationId }) => {
-    const [state, dispatch] = React.useReducer(reducer, { pageIndex: 0, pageSize: 10 });
+import { clone} from 'lodash';
+import TrialBalanceFilter from "./TrialBalanceFilter";
 
-    const apiUrl = `/organization/${organizationId}/report/trial-balance`;
-    const { isLoading, error, data } = useQuery(
-        ['trialBalanceData', apiUrl, state.pageIndex, state.pageSize],
-        () => fetchApiData(apiUrl, state.pageIndex, state.pageSize),
-        { keepPreviousData: true }
-    );
+const queryClient = new QueryClient()
 
-    const columns = useMemo(() => TABLE_COLUMNS, []);
-    const tableInstance = useTable(
+const DataTable = ({organization, programs}) => {
+    const [filter, setFilter] = useState({
+        programs: programs,
+        createdOnly: false,
+        reportKey: 'sku_value',
+        programId: 1
+    });
+
+    const [useFilter, setUseFilter] = useState(false);
+    const [trigger, setTrigger] = useState(0);
+    const [exportData, setExportData] = useState([]);
+    const [exportHeaders, setExportHeaders] = useState([]);
+    const [exportToCsv, setExportToCsv] = useState(false);
+    const exportLink = React.createRef();
+
+    const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
+        React.useReducer(reducer, initialState);
+
+    const apiUrl = `/organization/${organization.id}/report/trial-balance`;
+    const {isLoading, error, data, isSuccess} = useQuery(
+        ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+        () => fetchApiData(
+            {
+                url: apiUrl,
+                page: queryPageIndex,
+                size: queryPageSize,
+                filter,
+                sortby: queryPageSortBy,
+                trigger: queryTrigger
+            }
+        ),
         {
-            columns,
-            data: data ? data.results : [],
-            initialState: { pageIndex: state.pageIndex },
-            manualPagination: true,
-            pageCount: data ? Math.ceil(data.totalCount / state.pageSize) : 0,
-        },
-        useSortBy,
-        usePagination
+            keepPreviousData: true,
+            staleTime: Infinity,
+        }
     );
+
+    useEffect(() => {
+        if (exportToCsv) {
+            if (exportLink.current) {
+                setExportToCsv(false);
+                exportLink.current.link.click();
+            }
+        }
+    }, [exportLink])
+
+    const download = async (filterValues) => {
+        let tmpFilter = clone(filterValues);
+        tmpFilter.exportToCsv = 1;
+
+        const response = await fetchApiDataExport(
+            {
+                url: apiUrl,
+                filter: tmpFilter,
+                sortby: queryPageSortBy,
+                trigger: queryTrigger
+            }
+        );
+        // console.log(response)
+        setExportData(response.results);
+        setExportHeaders(response.headers);
+        setExportToCsv(true);
+    }
+
+    let columns = useMemo(() => TABLE_COLUMNS, [])
+
+    const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
-        page,
+        footerGroups,
+        rows,
         prepareRow,
-        state: { pageIndex, pageSize }
-    } = tableInstance;
+        rowSpanHeaders,
+        page,
+        pageCount,
+        pageOptions,
+        gotoPage,
+        previousPage,
+        canPreviousPage,
+        nextPage,
+        canNextPage,
+        setPageSize,
+        state: {pageIndex, pageSize, sortBy}
+    } = useTable({
+            columns: columns,
+            data: data ? Object.values(data.results) : [],
+            initialState: {
+                pageIndex: queryPageIndex,
+                pageSize: queryPageSize,
+                sortBy: queryPageSortBy,
+            },
+            manualPagination: true, // Tell the usePagination
+            pageCount: data ? totalPageCount : null,
+            autoResetSortBy: false,
+            autoResetExpanded: false,
+            autoResetPage: false,
+            disableResizing: true,
+            autoResetHiddenColumns: false,
+            striped: true
+        },
+        useSortBy,
+        useExpanded,
+        usePagination,
+        useResizeColumns,
+        // useFlexLayout,
+    );
 
-    useEffect(() => {
-        dispatch({ type: 'SET_PAGE_INDEX', pageIndex });
-        dispatch({ type: 'SET_PAGE_SIZE', pageSize });
-    }, [pageIndex, pageSize]);
+    const manualPageSize = []
+    useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
 
     if (isLoading) {
         return <p>Loading...</p>;
     }
 
     if (error) {
-        return <p>Error: {error.message}</p>;
+        return <p>Error: {JSON.stringify(error)}</p>;
     }
 
-    return (
-        <div className='table react-table report-table'>
-            <table {...getTableProps()} className="table">
-                <thead>
-                {headerGroups.map(headerGroup => (
-                    <tr {...headerGroup.getHeaderGroupProps()}>
-                        {headerGroup.headers.map(column => (
-                            <th {...column.getHeaderProps()}>{column.render('Header')}</th>
-                        ))}
-                    </tr>
-                ))}
-                </thead>
-                <tbody {...getTableBodyProps()}>
-                {page.map(row => {
-                    prepareRow(row);
-                    return (
-                        <tr {...row.getRowProps()}>
-                            {row.cells.map(cell => (
-                                <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+    if (isSuccess)
+        return (
+            <>
+                <div className='table react-table report-table'>
+                    <div className="action-panel">
+                        <Row className="mx-0">
+                            <Col>
+                                <TrialBalanceFilter
+                                    filter={filter} setFilter={setFilter} useFilter={useFilter} setUseFilter={setUseFilter}
+                                    exportData={exportData} exportLink={exportLink} exportHeaders={exportHeaders}
+                                    download={download}/>
+                            </Col>
+                        </Row>
+                    </div>
+                    {
+                        isLoading && <p>Loading...</p>
+                    }
+                    {
+                        isSuccess &&
+                        <table {...getTableProps()} className="table table-striped report-table">
+                            <thead>
+                            {headerGroups.map((headerGroup) => (
+                                <tr {...headerGroup.getHeaderGroupProps()}>
+                                    {headerGroup.headers.map(column => (
+                                        <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                            {column.render('Header')}
+                                            {column.isSorted ? <Sorting column={column}/> : ''}
+                                        </th>
+                                    ))}
+                                </tr>
                             ))}
-                        </tr>
-                    );
-                })}
-                </tbody>
-            </table>
-            <ReactTablePagination
-                page={page}
-                gotoPage={(pageIndex) => dispatch({ type: 'SET_PAGE_INDEX', pageIndex })}
-                pageIndex={pageIndex}
-                pageSize={pageSize}
-                setPageSize={(pageSize) => dispatch({ type: 'SET_PAGE_SIZE', pageSize })}
-                pageCount={data ? Math.ceil(data.totalCount / pageSize) : 0}
-            />
-        </div>
-    );
-};
+                            </thead>
+                            <tbody className="table table--bordered" {...getTableBodyProps()} >
+                            {page.map(row => {
+                                prepareRow(row);
+                                return (
+                                    <>
+                                        <tr {...row.getRowProps()} key={row.id}>
+                                            {
+                                                row.cells.map(cell => {
+                                                    return <td {...cell.getCellProps()} key={cell.column.id + row.id}>
+                                                        <span>{cell.render('Cell')}</span>
+                                                    </td>
+                                                })
+                                            }
+                                        </tr>
+                                    </>
+                                )
+                            })}
+                            </tbody>
+                            <tfoot>
+                            {footerGroups.map((footerGroup) => (
+                                <tr {...footerGroup.getFooterGroupProps()}>
+                                    {footerGroup.headers.map(column => (
+                                        <th {...column.getFooterProps()}>{column.render('Footer')}</th>
+                                    ))}
+                                </tr>
+                            ))}
+                            </tfoot>
+                        </table>
+                    }
 
-const TableWrapper = ({ organizationId }) => {
-    if (!organizationId) return 'Loading...';
+                    {(rows.length > 0) && (
+                        <>
+                            <ReactTablePagination
+                                page={page}
+                                gotoPage={gotoPage}
+                                previousPage={previousPage}
+                                nextPage={nextPage}
+                                canPreviousPage={canPreviousPage}
+                                canNextPage={canNextPage}
+                                pageOptions={pageOptions}
+                                pageSize={pageSize}
+                                pageIndex={pageIndex}
+                                pageCount={pageCount}
+                                setPageSize={setPageSize}
+                                manualPageSize={manualPageSize}
+                                dataLength={totalCount}
+                            />
+                            <div className="pagination justify-content-end mt-2">
+                                <span>
+                                Go to page:{' '}
+                                    <input
+                                        type="number"
+                                        value={pageIndex + 1}
+                                        onChange={(e) => {
+                                            const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                                            gotoPage(page);
+                                        }}
+                                        style={{ width: '100px' }}
+                                    />
+                                </span>{" "}
+                                <select
+                                    className="ml-2"
+                                    value={pageSize}
+                                    onChange={(e) => {
+                                        setPageSize(Number(e.target.value));
+                                    }}
+                                >
+                                    {[10, 20, 30, 40, 50].map((pageSize) => (
+                                        <option key={pageSize} value={pageSize}>
+                                            Show {pageSize}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </>
+                    )}
+                </div>
+            </>
+        )
+}
+
+const TableWrapper = ({organization, programs}) => {
+    if (!organization || !programs ) return 'Loading...'
     return (
         <QueryClientProvider client={queryClient}>
-            <DataTable organizationId={organizationId} />
+            <DataTable organization={organization}  programs={programs}/>
         </QueryClientProvider>
-    );
-};
+    )
+}
 
-export default withRouter(connect((state) => ({
-    organization: state.organization
-}))(TableWrapper));
+const mapStateToProps = (state) => {
+    return {
+        organization: state.organization,
+    };
+};
+export default connect(mapStateToProps)(TableWrapper);

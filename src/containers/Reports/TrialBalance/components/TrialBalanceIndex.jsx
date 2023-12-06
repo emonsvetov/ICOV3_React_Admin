@@ -1,28 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Card, CardBody, Col } from 'reactstrap';
 import TrialBalanceTable from './TrialBalanceTable';
 import axios from "axios";
+import {isEmpty} from '@/shared/helpers'
+import {connect} from "react-redux";
+import { getAllPrograms } from '@/shared/apiHelper.jsx';
 
-const TrialBalanceIndex = ({ organizationId }) => {
-    const [dataLoaded, setDataLoaded] = useState(false);
+
+const TrialBalanceIndex = ({ organization }) => {
+    const [defaultPrograms, setDefaultPrograms] = useState([]);
 
     useEffect(() => {
-        if (organizationId) {
-            const fetchData = async () => {
-                const apiUrl = `/v1/organization/${organizationId}/report/trial-balance`;
-                try {
-                    const response = await axios.get(apiUrl);
-                    setDataLoaded(true);
-                } catch (error) {
-                    console.error("Error fetching trial balance data:", error);
-                }
-            };
-
-            fetchData();
+        if ( isEmpty(defaultPrograms) ){
+            getAllPrograms( "minimal=true&limit=99999999" )
+                .then( response => {
+                    const data = response?.data ? response.data : [];
+                    const result = data.map(x => x.account_holder_id)
+                    setDefaultPrograms(result);
+                })
         }
-    }, [organizationId]);
+    })
 
-    if (!dataLoaded || !organizationId) {
+    if (isEmpty(defaultPrograms)) {
         return <p>Loading...</p>;
     }
 
@@ -30,11 +29,16 @@ const TrialBalanceIndex = ({ organizationId }) => {
         <Col md={12}>
             <Card>
                 <CardBody>
-                    <TrialBalanceTable />
+                    <TrialBalanceTable programs={defaultPrograms} />
                 </CardBody>
             </Card>
         </Col>
-    );
-};
+    )
+}
 
-export default TrialBalanceIndex;
+const mapStateToProps = (state) => {
+    return {
+        organization: state.organization,
+    };
+};
+export default connect(mapStateToProps)(TrialBalanceIndex);
