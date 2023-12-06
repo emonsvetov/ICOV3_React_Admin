@@ -15,3 +15,4 @@ export { default as ExpireMonies } from './ExpireMonies';
 export { default as ParticipantStatusSummary} from "./ParticipantStatusSummary"
 export { default as ParticipantAccountSummary} from "./ParticipantAccountSummary"
 export { default as ParticipantAccountSubProgram} from "./ParticipantAccountSubProgram"
+export { default as TrialBalance } from './TrialBalance'
