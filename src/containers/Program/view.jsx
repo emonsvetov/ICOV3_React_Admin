@@ -5,6 +5,7 @@ import MainModalWrapper from './View/components/MainModalWrapper';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { getProgramAction } from '@/redux/actions/programActions';
+import axios from 'axios'
 
 const PUBLIC_URL = `${process.env.PUBLIC_URL}`;
 const GeneralIcon = `${PUBLIC_URL}/img/icon/general.svg`;
@@ -19,7 +20,17 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
     const { id } = useParams()
     const [modalName, setModalName] = useState(null)
     const [isOpen, setOpen] = useState(false);
+    const [depositBalance, setDepositBalance] = useState(0);
+    const [financialBalance, setFinancialBalance] = useState(0);
     let history = useHistory();
+     useEffect(()=> {
+        if (organization && program)
+        axios.get(`/organization/${organization?.id}/program/${program?.id}/getBalance`)
+        .then( (res) => {
+                setDepositBalance(res.data.financial_detail);
+                setFinancialBalance(res.data.total_financial_balance);
+        })
+    },[organization, program])
     useEffect(() => {
         if(id && organization?.id)    {
             const {id: organizationId} = organization //store as
@@ -54,6 +65,14 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
                         <span style={{maxWidth:'200px'}} className="btn btn-success account__btn account__btn--small" onClick={()=>toggle('activateLiveMode')}>Live Mode</span>
                       </>
                     }
+                     <div className="program-balance" style={{marginTop:'10px'}}>
+                        <p>Deposit Balance:
+                            <span style={{marginLeft:'10px', }}>${depositBalance}</span>
+                        </p>
+                        <p style={{marginTop: '0px', marginBottom:'10px'}}>Financial Balance:
+                            <span style={{marginLeft:'10px', }}>${financialBalance}</span>
+                        </p>
+                    </div>
                 </Col>
             </Row>
             <Row>
@@ -199,26 +218,21 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
                 </Col>
             </Row>
             <Row>
-                {/*<Col md="4" lg="4" xl="4">*/}
-                {/*    <Card>*/}
-                {/*        <CardBody>*/}
-                {/*            <Row>*/}
-                {/*                <Col md={3} className='col-left'>*/}
-                {/*                    <img src={EventsIcon} className="card-img-top" alt="Domains" />*/}
-                {/*                </Col>*/}
-                {/*                <Col md={9} className='col-right pl-0'>*/}
-                {/*                    <h5>Domains</h5>*/}
-                {/*                    {*/}
-                {/*                        program.domains.length > 0 && */}
-                {/*                        program.domains.map( (domain, i) => {*/}
-                {/*                            return <li key={`domain-list-${i}`}><Link className="" to={`/domains/view/${domain.id}`}>{domain.name}</Link></li>*/}
-                {/*                        })*/}
-                {/*                    }*/}
-                {/*                </Col>*/}
-                {/*            </Row>*/}
-                {/*        </CardBody>*/}
-                {/*    </Card>*/}
-                {/*</Col>*/}
+            <Col md="4" lg="4" xl="4">
+                <Card>
+                    <CardBody>
+                        <Row onClick={()=>{toggle('domains')}}>
+                            <Col md={3} className='col-left'>
+                                <img src={EventsIcon} className="card-img-top" alt="Domains" />
+                            </Col>
+                            <Col md={9} className='col-right pl-0'>
+                                <h5>Domains</h5>
+                                <p>Domain settings.</p>
+                            </Col>
+                        </Row>
+                    </CardBody>
+                </Card>
+            </Col>
 
                 {auth?.isSuperAdmin && <Col md="6" lg="4" xl="4">
                     <Card>
@@ -268,6 +282,23 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
                 {/*        </CardBody>*/}
                 {/*    </Card>*/}
                 {/*</Col>*/}
+            </Row>
+            <Row>
+                <Col md="4" lg="4" xl="4">
+                    <Card>
+                        <CardBody>
+                            <Row onClick={()=>{history.push(`/program/${id}/reports`)}}>
+                                <Col md={3} className='col-left'>
+                                    <img src={EventsIcon} className="card-img-top" alt="Reports" />
+                                </Col>
+                                <Col md={9} className='col-right pl-0'>
+                                    <h5>Reports</h5>
+                                    <p>Program reports.</p>
+                                </Col>
+                            </Row>
+                        </CardBody>
+                    </Card>
+                </Col>
             </Row>
         </Container>
     )}

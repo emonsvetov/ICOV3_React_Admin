@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import { Col, Container, Row, Card, CardBody } from 'reactstrap';
 // import {withRouter} from "react-router-dom";
@@ -7,33 +7,33 @@ import { Col, Container, Row, Card, CardBody } from 'reactstrap';
 import JournalDetailedTable from './components/JournalDetailedDataTable.jsx';
 // import { getPrograms } from '@/shared/apiHelper.jsx';
 // import { isEmpty } from '@/shared/helpers';
+import {isEmpty} from '@/shared/helpers'
+import { getAllPrograms } from '@/shared/apiHelper.jsx';
 
 const JournalDetailed = ({organization}) => {
+    const [defaultPrograms, setDefaultPrograms] = useState([]);
 
-  const defaultPrograms = []
-  // const [defaultPrograms, setDefaultPrograms] = useState([]);
+    useEffect(() => {
+        if ( isEmpty(defaultPrograms) ){
+            getAllPrograms( "minimal=true&limit=99999999" )
+                .then( response => {
+                    const data = response?.data ? response.data : [];
+                    const result = data.map(x => x.account_holder_id)
+                    setDefaultPrograms(result);
+                })
+        }
+    })
 
-  // useEffect(() => {
-  //   if ( organization?.id ){
-  //     getPrograms( organization.id, "minimal=true&limit=99999999" )
-  //     .then( response => {
-  //       const data = response?.data ? response.data : [];
-  //       const result = data.map(x => x.account_holder_id)
-  //       setDefaultPrograms(result);
-  //     })
-  //   }
-  // }, [organization])
-
-  // if ( isEmpty(defaultPrograms) ) {
-  //   return <p>Loading...</p>;
-  // }
+    if (isEmpty(defaultPrograms)) {
+        return <p>Loading...</p>;
+    }
 
   return (
     <Container className="dashboard">
       <Row>
         <Col md={12}>
           <h3 className="page-title">Journal Detailed</h3>
-          <h3 class="page-subhead subhead"><Link className="" to="/">Home</Link> / JournalDetailed</h3>
+          <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / JournalDetailed</h3>
         </Col>
       </Row>
       <Row>
