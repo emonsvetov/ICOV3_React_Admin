@@ -1,31 +1,39 @@
+import { Link } from 'react-router-dom';
 
-
-export const TABLE_COLUMNS = [
+export const USER_DETAIL_CHANGE_LOGS_COLUMNS = [
     {
-        Header: "Program ID",
-        accessor: "id",
-        Footer:"#",
-        disableFilters:true,
-        disableGlobalFilters:true,
-        // sticky:'left'
-    },
-    {
-        Header: "Program Name",
+        Header: "Name",
         accessor: "name",
-        Footer:"Program Name",
-        Cell: ({ row, value }) => { return <Link to={`/program/view/${row.original.id}`}>{value}</Link>},
+        Cell: ({ row, value }) => { return <Link to={`/users/view/${row.original.id}`}>{value}</Link>},
     },
     {
-        Header: "Root Program ID",
-        accessor: "root_id",
-        Footer: "Status",
-        filter: 'equals'
+        Header: "Email",
+        accessor: "email"
     },
     {
-        Header: "Root Program Name",
-        accessor: "root_name",
-        Footer: "Status",
-        filter: 'equals'
+        Header: "Type",
+        accessor: "type"
     },
+    {
+        Header: "Old Value",
+        accessor: "old_user_status_label"
+    },
+    {
+        Header: "New Value",
+        accessor: "new_user_status_label"
+    },
+    {
+        Header: "Technical Reason",
+        accessor: "technical_reason"
+    },
+    {
+        Header: "Updated By",
+        accessor: "updated_by"
+    },
+    {
+        Header: "Updated At",
+        accessor: "updated_at"
+    },
+   
 ]
 

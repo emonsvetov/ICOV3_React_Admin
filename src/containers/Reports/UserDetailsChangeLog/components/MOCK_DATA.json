@@ -1,0 +1,7 @@
+[
+    {"id":1,"name" : "Demo Demo" , "email" : "admin@incentco.com" , "type" :"Status" , "old_user_status_label" : "Active", "new_user_status_label" : "Locked","technical_reason":"","updated_by":"Incentco Global Solutions","updated_at":"12/01/2023" },
+    {"id":2501,"name" : "Bruce Salter" , "email" : "deletejhaynes@incentco.com" , "type" :"Status" , "old_user_status_label" : "Active", "new_user_status_label" : "Locked","technical_reason":"","updated_by":"Incentco Global Solutions", "updated_at":"12/01/2023"},
+    {"id":2903,"name" : "Robert Bobrowski" , "email" : "r.bobrowski@neteos.pl" , "type" : "Status" , "old_user_status_label" : "Active", "new_user_status_label" : "Locked","technical_reason":"","updated_by":"Incentco Global Solutions", "updated_at":"12/01/2023"},
+    {"id":2901,"name" : "Janelle Howe" , "email" : "jhowe@incentco.com" , "type" : "Status" , "old_user_status_label" : "Active", "new_user_status_label" : "Locked","technical_reason":"","updated_by":"Incentco Global Solutions", "updated_at":"12/01/2023" }
+    
+]
