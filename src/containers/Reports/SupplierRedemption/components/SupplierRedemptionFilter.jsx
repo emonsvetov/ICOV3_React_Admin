@@ -62,7 +62,7 @@ const SupplierRedemptionFilter = (
       dataSet.active = reset ? true : active
     }
     if (options.reportKey) {
-      dataSet.reportKey = reset ? 'sku_value' : reportKey
+      dataSet.reportKey =  reportKey
     }
 
     if (options.codes) {
@@ -110,36 +110,23 @@ const SupplierRedemptionFilter = (
       }
     }
 
-    if (!change) {
-      alert('No change in filters')
-      setUseFilter(false)
-      return
-    }
-
     let filters = {}
-    if (options.keyword) filters.keyword = values.keyword
-    if (options.programs) {
+      filters.keyword = values.keyword
       filters.programs = values.programs
-    }
-    if (options.merchants) {
+
       filters.merchants = values.merchants
-    }
-    if (options.awardLevels) {
+
       filters.awardLevels = values.awardLevels
-    }
-    if (options.dateRange) {
+
       filters.from = values.from
       filters.to = values.to
-    }
-    if (options.active) {
+
       filters.active = values.active
-    }
-    if (options.reportKey) {
+
       filters.reportKey = values.reportKey
-    }
-    if (options.codes) {
+
       filters.codes = values.codes
-    }
+
 
     setFilter(filters)
     setUseFilter(true)

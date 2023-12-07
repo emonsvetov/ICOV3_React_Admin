@@ -34,10 +34,18 @@ const DataTable = ({organization, merchants}) => {
   const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
     React.useReducer(reducer, initialState);
 
-  const apiUrl = `/organization/${organization.id}/report/supplier-redemption`;
 
+
+
+
+    const handleButtonClick = () => {
+        // Обновите ключ запроса, чтобы инициировать новый запрос
+        setTrigger((prevTrigger) => prevTrigger + 1);
+    };
+    const apiUrl = `/organization/${organization.id}/report/supplier-redemption`;
     const handleDataSuccess = (resultData) => {
         const col = tableColumns(resultData.config)
+        console.log(col);
         setColumns(col);
     };
 
@@ -141,6 +149,7 @@ const DataTable = ({organization, merchants}) => {
   if (isSuccess)
     return (
       <>
+          <button onClick={handleButtonClick}>Отправить запрос</button>
         <div className='table react-table report-table'>
           <div className="action-panel">
             <Row className="mx-0">

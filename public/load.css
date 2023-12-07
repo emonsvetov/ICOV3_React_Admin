@@ -23,3 +23,15 @@
     transform: rotate(360deg) scale(2);
   }
 }
+
+
+.ant-table {
+  font-size: 13px;
+}
+
+:where(.css-dev-only-do-not-override-6j9yrn).ant-table-wrapper .ant-table-cell, :where(.css-dev-only-do-not-override-6j9yrn).ant-table-wrapper .ant-table-thead > tr > th, :where(.css-dev-only-do-not-override-6j9yrn).ant-table-wrapper .ant-table-tbody > tr > th, :where(.css-dev-only-do-not-override-6j9yrn).ant-table-wrapper .ant-table-tbody > tr > td, :where(.css-dev-only-do-not-override-6j9yrn).ant-table-wrapper tfoot > tr > th, :where(.css-dev-only-do-not-override-6j9yrn).ant-table-wrapper tfoot > tr > td {
+    position: relative;
+    padding: 6px 10px;
+    overflow-wrap: break-word;
+    text-align: center;
+}
