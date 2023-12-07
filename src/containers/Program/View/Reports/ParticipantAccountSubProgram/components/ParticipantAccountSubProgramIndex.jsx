@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useParams} from 'react';
 import { Card, CardBody, Col } from 'reactstrap';
 import ParticipantAccountSubProgramTable from './ParticipantAccountSubProgramTable';
 import axios from "axios";
@@ -8,7 +8,9 @@ import { getAllPrograms } from '@/shared/apiHelper.jsx';
 
 
 const ParticipantAccountSubProgramIndex = ({ organization }) => {
-  const [defaultPrograms, setDefaultPrograms] = useState([]);
+  const [defaultPrograms, setDefaultPrograms, program] = useState([]);
+
+  // let {programId} = useParams();
 
   useEffect(() => {
     if ( isEmpty(defaultPrograms) ){
@@ -26,19 +28,14 @@ const ParticipantAccountSubProgramIndex = ({ organization }) => {
   }
 
   return (
-    <Col md={12}>
-      <Card>
-        <CardBody>
-          <ParticipantAccountSubProgramTable programs={defaultPrograms} />
-        </CardBody>
-      </Card>
-    </Col>
+      <ParticipantAccountSubProgramTable programs={defaultPrograms} program={program} />
   )
 }
 
 const mapStateToProps = (state) => {
   return {
     organization: state.organization,
+    program: state.program,
   };
 };
 export default connect(mapStateToProps)(ParticipantAccountSubProgramIndex);

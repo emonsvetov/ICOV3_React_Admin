@@ -2,7 +2,7 @@ import React, { useState} from 'react'
 import ProgramsHierarchy from '@/shared/components/ProgramsHierarchy'
 import {connect} from 'react-redux'
 
-import {Button, Col, Row} from "reactstrap";
+import {Button, Col, Row, useParams} from "reactstrap";
 import DatePicker from "react-datepicker";
 import {CSVLink} from "react-csv";
 import {getFirstDay} from '@/shared/helpers'
@@ -23,6 +23,12 @@ const ParticipantStatusFilter = (
     exportLink,
     exportHeaders
   }) => {
+
+
+
+  // const { programId } = useParams();
+  // console.log(programId, '777')
+
   const options = {
     'dateRange': false,
     'programs': true,
