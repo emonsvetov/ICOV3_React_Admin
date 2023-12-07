@@ -17,7 +17,7 @@ import {
   Sorting
 } from "@/shared/apiTableHelper"
 import {clone} from 'lodash';
-import {getFirstDay, formatCurrency} from '@/shared/helpers'
+import {getFirstDay} from '@/shared/helpers'
 
 const queryClient = new QueryClient()
 
@@ -36,7 +36,7 @@ const DataTable = ({organization, programs}) => {
   const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
     React.useReducer(reducer, initialState);
 
-  const apiUrl = `/organization/${organization.id}/report/cash-deposit`;
+  const apiUrl = `/organization/${organization.id}/report/expire-monies`;
   const {isLoading, error, data, isSuccess, isFetching} = useQuery(
     ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
     () => fetchApiData(
@@ -76,15 +76,7 @@ const DataTable = ({organization, programs}) => {
         trigger: queryTrigger
       }
     );
-
-    const formattedExportData = response.results.map((row) => {
-      return Object.keys(row).reduce((acc, key) => {
-        acc[key] = formatCurrency(row[key]);
-        return acc;
-      }, {});
-    });
-
-    setExportData(formattedExportData);
+    setExportData(response.results);
     setExportHeaders(response.headers);
     setExportToCsv(true);
   }
@@ -154,7 +146,7 @@ const DataTable = ({organization, programs}) => {
 
                              config={{
                                keyword: false,
-                               dateRange: true,
+                               dateRange: false,
                                // awardLevels: availableAwardLevels,
                                programs: true,
                                exportToCsv: true

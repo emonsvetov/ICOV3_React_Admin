@@ -1,11 +1,11 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {useExpanded, useFlexLayout, usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
+import {useExpanded,  usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
-import {TABLE_COLUMNS} from "./columns";
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {Col, Row} from 'reactstrap';
 
-import {withRouter} from "react-router-dom";
+import {TABLE_COLUMNS} from "./columns";
+
 import {connect} from "react-redux";
 import {
   reducer,
@@ -13,17 +13,23 @@ import {
   fetchApiData,
   fetchApiDataExport,
   initialState,
-  TableFilter,
+ 
   Sorting
 } from "@/shared/apiTableHelper"
-import {clone} from 'lodash';
-import {getFirstDay, formatCurrency} from '@/shared/helpers'
+
+import { clone} from 'lodash';
+import ParticipantAccountSubProgramFilter from "./ParticipantAccountSubProgramFilter";
 
 const queryClient = new QueryClient()
 
 const DataTable = ({organization, programs}) => {
-  const defaultFrom = getFirstDay();
-  const [filter, setFilter] = useState({programs: programs, awardLevels: [], from: defaultFrom, to: new Date()});
+  const [filter, setFilter] = useState({
+    programs: programs,
+    createdOnly: false,
+    reportKey: 'sku_value',
+    programId: 1
+  });
+  
   const [useFilter, setUseFilter] = useState(false);
   const [trigger, setTrigger] = useState(0);
   const [exportData, setExportData] = useState([]);
@@ -31,13 +37,11 @@ const DataTable = ({organization, programs}) => {
   const [exportToCsv, setExportToCsv] = useState(false);
   const exportLink = React.createRef();
 
-  let columns = useMemo(() => TABLE_COLUMNS, [])
-
   const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
     React.useReducer(reducer, initialState);
 
-  const apiUrl = `/organization/${organization.id}/report/cash-deposit`;
-  const {isLoading, error, data, isSuccess, isFetching} = useQuery(
+  const apiUrl = `/organization/${organization.id}/report/participant-account-subprogram`;
+  const {isLoading, error, data, isSuccess} = useQuery(
     ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
     () => fetchApiData(
       {
@@ -76,18 +80,13 @@ const DataTable = ({organization, programs}) => {
         trigger: queryTrigger
       }
     );
-
-    const formattedExportData = response.results.map((row) => {
-      return Object.keys(row).reduce((acc, key) => {
-        acc[key] = formatCurrency(row[key]);
-        return acc;
-      }, {});
-    });
-
-    setExportData(formattedExportData);
+    // console.log(response)
+    setExportData(response.results);
     setExportHeaders(response.headers);
     setExportToCsv(true);
   }
+
+  let columns = useMemo(() => TABLE_COLUMNS, [])
 
   const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
@@ -98,6 +97,7 @@ const DataTable = ({organization, programs}) => {
     footerGroups,
     rows,
     prepareRow,
+    rowSpanHeaders,
     page,
     pageCount,
     pageOptions,
@@ -109,8 +109,8 @@ const DataTable = ({organization, programs}) => {
     setPageSize,
     state: {pageIndex, pageSize, sortBy}
   } = useTable({
-      columns,
-      data: data ? data.results : [],
+      columns: columns,
+      data: data ? Object.values(data.results) : [],
       initialState: {
         pageIndex: queryPageIndex,
         pageSize: queryPageSize,
@@ -121,24 +121,26 @@ const DataTable = ({organization, programs}) => {
       autoResetSortBy: false,
       autoResetExpanded: false,
       autoResetPage: false,
-      disableResizing: true
+      disableResizing: true,
+      autoResetHiddenColumns: false,
+      striped: true
     },
     useSortBy,
     useExpanded,
     usePagination,
     useResizeColumns,
-    useFlexLayout,
+    // useFlexLayout,
   );
 
   const manualPageSize = []
   useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
 
-  if (error) {
-    return <p>Error: {JSON.stringify(error)}</p>;
+  if (isLoading) {
+    return <p>Loading...</p>;
   }
 
-  if (isLoading || !organization?.id) {
-    return <p>Loading...</p>;
+  if (error) {
+    return <p>Error: {JSON.stringify(error)}</p>;
   }
 
   if (isSuccess)
@@ -148,28 +150,19 @@ const DataTable = ({organization, programs}) => {
           <div className="action-panel">
             <Row className="mx-0">
               <Col>
-                <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter}
-                             exportData={exportData} exportLink={exportLink} exportHeaders={exportHeaders}
-                             download={download}
-
-                             config={{
-                               keyword: false,
-                               dateRange: true,
-                               // awardLevels: availableAwardLevels,
-                               programs: true,
-                               exportToCsv: true
-                             }}/>
+                <ParticipantAccountSubProgramFilter
+                  filter={filter} setFilter={setFilter} useFilter={useFilter} setUseFilter={setUseFilter}
+                  exportData={exportData} exportLink={exportLink} exportHeaders={exportHeaders}
+                  download={download}/>
               </Col>
             </Row>
-            <div style={{clear: 'both'}}>&nbsp;</div>
           </div>
           {
-            (isLoading || isFetching) && <p className="text-center">Loading...</p>
+            isLoading && <p>Loading...</p>
           }
           {
-            // ref={r => { csvLinkTable = r; }}
             isSuccess &&
-            <table {...getTableProps()} className="table">
+            <table {...getTableProps()} className="table table-striped report-table">
               <thead>
               {headerGroups.map((headerGroup) => (
                 <tr {...headerGroup.getHeaderGroupProps()}>
@@ -182,22 +175,21 @@ const DataTable = ({organization, programs}) => {
                 </tr>
               ))}
               </thead>
-              <tbody className="table table--bordered" {...getTableBodyProps()}>
+              <tbody className="table table--bordered" {...getTableBodyProps()} >
               {page.map(row => {
                 prepareRow(row);
-                const subCount = (row.id.match(/\./g) || []).length
                 return (
-                  <tr {...row.getRowProps()}>
-                    {
-                      row.cells.map(cell => {
-                        // console.log(cell)
-                        const paddingLeft = subCount * 20
-                        return <td {...cell.getCellProps()}><span
-                          style={cell.column.Header === '#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span>
-                        </td>
-                      })
-                    }
-                  </tr>
+                  <>
+                    <tr {...row.getRowProps()} key={row.id}>
+                      {
+                        row.cells.map(cell => {
+                          return <td {...cell.getCellProps()} key={cell.column.id + row.id}>
+                          <span>{cell.render('Cell')}</span>
+                          </td>
+                        })
+                      }
+                    </tr>
+                  </>
                 )
               })}
               </tbody>
@@ -231,31 +223,32 @@ const DataTable = ({organization, programs}) => {
                 dataLength={totalCount}
               />
               <div className="pagination justify-content-end mt-2">
-                            <span>
-                            Go to page:{' '}
-                              <input
-                                type="number"
-                                value={pageIndex + 1}
+                                <span>
+                                Go to page:{' '}
+                                <input
+                                    type="number"
+                                    value={pageIndex + 1}
+                                    onChange={(e) => {
+                                    const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                                    gotoPage(page);
+                                    }}
+                                    style={{ width: '100px' }}
+                                />
+                                </span>{" "}
+                                <select
+                                className="ml-2"
+                                value={pageSize}
                                 onChange={(e) => {
-                                  const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                                  gotoPage(page);
+                                    setPageSize(Number(e.target.value));
                                 }}
-                                style={{width: '100px'}}
-                              />
-                            </span>{' '}
-                <select
-                  value={pageSize}
-                  onChange={(e) => {
-                    setPageSize(Number(e.target.value));
-                  }}
-                >
-                  {[10, 20, 30, 40, 50].map((pageSize) => (
-                    <option key={pageSize} value={pageSize}>
-                      Show {pageSize}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                                >
+                                {[10, 20, 30, 40, 50].map((pageSize) => (
+                                    <option key={pageSize} value={pageSize}>
+                                    Show {pageSize}
+                                    </option>
+                                ))}
+                                </select>
+                            </div>
             </>
           )}
         </div>
@@ -264,14 +257,17 @@ const DataTable = ({organization, programs}) => {
 }
 
 const TableWrapper = ({organization, programs}) => {
-  if (!organization || !programs) return 'Loading...'
+  if (!organization || !programs ) return 'Loading...'
   return (
     <QueryClientProvider client={queryClient}>
-      <DataTable organization={organization} programs={programs}/>
+      <DataTable organization={organization}  programs={programs}/>
     </QueryClientProvider>
   )
 }
 
-export default withRouter(connect((state) => ({
-  organization: state.organization
-}))(TableWrapper));
+const mapStateToProps = (state) => {
+  return {
+    organization: state.organization,
+  };
+};
+export default connect(mapStateToProps)(TableWrapper);

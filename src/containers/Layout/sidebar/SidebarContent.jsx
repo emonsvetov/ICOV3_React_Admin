@@ -29,8 +29,10 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
             <SidebarLink title="Program Status" route="/reports/program-status" />
             <SidebarLink title="Supplier Redemption" route="/reports/supplier-redemption" />
             <SidebarLink title="Expire Points" route="/reports/expire-points" />
+            <SidebarLink title="Expire Monies" route="/reports/expire-monies" />
             <SidebarLink title="Deposit Transfer" route="/reports/deposit-transfer" />
             <SidebarLink title="User Details Change Logs" route="/reports/users-details-change-logs" />
+              <SidebarLink title="Trial Balance" route="/reports/trial-balance" />
             {/*<SidebarLink title="Points Purchase Summary" route="/reports/points-purchase-summary" />*/}
           </>
         )
@@ -85,7 +87,8 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
               <SidebarLink title="Monies Pending Amount" route="/reports/monies-pending-amount"/>
               <SidebarLink title="Participant Status Summary" route="/reports/participant-status-summary"/>
               <SidebarLink title="Participant Account Summary" route="/reports/participant-account-summary"/>
-              
+              <SidebarLink title="Participant Accounts by Subprogram" route="/reports/participant-account-subprogram"/>
+
             </SidebarCategory>
         }
         {

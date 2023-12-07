@@ -65,22 +65,41 @@ const DataTable = ({organization, merchants}) => {
     }
   }, [exportLink])
 
-  const download = async (filterValues) => {
-    let tmpFilter = clone(filterValues);
-    tmpFilter.exportToCsv = 1;
+    function objectToCSV(data) {
+        const csvRows = data.map(row =>
+            Object.values(row).map(value => JSON.stringify(value, replacer)).join(',')
+        );
 
-    const response = await fetchApiDataExport(
-      {
-        url: apiUrl,
-        filter: tmpFilter,
-        sortby: queryPageSortBy,
-        trigger: queryTrigger
-      }
-    );
-    setExportData(response.results);
-    setExportHeaders(response.headers);
-    setExportToCsv(true);
-  }
+        return csvRows.join('\r\n');
+
+        function replacer(key, value) {
+            return value === null || value === undefined ? '' : value;
+        }
+    }
+
+    const download = async (filterValues) => {
+        let tmpFilter = {...filterValues, exportToCsv: 1};
+
+        const response = await fetchApiDataExport({
+            url: apiUrl,
+            filter: tmpFilter,
+            sortby: queryPageSortBy,
+            trigger: queryTrigger
+        });
+
+        if (response.results && Array.isArray(response.results.data)) {
+            const csvData = objectToCSV(response.results.data);
+            if (csvData) {
+                setExportData(csvData);
+                setExportHeaders(Object.keys(response.results.data[0]));
+                setExportToCsv(true);
+            } else {
+                console.error('Failed to serialize data for CSV export');
+            }
+        } else {
+            console.error('Data is not an array:', response.results);
+        }
+    };
 
   const updateColumns = useCallback((data) => {
     if (data) {

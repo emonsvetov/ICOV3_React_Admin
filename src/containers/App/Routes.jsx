@@ -77,9 +77,12 @@ import {
   Deposit,
   ParticipantStatusSummary,
   ParticipantAccountSummary,
+  ParticipantAccountSubProgram,
   UnassignedProgramDomains,
   MoniesPendingAmount,
-  ExpirePoints
+  ExpirePoints,
+  ExpireMonies,
+    TrialBalance,
  } from '../Reports';
 
 import TreeView from '../TreeViewBasic';
@@ -180,11 +183,14 @@ const Reports = () => (
     <Route exact path="/reports/deposit" component={Deposit} />
     <Route exact path="/reports/deposit-transfer" component={DepositTransfer} />
     <Route exact path="/reports/participant-status-summary" component={ParticipantStatusSummary} />
+    <Route exact path="/reports/participant-account-subprogram" component={ParticipantAccountSubProgram} />
     <Route exact path="/reports/participant-account-summary" component={ParticipantAccountSummary} />
     <Route exact path="/reports/unassigned-program-domains" component={UnassignedProgramDomains} />
     <Route exact path="/reports/monies-pending-amount" component={MoniesPendingAmount} />
     <Route exact path="/reports/users-details-change-logs" component={UserDetailsChangeLogs} />
     <Route exact path="/reports/expire-points" component={ExpirePoints} />
+    <Route exact path="/reports/expire-monies" component={ExpireMonies} />
+      <Route exact path="/reports/trial-balance" component={TrialBalance} />
   </Switch>
 );
 
