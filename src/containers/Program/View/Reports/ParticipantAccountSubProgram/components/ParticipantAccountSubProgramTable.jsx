@@ -22,7 +22,7 @@ import ParticipantAccountSubProgramFilter from "./ParticipantAccountSubProgramFi
 
 const queryClient = new QueryClient()
 
-const DataTable = ({organization, programs}) => {
+const DataTable = ({organization, programs, program}) => {
   const [filter, setFilter] = useState({
     programs: programs,
     createdOnly: false,
@@ -256,11 +256,11 @@ const DataTable = ({organization, programs}) => {
     )
 }
 
-const TableWrapper = ({organization, programs}) => {
+const TableWrapper = ({organization, programs, program}) => {
   if (!organization || !programs ) return 'Loading...'
   return (
     <QueryClientProvider client={queryClient}>
-      <DataTable organization={organization}  programs={programs}/>
+      <DataTable organization={organization}  programs={programs} program={program}/>
     </QueryClientProvider>
   )
 }
@@ -268,6 +268,7 @@ const TableWrapper = ({organization, programs}) => {
 const mapStateToProps = (state) => {
   return {
     organization: state.organization,
+    program: state.program,
   };
 };
 export default connect(mapStateToProps)(TableWrapper);
