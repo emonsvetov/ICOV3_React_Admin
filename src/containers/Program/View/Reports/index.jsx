@@ -7,6 +7,7 @@ import axios from "axios";
 import classnames from "classnames";
 import ParticipantAccountSubProgram from "../Reports/ParticipantAccountSubProgram";
 import ProgramParticipantStatusSummary from "../Reports/ProgramParticipantStatusSummary";
+import JournalDetailed from "../Reports/JournalDetail";
 
 const ProgramReport = ({organization}) => {
   // Tabs Panel
@@ -77,6 +78,19 @@ const ProgramReport = ({organization}) => {
                       Participant Status Summary
                     </NavLink>
                   </NavItem>
+                  <NavItem>
+                    <NavLink
+                        className={classnames({
+                          active:
+                              currentActiveTab === '3'
+                        })}
+                        onClick={() => {
+                          togglePan('3');
+                        }}
+                    >
+                      Journal Detail
+                    </NavLink>
+                  </NavItem>
                 </Nav>
               </Col>
             </Row>
@@ -88,6 +102,12 @@ const ProgramReport = ({organization}) => {
                 {
                   currentActiveTab != 2 ? 'Loading...' :
                   <ProgramParticipantStatusSummary program={program}/>
+                }
+              </TabPane>
+              <TabPane tabId="3">
+                {
+                  currentActiveTab != 3 ? 'Loading...' :
+                  <JournalDetailed program={program}/>
                 }
               </TabPane>
             </TabContent>
