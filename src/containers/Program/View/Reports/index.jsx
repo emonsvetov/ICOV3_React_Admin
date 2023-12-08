@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import axios from "axios";
 import classnames from "classnames";
 import ParticipantAccountSubProgram from "../Reports/ParticipantAccountSubProgram";
+import ProgramParticipantStatusSummary from "../Reports/ProgramParticipantStatusSummary";
 
 const ProgramReport = ({organization}) => {
   // Tabs Panel
@@ -73,7 +74,7 @@ const ProgramReport = ({organization}) => {
                           togglePan('2');
                         }}
                     >
-                      Report 2
+                      Participant Status Summary
                     </NavLink>
                   </NavItem>
                 </Nav>
@@ -81,13 +82,12 @@ const ProgramReport = ({organization}) => {
             </Row>
             <TabContent activeTab={currentActiveTab} className="tabContent">
               <TabPane tabId="1" className="tabPane">
-                {console.log(program, '11')}
                 <ParticipantAccountSubProgram program={program}/>
               </TabPane>
               <TabPane tabId="2">
                 {
                   currentActiveTab != 2 ? 'Loading...' :
-                      2
+                  <ProgramParticipantStatusSummary program={program}/>
                 }
               </TabPane>
             </TabContent>
