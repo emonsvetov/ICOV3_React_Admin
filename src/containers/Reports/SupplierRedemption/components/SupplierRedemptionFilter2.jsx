@@ -40,6 +40,7 @@ export const defFilter = {
     active: true,
     reportKey: 'sku_value',
     codes: null,
+    programId: 0,
 }
 
 export const SupplierRedemptionFilter2: FC<SupplierRedemptionFilterProps> = ({filters, merchants,exportCSV}) => {
