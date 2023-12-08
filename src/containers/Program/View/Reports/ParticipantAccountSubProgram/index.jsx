@@ -1,11 +1,9 @@
 import React from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { Col, Container, Row } from 'reactstrap';
 import ParticipantAccountSubProgramCard from './components/ParticipantAccountSubProgramIndex.jsx';
 
-const ParticipantAccountSubProgram = () => {
+const ParticipantAccountSubProgram = ({program}) => {
   return (
-      <ParticipantAccountSubProgramCard />
+      <ParticipantAccountSubProgramCard program={program} />
   )
 }
 

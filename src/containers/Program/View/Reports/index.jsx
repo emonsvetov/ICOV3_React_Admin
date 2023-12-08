@@ -20,7 +20,6 @@ const ProgramReport = ({organization}) => {
   const fetchProgramData = async(organization) => {
     try {
       const response = await axios.get(`/organization/${organization.id}/program/${programId}`);
-      // console.log(response)
       setProgram(response.data)
     } catch (e) {
       throw new Error(`API error:${e?.message}`);
@@ -30,7 +29,7 @@ const ProgramReport = ({organization}) => {
     if( organization )  {
       fetchProgramData(organization)
     }
-  },[organization])
+  },[organization, programId])
 
   if( !program?.id || !organization?.id )  {
     return 'Loading...'

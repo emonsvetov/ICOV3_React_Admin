@@ -210,6 +210,16 @@ export const getProgramsHierachy = async (organizationId) => {
   }
 }
 
+export const getProgramsHierachyReport = async (programId) => {
+    try {
+        let url = `/program/${programId}/hierarchy/report`
+        const response = await axios.get(url);
+        return response.data;
+    } catch (e) {
+        throw new Error(`API error:${e?.message}`);
+    }
+}
+
 export const getMilestoneOptions = async(organizationId, programId) => {
   try {
       const response = await axios.get(
