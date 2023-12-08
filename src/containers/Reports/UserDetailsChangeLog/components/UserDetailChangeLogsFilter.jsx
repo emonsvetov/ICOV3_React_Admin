@@ -30,7 +30,7 @@ const UserDetailsChangeLogsFilter = ({onClickFilterCallback}) => {
                         >
                         {({ input, meta }) => (
                             <div className="form__form-group">
-                                <span className="form__form-group-label">Program Name:</span>
+                                <span className="form__form-group-label">Search:</span>
                                 <div className="form__form-group-field">
                                     <div className="form__form-group-row">
                                         <input type="text" {...input} placeholder="" />
