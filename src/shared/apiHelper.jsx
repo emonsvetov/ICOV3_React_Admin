@@ -190,6 +190,16 @@ export const getAllPrograms = async (paramStr = "") => {
     }
 }
 
+export const getProgramsHierarchyByProgram = async (organizationId, parentProgramId) => {
+    try {
+        let url = `/organization/${organizationId}/program/${parentProgramId}/hierarchy`
+        const response = await axios.get(url);
+        return response.data;
+    } catch (e) {
+        throw new Error(`API error:${e?.message}`);
+    }
+}
+
 export const getProgramsHierachy = async (organizationId) => {
   try {
     let url = `/organization/${organizationId}/program/hierarchy`

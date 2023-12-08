@@ -283,6 +283,23 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
                 {/*    </Card>*/}
                 {/*</Col>*/}
             </Row>
+            <Row>
+                <Col md="4" lg="4" xl="4">
+                    <Card>
+                        <CardBody>
+                            <Row onClick={()=>{history.push(`/program/${id}/reports`)}}>
+                                <Col md={3} className='col-left'>
+                                    <img src={EventsIcon} className="card-img-top" alt="Reports" />
+                                </Col>
+                                <Col md={9} className='col-right pl-0'>
+                                    <h5>Reports</h5>
+                                    <p>Program reports.</p>
+                                </Col>
+                            </Row>
+                        </CardBody>
+                    </Card>
+                </Col>
+            </Row>
         </Container>
     )}
 

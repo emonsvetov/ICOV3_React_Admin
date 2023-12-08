@@ -26,6 +26,7 @@ import ProgramView from '../Program/view';
 import Pokemon from '../Program/components/pokemon';
 // import Merchant from '../Program/View/components/Merchant';
 import SubProgram from '../Program/View/Subprogram';
+import ProgramReport from '../Program/View/Reports';
 import ProgramUsers from '../Program/View/User';
 import ProgramUser from '../Program/View/User/edit';
 import ProgramViewUser from '../Program/View/User/view';
@@ -81,7 +82,8 @@ import {
   UnassignedProgramDomains,
   MoniesPendingAmount,
   ExpirePoints,
-  ExpireMonies
+  ExpireMonies,
+    TrialBalance,
  } from '../Reports';
 
 import TreeView from '../TreeViewBasic';
@@ -102,6 +104,7 @@ const Programs = () => (
     <Route exact path="/program/:programId/event/:eventId/edit" component={EditEvent} />
     {/* <Route exact path="/program/:programId/merchants" component={Merchant} /> */}
     <Route exact path="/program/:programId/subprograms" component={SubProgram} />
+    <Route exact path="/program/:programId/reports" component={ProgramReport} />
     <Route exact path="/program/:programId/users" component={ProgramUsers} />
     <Route exact path="/program/:programId/user/view/:userId" component={ProgramViewUser} />
     <Route exact path="/program/:programId/user/:userId" component={ProgramUser} />
@@ -182,12 +185,12 @@ const Reports = () => (
     <Route exact path="/reports/deposit" component={Deposit} />
     <Route exact path="/reports/deposit-transfer" component={DepositTransfer} />
     <Route exact path="/reports/participant-status-summary" component={ParticipantStatusSummary} />
-    <Route exact path="/reports/participant-account-subprogram" component={ParticipantAccountSubProgram} />
     <Route exact path="/reports/participant-account-summary" component={ParticipantAccountSummary} />
     <Route exact path="/reports/unassigned-program-domains" component={UnassignedProgramDomains} />
     <Route exact path="/reports/monies-pending-amount" component={MoniesPendingAmount} />
     <Route exact path="/reports/expire-points" component={ExpirePoints} />
     <Route exact path="/reports/expire-monies" component={ExpireMonies} />
+      <Route exact path="/reports/trial-balance" component={TrialBalance} />
   </Switch>
 );
 
