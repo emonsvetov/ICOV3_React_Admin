@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Card, CardBody, Col } from 'reactstrap';
 import UserDetailChangeLogsTable from './UserDetailChangeLogsTable';
 
-const UnassignedIndex = ({organization}) => {
+const UserDetailsChangeLogsIndex = ({organization}) => {
     // const { programId } = useParams();
     // const [program, setProgram] = useState(null);
     // const fetchProgramData = async(organization) => {
@@ -31,7 +31,7 @@ const UnassignedIndex = ({organization}) => {
     <Col md={12}>
       <Card>
         <CardBody>
-          <UserDetailChangeLogsTable program={organization}/>
+          <UserDetailChangeLogsTable />
         </CardBody>
       </Card>
     </Col>
@@ -40,4 +40,4 @@ const UnassignedIndex = ({organization}) => {
 
 export default withRouter(connect((state) => ({
   organization: state.organization
-}))(UnassignedIndex));
+}))(UserDetailsChangeLogsIndex));

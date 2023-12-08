@@ -1,21 +1,18 @@
 import React, {useState, useEffect, useMemo} from "react";
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
+import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
+import {Link} from "react-router-dom"
 import MOCK_DATA from "./MOCK_DATA.json";
-import { Link } from "react-router-dom"
 import {USER_DETAIL_CHANGE_LOGS_COLUMNS} from "./columns";
 import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
-import UserDetailChangeLogsFilter  from "./UserDetailChangeLogsFilter";
+import UserDetailsChangeLogsFilter  from "./UserDetailChangeLogsFilter";
 import { Col, Row} from 'reactstrap';
-import axios from 'axios';
-
+import axios from 'axios'
 
 import {renameChildrenToSubrows} from '@/shared/helpers'
-// import {getFirstDay} from '@/shared/helpers'
-
 
 const queryClient = new QueryClient()
 
@@ -65,7 +62,7 @@ const reducer = (state, { type, payload }) => {
   }
 };
 
-const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
+const fetchUserDetailsDataLogs = async (page, pageSize, pageFilterO = null, pageSortBy) => {
     // const offset = page * pageSize;
     const params = []
     let paramStr = ''
@@ -82,7 +79,7 @@ const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) 
     }
     try {
         const response = await axios.get(
-        `/organization/1/program?page=${page}&limit=${pageSize}&${paramStr}`
+              // apply api here 
         );
         // console.log(response)
         if( response.data.length === 0) return {results:[],count:0}
@@ -99,10 +96,12 @@ const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) 
 
 const DataTable = () => {
 
-    const [filter, setFilter] = useState({ keyword:'' });
     
+    const [filter, setFilter] = useState({keyword:''});
+  
+
     const onClickFilterCallback = ( keyword) => {
-        
+        console.log(keyword);
         if(filter.keyword === keyword)    {
             alert('No change in filters')
             return
@@ -121,7 +120,6 @@ const DataTable = () => {
             </>
         )
     }
-    
 
     let program_columns = [
         ...USER_DETAIL_CHANGE_LOGS_COLUMNS, 
@@ -131,6 +129,8 @@ const DataTable = () => {
             Cell: ({ row }) => <RenderActions row={row} />,
         }],
     ]
+
+    
     let columns = useMemo( () => program_columns, [])
 
     const defaultColumn = React.useMemo(
@@ -141,20 +141,24 @@ const DataTable = () => {
         }),
         []
     )
+
+    // remove this after api implement
     const fetchMockData = () => {
     
         const data = {
             results: renameChildrenToSubrows(MOCK_DATA),
-            count: 15
+            count: 10
         };
         return data;
     };
-    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] = React.useReducer(reducer, initialState);
+
+    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
+    React.useReducer(reducer, initialState);
 
     const { isLoading, error, data, isSuccess } = useQuery(
         ['programs', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
-        () =>fetchMockData() ,
-        // fetchProgramData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
+        () => fetchMockData(),// remove this after api implement and enable down side function
+        // fetchUserDetailsDataLogs(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
         {
             keepPreviousData: true,
             staleTime: Infinity,
@@ -205,9 +209,6 @@ const DataTable = () => {
     );
     // const [statusFilterValue, setStatusFilterValue] = useState("");
     const manualPageSize = []
-
-   // useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter} );
-
     
     React.useEffect(() => {
         dispatch({ type: PAGE_CHANGED, payload: pageIndex });
@@ -244,15 +245,11 @@ const DataTable = () => {
     }
     return (
             <>
-                <div className='table react-table '>
+                <div className='table react-table'>
                     <div className="action-panel">
                         <Row className="mx-0">
-                            <Col >
-                                <UserDetailChangeLogsFilter 
-                                setFilter={setFilter}
-                                filter={filter}
-                                onClickFilterCallback={onClickFilterCallback}
-                                />
+                            <Col lg={9} md={9} sm={8}>
+                                <UserDetailsChangeLogsFilter onClickFilterCallback={onClickFilterCallback} />
                             </Col>
                         </Row>
                     </div>
