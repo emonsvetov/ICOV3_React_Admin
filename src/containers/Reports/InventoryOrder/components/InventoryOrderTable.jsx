@@ -25,17 +25,21 @@ import moment from "moment";
 const queryClient = new QueryClient()
 
 const DataTable = ({organization, merchants}) => {
-  const [filter, setFilter] = useState({merchants: merchants, from: new Date()});
-  const [useFilter, setUseFilter] = useState(false);
-  const [trigger, setTrigger] = useState(0);
-  const [exportData, setExportData] = useState([]);
-  const [exportHeaders, setExportHeaders] = useState([]);
-  const [exportToCsv, setExportToCsv] = useState(false);
-  const [filterValues, setFilterValues] = useState([]);
-  const exportLink = React.createRef();
+    const [filter, setFilter] = useState({
+        merchants: merchants,
+        createdOnly: false,
+        reportKey: 'sku_value',
+        programId: 1
+    });
+    const [useFilter, setUseFilter] = useState(false);
+    const [trigger, setTrigger] = useState(0);
+    const [exportData, setExportData] = useState([]);
+    const [exportHeaders, setExportHeaders] = useState([]);
+    const [exportToCsv, setExportToCsv] = useState(false);
+    const exportLink = React.createRef();
 
-  const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
-    React.useReducer(reducer, initialState);
+    const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
+        React.useReducer(reducer, initialState);
 
   const apiUrl = `/organization/${organization.id}/report/inventory-order`;
   const {isLoading, error, data, isSuccess} = useQuery(
@@ -105,56 +109,53 @@ const DataTable = ({organization, merchants}) => {
 
   const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
+    const {
+        getTableProps,
+        getTableBodyProps,
+        headerGroups,
+        footerGroups,
+        rows,
+        prepareRow,
+        rowSpanHeaders,
+        page,
+        pageCount,
+        pageOptions,
+        gotoPage,
+        previousPage,
+        canPreviousPage,
+        nextPage,
+        canNextPage,
+        setPageSize,
+        state: {pageIndex, pageSize, sortBy}
+    } = useTable({
+            columns: columns,
+            data: data ? Object.values(data.results) : [],
+            initialState: {
+                pageIndex: queryPageIndex,
+                pageSize: queryPageSize,
+                sortBy: queryPageSortBy,
+            },
+            manualPagination: true, // Tell the usePagination
+            pageCount: data ? totalPageCount : null,
+            autoResetSortBy: false,
+            autoResetExpanded: false,
+            autoResetPage: false,
+            disableResizing: true,
+            autoResetHiddenColumns: false,
+            striped: true
+        },
+        useSortBy,
+        useExpanded,
+        usePagination,
+        useResizeColumns,
+        // useFlexLayout,
+    );
 
-  // rowSpanHeaders = [
-  //   { 1, topCellValue: null, topCellIndex: 0 }
-  // ];
+    const manualPageSize = []
+    useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    footerGroups,
-    rows,
-    prepareRow,
-    rowSpanHeaders,
-    page,
-    pageCount,
-    pageOptions,
-    gotoPage,
-    previousPage,
-    canPreviousPage,
-    nextPage,
-    canNextPage,
-    setPageSize,
-    state: {pageIndex, pageSize, sortBy}
-  } = useTable({
-      columns: columns,
-      data: data ? Object.values(data.results) : [],
-      initialState: {
-        pageIndex: queryPageIndex,
-        pageSize: queryPageSize,
-        sortBy: queryPageSortBy,
-      },
-      manualPagination: true, // Tell the usePagination
-      pageCount: data ? totalPageCount : null,
-      autoResetSortBy: false,
-      autoResetExpanded: false,
-      autoResetPage: false,
-      disableResizing: true,
-      autoResetHiddenColumns: false
-    },
-    useSortBy,
-    useExpanded,
-    usePagination,
-    useResizeColumns,
-    useFlexLayout,
-  );
 
-  const manualPageSize = []
-  useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
-
-  if (isLoading) {
+    if (isLoading) {
     return <p>Loading...</p>;
   }
 
