@@ -1,6 +1,6 @@
 import React,{FC} from 'react';
 import {any} from "prop-types";
-import SupplierRedemptionIndex from "../../../../Reports/SupplierRedemption/components/SupplierRedemptionIndex";
+import SupplierRedemptionSubIndex from "./components/SupplierRedemptionSubIndex";
 
 interface SupplierRedemptionSubProgramProps {
     program: any
@@ -8,7 +8,7 @@ interface SupplierRedemptionSubProgramProps {
 
 const SupplierRedemptionSubProgram: FC<SupplierRedemptionSubProgramProps> = ({program}) => {
     return (
-        <SupplierRedemptionIndex programid={program.id}/>
+        <SupplierRedemptionSubIndex programid={program.id}/>
     )
 }
 

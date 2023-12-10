@@ -1,7 +1,7 @@
 import React, {FC, useEffect, useMemo, useRef, useState} from 'react';
 import { Card, CardBody, Col } from 'reactstrap';
-import SupplierRedemptionTable from './SupplierRedemptionTable';
-import SupplierRedemptionFilter, {defFilter} from './SupplierRedemptionFilter';
+import SupplierRedemptionSubFilter, {defFilter}from "./SupplierRedemptionSubFilter";
+import SupplierRedemptionTable from "../../../../../Reports/SupplierRedemption/components/SupplierRedemptionTable";
 import axios from "axios";
 import {isEmpty} from '@/shared/helpers'
 import {CSVLink} from "react-csv";
@@ -12,7 +12,7 @@ interface SupplierRedemptionIndexProps
     programid?: any
 }
 
-const SupplierRedemptionIndex: FC<SupplierRedemptionIndexProps> = () => {
+const SupplierRedemptionIndex: FC<SupplierRedemptionIndexProps> = ({programid}) => {
     const [merchants, setMerchants] = useState([]);
     const [defaultMerchants, setDefaultMerchants] = useState([]);
     const [csvData, setCsvData] = useState([]);
@@ -29,13 +29,14 @@ const SupplierRedemptionIndex: FC<SupplierRedemptionIndexProps> = () => {
     const exportLink = useRef();
 
     const getDataReport = async () => {
-        const merchantsApiUrl = `/organization/1/report/supplier-redemption`
-        console.log(params)
-        try {
-            const response = await axios.get(merchantsApiUrl, {params});
-            setDataReport(response.data);
-            setCsvData([...Object.values(response.data.data), response.data.config.total]);
-        } catch (e) {
+        if (params.programId > 0){
+            const merchantsApiUrl = `/organization/1/report/supplier-redemption`
+            try {
+                const response = await axios.get(merchantsApiUrl, {params});
+                setDataReport(response.data);
+                setCsvData([...Object.values(response.data.data), response.data.config.total]);
+            } catch (e) {
+            }
         }
     }
 
@@ -56,12 +57,22 @@ const SupplierRedemptionIndex: FC<SupplierRedemptionIndexProps> = () => {
     }
 
     const handleFilterChange = (value) => {
+        value.programId = programid;
         setParams(value);
     }
 
     const handleCSVExport = (value) => {
         exportLink.current.link.click();
     }
+
+    useEffect(() => {
+        setParams(prevState => {
+            return {
+                ...prevState,
+                programId: programid
+            }
+        });
+    }, [programid]);
 
     useEffect(() => {
         getData();
@@ -72,13 +83,14 @@ const SupplierRedemptionIndex: FC<SupplierRedemptionIndexProps> = () => {
     }, [merchants])
 
     useEffect(() => {
-        getDataReport();
+        if (programid > 0) {
+            getDataReport();
+        }
     }, [params])
 
     if (isEmpty(defaultMerchants)) {
         return <p>Loading...</p>;
     }
-
 
     return (
 
@@ -95,7 +107,7 @@ const SupplierRedemptionIndex: FC<SupplierRedemptionIndexProps> = () => {
             </div>
             <Card>
                 <CardBody>
-                    <SupplierRedemptionFilter filters={handleFilterChange} exportCSV={handleCSVExport} merchants={merchants}/>
+                    <SupplierRedemptionSubFilter filters={handleFilterChange} exportCSV={handleCSVExport} merchants={merchants}/>
                     <SupplierRedemptionTable dataReport={dataReport}/>
                 </CardBody>
             </Card>

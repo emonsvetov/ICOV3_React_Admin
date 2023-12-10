@@ -1,20 +1,20 @@
 import React, {FC, useEffect, useState} from 'react';
 import dayjs from 'dayjs';
 import {
-  Button,
-  DatePicker,
-  Col,
-  ColorPicker, Flex,
-  Form,
-  InputNumber,
-  Radio,
-  Rate,
-  Row,
-  Select,
-  Slider,
-  Space,
-  Switch,
-  Upload,
+    Button,
+    DatePicker,
+    Col,
+    ColorPicker, Flex,
+    Form,
+    InputNumber,
+    Radio,
+    Rate,
+    Row,
+    Select,
+    Slider,
+    Space,
+    Switch,
+    Upload,
 } from 'antd';
 import {any} from "prop-types";
 import {CSVLink} from "react-csv";
@@ -22,12 +22,12 @@ import {CSVLink} from "react-csv";
 const { Option } = Select;
 
 const formItemLayout = {
-  labelCol: { span: 6 },
-  wrapperCol: { span: 20 },
+    labelCol: { span: 6 },
+    wrapperCol: { span: 20 },
 };
 
 
-interface SupplierRedemptionFilterProps {
+interface SupplierRedemptionSubFilterProps {
     filters: any,
     merchants: any,
     exportCSV: any,
@@ -43,7 +43,7 @@ export const defFilter = {
     programId: 0,
 }
 
-export const SupplierRedemptionFilter2: FC<SupplierRedemptionFilterProps> = ({filters, merchants,exportCSV}) => {
+export const SupplierRedemptionSubFilter: FC<SupplierRedemptionSubFilterProps> = ({filters, merchants,exportCSV}) => {
     const [filter, setFilter] = useState(defFilter);
 
     const onFinish = (values: any) => {
@@ -79,7 +79,7 @@ export const SupplierRedemptionFilter2: FC<SupplierRedemptionFilterProps> = ({fi
 
     const dateFormat = 'YYYY/MM/DD';
 
-   return (<Row className="table-filter-form form action-panel">
+    return (<Row className="table-filter-form form action-panel">
         <Form
             name="validate_other"
             {...formItemLayout}
@@ -132,28 +132,17 @@ export const SupplierRedemptionFilter2: FC<SupplierRedemptionFilterProps> = ({fi
             </Row>
 
             <Row>
-                <Col span={8} order={1}>
-                    <Form.Item
-                        name="merchants"
-                        label="Merchants"
-                        //initialValue={defFilter.merchants}
-                    >
-                        <Select mode="multiple" placeholder="Please select merchants">
-                            {merchants.map(item => (
-                                <Option key={item.id} value={item.id}>{item.name}</Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                </Col>
-
-                <Col span={10} order={2}>
+                <Col span={11} order={1}>
                     <Form.Item name="active"
                                label="Active Merchants"
                                valuePropName="checked"
-                               initialValue={defFilter.active}
-                    >
+                               initialValue={defFilter.active}>
                         <Switch/>
                     </Form.Item>
+                </Col>
+
+                <Col span={7} order={2}>
+
                 </Col>
 
                 <Col span={6} order={3}>
@@ -168,4 +157,4 @@ export const SupplierRedemptionFilter2: FC<SupplierRedemptionFilterProps> = ({fi
         </Form>
     </Row>)
 };
-export default SupplierRedemptionFilter2;
+export default SupplierRedemptionSubFilter;
