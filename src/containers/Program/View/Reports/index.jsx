@@ -6,7 +6,8 @@ import { connect } from 'react-redux'
 import axios from "axios";
 import classnames from "classnames";
 import ParticipantAccountSubProgram from "../Reports/ParticipantAccountSubProgram";
-import SupplierRedemptionSubProgram from "../Reports/SupplierRedemptionIndex";
+import ProgramParticipantStatusSummary from "../Reports/ProgramParticipantStatusSummary";
+import JournalDetailed from "../Reports/JournalDetail";
 
 const ProgramReport = ({organization}) => {
   // Tabs Panel
@@ -20,7 +21,6 @@ const ProgramReport = ({organization}) => {
   const fetchProgramData = async(organization) => {
     try {
       const response = await axios.get(`/organization/${organization.id}/program/${programId}`);
-      // console.log(response)
       setProgram(response.data)
     } catch (e) {
       throw new Error(`API error:${e?.message}`);
@@ -30,7 +30,7 @@ const ProgramReport = ({organization}) => {
     if( organization )  {
       fetchProgramData(organization)
     }
-  },[organization])
+  },[organization, programId])
 
   if( !program?.id || !organization?.id )  {
     return 'Loading...'
@@ -71,10 +71,23 @@ const ProgramReport = ({organization}) => {
                               currentActiveTab === '2'
                         })}
                         onClick={() => {
-                            togglePan('2');
+                          togglePan('2');
                         }}
                     >
-                        Supplier Redemption
+                      Participant Status Summary
+                    </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink
+                        className={classnames({
+                          active:
+                              currentActiveTab === '3'
+                        })}
+                        onClick={() => {
+                          togglePan('3');
+                        }}
+                    >
+                      Journal Detail
                     </NavLink>
                   </NavItem>
                 </Nav>
@@ -85,11 +98,16 @@ const ProgramReport = ({organization}) => {
                 <ParticipantAccountSubProgram program={program}/>
               </TabPane>
               <TabPane tabId="2">
-                  {
-                      currentActiveTab != 2 ? 'Loading...' :
-                          <SupplierRedemptionSubProgram program={program}/>
-                  }
-
+                {
+                  currentActiveTab != 2 ? 'Loading...' :
+                  <ProgramParticipantStatusSummary program={program}/>
+                }
+              </TabPane>
+              <TabPane tabId="3">
+                {
+                  currentActiveTab != 3 ? 'Loading...' :
+                  <JournalDetailed program={program}/>
+                }
               </TabPane>
             </TabContent>
           </CardBody>

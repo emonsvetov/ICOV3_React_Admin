@@ -5,10 +5,13 @@ import {connect} from "react-redux";
 import {useQuery} from "react-query";
 // import {isEmpty} from '@/shared/helpers'
 import { getProgramsHierachy } from '@/shared/apiHelper.jsx';
+import { useParams } from "react-router-dom";
+import {getProgramsHierachyByProgram, getProgramsHierarchyByProgram} from "../apiHelper";
 
 const ProgramsHierarchy = ({organization, selectedPrograms, setSelectedPrograms}) => {
 
   // const [programs, setPrograms] = useState([]);
+  let {programId} = useParams();
 
   const fetchProgramData = async (pageFilterO) => {
     const params = []
@@ -18,6 +21,13 @@ const ProgramsHierarchy = ({organization, selectedPrograms, setSelectedPrograms}
       if(pageFilterO.keyword !== 'undefined' && pageFilterO.keyword) params.push(`keyword=${pageFilterO.keyword}`)
       // console.log(params)
       paramStr = params.join('&')
+    }
+
+    if (organization?.id && programId) {
+      return getProgramsHierarchyByProgram(organization.id, programId)
+          .then(response => {
+            return response;
+          })
     }
 
     if(organization?.id) {

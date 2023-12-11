@@ -47,7 +47,7 @@ const ProgramViewUserHistory = ({organization, program, user}) => {
 
     const apiUrl = `/organization/${program.organization_id}/program/${program.id}/user/${user.id}/history`
     const {isLoading, error, data, isSuccess} = useQuery(
-        ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+        ['history', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
         () => fetchApiData(
             {
                 url: apiUrl,
