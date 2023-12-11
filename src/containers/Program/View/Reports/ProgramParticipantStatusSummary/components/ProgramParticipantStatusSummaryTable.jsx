@@ -19,6 +19,7 @@ import {
 
 import { clone} from 'lodash';
 import ProgramParticipantStatusSummaryFilter from "./ProgramParticipantStatusSummaryFilter";
+import {useParams} from "react-router-dom";
 
 const queryClient = new QueryClient()
 
@@ -29,6 +30,8 @@ const DataTable = ({organization, programs}) => {
         reportKey: 'sku_value',
         programId: 1
     });
+
+    let {programId} = useParams();
 
     const [useFilter, setUseFilter] = useState(false);
     const [trigger, setTrigger] = useState(0);
@@ -42,7 +45,7 @@ const DataTable = ({organization, programs}) => {
 
     const apiUrl = `/organization/${organization.id}/report/participant-status-summary`;
     const {isLoading, error, data, isSuccess} = useQuery(
-        ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+        [['programReportParticipantStatusSummary', programId], apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
         () => fetchApiData(
             {
                 url: apiUrl,
