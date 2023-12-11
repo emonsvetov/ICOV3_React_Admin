@@ -17,7 +17,7 @@ export const tableColumns = (config) => {
         width: item.width,
         Cell: ({ row, value }) => {
             if (item.type === 'float'){
-                value = item.prefix + parseFloat(value).toFixed(2) + item.suffix;
+                value = item.prefix + value + item.suffix;
             }
             return value;
         },

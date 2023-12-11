@@ -27,10 +27,10 @@ const formItemLayout = {
 };
 
 
-interface SupplierRedemptionFilterProps {
+interface SupplierRedemptionSubFilterProps {
     filters: any,
-        merchants: any,
-        exportCSV: any,
+    merchants: any,
+    exportCSV: any,
 }
 
 export const defFilter = {
@@ -43,7 +43,7 @@ export const defFilter = {
     programId: 0,
 }
 
-export const SupplierRedemptionFilter: FC<SupplierRedemptionFilterProps> = ({filters, merchants,exportCSV}) => {
+export const SupplierRedemptionSubFilter: FC<SupplierRedemptionSubFilterProps> = ({filters, merchants,exportCSV}) => {
     const [filter, setFilter] = useState(defFilter);
 
     const onFinish = (values: any) => {
@@ -132,28 +132,17 @@ export const SupplierRedemptionFilter: FC<SupplierRedemptionFilterProps> = ({fil
             </Row>
 
             <Row>
-                <Col span={8} order={1}>
-                    <Form.Item
-                        name="merchants"
-                        label="Merchants"
-                        //initialValue={defFilter.merchants}
-                    >
-                        <Select mode="multiple" placeholder="Please select merchants">
-                            {merchants.map(item => (
-                                <Option key={item.id} value={item.id}>{item.name}</Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                </Col>
-
-                <Col span={10} order={2}>
+                <Col span={11} order={1}>
                     <Form.Item name="active"
                                label="Active Merchants"
                                valuePropName="checked"
-                               initialValue={defFilter.active}
-                    >
+                               initialValue={defFilter.active}>
                         <Switch/>
                     </Form.Item>
+                </Col>
+
+                <Col span={7} order={2}>
+
                 </Col>
 
                 <Col span={6} order={3}>
@@ -168,4 +157,4 @@ export const SupplierRedemptionFilter: FC<SupplierRedemptionFilterProps> = ({fil
         </Form>
     </Row>)
 };
-export default SupplierRedemptionFilter;
+export default SupplierRedemptionSubFilter;
