@@ -47,7 +47,7 @@ const ProgramViewUserChangeLogs = ({organization, program, user}) => {
 
     const apiUrl = `/organization/${program.organization_id}/program/${program.id}/user/${user.id}/change-logs`
     const {isLoading, error, data, isSuccess} = useQuery(
-        ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+        ['changeLogs', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
         () => fetchApiData(
             {
                 url: apiUrl,
