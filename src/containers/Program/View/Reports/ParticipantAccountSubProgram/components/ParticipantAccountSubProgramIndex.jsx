@@ -1,27 +1,24 @@
-import React, {useEffect, useState, useParams} from 'react';
-import { Card, CardBody, Col } from 'reactstrap';
+import React, {useEffect, useState} from 'react';
 import ParticipantAccountSubProgramTable from './ParticipantAccountSubProgramTable';
-import axios from "axios";
 import {isEmpty} from '@/shared/helpers'
 import {connect} from "react-redux";
 import { getAllPrograms } from '@/shared/apiHelper.jsx';
+import {withRouter, useParams} from "react-router-dom";
 
 
 const ParticipantAccountSubProgramIndex = ({ organization }) => {
   const [defaultPrograms, setDefaultPrograms, program] = useState([]);
 
-  // let {programId} = useParams();
+  let {programId} = useParams();
 
   useEffect(() => {
-    if ( isEmpty(defaultPrograms) ){
-      getAllPrograms( "minimal=true&limit=99999999" )
+      getAllPrograms( "minimal=true&limit=99999999&programId=" +  programId )
           .then( response => {
-            const data = response?.data ? response.data : [];
-            const result = data.map(x => x.account_holder_id)
-            setDefaultPrograms(result);
+              const data = response?.data ? response.data : [];
+              const result = data.map(x => x.account_holder_id)
+              setDefaultPrograms(result);
           })
-    }
-  })
+  }, [programId])
 
   if (isEmpty(defaultPrograms)) {
     return <p>Loading...</p>;
