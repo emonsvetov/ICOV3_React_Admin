@@ -9,6 +9,7 @@ import ParticipantAccountSubProgram from "../Reports/ParticipantAccountSubProgra
 import ProgramParticipantStatusSummary from "../Reports/ProgramParticipantStatusSummary";
 import SupplierRedemptionIndex from "../Reports/SupplierRedemptionIndex";
 import JournalDetailed from "../Reports/JournalDetail";
+import DepositTransfer from "../Reports/DepositTransfer";
 
 const ProgramReport = ({organization}) => {
   // Tabs Panel
@@ -50,7 +51,7 @@ const ProgramReport = ({organization}) => {
         <Card>
           <CardBody className='infoview'>
             <Row>
-              <Col md="7" >
+              <Col md="12" >
                 <Nav tabs>
                   <NavItem>
                     <NavLink
@@ -91,17 +92,28 @@ const ProgramReport = ({organization}) => {
                       Journal Detail
                     </NavLink>
                   </NavItem>
-                    <NavLink
-                        className={classnames({
-                            active:
-                                currentActiveTab === '4'
-                        })}
-                        onClick={() => {
-                            togglePan('4');
-                        }}
-                    >
-                        Supplier Redemption
-                    </NavLink>
+                  <NavLink
+                      className={classnames({
+                          active:
+                              currentActiveTab === '4'
+                      })}
+                      onClick={() => {
+                          togglePan('4');
+                      }}
+                  >
+                      Supplier Redemption
+                  </NavLink>
+                  <NavLink
+                      className={classnames({
+                        active:
+                            currentActiveTab === '5'
+                      })}
+                      onClick={() => {
+                        togglePan('5');
+                      }}
+                  >
+                    Deposit Transfers
+                  </NavLink>
                 </Nav>
               </Col>
             </Row>
@@ -121,12 +133,18 @@ const ProgramReport = ({organization}) => {
                   <JournalDetailed program={program}/>
                 }
               </TabPane>
-                <TabPane tabId="4">
-                    {
-                        currentActiveTab != 4 ? 'Loading...' :
-                            <SupplierRedemptionIndex program={program}/>
-                    }
-                </TabPane>
+              <TabPane tabId="4">
+                  {
+                      currentActiveTab != 4 ? 'Loading...' :
+                          <SupplierRedemptionIndex program={program}/>
+                  }
+              </TabPane>
+              <TabPane tabId="5">
+                {
+                  currentActiveTab != 5 ? 'Loading...' :
+                      <DepositTransfer program={program}/>
+                }
+              </TabPane>
             </TabContent>
           </CardBody>
         </Card>
