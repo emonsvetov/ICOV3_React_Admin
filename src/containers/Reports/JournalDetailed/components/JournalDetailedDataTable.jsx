@@ -169,47 +169,49 @@ const DataTable = ({organization, programs}) => {
           {
             (isLoading || isFetching) && <p className="text-center">Loading...</p>
           }
-          {
-            // ref={r => { csvLinkTable = r; }}
-            isSuccess &&
-            <table {...getTableProps()} className="table table--bordered table--grouped">
-              <thead>
-              {headerGroups.map((headerGroup) => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map(column => (
-                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                      {column.render('Header')}
-                      {column.isSorted ? <Sorting column={column}/> : ''}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-              </thead>
-              <tbody className="table table--bordered" {...getTableBodyProps()}>
-              {page.map(row => {
-                prepareRow(row);
-                return (
-                  <tr {...row.getRowProps()}>
-                    {
-                      row.cells.map(cell => {
-                        return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                      })
-                    }
+          <div style={{width:"100%", overflow:'scroll'}}>
+            {
+              // ref={r => { csvLinkTable = r; }}
+              isSuccess &&
+              <table {...getTableProps()} className="table table--bordered table--grouped">
+                <thead>
+                {headerGroups.map((headerGroup) => (
+                  <tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map(column => (
+                      <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                        {column.render('Header')}
+                        {column.isSorted ? <Sorting column={column}/> : ''}
+                      </th>
+                    ))}
                   </tr>
-                )
-              })}
-              </tbody>
-              <tfoot>
-              {footerGroups.map((footerGroup) => (
-                <tr {...footerGroup.getFooterGroupProps()}>
-                  {footerGroup.headers.map(column => (
-                    <th {...column.getFooterProps()}>{column.render('Footer')}</th>
-                  ))}
-                </tr>
-              ))}
-              </tfoot>
-            </table>
-          }
+                ))}
+                </thead>
+                <tbody className="table table--bordered" {...getTableBodyProps()}>
+                {page.map(row => {
+                  prepareRow(row);
+                  return (
+                    <tr {...row.getRowProps()}>
+                      {
+                        row.cells.map(cell => {
+                          return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                        })
+                      }
+                    </tr>
+                  )
+                })}
+                </tbody>
+                <tfoot>
+                {footerGroups.map((footerGroup) => (
+                  <tr {...footerGroup.getFooterGroupProps()}>
+                    {footerGroup.headers.map(column => (
+                      <th {...column.getFooterProps()}>{column.render('Footer')}</th>
+                    ))}
+                  </tr>
+                ))}
+                </tfoot>
+              </table>
+            }
+          </div>
         </div>
       </>
     )
