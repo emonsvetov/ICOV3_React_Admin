@@ -7,6 +7,7 @@ import axios from "axios";
 import classnames from "classnames";
 import ParticipantAccountSubProgram from "../Reports/ParticipantAccountSubProgram";
 import ProgramParticipantStatusSummary from "../Reports/ProgramParticipantStatusSummary";
+import SupplierRedemptionIndex from "../Reports/SupplierRedemptionIndex";
 import JournalDetailed from "../Reports/JournalDetail";
 
 const ProgramReport = ({organization}) => {
@@ -90,6 +91,17 @@ const ProgramReport = ({organization}) => {
                       Journal Detail
                     </NavLink>
                   </NavItem>
+                    <NavLink
+                        className={classnames({
+                            active:
+                                currentActiveTab === '4'
+                        })}
+                        onClick={() => {
+                            togglePan('4');
+                        }}
+                    >
+                        Supplier Redemption
+                    </NavLink>
                 </Nav>
               </Col>
             </Row>
@@ -109,6 +121,12 @@ const ProgramReport = ({organization}) => {
                   <JournalDetailed program={program}/>
                 }
               </TabPane>
+                <TabPane tabId="4">
+                    {
+                        currentActiveTab != 4 ? 'Loading...' :
+                            <SupplierRedemptionIndex program={program}/>
+                    }
+                </TabPane>
             </TabContent>
           </CardBody>
         </Card>

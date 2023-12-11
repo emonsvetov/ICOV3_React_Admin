@@ -11,7 +11,7 @@ import Dropzone from 'react-dropzone-uploader'
 import 'react-dropzone-uploader/dist/styles.css'
 import {isEmpty} from '@/shared/helpers'
 import {Field, Form} from "react-final-form";
-import ScriptTag from 'react-script-tag';
+//import ScriptTag from 'react-script-tag';
 // import {formatBytes, formatDuration} from "react-dropzone-uploader/dist/utils";
 
 const fileTypes = [
