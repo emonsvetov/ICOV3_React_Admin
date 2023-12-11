@@ -266,7 +266,7 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
                         </CardBody>
                     </Card>
                 </Col>
-
+                
                 {/*<Col md="4" lg="4" xl="4">*/}
                 {/*    <Card>*/}
                 {/*        <CardBody>*/}
