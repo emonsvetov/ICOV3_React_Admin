@@ -1,44 +1,38 @@
 import React, {useEffect, useState} from 'react';
-import { Card, CardBody, Col } from 'reactstrap';
 import ParticipantAccountSubProgramTable from './ParticipantAccountSubProgramTable';
-import axios from "axios";
 import {isEmpty} from '@/shared/helpers'
 import {connect} from "react-redux";
 import { getAllPrograms } from '@/shared/apiHelper.jsx';
+import {withRouter, useParams} from "react-router-dom";
 
 
 const ParticipantAccountSubProgramIndex = ({ organization }) => {
-  const [defaultPrograms, setDefaultPrograms] = useState([]);
+  const [defaultPrograms, setDefaultPrograms, program] = useState([]);
+
+  let {programId} = useParams();
 
   useEffect(() => {
-    if ( isEmpty(defaultPrograms) ){
-      getAllPrograms( "minimal=true&limit=99999999" )
+      getAllPrograms( "minimal=true&limit=99999999&programId=" +  programId )
           .then( response => {
-            const data = response?.data ? response.data : [];
-            const result = data.map(x => x.account_holder_id)
-            setDefaultPrograms(result);
+              const data = response?.data ? response.data : [];
+              const result = data.map(x => x.account_holder_id)
+              setDefaultPrograms(result);
           })
-    }
-  })
+  }, [programId])
 
   if (isEmpty(defaultPrograms)) {
     return <p>Loading...</p>;
   }
 
   return (
-    <Col md={12}>
-      <Card>
-        <CardBody>
-          <ParticipantAccountSubProgramTable programs={defaultPrograms} />
-        </CardBody>
-      </Card>
-    </Col>
+      <ParticipantAccountSubProgramTable programs={defaultPrograms} program={program} />
   )
 }
 
 const mapStateToProps = (state) => {
   return {
     organization: state.organization,
+    program: state.program,
   };
 };
 export default connect(mapStateToProps)(ParticipantAccountSubProgramIndex);

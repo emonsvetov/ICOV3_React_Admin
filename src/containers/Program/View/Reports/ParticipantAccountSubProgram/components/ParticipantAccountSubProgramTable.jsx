@@ -1,5 +1,6 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {useExpanded,  usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
+import {Link, useParams} from 'react-router-dom'
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {Col, Row} from 'reactstrap';
@@ -23,9 +24,10 @@ import ParticipantAccountSubProgramFilter from "./ParticipantAccountSubProgramFi
 const queryClient = new QueryClient()
 
 const DataTable = ({organization, programs}) => {
+  const { programId } = useParams();
+
   const [filter, setFilter] = useState({
     programs: programs,
-    createdOnly: false,
     reportKey: 'sku_value',
     programId: 1
   });
@@ -40,7 +42,7 @@ const DataTable = ({organization, programs}) => {
   const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
     React.useReducer(reducer, initialState);
 
-  const apiUrl = `/organization/${organization.id}/report/participant-account-subprogram`;
+  const apiUrl = `/program/${programId}/report/participant-account-subprogram`;
   const {isLoading, error, data, isSuccess} = useQuery(
     ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
     () => fetchApiData(
@@ -80,7 +82,6 @@ const DataTable = ({organization, programs}) => {
         trigger: queryTrigger
       }
     );
-    // console.log(response)
     setExportData(response.results);
     setExportHeaders(response.headers);
     setExportToCsv(true);

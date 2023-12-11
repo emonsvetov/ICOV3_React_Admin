@@ -1,17 +1,9 @@
 import React, { useState} from 'react'
 import ProgramsHierarchy from '@/shared/components/ProgramsHierarchy'
 import {connect} from 'react-redux'
-
 import {Button, Col, Row} from "reactstrap";
-import DatePicker from "react-datepicker";
 import {CSVLink} from "react-csv";
-import {getFirstDay} from '@/shared/helpers'
-import {dateStrToYmd} from '@/shared/helpers';
 import {isEqual, clone, cloneDeep} from 'lodash';
-import {CheckBoxField} from '@/shared/components/form/CheckBox';
-
-const defaultFrom = getFirstDay()
-const defaultTo = new Date()
 
 const ParticipantStatusFilter = (
   {
@@ -23,29 +15,16 @@ const ParticipantStatusFilter = (
     exportLink,
     exportHeaders
   }) => {
+
   const options = {
-    'dateRange': false,
     'programs': true,
-    'keyword': false,
     'exportToCsv': true,
-    'createdOnly': false,
     'reportKey': true,
-    'programId': true,
   }
 
-  const [from, setFrom] = React.useState(defaultFrom)
-  const [to, setTo] = React.useState(defaultTo)
-  const [createdOnly, setCreatedOnly] = React.useState(false)
-  const [reportKey, setReportKey] = React.useState('sku_value')
   const [selectedPrograms, setSelectedPrograms] = useState(filter.programs ? filter.programs : []);
   const finalFilter = {...filter}
   let previous = cloneDeep(finalFilter);
-  const [keyword, setKeyword] = React.useState('')
-
-  const onKeywordChange = (e) => {
-    setKeyword( e.target.value )
-  }
-
 
   const onClickFilter = (reset = false, exportToCsv = 0) => {
     let dataSet = {}
@@ -85,7 +64,6 @@ const ParticipantStatusFilter = (
     if (options.programs) {
       filters.programs = values.programs
     }
-    filters.programId = filter.programId
     filters.programs = filter.programs
 
     setFilter(filters)
@@ -101,7 +79,6 @@ const ParticipantStatusFilter = (
               <div className="form__form-group">
                 <div className="form__form-group-field">
                   <div className="form__form-group-row">
-
                     <ProgramsHierarchy
                       defaultPrograms={options.programs}
                       selectedPrograms={selectedPrograms}
