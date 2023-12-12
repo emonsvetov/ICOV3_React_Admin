@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo} from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import MOCK_DATA from "./MOCK_DATA.json";
@@ -61,7 +61,7 @@ const reducer = (state, { type, payload }) => {
   }
 };
 const fetchMockData = () => {
-    
+
     const data = {
         results: renameChildrenToSubrows(MOCK_DATA),
         count: MOCK_DATA.length
@@ -101,16 +101,32 @@ const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) 
 };
 
 const DataTable = () => {
-    
+
     const [filter, setFilter] = useState({from:'', to:'', invoiceNumber:'', programName:'', programId:''});
-    // var [data, setData] = useState([]);
+
+
+    const handleDownload = async () => {
+        if (data && data.results) {
+            const csvString = convertArrayToCSV(data.results);
+            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'deposit_report.csv';
+            link.click();
+            URL.revokeObjectURL(url);
+        } else {
+            alert("No data to download");
+        }
+    };
+
 
     const onClickFilterCallback = (from, to, invoiceNumber, programName, programId) => {
-        
-        if( filter.from === from && 
-            filter.to === to &&  
-            filter.invoiceNumber === invoiceNumber && 
-            filter.programName === programName && 
+
+        if( filter.from === from &&
+            filter.to === to &&
+            filter.invoiceNumber === invoiceNumber &&
+            filter.programName === programName &&
             filter.programId === programId )
         {
             alert('No change in filters')
@@ -120,13 +136,9 @@ const DataTable = () => {
         // alert(status, keyword)
     }
 
-    const handleDownload = ( ) => {
-        alert("Download CSV")
-    }
-
     let program_columns = [
-        ...PROGRAM_COLUMNS, 
-     
+        ...PROGRAM_COLUMNS,
+
     ]
     let columns = useMemo( () => program_columns, [])
 
@@ -155,7 +167,6 @@ const DataTable = () => {
 
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
-    // console.log(data)
 
     const {
         getTableProps,
@@ -188,17 +199,17 @@ const DataTable = () => {
         autoResetExpanded: false,
         autoResetPage: false,
         defaultColumn,
-        
+
     },
     useSortBy,
     useExpanded,
     usePagination,
-    useResizeColumns, 
+    useResizeColumns,
     useFlexLayout,
     );
     // const [statusFilterValue, setStatusFilterValue] = useState("");
     const manualPageSize = []
-    
+
     React.useEffect(() => {
         dispatch({ type: PAGE_CHANGED, payload: pageIndex });
     }, [pageIndex]);
@@ -206,7 +217,6 @@ const DataTable = () => {
     React.useEffect(() => {
         // alert(PAGE_SIZE_CHANGED)
         dispatch({ type: PAGE_SIZE_CHANGED, payload: pageSize });
-        gotoPage(0);
     }, [pageSize, gotoPage]);
 
     useEffect(() => {
@@ -239,6 +249,9 @@ const DataTable = () => {
                         <Row className="mx-0">
                             <Col lg={9} md={9} sm={8}>
                                 <DepositFilter onClickFilterCallback={onClickFilterCallback} />
+                                <button onClick={handleDownload} className="btn btn-primary">
+                                    Export to CSV
+                                </button>
                             </Col>
                         </Row>
                     </div>
@@ -246,7 +259,7 @@ const DataTable = () => {
                          isLoading && <p>Loading...</p>
                     }
                     {
-                    isSuccess && 
+                    isSuccess &&
                     <table {...getTableProps()} className="table">
                         <thead>
                             {headerGroups.map( (headerGroup) => (
@@ -297,23 +310,23 @@ const DataTable = () => {
                         </tfoot>
                     </table>
                     }
-                
+
                 {(rows.length > 0) && (
                     <>
                         <ReactTablePagination
-                        page={page}
-                        gotoPage={gotoPage}
-                        previousPage={previousPage}
-                        nextPage={nextPage}
-                        canPreviousPage={canPreviousPage}
-                        canNextPage={canNextPage}
-                        pageOptions={pageOptions}
-                        pageSize={pageSize}
-                        pageIndex={pageIndex}
-                        pageCount={pageCount}
-                        setPageSize={setPageSize}
-                        manualPageSize={manualPageSize}
-                        dataLength={totalCount}
+                            page={page}
+                            gotoPage={gotoPage}
+                            previousPage={previousPage}
+                            nextPage={nextPage}
+                            canPreviousPage={canPreviousPage}
+                            canNextPage={canNextPage}
+                            pageOptions={pageOptions}
+                            pageSize={pageSize}
+                            pageIndex={pageIndex}
+                            pageCount={pageCount}
+                            setPageSize={setPageSize}
+                            manualPageSize={manualPageSize}
+                            dataLength={totalCount}
                         />
                         <div className="pagination justify-content-end mt-2">
                             <span>
@@ -346,6 +359,12 @@ const DataTable = () => {
                 </div>
             </>
     )
+}
+
+const convertArrayToCSV = (array) => {
+    const header = Object.keys(array[0]).join(',');
+    const rows = array.map(obj => Object.values(obj).join(',')).join('\n');
+    return [header, rows].join('\n');
 }
 
 const Sorting = ({ column }) => (

@@ -26,11 +26,13 @@ const ParticipantStatusFilter = (
   const options = {
     'dateRange': false,
     'programs': true,
+    'keyword': false,
     'exportToCsv': true,
     'createdOnly': false,
     'reportKey': true,
     'programId': true,
   }
+
   const [from, setFrom] = React.useState(defaultFrom)
   const [to, setTo] = React.useState(defaultTo)
   const [createdOnly, setCreatedOnly] = React.useState(false)
@@ -38,6 +40,12 @@ const ParticipantStatusFilter = (
   const [selectedPrograms, setSelectedPrograms] = useState(filter.programs ? filter.programs : []);
   const finalFilter = {...filter}
   let previous = cloneDeep(finalFilter);
+  const [keyword, setKeyword] = React.useState('')
+
+  const onKeywordChange = (e) => {
+    setKeyword( e.target.value )
+  }
+
 
   const onClickFilter = (reset = false, exportToCsv = 0) => {
     let dataSet = {}
@@ -57,6 +65,9 @@ const ParticipantStatusFilter = (
     if (options.programId) {
       dataSet.programId = filter.programId
     }
+    if (options.keyword) {
+      dataSet.keyword = filter.keyword
+    }
 
     onClickFilterCallback(dataSet)
     previous = dataSet;
@@ -66,6 +77,7 @@ const ParticipantStatusFilter = (
       setSelectedPrograms([]);
       setCreatedOnly(false)
       setReportKey('sku_value')
+      setKeyword('')
     }
   }
 
@@ -90,6 +102,11 @@ const ParticipantStatusFilter = (
     }
     if (options.reportKey) {
       if (finalFilter.reportKey !== values.reportKey) {
+        change = true
+      }
+    }
+    if (options.keyword) {
+      if (finalFilter.keyword !== values.keyword) {
         change = true
       }
     }
@@ -162,6 +179,22 @@ const ParticipantStatusFilter = (
                 </div>
               </div>
             </div>
+          }
+          {options.keyword &&
+              <div className="table-filter-form-col table-filter-form-col1">
+                <div className="form__form-group">
+                  <div className="form__form-group-field">
+                    <div className="form__form-group-row">
+                      <input
+                          value={keyword}
+                          onChange={onKeywordChange}
+                          type="text"
+                          placeholder={`Search ${options.label}`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
           }
           {options.dateRange &&
             <>

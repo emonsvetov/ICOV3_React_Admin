@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
 import {RTLProps} from '@/shared/prop-types/ReducerProps';
-import {Modal, ModalBody, Row, Col, Card, CardBody, Button} from 'reactstrap';
+import {Modal, ModalBody, Row, Col, Card, CardBody, Button } from 'reactstrap';
 import CloseButton from "@/shared/components/CloseButton";
 import CreatableSelect from "react-select/creatable";
 import axios from "axios";
@@ -10,6 +10,7 @@ import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
 import Dropzone from 'react-dropzone-uploader'
 import 'react-dropzone-uploader/dist/styles.css'
 import {Field, Form} from "react-final-form";
+//import ScriptTag from 'react-script-tag';
 // import {formatBytes, formatDuration} from "react-dropzone-uploader/dist/utils";
 
 const fileTypes = [
@@ -57,6 +58,8 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   const [iconMeta, setIconMeta] = useState({});
   const [fileName, setFileName] = React.useState("");
   let [dropZoneKey, setDropZoneKey] = useState(0);
+  const [tab, setTab] = useState(1);
+  const [link, setLink] = useState("");
 
   const loadMediTypes = async () => {
     try {
@@ -183,6 +186,10 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
     setFileName(event.target.value);
   }
 
+  const onChangeLinkUrl = (event) => {
+    setLink(event.target.value)
+  }
+
   const selectCreateOption = (inputValue) => {
 
     let saveUrl = axios.defaults.baseURL +  `/organization/${organization.id}/program/${program.id}/digital-media-type`;
@@ -216,132 +223,240 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       <ModalBody className='modal-lg'>
         <Card>
           <CardBody className='pt-0'>
-            <Form
-              onSubmit={handleSubmit}
-              validate={validate}
-              render={({handleSubmit, form, submitting, pristine, values}) => (
-                <form className="form" onSubmit={handleSubmit}>
+              {tab == 1 ?
+                <Form
+                  onSubmit={handleSubmit}
+                  validate={validate}
+                  render={({handleSubmit, form, submitting, pristine, values}) => (
+                    <form className="form" onSubmit={handleSubmit}>
 
-                  <Row>
-                    <Col md="12" lg="12" xl="12">
-                      <div className="card__title">
-                        <h3>Upload Digital Media</h3>
-                        <h5 className="colorgrey">{program.name}</h5>
-                        <div style={{paddingTop: '25px'}}></div>
-                        <div>
-                          <Field name="category">
-                            {({ input, meta }) => (
-                              <div className="form__form-group">
-                                <div className="form__form-group-field">
-                                  <div className="form__form-group-row">
-                                    <CreatableSelect
-                                      name="category"
-                                      isClearable
-                                      isDisabled={isLoading}
-                                      isLoading={isLoading}
-                                      options={mediaTypes}
-                                      onCreateOption={selectCreateOption}
-                                      placeholder='Select or Create a Menu Category'
-                                      onChange={value =>
-                                        getData(value.value)
-                                      }
-                                    />
-                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                      <Row>
+                        <Col md="12" lg="12" xl="12">
+                          <div className="card__title">
+                            <h3>Upload Digital Media</h3>
+                            <h5 className="colorgrey">{program.name}</h5>
+                            <div style={{paddingTop: '25px', paddingBottom:'25px'}}>
+                              <Button  color="primary" className="mr-3" onClick={()=>setTab(1)}>media</Button>
+                              <Button  color="primary" className="mr-3" onClick={()=>setTab(2)}>forms</Button>
+                            </div>
+                            <div>
+                              <Field name="category">
+                                {({ input, meta }) => (
+                                  <div className="form__form-group">
+                                    <div className="form__form-group-field">
+                                      <div className="form__form-group-row">
+                                        <CreatableSelect
+                                          name="category"
+                                          isClearable
+                                          isDisabled={isLoading}
+                                          isLoading={isLoading}
+                                          options={mediaTypes}
+                                          onCreateOption={selectCreateOption}
+                                          placeholder='Select or Create a Menu Category'
+                                          onChange={value =>
+                                            getData(value.value)
+                                          }
+                                        />
+                                        {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                              </Field>
+
+                            </div>
+                          </div>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md="4">
+                          <div className="form__form-group">
+                            <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
+                              <Dropzone key={dropZoneKey}
+                                getUploadParams={getUploadParams}
+                                accept="image/jpeg, image/png, image/gif"
+                                // accept="image/*,audio/*,video/*"
+                                name="media_upload"
+                                inputContent="Select Preview Image"
+                                maxFiles={1}
+                                onSubmit={false}
+                                onChangeStatus={handleUploadIcon}
+                              />
+                            </div>
+                          </div>
+                        </Col>
+                        <Col md="4">
+                          <div className="form__form-group">
+                            <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
+                              <Dropzone key={dropZoneKey}
+                                getUploadParams={getUploadParams}
+                                accept={fileTypes.join(',')}
+                                name="media_upload"
+                                inputContent="Select File"
+                                maxFiles={1}
+                                onSubmit={false}
+                                onChangeStatus={handleChangeStatus}
+                              />
+                            </div>
+                          </div>
+                        </Col>
+                        <Col md="4">
+                          <div>
+                            <Field name="name">
+                              {({input, meta}) => (
+                                <div className="form__form-group">
+                                  <span className="form__form-group-label">Enter File Name </span>
+                                  <div>
+                                    <input onChange={onChangeFileName}
+                                          style={{borderWidth: 1, borderColor: 'gray'}}
+                                          type="text" value={fileName}
+                                          placeholder="File Name"/>
                                   </div>
                                 </div>
+                              )}
+                            </Field>
+                          </div>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <div>
+                            <Button type="submit" disabled={loading} className="btn btn-primary"
+                                    color="#ffffff">Save</Button>
+                          </div>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          {media && media.length > 0
+                            && (
+                              <div className="dropzone__imgs-wrapper">
+                                {media.map((file, i) => (
+                                  <div className="dropzone__img" key={file.name} style={{
+                                    border: '1px solid grey',
+                                    width: `125px`,
+                                    backgroundImage: `url(${process.env.REACT_APP_API_STORAGE_URL + '/' + file.icon_path})`
+                                  }}>
+                                    <p className="dropzone__img-name">{file.name}</p>
+                                    <button className="dropzone__img-delete" type="button"
+                                            onClick={e => removeFile(i, file, e)}>
+                                      Remove
+                                    </button>
+                                  </div>
+                                ))}
                               </div>
                             )}
-                          </Field>
+                        </Col>
+                      </Row>
 
-                        </div>
-                      </div>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col md="4">
-                      <div className="form__form-group">
-                        <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
-                          <Dropzone key={dropZoneKey}
-                            getUploadParams={getUploadParams}
-                            accept="image/jpeg, image/png, image/gif"
-                            // accept="image/*,audio/*,video/*"
-                            name="media_upload"
-                            inputContent="Select Preview Image"
-                            maxFiles={1}
-                            onSubmit={false}
-                            onChangeStatus={handleUploadIcon}
-                          />
-                        </div>
-                      </div>
-                    </Col>
-                    <Col md="4">
-                      <div className="form__form-group">
-                        <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
-                          <Dropzone key={dropZoneKey}
-                            getUploadParams={getUploadParams}
-                            accept={fileTypes.join(',')}
-                            name="media_upload"
-                            inputContent="Select File"
-                            maxFiles={1}
-                            onSubmit={false}
-                            onChangeStatus={handleChangeStatus}
-                          />
-                        </div>
-                      </div>
-                    </Col>
-                    <Col md="4">
-                      <div>
-                        <Field name="name">
-                          {({input, meta}) => (
-                            <div className="form__form-group">
-                              <span className="form__form-group-label">Enter File Name </span>
-                              <div>
-                                <input onChange={onChangeFileName}
-                                       style={{borderWidth: 1, borderColor: 'gray'}}
-                                       type="text" value={fileName}
-                                       placeholder="File Name"/>
-                              </div>
+                    </form>
+                  )}
+                />
+                 :                 
+                <Form
+                  onSubmit={handleSubmit}
+                  validate={validate}
+                  render={({handleSubmit, form, submitting, pristine, values}) => (
+                    <form className="form" onSubmit={handleSubmit}>
+
+                      <Row>
+                        <Col md="12" lg="12" xl="12">
+                          <div className="card__title">
+                            <h3>Upload Digital Media</h3>
+                            <h5 className="colorgrey">{program.name}</h5>
+                            <div style={{paddingTop: '25px', paddingBottom:'25px'}}>
+                              <Button  color="primary" className="mr-3" onClick={()=>setTab(1)}>media</Button>
+                              <Button  color="primary" className="mr-3" onClick={()=>setTab(2)}>forms</Button>
                             </div>
-                          )}
-                        </Field>
-                      </div>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col>
-                      <div>
-                        <Button type="submit" disabled={loading} className="btn btn-primary"
-                                color="#ffffff">Save</Button>
-                      </div>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col>
-                      {media && media.length > 0
-                        && (
-                          <div className="dropzone__imgs-wrapper">
-                            {media.map((file, i) => (
-                              <div className="dropzone__img" key={file.name} style={{
-                                border: '1px solid grey',
-                                width: `125px`,
-                                backgroundImage: `url(${process.env.REACT_APP_API_STORAGE_URL + '/' + file.icon_path})`
-                              }}>
-                                <p className="dropzone__img-name">{file.name}</p>
-                                <button className="dropzone__img-delete" type="button"
-                                        onClick={e => removeFile(i, file, e)}>
-                                  Remove
-                                </button>
-                              </div>
-                            ))}
+                            <div>
+                              <Field name="category">
+                                {({ input, meta }) => (
+                                  <div className="form__form-group">
+                                    <div className="form__form-group-field">
+                                      <div className="form__form-group-row">
+                                        <CreatableSelect
+                                          name="category"
+                                          isClearable
+                                          isDisabled={isLoading}
+                                          isLoading={isLoading}
+                                          options={mediaTypes}
+                                          onCreateOption={selectCreateOption}
+                                          placeholder='Select or Create a Menu Category'
+                                          onChange={value =>
+                                            getData(value.value)
+                                          }
+                                        />
+                                        {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                              </Field>
+
+                            </div>
                           </div>
-                        )}
-                    </Col>
-                  </Row>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md="12">
+                          <div className="form__form-group">
+                            <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
+                             
+                            </div>
+                          </div>
+                          <Field name="link">
+                              {({input, meta}) => (
+                                <div className="form__form-group">
+                                  <span className="form__form-group-label">Link </span>
+                                  <div>
+                                    <input onChange={onChangeLinkUrl}
+                                          style={{borderWidth: 1, borderColor: 'gray', maxWidth:'200px'}}
+                                          type="text" value={link}
+                                          placeholder="Link Url"/>
+                                  </div>
+                                </div>
+                              )}
+                            </Field>
+                        </Col>
+                      </Row>
+                      <iframe src="https://form.jotform.com/203275544583156" width="80%" height="auto" style={{border:0}}
+                          
+                        />
+                      <Row>
+                        <Col>
+                          <div>
+                            <Button type="submit" disabled={loading} className="btn btn-primary"
+                                    color="#ffffff">Save</Button>
+                          </div>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          {media && media.length > 0
+                            && (
+                              <div className="dropzone__imgs-wrapper">
+                                {media.map((file, i) => (
+                                  <div className="dropzone__img" key={file.name} style={{
+                                    border: '1px solid grey',
+                                    width: `125px`,
+                                    backgroundImage: `url(${process.env.REACT_APP_API_STORAGE_URL + '/' + file.icon_path})`
+                                  }}>
+                                    <p className="dropzone__img-name">{file.name}</p>
+                                    <button className="dropzone__img-delete" type="button"
+                                            onClick={e => removeFile(i, file, e)}>
+                                      Remove
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                        </Col>
+                      </Row>
 
-                </form>
-              )}
-            />
-
+                    </form>
+                  )}
+                />
+              }
           </CardBody>
         </Card>
       </ModalBody>

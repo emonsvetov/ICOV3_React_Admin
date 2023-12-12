@@ -1,6 +1,4 @@
-
-import { toPoints} from '@/shared/helpers'
-
+import {formatCurrency} from '@/shared/helpers'
 export const TABLE_COLUMNS = [
 
   {
@@ -31,25 +29,25 @@ export const TABLE_COLUMNS = [
   {
     Header: "Total Amount received",
     accessor: "total_amount_received",
-    Cell: ({ row, value }) => { return toPoints(value); },
+    Cell: ({ row, value }) => { return formatCurrency(value); },
     width: 140
   },
   {
     Header: "Funding Deposit",
     accessor: "funding_deposit",
-    Cell: ({ row, value }) => { return toPoints(value); },
+    Cell: ({ row, value }) => { return formatCurrency(value); },
     width: 130
   },
   {
     Header: "Deposit fee",
     accessor: "deposit_fee",
-    Cell: ({ row, value }) => { return toPoints(value); },
+    Cell: ({ row, value }) => { return formatCurrency(value); },
     width: 120
   },
   {
     Header: "Credit Card Convenience Fee",
     accessor: "credit_card_convenience_fee",
-    Cell: ({ row, value }) => { return toPoints(value); },
+    Cell: ({ row, value }) => { return formatCurrency(value); },
     width: 120
   },
   {

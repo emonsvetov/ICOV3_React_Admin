@@ -98,6 +98,21 @@ const DataTable = () => {
     const [filter, setFilter] = useState({keyword:''});
     // var [data, setData] = useState([]);
 
+    const handleDownload = async () => {
+        if (data && data.results) {
+            const csvString = convertArrayToCSV(data.results);
+            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'unassigned_program_domain_report.csv';
+            link.click();
+            URL.revokeObjectURL(url);
+        } else {
+            alert("No data to download");
+        }
+    };
+
     const onClickFilterCallback = ( keyword) => {
         
         if(filter.keyword === keyword)    {
@@ -222,6 +237,9 @@ const DataTable = () => {
                         <Row className="mx-0">
                             <Col lg={9} md={9} sm={8}>
                                 <ProgramFilter onClickFilterCallback={onClickFilterCallback} />
+                                <button onClick={handleDownload} className="btn btn-primary">
+                                    Export to CSV
+                                </button>
                             </Col>
                         </Row>
                     </div>
@@ -329,6 +347,12 @@ const DataTable = () => {
                 </div>
             </>
     )
+}
+
+const convertArrayToCSV = (array) => {
+    const header = Object.keys(array[0]).join(',');
+    const rows = array.map(obj => Object.values(obj).join(',')).join('\n');
+    return [header, rows].join('\n');
 }
 
 const Sorting = ({ column }) => (

@@ -1,309 +1,171 @@
-import React, {useState} from 'react'
-import MerchantsHierarchy from '@/shared/components/MerchantsHierarchy'
-import {connect} from 'react-redux'
-import {withRouter} from 'react-router-dom'
-import {Button, Col, Row} from "reactstrap";
-import DatePicker from "react-datepicker";
+import React, {FC, useEffect, useState} from 'react';
+import dayjs from 'dayjs';
+import {
+    Button,
+    DatePicker,
+    Col,
+    ColorPicker, Flex,
+    Form,
+    InputNumber,
+    Radio,
+    Rate,
+    Row,
+    Select,
+    Slider,
+    Space,
+    Switch,
+    Upload,
+} from 'antd';
+import {any} from "prop-types";
 import {CSVLink} from "react-csv";
-import {getFirstDay} from '@/shared/helpers'
-import {dateStrToYmd} from '@/shared/helpers';
-import {isEqual, clone} from 'lodash';
-import {CheckBoxField} from '@/shared/components/form/CheckBox';
-import RadioButtonField from '@/shared/components/form/RadioButton';
-import CodeSelectField from '@/shared/components/form/Select';
+
+const { Option } = Select;
+
+const formItemLayout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 20 },
+};
 
 
-const defaultFrom = getFirstDay()
-const defaultTo = new Date()
-
-const SupplierRedemptionFilter = (
-  {
-    filter,
-    setFilter,
-    setUseFilter,
-    download,
-    exportData,
-    exportLink,
-    exportHeaders
-  }) => {
-  const options = {
-    'dateRange': true,
-    'merchants': true,
-    'exportToCsv': true,
-    'active': true,
-    'reportKey': true,
-    'codes': true,
-  }
-  const [from, setFrom] = React.useState(defaultFrom)
-  const [to, setTo] = React.useState(defaultTo)
-  const [code, setCode] = React.useState('')
-  const [active, setActive] = React.useState(true)
-  const [reportKey, setReportKey] = React.useState('sku_value')
-  const [selectedMerchants, setSelectedMerchants] = useState(filter.merchants ? filter.merchants : []);
-  const finalFilter = {...filter}
-  const [selectedValue, setSelectedValue] = useState("0");
-  const codes = [
-    { value: "", label: "All Codes" },
-    { value: "0", label: "Real Codes" },
-    { value: "1", label: "Virtual Codes" }
-  ];
-  const onClickFilter = (reset = false, exportToCsv = 0) => {
-    let dataSet = {}
-    if (options.dateRange) {
-      dataSet.from = dateStrToYmd(reset ? defaultFrom : from)
-      dataSet.to = dateStrToYmd(reset ? defaultTo : to)
-    }
-    if (options.merchants) {
-      dataSet.merchants = reset ? [] : clone(selectedMerchants)
-    }
-    if (options.active) {
-      dataSet.active = reset ? true : active
-    }
-    if (options.reportKey) {
-      dataSet.reportKey = reset ? 'sku_value' : reportKey
-    }
-
-    if (options.codes) {
-      dataSet.codes = code
-    }
-
-    onClickFilterCallback(dataSet)
-    if (reset) {
-      setFrom(defaultFrom)
-      setTo(defaultTo)
-      setSelectedMerchants([]);
-      setActive(true)
-      setReportKey('sku_value')
-    }
-  }
-
-  const onClickFilterCallback = (values) => {
-    let change = false;
-
-    if (options.merchants) {
-      if (!isEqual(finalFilter.merchants, values.merchants)) {
-        change = true
-      }
-    }
-
-    if (options.dateRange) {
-      if (finalFilter.from !== values.from || finalFilter.to !== values.to) {
-        change = true
-      }
-    }
-    if (options.active) {
-      if (finalFilter.active !== values.active) {
-        change = true
-      }
-    }
-    if (options.reportKey) {
-      if (finalFilter.reportKey !== values.reportKey) {
-        change = true
-      }
-    }
-
-    if (options.codes) {
-      if (finalFilter.codes !== values.codes) {
-        change = true
-      }
-    }
-
-    if (!change) {
-      alert('No change in filters')
-      setUseFilter(false)
-      return
-    }
-
-    let filters = {}
-    if (options.keyword) filters.keyword = values.keyword
-    if (options.programs) {
-      filters.programs = values.programs
-    }
-    if (options.merchants) {
-      filters.merchants = values.merchants
-    }
-    if (options.awardLevels) {
-      filters.awardLevels = values.awardLevels
-    }
-    if (options.dateRange) {
-      filters.from = values.from
-      filters.to = values.to
-    }
-    if (options.active) {
-      filters.active = values.active
-    }
-    if (options.reportKey) {
-      filters.reportKey = values.reportKey
-    }
-    if (options.codes) {
-      filters.codes = values.codes
-    }
-
-    setFilter(filters)
-    setUseFilter(true)
-  }
-
-  const onStartChange = (value) => {
-    setFrom(value)
-  }
-  const onEndChange = (value) => {
-    setTo(value)
-  }
-
-  const onChangeActive = () => {
-    setActive(!active)
-  }
-
-  const onChangeRadio = (value) => {
-    setReportKey(value)
-  }
-
-  return (
-    <Row className="table-filter-form form">
-      <Col md={8} lg={8} sm={8} className="table-filter-form-fields">
-        <div>
-          {options.merchants &&
-            <div className="table-filter-form-col table-filter-form-col1 float-filter" style={{paddingTop: 4}}>
-              <div className="form__form-group">
-                <div className="form__form-group-field">
-                  <div className="form__form-group-row">
-                    <MerchantsHierarchy
-                      defaultMerchants={options.merchants}
-                      selectedMerchants={selectedMerchants}
-                      setSelectedMerchants={setSelectedMerchants}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          }
-          {options.dateRange &&
-            <>
-              <div className="table-filter-form-col table-filter-form-col2 float-filter">
-                <div className="form__form-group">
-                  <span className="form__form-group-label">From</span>
-                  <div className="form__form-group-field">
-                    <div className="form__form-group-row">
-                      <DatePicker
-                        dateFormat="MM/dd/yyyy"
-                        selected={from}
-                        onChange={onStartChange}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="table-filter-form-col table-filter-form-col2 float-filter">
-                <div className="form__form-group">
-                  <span className="form__form-group-label">To</span>
-                  <div className="form__form-group-field">
-                    <div className="form__form-group-row">
-                      <DatePicker
-                        dateFormat="MM/dd/yyyy"
-                        selected={to}
-                        onChange={onEndChange}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-          }
-          <div className="table-filter-form-col table-filter-form-col float-filter">
-            <div className="form__form-group">
-              <span className="form__form-group-label">Show</span>
-              <div style={{width: '130px'}} className="form__form-group-field">
-                <CodeSelectField
-                    name="code"
-                    label="Select a Code"
-                    value={code}
-                    options={codes}
-                    onChange={(val) => {
-                      setCode(val.value)
-                    }}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="clearfix">&nbsp;</div>
-          <div className="clearfix">&nbsp;</div>
-          {options.active &&
-            <>
-              <div className="table-filter-form-col table-filter-form-col2 float-filter">
-                <div className="form__form-group">
-                  <div className="form__form-group-field">
-                    <div className="form__form-group-row">
-                      <CheckBoxField name="active" label="Active Merchants" checked={active} onChange={onChangeActive}
-                                     type="checkbox"/>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-          }
-          {options.reportKey &&
-            <>
-              <div className="table-filter-form-col table-filter-form-col2 float-filter">
-                <div className="form__form-group">
-                  <div className="form__form-group-field">
-                    <div className="form__form-group-row">
-                      <RadioButtonField
-                        name="sku" label="Sku Value" onChange={onChangeRadio}
-                        radioValue="sku_value"
-                        value={reportKey}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="table-filter-form-col table-filter-form-col2 float-filter">
-                <div className="form__form-group">
-                  <div className="form__form-group-field">
-                    <div className="form__form-group-row">
-                      <RadioButtonField
-                        name="redemption" label="Redemption Value" onChange={onChangeRadio}
-                        radioValue="redemption_value"
-                        value={reportKey}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-          }
-        </div>
-      </Col>
-      <Col className="align-items-center max-height-32px pl-1">
-        <Button
-          onClick={() => onClickFilter()}
-          className="btn btn-sm btn-primary"
-          color="#ffffff"
-        >Filter</Button>
-        <Button
-          onClick={() => onClickFilter(true)}
-          className="btn btn-sm btn-primary"
-          color="#ffffff"
-        >Reset</Button>
-        {options.exportToCsv &&
-          <div>
-            <span className="text-blue pointer mr-2" onClick={() => {
-              download(filter)
-            }}>Export to CSV</span>
-            <CSVLink
-              data={exportData}
-              headers={exportHeaders}
-              filename="report.csv"
-              className="hidden"
-              ref={exportLink}
-              target="_blank"
-            />
-          </div>
-        }
-      </Col>
-    </Row>
-  )
+interface SupplierRedemptionFilterProps {
+    filters: any,
+        merchants: any,
+        exportCSV: any,
 }
 
-export default withRouter(connect((state) => ({
-  auth: state.auth
-}))(SupplierRedemptionFilter));
+export const defFilter = {
+    merchants: null,
+    from: '2022-12-31',
+    to: '2023-12-06',
+    active: true,
+    reportKey: 'sku_value',
+    codes: null,
+    programId: 0,
+}
+
+export const SupplierRedemptionFilter: FC<SupplierRedemptionFilterProps> = ({filters, merchants,exportCSV}) => {
+    const [filter, setFilter] = useState(defFilter);
+
+    const onFinish = (values: any) => {
+        const updatedFilter = {...filter};
+
+        if (values.from){
+            updatedFilter.from = values.from.format('YYYY-MM-DD');
+        }
+
+        if (values.to) {
+            updatedFilter.to = values.to.format('YYYY-MM-DD');
+        }
+
+        if (values.merchants) {
+            updatedFilter.merchants = values.merchants.join(', ');
+        }
+
+        if (values.active) {
+            updatedFilter.active = values.active;
+        } else {
+            updatedFilter.active = values.active;
+        }
+
+        if (values.reportKey) {
+            updatedFilter.reportKey = values.reportKey;
+        }
+        if (values.codes) {
+            updatedFilter.codes = values.codes;
+        }
+
+        filters(updatedFilter);
+    };
+
+    const dateFormat = 'YYYY/MM/DD';
+
+    return (<Row className="table-filter-form form action-panel">
+        <Form
+            name="validate_other"
+            {...formItemLayout}
+            onFinish={onFinish}
+            initialValues={{}}
+        >
+            <Row>
+                <Col span={6} order={4}>
+                    <Form.Item
+                        name="reportKey"
+                        label=""
+                        initialValue={defFilter.reportKey}
+                        style={{width: 300}}
+                    >
+                        <Radio.Group>
+                            <Radio.Button value="sku_value">Sku Value</Radio.Button>
+                            <Radio.Button value="redemption_value">Redemption Value</Radio.Button>
+                        </Radio.Group>
+                    </Form.Item>
+                </Col>
+                <Col span={6} order={3}>
+                    <Form.Item
+                        name="from"
+                        label="From"
+                        initialValue={dayjs(defFilter.from, dateFormat)}
+                    >
+                        <DatePicker format="DD/MM/YYYY"/>
+                    </Form.Item>
+                </Col>
+                <Col span={6} order={2}>
+                    <Form.Item
+                        name="to"
+                        label="To"
+                        initialValue={dayjs(defFilter.to, dateFormat)}
+                    >
+                        <DatePicker format="DD/MM/YYYY"/>
+                    </Form.Item>
+                </Col>
+                <Col span={6} order={1}>
+                    <Form.Item name="codes"
+                               label="Show"
+                               valuePropName="checked"
+                               initialValue={defFilter.codes}>
+                        <Select allowClear placeholder="Please select a value">
+                            <Option value="0">Real Codes</Option>
+                            <Option value="1">Virtual Codes</Option>
+                        </Select>
+                    </Form.Item>
+                </Col>
+            </Row>
+
+            <Row>
+                <Col span={8} order={1}>
+                    <Form.Item
+                        name="merchants"
+                        label="Merchants"
+                        //initialValue={defFilter.merchants}
+                    >
+                        <Select mode="multiple" placeholder="Please select merchants">
+                            {merchants.map(item => (
+                                <Option key={item.id} value={item.id}>{item.name}</Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                </Col>
+
+                <Col span={10} order={2}>
+                    <Form.Item name="active"
+                               label="Active Merchants"
+                               valuePropName="checked"
+                               initialValue={defFilter.active}
+                    >
+                        <Switch/>
+                    </Form.Item>
+                </Col>
+
+                <Col span={6} order={3}>
+                    <Space size="small">
+                        <Button type="primary" htmlType="submit">Search</Button>
+                        <Button htmlType="reset" >Clear</Button>
+                        <a style={{fontSize: 12}} onClick={() => {exportCSV();}}>Export to CSV</a>
+                    </Space>
+                </Col>
+
+            </Row>
+        </Form>
+    </Row>)
+};
+export default SupplierRedemptionFilter;

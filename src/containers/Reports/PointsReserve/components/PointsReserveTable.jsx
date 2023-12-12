@@ -3,25 +3,21 @@ import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useF
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import MOCK_DATA from "./MOCK_DATA.json";
 import {PROGRAM_COLUMNS} from "./columns";
-import SortIcon from 'mdi-react/SortIcon';
-import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
-import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
+import {getFirstDay, dateStrToYmd} from '@/shared/helpers'
 import { Col, Row} from 'reactstrap';
 import PointsReserveFilter  from "./PointsReserveFilter";
-import axios from 'axios'
-
+import {connect} from "react-redux";
+import {
+    reducer,
+    fetchApiData,
+    initialState,
+   
+    Sorting
+  } from "@/shared/apiTableHelper"
 import {renameChildrenToSubrows} from '@/shared/helpers'
 
 const queryClient = new QueryClient()
-
-const initialState = {
-    queryPageIndex: 0,
-    queryPageSize: 10,
-    totalCount: null,
-    queryPageFilter:{},
-    queryPageSortBy: [],
-};
 
 const PAGE_CHANGED = 'PAGE_CHANGED';
 const PAGE_SIZE_CHANGED = 'PAGE_SIZE_CHANGED';
@@ -29,37 +25,38 @@ const PAGE_SORT_CHANGED = 'PAGE_SORT_CHANGED'
 const PAGE_FILTER_CHANGED = 'PAGE_FILTER_CHANGED';
 const TOTAL_COUNT_CHANGED = 'TOTAL_COUNT_CHANGED';
 
-const reducer = (state, { type, payload }) => {
-  switch (type) {
-    case PAGE_CHANGED:
-        return {
-            ...state,
-            queryPageIndex: payload,
-        };
-    case PAGE_SIZE_CHANGED:
-        return {
-            ...state,
-            queryPageSize: payload,
-        };
-    case PAGE_SORT_CHANGED:
-        return {
-            ...state,
-            queryPageSortBy: payload,
-        };
-    case PAGE_FILTER_CHANGED:
-        return {
-            ...state,
-            queryPageFilter: payload,
-        };
-    case TOTAL_COUNT_CHANGED:
-        return {
-            ...state,
-            totalCount: payload,
-        };
-    default:
-      throw new Error(`Unhandled action type: ${type}`);
-  }
-};
+// const reducer = (state, { type, payload }) => {
+//   switch (type) {
+//     case PAGE_CHANGED:
+//         return {
+//             ...state,
+//             queryPageIndex: payload,
+//         };
+//     case PAGE_SIZE_CHANGED:
+//         return {
+//             ...state,
+//             queryPageSize: payload,
+//         };
+//     case PAGE_SORT_CHANGED:
+//         return {
+//             ...state,
+//             queryPageSortBy: payload,
+//         };
+//     case PAGE_FILTER_CHANGED:
+//         return {
+//             ...state,
+//             queryPageFilter: payload,
+//         };
+//     case TOTAL_COUNT_CHANGED:
+//         return {
+//             ...state,
+//             totalCount: payload,
+//         };
+//     default:
+//       throw new Error(`Unhandled action type: ${type}`);
+//   }
+// };
+
 const fetchMockData = () => {
     
     const data = {
@@ -69,58 +66,59 @@ const fetchMockData = () => {
     return data;
 };
 
-const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
-    // const offset = page * pageSize;
-    const params = []
-    let paramStr = ''
-    if( pageFilterO ) {
-        if(pageFilterO.status !== 'undefined' && pageFilterO.status) params.push(`status=${pageFilterO.status}`)
-        if(pageFilterO.keyword !== 'undefined' && pageFilterO.keyword) params.push(`keyword=${pageFilterO.keyword}`)
-        // console.log(params)
-        paramStr = params.join('&')
-    }
-    if( pageSortBy.length > 0 ) {
-        const sortParams = pageSortBy[0];
-        const sortyByDir = sortParams.desc ? 'desc' : 'asc'
-        paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
-    }
-    try {
-        const response = await axios.get(
-        `/organization/1/program?page=${page}&limit=${pageSize}&${paramStr}`
-        );
-        // console.log(response)
-        if( response.data.length === 0) return {results:[],count:0}
-        const data = {
-            results: renameChildrenToSubrows(response.data.data),
-            count: response.data.total
-        };
-        // console.log(data)
-        return data;
-    } catch (e) {
-        throw new Error(`API error:${e?.message}`);
-    }
-};
 
-const DataTable = () => {
+const DataTable = ({organization, programs}) => {
 
-    const [filter, setFilter] = useState({from:'', to:''});
 
-    const onClickFilterCallback = (from, to) => {
+const onClickFilterCallback = (from, to) => {
             
-        if(filter.from === from && filter.to === to)    {
-            alert('No change in filters')
-            return
-        }
-        setFilter({from, to})
+    if(filter.from === from && filter.to === to)    {
+        alert('No change in filters')
+        return
     }
+    setFilter({...filter, from, to})
+}
 
-    const handleDownload = ( ) => {
-        alert('downloading...')
+
+const [filter, setFilter] = useState({
+    programs: programs,
+    createdOnly: false,
+    reportKey: 'sku_value',
+    programId: 1,
+    from: dateStrToYmd(getFirstDay()),
+    to: dateStrToYmd(new Date())
+    });
+
+const handleDownload = ( ) => {
+    alert('downloading...')
+}
+
+const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
+React.useReducer(reducer, initialState);
+
+const apiUrl = `/organization/${organization.id}/report/points-reserve`;
+const {isLoading, error, data, isSuccess} = useQuery(
+    ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+    () => fetchApiData(
+      {
+        url: apiUrl,
+        page: queryPageIndex,
+        size: queryPageSize,
+        filter,
+        sortby: queryPageSortBy,
+        trigger: queryTrigger
+      }
+    ),
+    {
+      keepPreviousData: true,
+      staleTime: Infinity,
     }
-    let program_columns = [
-        ...PROGRAM_COLUMNS, 
+  );
 
-    ]
+let program_columns = [
+    ...PROGRAM_COLUMNS, 
+
+]
     let columns = useMemo( () => program_columns, [])
 
     const defaultColumn = React.useMemo(
@@ -131,19 +129,6 @@ const DataTable = () => {
         }),
         []
     )
-
-    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
-    React.useReducer(reducer, initialState);
-
-    const { isLoading, error, data, isSuccess } = useQuery(
-        ['programs', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
-        // () => fetchProgramData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
-        () => fetchMockData(),
-        {
-            keepPreviousData: true,
-            staleTime: Infinity,
-        }
-    );
 
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
@@ -170,7 +155,7 @@ const DataTable = () => {
         columns,
         data: data ? data.results : [],
         initialState: {
-            pageIndex: queryPageIndex,
+            pageIndex: queryPageIndex,          
             pageSize: queryPageSize,
             sortBy: queryPageSortBy,
         },
@@ -340,26 +325,32 @@ const DataTable = () => {
     )
 }
 
-const Sorting = ({ column }) => (
-    <span className="react-table__column-header sortable">
-      {column.isSortedDesc === undefined ? (
-        <SortIcon />
-      ) : (
-        <span>
-          {column.isSortedDesc
-            ? <SortAscendingIcon />
-            : <SortDescendingIcon />}
-        </span>
-      )}
-    </span>
-  );
+// const Sorting = ({ column }) => (
+//     <span className="react-table__column-header sortable">
+//       {column.isSortedDesc === undefined ? (
+//         <SortIcon />
+//       ) : (
+//         <span>
+//           {column.isSortedDesc
+//             ? <SortAscendingIcon />
+//             : <SortDescendingIcon />}
+//         </span>
+//       )}
+//     </span>
+//   );
 
-const TableWrapper = () => {
+const TableWrapper = ({organization, programs}) => {
+    if (!organization || !programs ) return 'Loading...'
     return (
         <QueryClientProvider client={queryClient}>
-            <DataTable />
+            <DataTable organization={organization}  programs={programs}/>
         </QueryClientProvider>
     )
 }
 
-export default TableWrapper;
+const mapStateToProps = (state) => {
+    return {
+      organization: state.organization,
+    };
+  };
+  export default connect(mapStateToProps)(TableWrapper);

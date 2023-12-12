@@ -28,7 +28,7 @@ export const JOURNAL_DETAILED_COLUMNS = [
         {
           Header: "Deposit Reversal",
           accessor: "deposit_reversal",
-          Footer: (info) => footerRenderer(info, 'deposits')
+          Footer: (info) => footerRenderer(info, 'deposit_reversal')
         },
         {
           Header: "Points Purchased",

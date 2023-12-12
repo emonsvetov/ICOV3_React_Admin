@@ -189,15 +189,6 @@ const DepositFilter = ({onClickFilterCallback}) => {
                         className="btn btn-sm btn-primary" 
                         color="#ffffff"
                     >Filter</Button>
-                    <Button
-                        type="submit"
-                        onClick={() => {
-                            form.change("action", "export");
-                        }}
-                        disabled={submitting} 
-                        className="btn btn-sm btn-primary" 
-                        color="#ffffff"
-                    >Export CSV</Button>
                 </div>
                 </Row>
                 

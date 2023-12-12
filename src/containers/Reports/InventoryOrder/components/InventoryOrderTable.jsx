@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {useExpanded, usePagination, useResizeColumns, useSortBy, useTable, useFlexLayout} from "react-table";
+import {useExpanded, usePagination, useResizeColumns, useSortBy, useTable } from "react-table";
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {Col, Row} from 'reactstrap';
@@ -17,22 +17,28 @@ import {
   Sorting,
 } from "@/shared/apiTableHelper"
 
-import { clone} from 'lodash';
 
 
 const queryClient = new QueryClient()
 
 const DataTable = ({organization, merchants}) => {
-  const [filter, setFilter] = useState({merchants: merchants, from: new Date()});
-  const [useFilter, setUseFilter] = useState(false);
-  const [trigger, setTrigger] = useState(0);
-  const [exportData, setExportData] = useState([]);
-  const [exportHeaders, setExportHeaders] = useState([]);
-  const [exportToCsv, setExportToCsv] = useState(false);
-  const exportLink = React.createRef();
 
-  const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
-    React.useReducer(reducer, initialState);
+    const [filter, setFilter] = useState({
+        merchants: merchants,
+        createdOnly: false,
+        reportKey: 'sku_value',
+        programId: 1
+    });
+    const [useFilter, setUseFilter] = useState(false);
+    const [trigger, setTrigger] = useState(0);
+    const [exportData, setExportData] = useState([]);
+    const [exportHeaders, setExportHeaders] = useState([]);
+    const [exportToCsv, setExportToCsv] = useState(false);
+    const exportLink = React.createRef();
+
+
+    const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
+        React.useReducer(reducer, initialState);
 
   const apiUrl = `/organization/${organization.id}/report/inventory-order`;
   const {isLoading, error, data, isSuccess} = useQuery(
@@ -52,7 +58,41 @@ const DataTable = ({organization, merchants}) => {
       staleTime: Infinity,
     }
   );
+    function objectToCSV(data) {
+        const csvRows = data.map(row =>
+            Object.values(row).map(value => JSON.stringify(value, replacer)).join(',')
+        );
 
+        return csvRows.join('\r\n');
+
+        function replacer(key, value) {
+            return value === null || value === undefined ? '' : value;
+        }
+    }
+
+    const download = async (filterValues) => {
+        let tmpFilter = {...filterValues, exportToCsv: 1};
+
+        const response = await fetchApiDataExport({
+            url: apiUrl,
+            filter: tmpFilter,
+            sortby: queryPageSortBy,
+            trigger: queryTrigger
+        });
+
+        if (response.results && Array.isArray(response.results.data)) {
+            const csvData = objectToCSV(response.results.data);
+            if (csvData) {
+                setExportData(csvData);
+                setExportHeaders(Object.keys(response.results.data[0]));
+                setExportToCsv(true);
+            } else {
+                console.error('Failed to serialize data for CSV export');
+            }
+        } else {
+            console.error('Data is not an array:', response.results);
+        }
+    };
   useEffect(() => {
     if (exportToCsv) {
       if (exportLink.current) {
@@ -62,76 +102,59 @@ const DataTable = ({organization, merchants}) => {
     }
   }, [exportLink])
 
-  const download = async (filterValues) => {
-    let tmpFilter = clone(filterValues);
-    tmpFilter.exportToCsv = 1;
 
-    const response = await fetchApiDataExport(
-      {
-        url: apiUrl,
-        filter: tmpFilter,
-        sortby: queryPageSortBy,
-        trigger: queryTrigger
-      }
-    );
-    setExportData(response.results);
-    setExportHeaders(response.headers);
-    setExportToCsv(true);
-  }
 
   let columns = useMemo(() => TABLE_COLUMNS, [])
 
   const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
+    const {
+        getTableProps,
+        getTableBodyProps,
+        headerGroups,
+        footerGroups,
+        rows,
+        prepareRow,
+        rowSpanHeaders,
+        page,
+        pageCount,
+        pageOptions,
+        gotoPage,
+        previousPage,
+        canPreviousPage,
+        nextPage,
+        canNextPage,
+        setPageSize,
+        state: {pageIndex, pageSize, sortBy}
+    } = useTable({
+            columns: columns,
+            data: data ? Object.values(data.results) : [],
+            initialState: {
+                pageIndex: queryPageIndex,
+                pageSize: queryPageSize,
+                sortBy: queryPageSortBy,
+            },
+            manualPagination: true, // Tell the usePagination
+            pageCount: data ? totalPageCount : null,
+            autoResetSortBy: false,
+            autoResetExpanded: false,
+            autoResetPage: false,
+            disableResizing: true,
+            autoResetHiddenColumns: false,
+            striped: true
+        },
+        useSortBy,
+        useExpanded,
+        usePagination,
+        useResizeColumns,
+        // useFlexLayout,
+    );
 
-  // rowSpanHeaders = [
-  //   { 1, topCellValue: null, topCellIndex: 0 }
-  // ];
+    const manualPageSize = []
+    useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    footerGroups,
-    rows,
-    prepareRow,
-    page,
-    pageCount,
-    pageOptions,
-    gotoPage,
-    previousPage,
-    canPreviousPage,
-    nextPage,
-    canNextPage,
-    setPageSize,
-    state: {pageIndex, pageSize, sortBy}
-  } = useTable({
-      columns: columns,
-      data: data ? Object.values(data.results) : [],
-      initialState: {
-        pageIndex: queryPageIndex,
-        pageSize: queryPageSize,
-        sortBy: queryPageSortBy,
-      },
-      manualPagination: true, // Tell the usePagination
-      pageCount: data ? totalPageCount : null,
-      autoResetSortBy: false,
-      autoResetExpanded: false,
-      autoResetPage: false,
-      disableResizing: true,
-      autoResetHiddenColumns: false
-    },
-    useSortBy,
-    useExpanded,
-    usePagination,
-    useResizeColumns,
-    useFlexLayout,
-  );
 
-  const manualPageSize = []
-  useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
-
-  if (isLoading) {
+    if (isLoading) {
     return <p>Loading...</p>;
   }
 

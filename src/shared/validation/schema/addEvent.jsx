@@ -1,10 +1,10 @@
 import { Validators } from '@lemoncode/fonk';
 import { isNumber } from '@lemoncode/fonk-is-number-validator';
-import {isObject, isBadgeAward} from "../../helpers";
+import { isBadgeAward } from "../../helpers";
 Validators.required.setErrorMessage("This field is required");
 
 export const maxAwardableAmountRequiredValidator = args => {
-  const { value, values } = args;
+  const { values } = args;
   // console.log(values?.event_type_id)
   if( isBadgeAward(values?.event_type_id) ) {
       return {
@@ -18,8 +18,7 @@ export const maxAwardableAmountRequiredValidator = args => {
 }
 
 export const maxAwardableAmountNumberValidator = args => {
-  console.log(values?.event_type_id)
-  const { value, values } = args;
+  const { values } = args;
   if( isBadgeAward(values?.event_type_id) ) {
       return {
           succeeded: true,

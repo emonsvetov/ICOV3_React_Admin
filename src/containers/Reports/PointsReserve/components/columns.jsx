@@ -9,12 +9,12 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "Awarded",
-        accessor: "awarded",
+        accessor: "value_awarded",
         Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
         Footer: (info) => {
             const { rows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.awarded) + sum, 0),
+              () => rows.reduce((sum, row) => Number(row.values.value_awarded) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue)}`}</span>;
@@ -62,12 +62,12 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "Unredeemed",
-        accessor: "unredeemed",
+        accessor: "value_unredeemed",
         Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
         Footer: (info) => {
             const { rows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.unredeemed) + sum, 0),
+              () => rows.reduce((sum, row) => Number(row.values.value_unredeemed) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue)}`}</span>;
@@ -75,12 +75,12 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "Paid",
-        accessor: "paid",
+        accessor: "value_paid",
         Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
         Footer: (info) => {
             const { rows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.paid) + sum, 0),
+              () => rows.reduce((sum, row) => Number(row.values.value_paid) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue)}`}</span>;
@@ -101,7 +101,7 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "Reserve %",
-        accessor: "reserve_percent",
+        accessor: "reserve_percentage",
         Cell: ({ row, value }) => { return `${parseFloat(value)}%`},
         Footer: (info) => {
             const { rows, flatRows } = info;
