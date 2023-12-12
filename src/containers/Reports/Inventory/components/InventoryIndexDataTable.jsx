@@ -101,109 +101,103 @@ const DataTable = ({organization, merchants}) => {
         }
     };
 
-  const updateColumns = useCallback((data) => {
-    if (data) {
-      let resultArr = [];
-      let report = Object.values(data.results.report);
-      for (let key in report) {
-        let item = report[key];
-        let tmpColumns = [];
+    const updateColumns = useCallback((data) => {
+        if (data) {
+            let resultArr = [];
+            let report = Object.values(data.results.report);
+            for (let key in report) {
+                let item = report[key];
+                let tmpColumns = [];
 
-        resultArr = [
-          {
-            Header: 'Merchant Name',
-            accessor: 'name',
-            width: 200
-          }
-        ];
-        /** Promotional Codes On Hand */
-        let innerObject = Object.keys(item.on_hand);
-        for (let innerKey in innerObject) {
-          let innerItem = innerObject[innerKey];
-            let headerValue = parseInt(innerItem, 10);
-            tmpColumns.push(
-            {
-              id: "on_hand" + innerKey,
-              Header: "$" + headerValue,
-              accessor: (row) => { return row.on_hand[innerItem]; },
-              width: 100
-            },
-          )
+                resultArr = [
+                    {
+                        Header: 'Merchant Name',
+                        accessor: 'name',
+                        width: 200
+                    }
+                ];
+
+                /** Promotional Codes On Hand */
+                let innerObject = Object.keys(item.on_hand);
+                for (let innerKey in innerObject) {
+                    let innerItem = innerObject[innerKey];
+                    let headerValue = parseInt(innerItem, 10);
+                    tmpColumns.push({
+                        id: "on_hand" + innerKey,
+                        Header: "$" + headerValue,
+                        accessor: (row) => row.on_hand[innerItem],
+                        Cell: ({ value }) => Math.round(value).toString(),
+                        width: 100
+                    });
+                }
+                resultArr.push({
+                    id: 'promotional',
+                    Header: () => (
+                        <div style={{ textAlign: 'center', borderTop: '1px solid #eff1f5', paddingTop: 6 }}>Promotional Codes On Hand</div>
+                    ),
+                    className: 'align-center',
+                    Footer: "",
+                    columns: tmpColumns
+                });
+
+                /** Optimal Inventory Limits */
+                tmpColumns = [];
+                innerObject = Object.keys(item.optimal_values);
+                for (let innerKey in innerObject) {
+                    let innerItem = innerObject[innerKey];
+                    tmpColumns.push({
+                        id: "optimal_values" + innerKey,
+                        Header: "$" + innerItem,
+                        accessor: (row) => row.optimal_values[innerItem],
+                        Cell: ({ value }) => Math.floor(value).toString(),
+                        width: 100
+                    });
+                }
+                resultArr.push({
+                    id: 'optimal',
+                    Header: () => (
+                        <div style={{ textAlign: 'center', borderTop: '1px solid #eff1f5', paddingTop: 6 }}>Optimal Inventory Limits</div>
+                    ),
+                    className: 'align-center',
+                    Footer: "",
+                    columns: tmpColumns
+                });
+
+                /** %Remaining */
+                tmpColumns = [];
+                innerObject = Object.keys(item.percent_remaining);
+                for (let innerKey in innerObject) {
+                    let innerItem = innerObject[innerKey];
+                    tmpColumns.push({
+                        id: "percent_remaining" + innerKey,
+                        Header: "$" + Math.round(innerItem),
+                        accessor: (row) => row.percent_remaining[innerItem],
+                        Cell: ({ value }) => Math.round(value).toString(),
+                        width: 100
+                    });
+                }
+                resultArr.push({
+                    id: 'remaining',
+                    Header: () => (
+                        <div style={{ textAlign: 'center', borderTop: '1px solid #eff1f5', paddingTop: 6 }}>%Remaining</div>
+                    ),
+                    className: 'align-center',
+                    Footer: "",
+                    columns: tmpColumns
+                });
+
+                resultArr.push({
+                    Header: 'Cost Basis',
+                    accessor: 'cost_basis',
+                    Cell: ({ value }) => Math.round(value).toString(),
+                    width: 150
+                });
+                break;
+            }
+            setColumns(resultArr);
         }
-        resultArr.push(
-          {
-            id: 'promotional',
-            Header: () => (
-              <div style={{textAlign: 'center', borderTop: '1px solid #eff1f5', paddingTop: 6}}>Promotional Codes On
-                Hand</div>),
-            className: 'align-center',
-            Footer: "",
-            columns: tmpColumns
-          }
-        );
-        /** Optimal Inventory Limits */
-        tmpColumns = [];
-        innerObject = Object.keys(item.optimal_values);
-        for (let innerKey in innerObject) {
-          let innerItem = innerObject[innerKey];
-          tmpColumns.push(
-            {
-              id: "optimal_values" + innerKey,
-              Header: "$" + innerItem,
-              accessor: (row) => { return row.optimal_values[innerItem]; },
-              width: 100
-            },
-          )
-        }
-        resultArr.push(
-          {
-            id: 'optimal',
-            Header: () => (
-              <div style={{textAlign: 'center', borderTop: '1px solid #eff1f5', paddingTop: 6}}>Optimal Inventory
-                Limits</div>),
-            className: 'align-center',
-            Footer: "",
-            columns: tmpColumns
-          }
-        );
-        /** %Remaining */
-        tmpColumns = [];
-        innerObject = Object.keys(item.percent_remaining);
-        for (let innerKey in innerObject) {
-          let innerItem = innerObject[innerKey];
-          tmpColumns.push(
-            {
-              id: "percent_remaining" + innerKey,
-              Header: "$" + innerItem,
-              accessor: (row) => { return row.percent_remaining[innerItem]; },
-              width: 100
-            },
-          )
-        }
-        resultArr.push(
-          {
-            id: 'remaining',
-            Header: () => (
-              <div style={{textAlign: 'center', borderTop: '1px solid #eff1f5', paddingTop: 6}}>%Remaining</div>),
-            className: 'align-center',
-            Footer: "",
-            columns: tmpColumns
-          }
-        );
-        resultArr.push(
-          {
-            Header: 'Cost Basis',
-            accessor: 'cost_basis',
-            Cell: ({row, value}) => {
-              return toCurrency(value);
-            },
-            width: 150
-          });
-        break;
-      }
-      setColumns(resultArr);
-    }
-  }, []);
+    }, []);
+
 
   useEffect(() => {
     updateColumns(data);
