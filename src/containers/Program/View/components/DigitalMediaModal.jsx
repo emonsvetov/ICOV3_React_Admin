@@ -72,19 +72,19 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       let options = [];
       let menuItems = [];
       response.data.map(row => {
-        if (row.is_menu_item == 0) {
-          options.push({
-            value: row.program_media_type_id,
-            label: row.name
-          });
-         
-        }
-        else {
+        if (row.is_menu_item == 1) {
           menuItems.push({
             value: row.program_media_type_id,
             url: row.menu_link,
             id: row.program_media_type_id
           })
+        }
+        else {
+          options.push({
+            value: row.program_media_type_id,
+            label: row.name
+          });
+         
         }
       })
       setMediaTypes(options);
