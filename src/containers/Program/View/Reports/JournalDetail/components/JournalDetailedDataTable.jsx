@@ -21,8 +21,6 @@ const queryClient = new QueryClient()
 
 const DataTable = ({organization, programs}) => {
 
-  // console.log(organization)
-
   const defaultFrom = getFirstDay();
   const [filter, setFilter] = useState({programs: programs, awardLevels: [], from: defaultFrom, to: new Date()});
     const [useFilter, setUseFilter] = useState(false);
@@ -41,6 +39,10 @@ const DataTable = ({organization, programs}) => {
       }
     }, [exportLink])
   
+    useEffect(()=>{
+      setFilter({programs: programs, awardLevels: [], from: defaultFrom, to: new Date()})
+    }, [programs])
+
     const download = async (filterValues) => {
       let tmpFilter = clone(filterValues);
       tmpFilter.exportToCsv = 1;
@@ -169,7 +171,7 @@ const DataTable = ({organization, programs}) => {
           {
             (isLoading || isFetching) && <p className="text-center">Loading...</p>
           }
-          <div style={{width:"100%", overflow:'scroll'}}>
+          <div style={{width:'100%', overflow:'scroll'}}>
             {
               // ref={r => { csvLinkTable = r; }}
               isSuccess &&

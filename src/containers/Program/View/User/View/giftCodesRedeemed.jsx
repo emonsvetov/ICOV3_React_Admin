@@ -47,7 +47,7 @@ const ProgramViewUserGiftCodesRedeemed = ({organization, program, user}) => {
 
     const apiUrl = `/organization/${program.organization_id}/program/${program.id}/user/${user.id}/gift-codes-redeemed`
     const {isLoading, error, data, isSuccess} = useQuery(
-        ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+        ['giftCodesRedeemed', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
         () => fetchApiData(
             {
                 url: apiUrl,
@@ -109,7 +109,7 @@ const ProgramViewUserGiftCodesRedeemed = ({organization, program, user}) => {
 
     useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
 
-    if (!program?.id || !organization?.id) {
+    if (!program?.id || !organization?.id || !data) {
         return <p>Loading...</p>;
     }
 

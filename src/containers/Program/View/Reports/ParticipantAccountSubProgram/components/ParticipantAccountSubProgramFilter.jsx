@@ -1,5 +1,5 @@
 import React, { useState} from 'react'
-import ProgramsHierarchyReport from '@/shared/components/ProgramsHierarchyReport'
+import ProgramsHierarchy from '@/shared/components/ProgramsHierarchy'
 import {connect} from 'react-redux'
 import {Button, Col, Row} from "reactstrap";
 import {CSVLink} from "react-csv";
@@ -79,7 +79,7 @@ const ParticipantStatusFilter = (
               <div className="form__form-group">
                 <div className="form__form-group-field">
                   <div className="form__form-group-row">
-                    <ProgramsHierarchyReport
+                    <ProgramsHierarchy
                       defaultPrograms={options.programs}
                       selectedPrograms={selectedPrograms}
                       setSelectedPrograms={setSelectedPrograms}

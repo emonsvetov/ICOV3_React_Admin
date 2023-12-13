@@ -10,10 +10,9 @@ import {getProgramsHierachyByProgram, getProgramsHierarchyByProgram} from "../ap
 
 const ProgramsHierarchy = ({organization, selectedPrograms, setSelectedPrograms}) => {
 
-  // const [programs, setPrograms] = useState([]);
-  let {programId} = useParams();
+  // const [programs, setPrograms] = useState([])
 
-  const fetchProgramData = async (pageFilterO) => {
+  const fetchProgramData = async (pageFilterO, programId) => {
     const params = []
     let paramStr = ''
     if( pageFilterO ) {
@@ -38,10 +37,12 @@ const ProgramsHierarchy = ({organization, selectedPrograms, setSelectedPrograms}
     }
   };
 
+  let {programId} = useParams();
+
   const queryPageFilter = '';
   const {isLoading, error, data, isSuccess} = useQuery(
-    ['programs', queryPageFilter],
-    () => fetchProgramData(queryPageFilter),
+    ['programs', queryPageFilter, programId],
+    () => fetchProgramData(queryPageFilter, programId),
     {
       keepPreviousData: true,
       staleTime: Infinity,
