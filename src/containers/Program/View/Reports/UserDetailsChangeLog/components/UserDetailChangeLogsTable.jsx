@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import {connect} from "react-redux";
 import {
   useTable,
   usePagination,
@@ -22,6 +23,7 @@ import { clone } from "lodash";
 import { renameChildrenToSubrows } from "@/shared/helpers";
 import {
   reducer,
+  fetchApiData,
   fetchApiDataExport,
   useEffectToDispatch,
 } from "@/shared/apiTableHelper";
@@ -36,42 +38,9 @@ const initialState = {
   queryPageSortBy: [],
 };
 
-const fetchUserDetailsDataLogs = async (
-  page,
-  pageSize,
-  pageFilterO = null,
-  pageSortBy
-) => {
-  const params = [];
-  let paramStr = "";
-  if (pageFilterO) {
-    if (pageFilterO.status !== "undefined" && pageFilterO.status)
-      params.push(`status=${pageFilterO.status}`);
-    if (pageFilterO.keyword !== "undefined" && pageFilterO.keyword)
-      params.push(`keyword=${pageFilterO.keyword}`);
-    paramStr = params.join("&");
-  }
-  if (pageSortBy.length > 0) {
-    const sortParams = pageSortBy[0];
-    const sortyByDir = sortParams.desc ? "desc" : "asc";
-    paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`;
-  }
-  try {
-    const response = await axios.get(""); // apply api inside the brackets
-    // console.log(response)
-    if (response.data.length === 0) return { results: [], count: 0 };
-    const data = {
-      results: renameChildrenToSubrows(response.data.data),
-      count: response.data.total,
-    };
-    // console.log(data)
-    return data;
-  } catch (e) {
-    throw new Error(`API error:${e?.message}`);
-  }
-};
 
-const DataTable = () => {
+
+const DataTable = ({organization, programs}) => {
   const [filter, setFilter] = useState({ keyword: "", from: "", to: "" });
   const [useFilter, setUseFilter] = useState(false);
   const [trigger, setTrigger] = useState(0);
@@ -153,6 +122,8 @@ const DataTable = () => {
     },
     dispatch,
   ] = React.useReducer(reducer, initialState);
+  //const apiUrl = `/organization/${organization.id}/report/`; // add end point of the api here
+
 
   const { isLoading, error, data, isSuccess } = useQuery(
     [
@@ -164,7 +135,16 @@ const DataTable = () => {
       queryTrigger,
     ],
     () => fetchMockData(), // remove this function after api implement and enable down side function
-    // fetchUserDetailsDataLogs(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
+    // fetchApiData(
+                //{
+                // url: apiUrl,
+                // page: queryPageIndex,
+                // size: queryPageSize,
+                // filter,
+                // sortby: queryPageSortBy,
+                // trigger: queryTrigger
+                //}
+                // ),
     {
       keepPreviousData: true,
       staleTime: Infinity,
@@ -399,4 +379,9 @@ const TableWrapper = () => {
   );
 };
 
-export default TableWrapper;
+const mapStateToProps = (state) => {
+  return {
+      organization: state.organization,
+  };
+};
+export default connect(mapStateToProps)(TableWrapper);

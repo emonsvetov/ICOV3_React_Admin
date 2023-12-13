@@ -30,7 +30,6 @@ import ProgramReport from '../Program/View/Reports';
 import ProgramUsers from '../Program/View/User';
 import ProgramUser from '../Program/View/User/edit';
 import ProgramViewUser from '../Program/View/User/view';
-import UserDetailsChangeLogs from "../Reports/UserDetailsChangeLog"
 import UsersIndex from '../Users/index';
 import AddUser from '../Users/add_user';
 import ViewUser from '../Users/view_user';
@@ -188,7 +187,6 @@ const Reports = () => (
     <Route exact path="/reports/participant-account-summary" component={ParticipantAccountSummary} />
     <Route exact path="/reports/unassigned-program-domains" component={UnassignedProgramDomains} />
     <Route exact path="/reports/monies-pending-amount" component={MoniesPendingAmount} />
-    <Route exact path="/reports/users-details-change-logs" component={UserDetailsChangeLogs} />
     <Route exact path="/reports/expire-points" component={ExpirePoints} />
     <Route exact path="/reports/expire-monies" component={ExpireMonies} />
       <Route exact path="/reports/trial-balance" component={TrialBalance} />

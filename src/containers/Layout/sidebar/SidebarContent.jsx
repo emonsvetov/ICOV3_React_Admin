@@ -31,7 +31,6 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
             <SidebarLink title="Expire Points" route="/reports/expire-points" />
             <SidebarLink title="Expire Monies" route="/reports/expire-monies" />
             <SidebarLink title="Deposit Transfer" route="/reports/deposit-transfer" />
-            <SidebarLink title="User Details Change Logs" route="/reports/users-details-change-logs" />
               <SidebarLink title="Trial Balance" route="/reports/trial-balance" />
             {/*<SidebarLink title="Points Purchase Summary" route="/reports/points-purchase-summary" />*/}
           </>
