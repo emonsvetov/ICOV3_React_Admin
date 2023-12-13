@@ -1,7 +1,7 @@
 import React from 'react';
 import { Field } from 'react-final-form';
 
-const CheckboxField = ({ name, label, onChange }) => {
+const CheckboxField = ({ name, label, onChange, checked }) => {
   return (
     <Field
       name={name}
@@ -13,6 +13,7 @@ const CheckboxField = ({ name, label, onChange }) => {
               className="checkbox-btn__checkbox"
               id={name}
               {...input}
+              checked={checked} 
               onChange={(e) => {
                 input.onChange(e);  
                 if (onChange) {
