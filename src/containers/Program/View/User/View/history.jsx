@@ -36,6 +36,13 @@ const ProgramViewUserHistory = ({organization, program, user}) => {
         []
     )
 
+    const customInitialState = {
+        queryPageSortBy: [{
+            id: "event_date",
+            desc: true
+        }]
+    }
+
     const [{
         queryPageIndex,
         queryPageSize,
@@ -43,7 +50,7 @@ const ProgramViewUserHistory = ({organization, program, user}) => {
         queryPageFilter,
         queryPageSortBy,
         queryTrigger
-    }, dispatch] = React.useReducer(reducer, initialState);
+    }, dispatch] = React.useReducer(reducer, { ...initialState, ...customInitialState });
 
     const apiUrl = `/organization/${program.organization_id}/program/${program.id}/user/${user.id}/history`
     const {isLoading, error, data, isSuccess} = useQuery(
