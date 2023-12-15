@@ -11,6 +11,7 @@ import SupplierRedemptionIndex from "../Reports/SupplierRedemptionIndex";
 import JournalDetailed from "../Reports/JournalDetail";
 import DepositTransfer from "../Reports/DepositTransfer";
 import DepositBalance from "../Reports/DepositBalance";
+import TeamRoster from "../Reports/TeamRoster"
 
 const ProgramReport = ({organization}) => {
   // Tabs Panel
@@ -126,6 +127,17 @@ const ProgramReport = ({organization}) => {
                   >
                     Deposit Balance
                   </NavLink>
+                  <NavLink
+                      className={classnames({
+                        active:
+                            currentActiveTab === '7'
+                      })}
+                      onClick={() => {
+                        togglePan('7');
+                      }}
+                  >
+                   Team Roster
+                  </NavLink>
                 </Nav>
               </Col>
             </Row>
@@ -161,6 +173,12 @@ const ProgramReport = ({organization}) => {
                 {
                   currentActiveTab != 6 ? 'Loading...' :
                       <DepositBalance program={program}/>
+                }
+              </TabPane>
+              <TabPane tabId="7">
+                {
+                  currentActiveTab != 7 ? 'Loading...' :
+                      <TeamRoster program={program}/>
                 }
               </TabPane>
             </TabContent>
