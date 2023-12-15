@@ -33,6 +33,11 @@ const DataTable = ({organization, merchants}) => {
   const [filterValues, setFilterValues] = useState([]);
   const [columns, setColumns] = useState([{Header: 'Cost Basis', accessor: 'cost_basis'}]);
   const exportLink = React.createRef();
+  const inventoryTypes = [
+    { 'label': 'All Codes', 'value': 0 },
+    { 'label': 'Real Codes', 'value': 1 },
+    { 'label': 'Virtual Codes', 'value': 2 },
+  ];
 
   const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
     React.useReducer(reducer, initialState);
@@ -126,14 +131,14 @@ const DataTable = ({organization, merchants}) => {
                         id: "on_hand" + innerKey,
                         Header: "$" + headerValue,
                         accessor: (row) => row.on_hand[innerItem],
-                        Cell: ({ value }) => Math.round(value).toString(),
+                        Cell: ({ value }) => value ? Math.round(value).toString() : '-',
                         width: 100
                     });
                 }
                 resultArr.push({
                     id: 'promotional',
                     Header: () => (
-                        <div style={{ textAlign: 'center', borderTop: '1px solid #eff1f5', paddingTop: 6 }}>Promotional Codes On Hand</div>
+                        <div style={{ textAlign: 'left', borderTop: '1px solid #eff1f5', paddingTop: 6 }}>Promotional Codes On Hand</div>
                     ),
                     className: 'align-center',
                     Footer: "",
@@ -149,14 +154,14 @@ const DataTable = ({organization, merchants}) => {
                         id: "optimal_values" + innerKey,
                         Header: "$" + innerItem,
                         accessor: (row) => row.optimal_values[innerItem],
-                        Cell: ({ value }) => Math.floor(value).toString(),
+                        Cell: ({ value }) => value ? Math.floor(value).toString() : '-',
                         width: 100
                     });
                 }
                 resultArr.push({
                     id: 'optimal',
                     Header: () => (
-                        <div style={{ textAlign: 'center', borderTop: '1px solid #eff1f5', paddingTop: 6 }}>Optimal Inventory Limits</div>
+                        <div style={{ textAlign: 'left', borderTop: '1px solid #eff1f5', paddingTop: 6 }}>Optimal Inventory Limits</div>
                     ),
                     className: 'align-center',
                     Footer: "",
@@ -172,14 +177,14 @@ const DataTable = ({organization, merchants}) => {
                         id: "percent_remaining" + innerKey,
                         Header: "$" + Math.round(innerItem),
                         accessor: (row) => row.percent_remaining[innerItem],
-                        Cell: ({ value }) => Math.round(value).toString(),
+                        Cell: ({ value }) => value ? Math.round(value).toString() * 100 + '%' : '-',
                         width: 100
                     });
                 }
                 resultArr.push({
                     id: 'remaining',
                     Header: () => (
-                        <div style={{ textAlign: 'center', borderTop: '1px solid #eff1f5', paddingTop: 6 }}>%Remaining</div>
+                        <div style={{ textAlign: 'left', borderTop: '1px solid #eff1f5', paddingTop: 6 }}>%Remaining</div>
                     ),
                     className: 'align-center',
                     Footer: "",
@@ -189,7 +194,7 @@ const DataTable = ({organization, merchants}) => {
                 resultArr.push({
                     Header: 'Cost Basis',
                     accessor: 'cost_basis',
-                    Cell: ({ value }) => Math.round(value).toString(),
+                    Cell: ({ value }) => '$' + Math.round(value).toString(),
                     width: 150
                 });
                 break;
@@ -266,11 +271,12 @@ const DataTable = ({organization, merchants}) => {
               <Col>
                 <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter}
                              exportData={exportData} exportLink={exportLink} exportHeaders={exportHeaders}
-                             download={download}
+                             download={download} inventoryTypes={inventoryTypes}
 
                              config={{
                                keyword: false,
                                dateRange: false,
+                               inventoryTypes: true,
                                date: true,
                                merchants: true,
                                exportToCsv: true

@@ -11,7 +11,9 @@ import SupplierRedemptionIndex from "../Reports/SupplierRedemptionIndex";
 import JournalDetailed from "../Reports/JournalDetail";
 import DepositTransfer from "../Reports/DepositTransfer";
 import DepositBalance from "../Reports/DepositBalance";
-import TeamRoster from "../Reports/TeamRoster"
+import PointsPurchase from "../Reports/PointsPurchase";
+import ParticipantAccountSummary from '../Reports/ParticipantAccountSummary'
+import TeamRoster from "../Reports/TeamRoster";
 
 const ProgramReport = ({organization}) => {
   // Tabs Panel
@@ -136,7 +138,18 @@ const ProgramReport = ({organization}) => {
                         togglePan('7');
                       }}
                   >
-                   Team Roster
+                    Point Purchase
+                  </NavLink>
+                  <NavLink
+                      className={classnames({
+                        active:
+                            currentActiveTab === '8'
+                      })}
+                      onClick={() => {
+                        togglePan('8');
+                      }}
+                  >
+                    Participant Account Summary
                   </NavLink>
                 </Nav>
               </Col>
@@ -178,6 +191,18 @@ const ProgramReport = ({organization}) => {
               <TabPane tabId="7">
                 {
                   currentActiveTab != 7 ? 'Loading...' :
+                      <PointsPurchase program={program}/>
+                }
+              </TabPane>
+              <TabPane tabId="8">
+                {
+                  currentActiveTab != 8 ? 'Loading...' :
+                      <ParticipantAccountSummary program={program}/>
+                }
+              </TabPane>
+              <TabPane tabId="9">
+                {
+                  currentActiveTab != 9 ? 'Loading...' :
                       <TeamRoster program={program}/>
                 }
               </TabPane>
