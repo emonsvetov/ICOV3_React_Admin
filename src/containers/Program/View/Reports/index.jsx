@@ -151,6 +151,17 @@ const ProgramReport = ({organization}) => {
                   >
                     Participant Account Summary
                   </NavLink>
+                  <NavLink
+                      className={classnames({
+                        active:
+                            currentActiveTab === '9'
+                      })}
+                      onClick={() => {
+                        togglePan('9');
+                      }}
+                  >
+                    Team Roster
+                  </NavLink>
                 </Nav>
               </Col>
             </Row>
