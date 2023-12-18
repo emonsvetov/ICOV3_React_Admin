@@ -10,7 +10,6 @@ import {
 } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { Link } from "react-router-dom";
-import MOCK_DATA from "./MOCK_DATA.json";
 import { USER_DETAIL_CHANGE_LOGS_COLUMNS } from "./columns";
 import SortIcon from "mdi-react/SortIcon";
 import SortAscendingIcon from "mdi-react/SortAscendingIcon";
