@@ -13,6 +13,7 @@ import DepositTransfer from "../Reports/DepositTransfer";
 import DepositBalance from "../Reports/DepositBalance";
 import PointsPurchase from "../Reports/PointsPurchase";
 import ParticipantAccountSummary from '../Reports/ParticipantAccountSummary'
+import UserDetailsChangeLogs from "../Reports/UserDetailsChangeLog";
 const ProgramReport = ({organization}) => {
   // Tabs Panel
   const [currentActiveTab, setCurrentActiveTab] = useState('1');
@@ -149,6 +150,17 @@ const ProgramReport = ({organization}) => {
                   >
                     Participant Account Summary
                   </NavLink>
+                  <NavLink
+                      className={classnames({
+                        active:
+                            currentActiveTab === '9'
+                      })}
+                      onClick={() => {
+                        togglePan('9');
+                      }}
+                  >
+                    User Detail Change Log
+                  </NavLink>
                 </Nav>
               </Col>
             </Row>
@@ -196,6 +208,12 @@ const ProgramReport = ({organization}) => {
                 {
                   currentActiveTab != 8 ? 'Loading...' :
                       <ParticipantAccountSummary program={program}/>
+                }
+              </TabPane>
+              <TabPane tabId="9">
+                {
+                  currentActiveTab != 9 ? 'Loading...' :
+                      <UserDetailsChangeLogs program={program}/>
                 }
               </TabPane>
             </TabContent>
