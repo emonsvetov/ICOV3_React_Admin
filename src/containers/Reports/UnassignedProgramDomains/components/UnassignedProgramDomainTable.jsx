@@ -5,19 +5,25 @@ import ReactTablePagination from '@/shared/components/table/components/ReactTabl
 import { Col, Row } from 'reactstrap';
 import { TABLE_COLUMNS } from './columns';
 import { connect } from 'react-redux';
-import { reducer, useEffectToDispatch, fetchApiData, initialState, Sorting } from '@/shared/apiTableHelper';
 import { clone } from 'lodash';
+import { reducer, useEffectToDispatch, fetchApiData, fetchApiDataExport, initialState, Sorting } from "@/shared/apiTableHelper";
 import UnassignedProgramDomainFilter from './UnassignedProgramDomainFilter';
 
 const queryClient = new QueryClient();
 
 const DataTable = ({ organization, programs }) => {
     const [filter, setFilter] = useState({ keyword: '', rootProgramName: '' });
-    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] = React.useReducer(reducer, initialState);
+    const [exportData, setExportData] = useState([]);
+    const [exportHeaders, setExportHeaders] = useState([]);
+    const [exportToCsv, setExportToCsv] = useState(false);
+    const exportLink = React.createRef();
+    const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
+        React.useReducer(reducer, initialState);
 
     const onClickFilterCallback = (newFilter) => {
         setFilter(newFilter);
     };
+
 
     const apiUrl = `/organization/${organization.id}/report/unassigned-program-domains`;
     const { isLoading, error, data, isSuccess } = useQuery(
@@ -38,16 +44,66 @@ const DataTable = ({ organization, programs }) => {
 
     const filteredData = useMemo(() => {
         if (!data || !data.results) return [];
-
         return data.results.filter(item => {
             const itemName = item.name ? item.name.toLowerCase() : '';
             const itemRootName = item.root_name ? item.root_name.toLowerCase() : '';
             const filterKeyword = filter.keyword.toLowerCase();
             const filterRootProgramName = filter.rootProgramName.toLowerCase();
-
             return itemName.includes(filterKeyword) && itemRootName.includes(filterRootProgramName);
         });
     }, [data, filter]);
+
+    function objectToCSV(data) {
+        const csvRows = data.map(row =>
+            Object.values(row).map(value => JSON.stringify(value, replacer)).join(',')
+        );
+
+        return csvRows.join('\r\n');
+
+        function replacer(key, value) {
+            return value === null || value === undefined ? '' : value;
+        }
+    }
+
+    const download = async (filterValues) => {
+        let tmpFilter = {...filterValues, exportToCsv: 1};
+
+        const response = await fetchApiDataExport({
+            url: apiUrl,
+            filter: tmpFilter,
+            sortby: queryPageSortBy,
+            trigger: queryTrigger
+        });
+
+        if (response.results && Array.isArray(response.results.data)) {
+            const csvData = objectToCSV(response.results.data);
+            if (csvData) {
+                setExportData(csvData);
+                setExportHeaders(Object.keys(response.results.data[0]));
+                setExportToCsv(true);
+            } else {
+                console.error('Failed to serialize data for CSV export');
+            }
+        } else {
+            console.error('Data is not an array:', response.results);
+        }
+    };
+
+    useEffect(() => {
+        if (data && data.total) {
+            dispatch({ type: 'TOTAL_COUNT_CHANGED', payload: data.total });
+        }
+    }, [data]);
+
+    useEffect(() => {
+        if (exportToCsv) {
+            if (exportLink.current) {
+                setExportToCsv(false);
+                exportLink.current.link.click();
+            }
+        }
+    }, [exportLink])
+
 
     let columns = useMemo(() => TABLE_COLUMNS, []);
     const totalPageCount = Math.ceil(totalCount / queryPageSize);
@@ -56,9 +112,9 @@ const DataTable = ({ organization, programs }) => {
         getTableProps,
         getTableBodyProps,
         headerGroups,
-        rows,
         prepareRow,
         page,
+        rows,
         pageCount,
         pageOptions,
         gotoPage,
@@ -71,11 +127,7 @@ const DataTable = ({ organization, programs }) => {
     } = useTable({
             columns,
             data: filteredData,
-            initialState: {
-                pageIndex: queryPageIndex,
-                pageSize: queryPageSize,
-                sortBy: queryPageSortBy,
-            },
+            initialState: { pageIndex: queryPageIndex, pageSize: queryPageSize, sortBy: queryPageSortBy },
             manualPagination: true,
             pageCount: totalPageCount,
         },
@@ -87,10 +139,6 @@ const DataTable = ({ organization, programs }) => {
 
     useEffectToDispatch(dispatch, { pageIndex, pageSize, gotoPage, sortBy, filter, data, queryTrigger });
 
-    useEffect(() => {
-        setPageSize(10);
-    }, []);
-
     if (isLoading) return <p>Loading...</p>;
     if (error) return <p>Error: {JSON.stringify(error)}</p>;
 
@@ -100,9 +148,9 @@ const DataTable = ({ organization, programs }) => {
                 <div className="action-panel">
                     <Row className="mx-0">
                         <Col>
-                            <UnassignedProgramDomainFilter
-                                onClickFilterCallback={onClickFilterCallback}
-                            />
+                            <UnassignedProgramDomainFilter onClickFilterCallback={onClickFilterCallback}
+                                                           exportData={exportData} exportLink={exportLink} exportHeaders={exportHeaders}
+                                                           download={download} />
                         </Col>
                     </Row>
                 </div>
@@ -147,6 +195,7 @@ const DataTable = ({ organization, programs }) => {
                         pageIndex={pageIndex}
                         pageCount={pageCount}
                         setPageSize={setPageSize}
+                        dataLength={totalCount}
                     />
                 )}
             </div>
