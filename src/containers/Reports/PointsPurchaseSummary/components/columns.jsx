@@ -8,58 +8,58 @@ import ChevronRightIcon from 'mdi-react/ChevronRightIcon';
 // import { ColumnFilter } from "./ColumnFilter"
 
 export const PROGRAM_COLUMNS = [
-    {
-        // Build our expander column
-        id: 'expander', // Make sure it has an ID
-        Header: ({ getToggleAllRowsExpandedProps, isAllRowsExpanded }) => (
-          <span {...getToggleAllRowsExpandedProps()}>
-            {isAllRowsExpanded ? 'Collpase All' : 'Expand All'}
-          </span>
-        ),
-        Cell: ({ row }) =>
-          // Use the row.canExpand and row.getToggleRowExpandedProps prop getter
-          // to build the toggle for expanding a row
-          row.canExpand ? (
-            <span
-              {...row.getToggleRowExpandedProps({
-                style: {
-                  // We can even use the row.depth property
-                  // and paddingLeft to indicate the depth
-                  // of the row
-                  paddingLeft: `${row.depth * 2}rem`,
-                },
-              })}
-            >
-              {row.isExpanded ? <ChevronUpIcon className="chevron-expand" /> : <ChevronRightIcon className="chevron-expand" />}
-            </span>
-        ) : null,
-    },
+    // {
+    //     // Build our expander column
+    //     id: 'expander', // Make sure it has an ID
+    //     Header: ({ getToggleAllRowsExpandedProps, isAllRowsExpanded }) => (
+    //       <span {...getToggleAllRowsExpandedProps()}>
+    //         {isAllRowsExpanded ? 'Collpase All' : 'Expand All'}
+    //       </span>
+    //     ),
+    //     Cell: ({ row }) =>
+    //       // Use the row.canExpand and row.getToggleRowExpandedProps prop getter
+    //       // to build the toggle for expanding a row
+    //       row.canExpand ? (
+    //         <span
+    //           {...row.getToggleRowExpandedProps({
+    //             style: {
+    //               // We can even use the row.depth property
+    //               // and paddingLeft to indicate the depth
+    //               // of the row
+    //               paddingLeft: `${row.depth * 2}rem`,
+    //             },
+    //           })}
+    //         >
+    //           {row.isExpanded ? <ChevronUpIcon className="chevron-expand" /> : <ChevronRightIcon className="chevron-expand" />}
+    //         </span>
+    //     ) : null,
+    // },
     {
         Header: "Program",
         accessor: "name",
         Footer:"Total",
         Cell: ({ row, value }) => { return <Link to={`/program/view/${row.original.id}`}>{value}</Link>},
     },
-    {
-        Header: "Eligible Participants",
-        accessor: "eligible_participants",
-        Footer: (info) => {
-            const { rows, flatRows } = info;
-            const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.eligible_participants) + sum, 0),
-              [rows],
-            );
-            return <span>{totalValue}</span>;
-        },
-    },
+    // {
+    //     Header: "Eligible Participants",
+    //     accessor: "eligible_participants",
+    //     Footer: (info) => {
+    //         const { rows, flatRows } = info;
+    //         const totalValue = useMemo(
+    //           () => rows.reduce((sum, row) => Number(row.values.eligible_participants) + sum, 0),
+    //           [rows],
+    //         );
+    //         return <span>{totalValue}</span>;
+    //     },
+    // },
     {
         Header: "Jan",
-        accessor: "jan",
+        accessor: "month_1",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.jan) + sum, 0),
+              () => rows.reduce((sum, row) => Number(row.values.month_1) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -67,12 +67,12 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "Feb",
-        accessor: "feb",
+        accessor: "month_2",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.feb) + sum, 0),
+              () => rows.reduce((sum, row) => Number(row.values.month_2) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -80,12 +80,12 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "Mar",
-        accessor: "mar",
+        accessor: "month_3",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.mar) + sum, 0),
+              () => rows.reduce((sum, row) => Number(row.values.month_3) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -93,12 +93,12 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "Apr",
-        accessor: "apr",
+        accessor: "month_4",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.apr) + sum, 0),
+              () => rows.reduce((sum, row) => Number(row.values.month_4) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -106,12 +106,12 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "May",
-        accessor: "may",
+        accessor: "month_5",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.may) + sum, 0),
+              () => rows.reduce((sum, row) => Number(row.values.month_5) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -119,12 +119,12 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "Jun",
-        accessor: "jun",
+        accessor: "month_6",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.jun) + sum, 0),
+              () => rows.reduce((sum, row) => Number(row.values.month_6) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -132,12 +132,12 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "Jul",
-        accessor: "jul",
+        accessor: "month_7",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.jul) + sum, 0),
+              () => rows.reduce((sum, row) => Number(row.values.month_7) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -145,12 +145,12 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "Aug",
-        accessor: "aug",
+        accessor: "month_8",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.aug) + sum, 0),
+              () => rows.reduce((sum, row) => Number(row.values.month_8) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -158,12 +158,12 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "Sep",
-        accessor: "sep",
+        accessor: "month_9",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.sep) + sum, 0),
+              () => rows.reduce((sum, row) => Number(row.values.month_9) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -171,12 +171,12 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "oct",
-        accessor: "oct",
+        accessor: "month_10",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.oct) + sum, 0),
+              () => rows.reduce((sum, row) => Number(row.values.month_10) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -184,12 +184,12 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "Nov",
-        accessor: "nov",
+        accessor: "month_11",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.nov) + sum, 0),
+              () => rows.reduce((sum, row) => Number(row.values.month_11) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -197,12 +197,12 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "Dec",
-        accessor: "dec",
+        accessor: "month_12",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.dec) + sum, 0),
+              () => rows.reduce((sum, row) => Number(row.values.month_12) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -210,12 +210,12 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "YTD",
-        accessor: "ytd",
+        accessor: "YTD",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.ytd) + sum, 0),
+              () => rows.reduce((sum, row) => Number(row.values.YTD) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
