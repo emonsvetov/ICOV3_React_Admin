@@ -192,7 +192,6 @@ const Reports = () => (
     <Route exact path="/reports/expire-points" component={ExpirePoints} />
     <Route exact path="/reports/expire-monies" component={ExpireMonies} />
     <Route exact path="/reports/trial-balance" component={TrialBalance} />
-    <Route exact path="/reports/points-purchase" component={PointsPurchaseSummary} />
   </Switch>
 );
 

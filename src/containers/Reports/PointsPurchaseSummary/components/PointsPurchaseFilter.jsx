@@ -77,7 +77,7 @@ return (
         {({ handleSubmit, form, submitting, pristine, values }) => (
             <form className="form" onSubmit={handleSubmit}>
             <Row>
-                <div className='col-md-2'>
+                <div className='col-md-6 col-sm-12'>
                     <div className="form__form-group">
                         <span className="form__form-group-label">
                             Target Year
@@ -99,7 +99,7 @@ return (
                 </div>
                 
                 
-                <div className="col-md-3 d-flex align-items-end pl-5">
+                <div className="col-md-6 col-sm-12 d-flex align-items-end">
                     <Button 
                         type="submit"
                         onClick={() => {
