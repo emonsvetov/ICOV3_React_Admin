@@ -6,13 +6,13 @@ import { Col, Row} from 'reactstrap';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {clone} from 'lodash';
+import JournalDetailedFilter from "./JournalDetailedFilter";
 import {
   reducer,
   useEffectToDispatch,
   fetchApiData,
   fetchApiDataExport,
   initialState,
-  TableFilter,
   Sorting
 } from "@/shared/apiTableHelper"
 import {getFirstDay} from '@/shared/helpers'
@@ -45,7 +45,8 @@ const DataTable = ({organization, programs}) => {
 
     const download = async (filterValues) => {
       let tmpFilter = clone(filterValues);
-      tmpFilter.exportToCsv = 1;
+      tmpFilter.limit = pageSize;
+      tmpFilter.page = pageIndex+1;
       
       const response = await fetchApiDataExport(
         {
@@ -103,9 +104,17 @@ const DataTable = ({organization, programs}) => {
         getTableBodyProps,
         headerGroups,
         footerGroups,
+        rows,
         prepareRow,
         page,
+        pageCount,
+        pageOptions,
         gotoPage,
+        previousPage,
+        canPreviousPage,
+        nextPage,
+        canNextPage,
+        setPageSize,
         state: { pageIndex, pageSize, sortBy }
     } = useTable({
         columns,
@@ -147,7 +156,7 @@ const DataTable = ({organization, programs}) => {
           <div className="action-panel">
             <Row className="mx-0">
               <Col>
-                <TableFilter 
+                <JournalDetailedFilter 
                   filter={filter} 
                   setFilter={setFilter} 
                   setUseFilter={setUseFilter}
@@ -214,6 +223,7 @@ const DataTable = ({organization, programs}) => {
               </table>
             }
           </div>
+
         </div>
       </>
     )
