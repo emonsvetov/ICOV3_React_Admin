@@ -1,18 +1,19 @@
 import React, {useState, useEffect, useMemo} from "react";
-import { useTable, usePagination, useSortBy, useResizeColumns, useFlexLayout } from "react-table";
+import {useExpanded, useFlexLayout, usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import {JOURNAL_DETAILED_COLUMNS} from "./columns";
+import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import { Col, Row} from 'reactstrap';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {clone} from 'lodash';
+import JournalDetailedFilter  from "./JournalDetailedFilter";
 import {
   reducer,
   useEffectToDispatch,
   fetchApiData,
   fetchApiDataExport,
   initialState,
-  TableFilter,
   Sorting
 } from "@/shared/apiTableHelper"
 import {getFirstDay} from '@/shared/helpers'
@@ -43,8 +44,9 @@ const DataTable = ({organization, programs}) => {
   
     const download = async (filterValues) => {
       let tmpFilter = clone(filterValues);
-      tmpFilter.exportToCsv = 1;
-      
+      // tmpFilter.exportToCsv = 1;
+      tmpFilter.limit = pageSize;
+      tmpFilter.page = pageIndex+1;
       const response = await fetchApiDataExport(
         {
           url: apiUrl,
@@ -97,37 +99,45 @@ const DataTable = ({organization, programs}) => {
     // console.log(data)
 
     const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        footerGroups,
-        prepareRow,
-        page,
-        gotoPage,
-        state: { pageIndex, pageSize, sortBy }
+      getTableProps,
+      getTableBodyProps,
+      headerGroups,
+      footerGroups,
+      rows,
+      prepareRow,
+      page,
+      pageCount,
+      pageOptions,
+      gotoPage,
+      previousPage,
+      canPreviousPage,
+      nextPage,
+      canNextPage,
+      setPageSize,
+      state: {pageIndex, pageSize, sortBy}
     } = useTable({
-        columns,
-        data: data ? data.results : [],
-        initialState: {
-            pageIndex: queryPageIndex,
-            pageSize: queryPageSize,
-            sortBy: queryPageSortBy,
-        },
-        manualPagination: true, // Tell the usePagination
-        pageCount: data ? totalPageCount : null,
-        autoResetSortBy: false,
-        autoResetExpanded: false,
-        autoResetPage: false,
-        defaultColumn,
-        isPlaceholderData: false
-        
+      columns,
+      data: data ? data.results : [],
+      initialState: {
+        pageIndex: queryPageIndex,
+        pageSize: queryPageSize,
+        sortBy: queryPageSortBy,
+      },
+      manualPagination: true, // Tell the usePagination
+      pageCount: data ? totalPageCount : null,
+      autoResetSortBy: false,
+      autoResetExpanded: false,
+      autoResetPage: false,
+      disableResizing: true
     },
     useSortBy,
+    useExpanded,
     usePagination,
-    useResizeColumns, 
+    useResizeColumns,
     useFlexLayout,
     );
 
+    const manualPageSize = []
     useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
 
     if (error) {
@@ -145,7 +155,7 @@ const DataTable = ({organization, programs}) => {
           <div className="action-panel">
             <Row className="mx-0">
               <Col>
-                <TableFilter 
+                <JournalDetailedFilter 
                   filter={filter} 
                   setFilter={setFilter} 
                   setUseFilter={setUseFilter}
@@ -212,6 +222,51 @@ const DataTable = ({organization, programs}) => {
               </table>
             }
           </div>
+          {(rows.length > 0) && (
+            <>
+              <ReactTablePagination
+                page={page}
+                gotoPage={gotoPage}
+                previousPage={previousPage}
+                nextPage={nextPage}
+                canPreviousPage={canPreviousPage}
+                canNextPage={canNextPage}
+                pageOptions={pageOptions}
+                pageSize={pageSize}
+                pageIndex={pageIndex}
+                pageCount={pageCount}
+                setPageSize={setPageSize}
+                manualPageSize={manualPageSize}
+                dataLength={totalCount}
+              />
+              <div className="pagination justify-content-end mt-2">
+                            <span>
+                            Go to page:{' '}
+                              <input
+                                type="number"
+                                value={pageIndex + 1}
+                                onChange={(e) => {
+                                  const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                                  gotoPage(page);
+                                }}
+                                style={{width: '100px'}}
+                              />
+                            </span>{' '}
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                  }}
+                >
+                  {[10, 20, 30, 40, 50].map((pageSize) => (
+                    <option key={pageSize} value={pageSize}>
+                      Show {pageSize}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </>
+          )}
         </div>
       </>
     )
