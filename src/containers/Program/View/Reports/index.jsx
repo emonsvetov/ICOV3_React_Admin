@@ -14,6 +14,7 @@ import DepositBalance from "../Reports/DepositBalance";
 import PointsPurchase from "../Reports/PointsPurchase";
 import ParticipantAccountSummary from '../Reports/ParticipantAccountSummary'
 import TeamRoster from "../Reports/TeamRoster";
+import UserDetailsChangeLogs from "../Reports/UserDetailsChangeLog";
 
 const ProgramReport = ({organization}) => {
   // Tabs Panel
@@ -160,6 +161,17 @@ const ProgramReport = ({organization}) => {
                         togglePan('9');
                       }}
                   >
+                    User Detail Change Log
+                  </NavLink>
+                  <NavLink
+                      className={classnames({
+                        active:
+                            currentActiveTab === '10'
+                      })}
+                      onClick={() => {
+                        togglePan('10');
+                      }}
+                  >
                     Team Roster
                   </NavLink>
                 </Nav>
@@ -214,7 +226,13 @@ const ProgramReport = ({organization}) => {
               <TabPane tabId="9">
                 {
                   currentActiveTab != 9 ? 'Loading...' :
-                      <TeamRoster program={program}/>
+                      <UserDetailsChangeLogs program={program}/>
+                }
+              </TabPane>
+              <TabPane tabId="10">
+                {
+                  currentActiveTab != 10 ? 'Loading...' :
+                      <TeamRoster program={program}/>        
                 }
               </TabPane>
             </TabContent>

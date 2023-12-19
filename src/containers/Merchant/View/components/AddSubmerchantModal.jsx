@@ -35,7 +35,7 @@ const AddSubmerchantModal = ({isOpen, setOpen, toggle, theme, rtl, merchant, org
     const fetchMerchants = async ( ) => {
         try {
             console.log('fetching merchants')
-            const response = await axios.get(`/merchant?minimal=true`);
+            const response = await axios.get(`/organization/${organization.id}/merchant?minimal=true`);
             // console.log(response);
             return response.data;
         } catch (e) {
