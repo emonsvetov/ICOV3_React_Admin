@@ -12,6 +12,7 @@ import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter} f
 import ProgramFilter  from "./ProgramsFilter"
 import { Link } from 'react-router-dom'
 import axios from 'axios'
+import FolderPlusOutlineIcon from 'mdi-react/FolderPlusOutlineIcon';
 import FolderMoveOutlineIcon from 'mdi-react/FolderMoveOutlineIcon'
 import ContentCopyIcon from 'mdi-react/ContentCopyIcon'
 import CopyProgramModal from "./CopyProgramModal"
@@ -236,11 +237,14 @@ const DataTable = ({organization}) => {
                             <div className="col-md-9 col-lg-9">
                                 <ProgramFilter onClickFilterCallback={onClickFilterCallback} organization={organization} />
                             </div>
-                            <div className="col-md-3 col-lg-3 text-right pr-0">
-                                <Link style={{maxWidth:'200px'}}
-                                className="btn btn-primary account__btn account__btn--small"
+                            <div className="col-md-2 col-md-3 text-right " >
+                            
+                                <Link 
+                                
+                                className="btn btn-sm  btn-success"
                                 to="/program/add"
-                                >Add new program
+                                > <div  className='text-center'><FolderPlusOutlineIcon size={34} color='#70bbfd' /></div>
+                                  {" "} New Program
                                 </Link>
                             </div>
                         </div>
