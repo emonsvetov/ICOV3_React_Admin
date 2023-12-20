@@ -53,10 +53,19 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true
     if (org) {
         orgPlaceholder = orgOptions.filter(o => o.value === org).map(o => o.label)
     }
+
+    const handleKeyDown = (event) => {
+        console.log(event);
+        if (event.key === 'Enter') {
+            onClickFilter()
+        }
+      };
+
+
     return (
         <div className="form__form-group">
             {useOrg && auth?.isSuperAdmin &&
-            <div className="col-md-4 px-0 pr-3">
+            <div className="col-md-4 px-0 pr-3" >
                 <p className="">Organization</p>
                 <div>
                     <Select
@@ -67,16 +76,17 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true
                         className="react-select"
                         placeholder={orgPlaceholder}
                         classNamePrefix="react-select"
+                       // onKeyDown={handleKeyDown}
                     />
                 </div>
             </div>}
-            <div className="col-md-4 px-0">
+            <div className="col-md-4 px-0" style={{maxWidth:"100px"}}>
                 <p className="">Program Status</p>
-                <div>
+                <div >
                     <ProgramStatusDropdown value={status} onChange={onStatusChange} organization={organization} />
                 </div>
             </div>
-            <div className="col-md-4">
+            <div className="col-md-4" >
                 <p className="">Keyword</p>
                 <div>
                     <input 
@@ -92,12 +102,13 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true
                 <div className='flex'>
                     <Button
                       onClick={()=>onClickFilter()}
-                      className="btn btn-sm btn-primary"
+                      className="btn btn-sm btn-info"
                       color="#ffffff"
+                      onKeyDown={handleKeyDown}
                     >Filter</Button>
                     <Button
                       onClick={()=>onClickFilter(true)}
-                      className="btn btn-sm btn-primary"
+                      className="btn btn-sm btn-secondary"
                       color="#ffffff"
                     >Reset</Button>
                 </div>
