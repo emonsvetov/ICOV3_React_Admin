@@ -232,7 +232,7 @@ const DataTable = ({organization}) => {
     return (
             <>
                 <div className='table react-table'>
-                    <form className="form form--horizontal">
+                    <div className="form form--horizontal action-panel">
                         <div className="form__form-group pb-4">
                             <div className="col-md-9 col-lg-9">
                                 <ProgramFilter onClickFilterCallback={onClickFilterCallback} organization={organization} />
@@ -248,7 +248,7 @@ const DataTable = ({organization}) => {
                                 </Link>
                             </div>
                         </div>
-                    </form>
+                    </div>
                     <table {...getTableProps()} className="table">
                         <thead>
                             {headerGroups.map( (headerGroup) => (
