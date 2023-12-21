@@ -15,6 +15,7 @@ const ReportsModal = ({ dispatch, data, isOpen, toggle, theme, rtl }) => {
   const [checkboxOptions, setCheckboxOptions] = useState([]);
   const [selectedCheckboxes, setSelectedCheckboxes] = useState(new Set());
   const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [selectAll, setSelectAll] = useState(false);
 
   useEffect(() => {
     if (!data.id) {
@@ -41,6 +42,13 @@ const ReportsModal = ({ dispatch, data, isOpen, toggle, theme, rtl }) => {
     }
   }, [isOpen, data.id]);
 
+  useEffect(() => {
+    if (checkboxOptions.length > 0 && selectedCheckboxes.size > 0) {
+      setSelectAll(checkboxOptions.every(option => selectedCheckboxes.has(option.id)));
+    }
+  }, [checkboxOptions, selectedCheckboxes]);
+  
+
   const handleCheckboxChange = (checkboxId) => {
     setSelectedCheckboxes(prevSelected => {
       const updatedSelected = new Set(prevSelected);
@@ -51,6 +59,15 @@ const ReportsModal = ({ dispatch, data, isOpen, toggle, theme, rtl }) => {
       }
       return updatedSelected;
     });
+  };
+
+  const handleSelectAllChange = () => {
+    if (selectAll) {
+      setSelectedCheckboxes(new Set());
+    } else {
+      setSelectedCheckboxes(new Set(checkboxOptions.map(option => option.id)));
+    }
+    setSelectAll(!selectAll);
   };
 
   const onSubmitForm = async (values) => {
@@ -99,13 +116,25 @@ const ReportsModal = ({ dispatch, data, isOpen, toggle, theme, rtl }) => {
                 </Col>
               </Row>
             </ModalHeader>
+            
             <ModalBody className="modal-lg">
               {!isDataLoaded ? (
                 <div>Loading...</div>
               ) : (
                 <Row>
+                  <Col md="12">
+                    <div style={{ padding: '10px 0px', marginBottom: '20px'}}>
+                      <CheckboxField
+                        name="selectAll"
+                        label="Select All"
+                        checked={selectAll}
+                        onChange={handleSelectAllChange}
+                      />
+                    </div>
+                  </Col>
+                  
                   {checkboxOptions.map((option) => (
-                    <Col md="6" lg="4" xl="4" key={option.id}>
+                    <Col md="6" lg="4" xl="4" key={option.id}>  
                       <div className="form__form-group">
                         <CheckboxField
                           name={`w${option.id}`}
