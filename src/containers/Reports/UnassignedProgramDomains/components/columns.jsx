@@ -1,14 +1,19 @@
 import { Link } from 'react-router-dom';
-import React, { useMemo } from 'react';
+// import {format} from 'date-fns'
 
-export const TABLE_COLUMNS = [
+import ChevronUpIcon from 'mdi-react/ChevronUpIcon';
+import ChevronRightIcon from 'mdi-react/ChevronRightIcon';
+
+// import { ColumnFilter } from "./ColumnFilter"
+
+export const PROGRAM_COLUMNS = [
     {
-        Header: "ID",
+        Header: "Program ID",
         accessor: "id",
-        width: 130,
         Footer:"#",
         disableFilters:true,
-        disableGlobalFilters:true
+        disableGlobalFilters:true,
+        // sticky:'left'
     },
     {
         Header: "Program Name",
@@ -28,4 +33,5 @@ export const TABLE_COLUMNS = [
         Footer: "Status",
         filter: 'equals'
     },
-];
+]
+
