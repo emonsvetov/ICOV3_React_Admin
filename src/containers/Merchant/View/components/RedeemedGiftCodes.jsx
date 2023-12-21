@@ -21,14 +21,13 @@ const formatDateTime = (datetime) => {
     return format(adjustedDate, 'yyyy-MM-dd HH:mm:ss');
 };
 
-
 const DataTable = ({merchant}) => {
     
     const [filter, setFilter] = useState({ from:'', to: '', type:'redeemed'});
     const [useFilter, setUseFilter] = useState(false);
     const [isOpen, setOpen] = useState(false)
     const [trigger, setTrigger] = useState( 0 );
-    const [allData, setAllData] = useState([]);
+    const [allDataCSV, setAllDataCSV] = useState([]);
 
     const toggle = () => {
         setOpen(prevState => !prevState)
@@ -41,23 +40,29 @@ const DataTable = ({merchant}) => {
 
     const apiUrl = `/merchant/${merchant.id}/giftcode`
 
-    const fetchAllData = async () => {
+    const fetchAllDataForCSV = async () => {
         try {
-            const response = await axios.get(`/merchant/${merchant.id}/giftcode`);
-        
-            const allData = response.data.data.map(item => ({
-                ...item,
-                adjusted_redemption_datetime: formatDateTime(item.redemption_datetime)
-            }));
-            setAllData(allData);
-        } catch (e) {
-            console.error("Error loading data: ", e);
+            const params = {
+                allmerch: true, 
+                ...filter, 
+            };
+            const response = await axios.get(apiUrl, { params });
+               
+            const formattedData = response.data.map(item => {
+                return {
+                    ...item,
+                    adjusted_redemption_datetime: formatDateTime(item.redemption_datetime)
+                };
+            });
+            setAllDataCSV(formattedData);
+        } catch (error) {
+            console.error("Error fetching all data for CSV: ", error);
         }
     };
-
+    
     useEffect(() => {
-        fetchAllData();
-    }, []);
+        fetchAllDataForCSV();
+    }, [filter]);
 
     const { isLoading, error, data, isSuccess } = useQuery(
         ['giftcodes', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
@@ -145,7 +150,7 @@ const DataTable = ({merchant}) => {
                         </Col>
                         <Col md={2} className="text-right pr-0">
                             <CSVLink 
-                                data={allData}
+                                data={allDataCSV}
                                 filename={"exported_data.csv"}
                                 className="btn btn-primary account__btn account__btn--small"
                                 style={{maxWidth:'200px'}}
@@ -263,5 +268,3 @@ const TableWrapper = ({merchant}) => {
 }
 
 export default TableWrapper;
-
-
