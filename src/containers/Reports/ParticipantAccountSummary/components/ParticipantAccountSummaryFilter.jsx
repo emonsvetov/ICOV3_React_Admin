@@ -221,12 +221,12 @@ const ParticipantStatusFilter = (
         >Filter</Button>
         <Button
           onClick={() => onClickFilter(true)}
-          className="btn btn-sm btn-primary"
+          className="btn btn-sm btn-secondary"
           color="#ffffff"
         >Reset</Button>
         {options.exportToCsv &&
           <div>
-            <span className="text-blue pointer mr-2" onClick={() => {
+            <span className="btn btn-sm btn-success mr-2 text-white pointer" onClick={() => {
               download(filter)
             }}>Export to CSV</span>
             <CSVLink

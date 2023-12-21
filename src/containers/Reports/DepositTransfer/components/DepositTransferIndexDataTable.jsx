@@ -154,7 +154,7 @@ const DataTable = ({organization, programs}) => {
       <>
         <div className='table react-table report-table'>
           <div className="action-panel">
-            <Row className="mx-0">
+            <Row className="form__form-group mx-0">
               <Col>
                 <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter}
                              exportData={exportData} exportLink={exportLink} exportHeaders={exportHeaders}

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 
 import getOrganizationList from '@/service/getOrganizationList';
 import {labelizeNamedData} from '@/shared/helpers'
-import {Button} from "reactstrap";
+import {Button,Row} from "reactstrap";
 
 import ProgramStatusDropdown from './ProgramStatusDropdown'
 
@@ -24,7 +24,9 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true
     const onProgramPhaseChange = (e) => {
         setKeyword( e.target.value)
     }
-    const onClickFilter = (reset = false) => {
+    const onClickFilter = (event,reset = false) => {
+        console.log(reset);
+        event.preventDefault();
         if( reset ) {
             setKeyword('');
             setOrg('');
@@ -54,17 +56,11 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true
         orgPlaceholder = orgOptions.filter(o => o.value === org).map(o => o.label)
     }
 
-    const handleKeyDown = (event) => {
-        console.log(event);
-        if (event.key === 'Enter') {
-            onClickFilter()
-        }
-      };
-
 
     return (
-        <div className="form__form-group">
-            {useOrg && auth?.isSuperAdmin &&
+        <form className="form__form-group" onSubmit={onClickFilter}>
+        
+        {useOrg && auth?.isSuperAdmin &&
             <div className="col-md-4 px-0 pr-3" >
                 <p className="">Organization</p>
                 <div>
@@ -76,7 +72,6 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true
                         className="react-select"
                         placeholder={orgPlaceholder}
                         classNamePrefix="react-select"
-                       // onKeyDown={handleKeyDown}
                     />
                 </div>
             </div>}
@@ -97,23 +92,24 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true
                     />
                 </div>
             </div>
-            <div className="col-md-4 pl-0">
+            <div className="col-md-4 pl-0 ">
                 <p className="">&nbsp;</p>
                 <div className='flex'>
                     <Button
-                      onClick={()=>onClickFilter()}
-                      className="btn btn-sm btn-info"
+                      type='submit'
+                      className="btn btn-sm btn-primary"
                       color="#ffffff"
-                      onKeyDown={handleKeyDown}
+                    
                     >Filter</Button>
                     <Button
-                      onClick={()=>onClickFilter(true)}
+                      onClick={(e)=>onClickFilter(e,true)}
                       className="btn btn-sm btn-secondary"
                       color="#ffffff"
                     >Reset</Button>
                 </div>
             </div>
-        </div>
+       
+    </form>
     )
 }
 
