@@ -25,7 +25,6 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true
         setKeyword( e.target.value)
     }
     const onClickFilter = (event,reset = false) => {
-        console.log(reset);
         event.preventDefault();
         if( reset ) {
             setKeyword('');
@@ -37,7 +36,6 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true
         }
     }
     useEffect(() => {
-        // console.log(organization)
         if( organization?.id )
         {
             if( auth && auth?.isSuperAdmin )
