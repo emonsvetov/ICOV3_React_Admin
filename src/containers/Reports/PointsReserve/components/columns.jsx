@@ -107,7 +107,7 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.reserve_percent) + sum, 0),
+              () => rows.reduce((sum, row) => Number(row.values.reserve_percentage) + sum, 0),
               [rows],
             );
             const avg = Math.round(totalValue / flatRows.length);
