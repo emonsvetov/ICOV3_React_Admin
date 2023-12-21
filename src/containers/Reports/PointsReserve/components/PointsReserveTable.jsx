@@ -55,7 +55,7 @@ useEffect(() => {
 
   const download = async (filterValues) => {
     let tmpFilter = clone(filterValues);
-    // tmpFilter.exportToCsv = 1;
+    tmpFilter.exportToCsv = 1;
     tmpFilter.limit = pageSize;
     tmpFilter.page = pageIndex+1;
     const response = await fetchApiDataExport(
