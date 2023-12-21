@@ -234,26 +234,6 @@ const DataTable = ({organization, program, programs}) => {
               </tfoot>
             </table>
           }
-
-          {(rows.length > 0) && (
-            <>
-              <ReactTablePagination
-                page={page}
-                gotoPage={gotoPage}
-                previousPage={previousPage}
-                nextPage={nextPage}
-                canPreviousPage={canPreviousPage}
-                canNextPage={canNextPage}
-                pageOptions={pageOptions}
-                pageSize={pageSize}
-                pageIndex={pageIndex}
-                pageCount={pageCount}
-                setPageSize={setPageSize}
-                manualPageSize={manualPageSize}
-                dataLength={totalCount}
-              />
-            </>
-          )}
         </div>
       </>
     )
