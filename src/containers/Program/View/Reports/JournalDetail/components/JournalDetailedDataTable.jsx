@@ -47,7 +47,7 @@ const DataTable = ({organization, programs}) => {
       let tmpFilter = clone(filterValues);
       tmpFilter.limit = pageSize;
       tmpFilter.page = pageIndex+1;
-      
+      tmpFilter.exportToCsv = 1;
       const response = await fetchApiDataExport(
         {
           url: apiUrl,
