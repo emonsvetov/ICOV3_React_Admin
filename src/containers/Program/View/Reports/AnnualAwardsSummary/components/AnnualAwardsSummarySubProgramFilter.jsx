@@ -33,8 +33,6 @@ export const AnnualAwardsSummarySubProgramFilter: FC<AnnualAwardsSummarySubProgr
             updatedFilter.year = values.year
         }
 
-        //console.log(values.programs.join(','))
-
         if (values.programs) {
             updatedFilter.programs = values.programs.join(',')
         }
