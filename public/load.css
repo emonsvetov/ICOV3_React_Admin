@@ -169,6 +169,14 @@
     background-color: #4ce1b6;
 }
 
+.ant-select-focused:where(.css-dev-only-do-not-override-6j9yrn).ant-select:not(.ant-pagination-size-changer).ant-select-selector{
+    border-color: #4ce1b6;
+    outline: #4ce1b6;
+}
+.ant-select-focused.ant-select-selector{
+    border-color: #4ce1b6;
+}
+
 iframe{
     display: none;
 }
