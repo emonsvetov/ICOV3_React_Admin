@@ -2,7 +2,7 @@ import React, {FC, useEffect, useState} from 'react';
 import {any} from "prop-types";
 import {Button, Col, Form, Radio, Row, Select, Space, Switch, Table} from "antd";
 import {Option} from "antd/lib/mentions";
-import ProgramsHierarchyReport from "../../../../../../shared/components/ProgramsHierarchyReport";
+
 
 interface AnnualAwardsSummarySubProgramFilterProps
 {
