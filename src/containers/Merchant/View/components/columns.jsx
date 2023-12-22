@@ -189,6 +189,22 @@ export const REDEEMED_GIFT_CODES_COULMNS = [
         Cell: ({ row, value }) => { return value == 1 ? 'Yes' : 'No'},
         width: 120,
     },
+    {
+        Header: "Virtual inventory",
+        accessor: "virtual_inventory",
+        Cell: ({ row, value }) => { return value == 1 ? 'Yes' : 'No'},
+        width: 120,
+    },
+    {
+        Header: "Tango RA Number",
+        accessor: "tango_reference_order_id",
+        width: 120,
+    },
+    {
+        Header: "Tango Redeemption Time",
+        width: 120,
+        accessor: "adjusted_redemption_datetime",
+    },
 ]
 
 export const SUB_MERCHANTS_COLUMNS = [

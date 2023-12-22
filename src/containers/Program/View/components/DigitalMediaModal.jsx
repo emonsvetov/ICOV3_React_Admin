@@ -62,6 +62,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   let [dropZoneKey, setDropZoneKey] = useState(0);
   const [tab, setTab] = useState(1);
   const [link, setLink] = useState("");
+  const [menuItems, setMenuItems] = useState([]);
 
   const loadMediTypes = async () => {
     try {
@@ -69,14 +70,25 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       if (response.data.length === 0) return {results: [], count: 0}
 
       let options = [];
-
+      let menuItems = [];
       response.data.map(row => {
-        options.push({
-          value: row.program_media_type_id,
-          label: row.name
-        });
+        if (row.is_menu_item == 1) {
+          menuItems.push({
+            value: row.program_media_type_id,
+            url: row.menu_link,
+            id: row.program_media_type_id
+          })
+        }
+        else {
+          options.push({
+            value: row.program_media_type_id,
+            label: row.name
+          });
+         
+        }
       })
       setMediaTypes(options);
+      setMenuItems(menuItems);
     } catch (e) {
       throw new Error(`API error:${e?.message}`);
     }
@@ -157,6 +169,29 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       })
   }
 
+  const handleSubmitMenuItem = (linkUrl) => {
+
+    let saveUrl = axios.defaults.baseURL +  `/organization/${organization.id}/program/${program.id}/digital-media-type`;
+
+    let data = new FormData();
+    data.append('name', "menuLink");
+    data.append('is_menu_item', 1);
+    data.append('menu_link', linkUrl);
+    
+    axios.post(saveUrl, data)
+      .then((res) => {
+        // console.log(res)
+        if (res.status === 200) {
+          loadMediTypes();
+        }
+      })
+      .catch(error => {
+        dispatch(sendFlashMessage(JSON.stringify(error.response.data.errors), 'alert-danger'))
+        setLoading(false)
+        throw new Error(`API error:${error?.message}`);
+      });
+  }
+
   const validate = values => {
     let errors = {}
     if (!mediaType){
@@ -193,7 +228,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   }
 
   const selectCreateOption = (inputValue) => {
-
+  
     let saveUrl = axios.defaults.baseURL +  `/organization/${organization.id}/program/${program.id}/digital-media-type`;
 
     let data = new FormData();
@@ -217,6 +252,24 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
         setLoading(false)
         throw new Error(`API error:${error?.message}`);
       });
+  }
+
+  const addMenus = () => {
+    if (link != "") {
+      handleSubmitMenuItem(link);
+      setLink("");
+    }
+  
+  }
+
+  const deleteMenu = (id) => {
+    console.log(menuItems[id].program_media_type_id);
+    const response = axios.delete(
+      `/organization/${organization.id}/program/${program.id}/digital-media-type/${menuItems[id].id}`
+    );
+    let temp_array = [...menuItems];
+    temp_array.splice(id, 1);
+    setMenuItems(temp_array);
   }
 
   return (
@@ -355,12 +408,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                   )}
                 />
                  :                 
-                <Form
-                  onSubmit={handleSubmit}
-                  validate={validate}
-                  render={({handleSubmit, form, submitting, pristine, values}) => (
-                    <form className="form" onSubmit={handleSubmit}>
-
+                  <>
                       <Row>
                         <Col md="12" lg="12" xl="12">
                           <div className="card__title">
@@ -369,32 +417,6 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                             <div style={{paddingTop: '25px', paddingBottom:'25px'}}>
                               <Button  color="primary" className="mr-3" onClick={()=>setTab(1)}>media</Button>
                               <Button  color="primary" className="mr-3" onClick={()=>setTab(2)}>forms</Button>
-                            </div>
-                            <div>
-                              <Field name="category">
-                                {({ input, meta }) => (
-                                  <div className="form__form-group">
-                                    <div className="form__form-group-field">
-                                      <div className="form__form-group-row">
-                                        <CreatableSelect
-                                          name="category"
-                                          isClearable
-                                          isDisabled={isLoading}
-                                          isLoading={isLoading}
-                                          options={mediaTypes}
-                                          onCreateOption={selectCreateOption}
-                                          placeholder='Select or Create a Menu Category'
-                                          onChange={value =>
-                                            getData(value.value)
-                                          }
-                                        />
-                                        {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                                      </div>
-                                    </div>
-                                  </div>
-                                )}
-                              </Field>
-
                             </div>
                           </div>
                         </Col>
@@ -406,32 +428,35 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                              
                             </div>
                           </div>
-                          <Field name="link">
-                              {({input, meta}) => (
-                                <div className="form__form-group">
-                                  <span className="form__form-group-label">Link </span>
-                                  <div>
-                                    <input onChange={onChangeLinkUrl}
-                                          style={{borderWidth: 1, borderColor: 'gray', maxWidth:'200px'}}
-                                          type="text" value={link}
-                                          placeholder="Link Url"/>
-                                  </div>
+                          <div className="form__form-group">
+                            <span className="form__form-group-label">Link </span>
+                              <div className='table-filter-form form row'>
+                                <div className='col-sm-4 col-md-4 col-lg-4'>
+                                  <input onChange={onChangeLinkUrl}
+                                      style={{borderWidth: 1, borderColor: 'gray', maxWidth:'200px'}}
+                                      type="text" value={link}
+                                      placeholder="Link Url"/>
                                 </div>
-                              )}
-                            </Field>
-                        </Col>
-                      </Row>
-                      <iframe src="https://form.jotform.com/203275544583156" width="80%" height="auto" style={{border:0}}
-                          
-                        />
-                      <Row>
-                        <Col>
-                          <div>
-                            <Button type="submit" disabled={loading} className="btn btn-primary"
-                                    color="#ffffff">Save</Button>
+                                <div className='col'>      
+                                  <Button  color="primary" className="" onClick={()=>addMenus()}>Add</Button>
+                                </div>
+                              </div>
                           </div>
                         </Col>
                       </Row>
+                      {menuItems.map((menus, idx)=> {
+                        return(
+                          <div className='table-filter-form form row'>
+                            <div className='col-sm-8 col-md-8 col-lg-8'>
+                                <h4>{menus.url}</h4>
+                            </div>
+                            <div className='col'>      
+                              <Button  color="primary" className="" onClick={()=>deleteMenu(idx)}>Delete</Button>
+                            </div>
+                          </div>
+                        )
+                      })}
+
                       <Row>
                         <Col>
                           {media && media.length > 0
@@ -454,10 +479,8 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                             )}
                         </Col>
                       </Row>
-
-                    </form>
-                  )}
-                />
+                    </>
+    
               }
           </CardBody>
         </Card>
