@@ -9,6 +9,7 @@ import ParticipantAccountSubProgram from "../Reports/ParticipantAccountSubProgra
 import ProgramParticipantStatusSummary from "../Reports/ProgramParticipantStatusSummary";
 import SupplierRedemptionIndex from "../Reports/SupplierRedemptionIndex";
 import JournalDetailed from "../Reports/JournalDetail";
+import AnnualAwardsSummarySubProgram from "./AnnualAwardsSummary";
 
 const ProgramReport = ({organization}) => {
   // Tabs Panel
@@ -50,7 +51,7 @@ const ProgramReport = ({organization}) => {
         <Card>
           <CardBody className='infoview'>
             <Row>
-              <Col md="7" >
+              <Col md="24" >
                 <Nav tabs>
                   <NavItem>
                     <NavLink
@@ -102,6 +103,17 @@ const ProgramReport = ({organization}) => {
                     >
                         Supplier Redemption
                     </NavLink>
+                    <NavLink
+                        className={classnames({
+                            active:
+                                currentActiveTab === '5'
+                        })}
+                        onClick={() => {
+                            togglePan('5');
+                        }}
+                    >
+                        Annual Awards Summary
+                    </NavLink>
                 </Nav>
               </Col>
             </Row>
@@ -125,6 +137,12 @@ const ProgramReport = ({organization}) => {
                     {
                         currentActiveTab != 4 ? 'Loading...' :
                             <SupplierRedemptionIndex program={program}/>
+                    }
+                </TabPane>
+                <TabPane tabId="5">
+                    {
+                        currentActiveTab != 5 ? 'Loading...' :
+                            <AnnualAwardsSummarySubProgram program={program}/>
                     }
                 </TabPane>
             </TabContent>
