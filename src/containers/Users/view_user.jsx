@@ -57,7 +57,7 @@ const ViewUser = ({ organization }) => {
     // console.log(organization)
 
     const { isLoading, error, data, isSuccess, remove } = useQuery(
-        ['user', id],
+        ['userGlobalInfo', id],
         () => fetchUser(id),
         {
             keepPreviousData: false,
