@@ -23,6 +23,8 @@ const ViewUser = ({ organization }) => {
     const [userProgramIds, setUserProgramIds] = useState(null)
     let { id } = useParams();
 
+    console.log(id, 'USER ID')
+
     // Tabs Panel
     const [currentActiveTab, setCurrentActiveTab] = useState('1');
     const togglePan = tab => {
