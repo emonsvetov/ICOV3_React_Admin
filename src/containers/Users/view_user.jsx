@@ -47,7 +47,7 @@ const ViewUser = ({ organization }) => {
     }
 
     useEffect( () => {
-        if( organization.id )   {
+        if (id) {
             getUserPrograms()
         }
     }, [id])
