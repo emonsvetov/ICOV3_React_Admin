@@ -24,6 +24,7 @@ const ViewUser = ({ organization }) => {
     let { id } = useParams();
 
     console.log(id, 'USER ID')
+    console.log(userProgramIds, 'userProgramIds')
 
     // Tabs Panel
     const [currentActiveTab, setCurrentActiveTab] = useState('1');
