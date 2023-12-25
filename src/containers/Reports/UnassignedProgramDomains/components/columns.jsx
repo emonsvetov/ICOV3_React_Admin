@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 import React, { useMemo } from 'react';
 
-export const TABLE_COLUMNS = [
+export const PROGRAM_COLUMNS = [
     {
-        Header: "ID",
+        Header: "Program ID",
         accessor: "id",
         width: 130,
         Footer:"#",
