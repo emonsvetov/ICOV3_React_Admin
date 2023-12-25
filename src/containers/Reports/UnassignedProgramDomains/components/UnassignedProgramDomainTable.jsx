@@ -3,7 +3,7 @@ import { useExpanded, usePagination, useResizeColumns, useSortBy, useTable } fro
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import { Col, Row } from 'reactstrap';
-import { TABLE_COLUMNS } from './columns';
+import { PROGRAM_COLUMNS } from './columns';
 import { connect } from 'react-redux';
 import { clone } from 'lodash';
 import { reducer, useEffectToDispatch, fetchApiData, fetchApiDataExport, initialState, Sorting } from "@/shared/apiTableHelper";
@@ -105,7 +105,7 @@ const DataTable = ({ organization, programs }) => {
     }, [exportLink])
 
 
-    let columns = useMemo(() => TABLE_COLUMNS, []);
+    let columns = useMemo(() => PROGRAM_COLUMNS, []);
     const totalPageCount = Math.ceil(totalCount / queryPageSize);
 
     const {
