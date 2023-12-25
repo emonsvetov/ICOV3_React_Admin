@@ -21,6 +21,7 @@ const ViewUser = ({ organization }) => {
 
     const [userPrograms, setUserPrograms] = useState(null)
     const [userProgramIds, setUserProgramIds] = useState(null)
+    let { id } = useParams();
 
     // Tabs Panel
     const [currentActiveTab, setCurrentActiveTab] = useState('1');
@@ -49,9 +50,9 @@ const ViewUser = ({ organization }) => {
         if( organization.id )   {
             getUserPrograms()
         }
-    }, [])
+    }, [id])
 
-    let { id } = useParams();
+
 
     // console.log(organization)
 
