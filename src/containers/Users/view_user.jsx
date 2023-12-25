@@ -43,6 +43,7 @@ const ViewUser = ({ organization }) => {
     const getUserPrograms = () => {
         fetchUserPrograms( organization.id, id )
             .then( data => {
+                console.log(data, 'USER data')
                 setUserPrograms(data);
                 setUserProgramIds(data.map(a => a.account_holder_id));
             })
