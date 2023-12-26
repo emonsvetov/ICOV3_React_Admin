@@ -32,11 +32,14 @@ interface SupplierRedemptionSubFilterProps {
     merchants: any,
     exportCSV: any,
 }
+const today = new Date();
+const oneYearAgo = new Date(today);
+oneYearAgo.setFullYear(today.getFullYear() - 1);
 
 export const defFilter = {
     merchants: null,
-    from: '2022-12-31',
-    to: '2023-12-06',
+    from: oneYearAgo.toISOString().split('T')[0],
+    to: today.toISOString().split('T')[0],
     active: true,
     reportKey: 'sku_value',
     codes: null,
