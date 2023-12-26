@@ -21,6 +21,7 @@ const ViewUser = ({ organization }) => {
 
     const [userPrograms, setUserPrograms] = useState(null)
     const [userProgramIds, setUserProgramIds] = useState(null)
+    let { id } = useParams();
 
     // Tabs Panel
     const [currentActiveTab, setCurrentActiveTab] = useState('1');
@@ -31,32 +32,21 @@ const ViewUser = ({ organization }) => {
     const fetchUser = async (id) => {
         try {
             const response = await axios.get(`/organization/${organization.id}/user/${id}`);
+            await fetchUserPrograms( organization.id, id )
+                .then( data => {
+                    console.log(data, 'USER data')
+                    setUserPrograms(data);
+                    setUserProgramIds(data.map(a => a.account_holder_id));
+                })
+
             return response.data;
         } catch (e) {
             throw new Error(`API error:${e?.message}`);
         }
     };
 
-    const getUserPrograms = () => {
-        fetchUserPrograms( organization.id, id )
-            .then( data => {
-                setUserPrograms(data);
-                setUserProgramIds(data.map(a => a.account_holder_id));
-            })
-    }
-
-    useEffect( () => {
-        if( organization.id )   {
-            getUserPrograms()
-        }
-    }, [])
-
-    let { id } = useParams();
-
-    // console.log(organization)
-
     const { isLoading, error, data, isSuccess, remove } = useQuery(
-        ['user', id],
+        ['userGlobalInfo', id],
         () => fetchUser(id),
         {
             keepPreviousData: false,

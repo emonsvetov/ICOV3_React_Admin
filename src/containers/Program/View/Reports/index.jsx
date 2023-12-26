@@ -15,6 +15,7 @@ import PointsPurchase from "../Reports/PointsPurchase";
 import ParticipantAccountSummary from '../Reports/ParticipantAccountSummary'
 import UserDetailsChangeLogs from "../Reports/UserDetailsChangeLog";
 import DeletedSocialWallPosts from '../Reports/DeletedSocialWallPosts'
+import AnnualAwardsSummarySubProgram from "./AnnualAwardsSummary";
 const ProgramReport = ({organization}) => {
   // Tabs Panel
   const [currentActiveTab, setCurrentActiveTab] = useState('1');
@@ -173,6 +174,17 @@ const ProgramReport = ({organization}) => {
                   >
                       Deleted Social Wall Posts
                   </NavLink>
+                    <NavLink
+                        className={classnames({
+                            active:
+                                currentActiveTab === '11'
+                        })}
+                        onClick={() => {
+                            togglePan('11');
+                        }}
+                    >
+                        Annual Awards Summary
+                    </NavLink>
                 </Nav>
               </Col>
             </Row>
@@ -234,6 +246,12 @@ const ProgramReport = ({organization}) => {
                       <DeletedSocialWallPosts program={program}/>
                 }
               </TabPane>
+                <TabPane tabId="11">
+                    {
+                        currentActiveTab != 11 ? 'Loading...' :
+                            <AnnualAwardsSummarySubProgram program={program}/>
+                    }
+                </TabPane>
             </TabContent>
           </CardBody>
         </Card>

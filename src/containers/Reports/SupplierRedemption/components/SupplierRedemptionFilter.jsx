@@ -100,7 +100,7 @@ export const SupplierRedemptionFilter: FC<SupplierRedemptionFilterProps> = ({fil
                         </Radio.Group>
                     </Form.Item>
                 </Col>
-                <Col span={6} order={3}>
+                <Col span={6} order={2}>
                     <Form.Item
                         name="from"
                         label="From"
@@ -109,7 +109,7 @@ export const SupplierRedemptionFilter: FC<SupplierRedemptionFilterProps> = ({fil
                         <DatePicker format="DD/MM/YYYY"/>
                     </Form.Item>
                 </Col>
-                <Col span={6} order={2}>
+                <Col span={6} order={3}>
                     <Form.Item
                         name="to"
                         label="To"
