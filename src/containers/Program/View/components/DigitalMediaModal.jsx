@@ -62,21 +62,25 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   let [dropZoneKey, setDropZoneKey] = useState(0);
   const [tab, setTab] = useState(1);
   const [link, setLink] = useState("");
+  const [tempLink, setTempLink] = useState()
   const [menuItems, setMenuItems] = useState([]);
+  const [currentMenuItem, setCurrentMenuItem] = useState();
 
   const loadMediTypes = async () => {
     try {
       const response = await axios.get(`/organization/${organization.id}/program/${program.id}/digital-media-type`);
       if (response.data.length === 0) return {results: [], count: 0}
-
+      
       let options = [];
       let menuItems = [];
       response.data.map(row => {
-        if (row.is_menu_item == 1) {
+        if (row.is_menu_item === 1) {
           menuItems.push({
             value: row.program_media_type_id,
             url: row.menu_link,
-            id: row.program_media_type_id
+            id: row.program_media_type_id,
+            menu_link:row.menu_link,
+            label:row.name
           })
         }
         else {
@@ -88,7 +92,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
         }
       })
       setMediaTypes(options);
-      setMenuItems(menuItems);
+      setMenuItems(menuItems);      
     } catch (e) {
       throw new Error(`API error:${e?.message}`);
     }
@@ -104,12 +108,29 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       const data = response.data;
       setMediaType(media_type);
       setMedia(data);
+      
+      let temp = menuItems.filter(iframe =>  iframe.id === media_type)[0];    
+      setCurrentMenuItem(temp);
+      setTempLink(temp.menu_link);
+
       return data;
     } catch (e) {
       throw new Error(`API error:${e?.message}`);
     }
+    
   }
 
+  const getIframe = (value) => {    
+    let temp = menuItems.filter(iframe =>  iframe.id === value)[0];    
+    setCurrentMenuItem(temp); 
+
+    setTempLink(temp.menu_link);
+    getData(temp.id);
+  }
+
+  const saveIframe = () => {
+    saveLinkForIframe();
+  }
 
   useEffect(() => {
     loadMediTypes();
@@ -169,12 +190,35 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       })
   }
 
-  const handleSubmitMenuItem = (linkUrl) => {
+  const saveLinkForIframe = () => {
+    let saveUrl = axios.defaults.baseURL +  `/organization/${organization.id}/program/${program.id}/digital-media-type-iframe`;
+    let data = new FormData();
+    
+    data.append('program_media_type_id', currentMenuItem.id)
+    data.append('name', currentMenuItem.label);
+    data.append('is_menu_item', 1);
+    data.append('menu_link', tempLink);
+    
+    axios.post(saveUrl, data)
+      .then((res) => {
+        if (res.status === 200) {
+          loadMediTypes();
+          setTempLink("")
+        }
+      })
+      .catch(error => {
+        dispatch(sendFlashMessage(JSON.stringify(error.response.data.errors), 'alert-danger'))
+        setLoading(false)
+        throw new Error(`API error:${error?.message}`);
+      });
+  }
+
+  const handleSubmitMenuItem = (linkUrl, inputValue) => {
 
     let saveUrl = axios.defaults.baseURL +  `/organization/${organization.id}/program/${program.id}/digital-media-type`;
 
     let data = new FormData();
-    data.append('name', "menuLink");
+    data.append('name', inputValue);
     data.append('is_menu_item', 1);
     data.append('menu_link', linkUrl);
     
@@ -233,16 +277,20 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
 
     let data = new FormData();
     data.append('name', inputValue);
+    data.append('is_menu_item', 1);
 
     axios.post(saveUrl, data)
-      .then((res) => {
-        // console.log(res)
+      .then((res) => {        
         if (res.status === 200) {
-              mediaTypes.push({
-                  value: res.data.program_media_type_id,
-                  label: inputValue
-              });
-              setMediaTypes(mediaTypes);
+          menuItems.push({
+            id: res.data.program_media_type_id,
+            label: res.data.name,
+            // menu_link: res.data.menu_link,
+            // url: res.data.menu_link,
+            // value: res.data.program_media_type_id
+          });          
+          setMenuItems(menuItems);
+          setMedia([]);
         }
       })
       .catch(error => {
@@ -254,22 +302,51 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       });
   }
 
+  const selectCreateIframe = (inputValue) => {
+   if (link === "")
+    handleSubmitMenuItem(link, inputValue)
+  }
+
   const addMenus = () => {
-    if (link != "") {
-      handleSubmitMenuItem(link);
+    if (link !== "") {      
       setLink("");
+      setTempLink(link);     
     }
   
   }
 
-  const deleteMenu = (id) => {
-    console.log(menuItems[id].program_media_type_id);
-    const response = axios.delete(
-      `/organization/${organization.id}/program/${program.id}/digital-media-type/${menuItems[id].id}`
-    );
-    let temp_array = [...menuItems];
-    temp_array.splice(id, 1);
-    setMenuItems(temp_array);
+  const deleteMenu = () => {
+    let id = currentMenuItem.id;
+
+    let deleteUrl = axios.defaults.baseURL +  `/organization/${organization.id}/program/${program.id}/digital-media-type-url-delete`;
+
+    let data = new FormData();
+    data.append('program_media_type_id', id);
+   debugger
+    axios.post(deleteUrl, data)
+      .then((res) => {        
+        if (res.status === 200) {
+          let temp_array = [...menuItems];
+          temp_array.splice(id, 1);
+          setMenuItems(temp_array);
+          setTempLink("");
+        }
+      })
+      .catch(error => {
+        console.log(error)
+        console.log(JSON.stringify(error.response.data.errors));
+        dispatch(sendFlashMessage(JSON.stringify(error.response.data.errors), 'alert-danger'))
+        setLoading(false)
+        throw new Error(`API error:${error?.message}`);
+      });    
+  }
+
+  const setMediaTab = () => {
+    setTab(1);
+  }
+
+  const setFormsTab = () => {
+    setTab(2);
   }
 
   return (
@@ -278,7 +355,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       <ModalBody className='modal-lg'>
         <Card>
           <CardBody className='pt-0'>
-              {tab == 1 ?
+              {tab === 1 ?
                 <Form
                   onSubmit={handleSubmit}
                   validate={validate}
@@ -305,7 +382,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                           isClearable
                                           isDisabled={isLoading}
                                           isLoading={isLoading}
-                                          options={mediaTypes}
+                                          options={menuItems}
                                           onCreateOption={selectCreateOption}
                                           placeholder='Select or Create a Menu Category'
                                           onChange={value =>
@@ -415,8 +492,8 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                             <h3>Upload Digital Media</h3>
                             <h5 className="colorgrey">{program.name}</h5>
                             <div style={{paddingTop: '25px', paddingBottom:'25px'}}>
-                              <Button  color="primary" className="mr-3" onClick={()=>setTab(1)}>media</Button>
-                              <Button  color="primary" className="mr-3" onClick={()=>setTab(2)}>forms</Button>
+                              <Button  color="primary" className="mr-3" onClick={setMediaTab}>media</Button>
+                              <Button  color="primary" className="mr-3" onClick={setFormsTab}>forms</Button>
                             </div>
                           </div>
                         </Col>
@@ -425,7 +502,18 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                         <Col md="12">
                           <div className="form__form-group">
                             <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
-                             
+                              <CreatableSelect
+                                  name="category"
+                                  isClearable
+                                  isDisabled={isLoading}
+                                  isLoading={isLoading}
+                                  options={menuItems}
+                                  onCreateOption={selectCreateIframe}
+                                  placeholder='Select or Create a Menu Category'
+                                  onChange={value =>
+                                    getIframe(value.value)
+                                  }
+                                />
                             </div>
                           </div>
                           <div className="form__form-group">
@@ -444,19 +532,17 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                           </div>
                         </Col>
                       </Row>
-                      {menuItems.map((menus, idx)=> {
-                        return(
-                          <div className='table-filter-form form row'>
-                            <div className='col-sm-8 col-md-8 col-lg-8'>
-                                <h4>{menus.url}</h4>
-                            </div>
-                            <div className='col'>      
-                              <Button  color="primary" className="" onClick={()=>deleteMenu(idx)}>Delete</Button>
-                            </div>
+                      {tempLink&&
+                       <div className='table-filter-form form row'>
+                          <div className='col-sm-8 col-md-8 col-lg-8'>
+                              <h4>{tempLink}</h4>
                           </div>
-                        )
-                      })}
-
+                          <div className='col'>      
+                            <Button  color="primary" className="" onClick={()=>deleteMenu()}>Delete</Button>
+                          </div>
+                        </div>
+                        
+                      }                     
                       <Row>
                         <Col>
                           {media && media.length > 0
@@ -477,6 +563,14 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                 ))}
                               </div>
                             )}
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <div>
+                            <Button onClick={saveIframe} className="btn btn-primary"
+                                    color="#ffffff">Save</Button>
+                          </div>
                         </Col>
                       </Row>
                     </>
