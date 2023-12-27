@@ -69,6 +69,7 @@ import {
   AwardDetail,
   CashDeposit,
   Inventory,
+  Orders,
   InventoryOrder,
   JournalDetailed,
   PointsPurchaseSummary,
@@ -177,6 +178,7 @@ const Reports = () => (
     <Route exact path="/reports/award-detail" component={AwardDetail} />
     <Route exact path="/reports/cash-deposit" component={CashDeposit} />
     <Route exact path="/reports/inventory" component={Inventory} />
+    <Route exact path="/reports/orders" component={Orders} />
     <Route exact path="/reports/inventory-order" component={InventoryOrder} />
     <Route exact path="/reports/journal-detailed" component={JournalDetailed} />
     <Route exact path="/reports/points-purchase-summary" component={PointsPurchaseSummary} />
