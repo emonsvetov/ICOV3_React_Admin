@@ -93,8 +93,13 @@ const MoniesFilter = ({onClickFilterCallback}) => {
                     </div>
                     </div>
                 </div>
+<<<<<<< HEAD
                 <div className="col-md-4 d-flex align-items-end pl-1" >
                     <Button
+=======
+                <div className="col-md-4 d-flex align-items-end pl-1">
+                    <Button 
+>>>>>>> 787fc0bf3a8218427f38e018b4ce3af4e7082242
                         type="submit"
                         onClick={() => {
                             form.change("action", "submit");
@@ -109,7 +114,11 @@ const MoniesFilter = ({onClickFilterCallback}) => {
                             form.change("action", "export");
                         }}
                         disabled={submitting} 
+<<<<<<< HEAD
                         className="btn btn-sm btn-success" 
+=======
+                        className="btn btn-sm btn-primary" 
+>>>>>>> 787fc0bf3a8218427f38e018b4ce3af4e7082242
                         color="#ffffff"
                     >Export CSV</Button>
                 </div>
