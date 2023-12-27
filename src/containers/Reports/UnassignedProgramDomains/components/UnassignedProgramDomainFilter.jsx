@@ -36,7 +36,7 @@ const UnassignedProgramDomainFilter = ({ onClickFilterCallback, download, filter
                 </div>
                 <div className="col-md-4 d-flex align-items-end pl-1">
                     <Button type="submit" className="btn btn-sm btn-primary" color="#ffffff">Filter</Button>
-                    <Button onClick={handleExportClick} className="btn btn-sm btn-primary ml-2" color="#ffffff">Export to CSV</Button>
+                    <Button onClick={handleExportClick} className="btn btn-sm btn-success ml-2" color="#ffffff">Export to CSV</Button>
                     <CSVLink
                         data={exportData}
                         headers={exportHeaders}

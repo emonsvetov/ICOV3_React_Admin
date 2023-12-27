@@ -246,10 +246,10 @@ const DataTable = () => {
             <>
                 <div className='table react-table'>
                     <div className="action-panel">
-                        <Row className="mx-0">
+                        <Row className="flex mx-0">
                             <Col lg={9} md={9} sm={8}>
                                 <DepositFilter onClickFilterCallback={onClickFilterCallback} />
-                                <button onClick={handleDownload} className="btn btn-primary">
+                                <button onClick={handleDownload} className="btn btn-success">
                                     Export to CSV
                                 </button>
                             </Col>

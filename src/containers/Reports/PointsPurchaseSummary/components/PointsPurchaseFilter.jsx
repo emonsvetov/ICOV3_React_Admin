@@ -115,7 +115,7 @@ return (
                              form.change("action", "export");
                          }}
                         disabled={submitting} 
-                        className="btn btn-sm btn-primary" 
+                        className="btn btn-sm btn-success" 
                         color="#ffffff"
                     >Export CSV
                      <CSVLink

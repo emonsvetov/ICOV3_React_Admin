@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import Select from 'react-select'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-
+import { Button } from 'reactstrap';
 import getUserStatusList from '@/service/getUserStatuses';
 import getOrganizationList from '@/service/getOrganizationList';
 import { labelizeNamedData } from '@/shared/helpers'
@@ -98,8 +98,8 @@ const UserFilter = ({ onClickFilterCallback, organization, auth }) => {
             </div>
             <div className="col-md-3 pl-0">
                 <p className="">&nbsp;</p>
-                <div className='flex'>
-                    <span className="text-primary pointer btn-sm bordered" onClick={onClickFilter}>Filter</span>
+                <div className="d-flex align-items-end ">
+                    <Button type="button" onClick={onClickFilter} className="btn btn-sm btn-primary" color="#ffffff">Filter</Button>
                 </div>
             </div>
         </div>

@@ -587,13 +587,13 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                 >Filter</Button>
                 <Button
                     onClick={()=>onClickFilter(true)}
-                    className="btn btn-sm btn-primary"
+                    className="btn btn-sm btn-secondary"
                     color="#ffffff"
                 >Reset</Button>
                 {options.exportToCsv &&
                     <>
             <span
-                className="btn btn-sm btn-primary mr-2 text-white pointer"
+                className="btn btn-sm btn-success mr-2 text-white pointer"
                 onClick={() => { download(filter) }}
             >Export to CSV</span>
                         <CSVLink
