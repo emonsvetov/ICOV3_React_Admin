@@ -24,6 +24,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
           <>
             <SidebarLink title="Cash Deposit" route="/reports/cash-deposit" />
             <SidebarLink title="Inventory" route="/reports/inventory" />
+            <SidebarLink title="Orders" route="/reports/orders" />
             <SidebarLink title="Journal Detailed" route="/reports/journal-detailed" />
             <SidebarLink title="Points Reserve" route="/reports/points-reserve" />
             <SidebarLink title="Program Status" route="/reports/program-status" />
