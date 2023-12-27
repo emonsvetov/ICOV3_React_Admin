@@ -21,7 +21,7 @@ const fetchPrograms = async () => {
         throw new Error(`API error:${e?.message}`);
     }
 };
-const MoniesFilter = ({onClickFilterCallback}) => {
+const DepositsReceivedFilter = ({onClickFilterCallback}) => {
     const [loading, setLoading] = React.useState(false)
     const [data, setData] = React.useState([])
     const [selected, setSelected] = React.useState([]);
@@ -120,4 +120,4 @@ const MoniesFilter = ({onClickFilterCallback}) => {
     )
 }
 
-export default MoniesFilter;
+export default DepositsReceivedFilter;
