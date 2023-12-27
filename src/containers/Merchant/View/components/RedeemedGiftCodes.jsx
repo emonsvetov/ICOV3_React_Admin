@@ -7,10 +7,18 @@ import {REDEEMED_GIFT_CODES_COULMNS}  from "./columns";
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import UploadGiftCodesModal  from "./UploadGiftCodesModal";
 import { Row, Col } from 'reactstrap';
+import { format, subHours } from 'date-fns';
+import { CSVLink } from 'react-csv';
 
 import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter, Sorting} from "@/shared/apiTableHelper"
 
 const queryClient = new QueryClient()
+
+const formatDateTime = (datetime) => {
+    const date = new Date(datetime);
+    const adjustedDate = subHours(date, 4);
+    return format(adjustedDate, 'yyyy-MM-dd HH:mm:ss');
+};
 
 const DataTable = ({merchant}) => {
     
@@ -18,6 +26,7 @@ const DataTable = ({merchant}) => {
     const [useFilter, setUseFilter] = useState(false);
     const [isOpen, setOpen] = useState(false)
     const [trigger, setTrigger] = useState( 0 );
+    const [allDataCSV, setAllDataCSV] = useState([]);
 
     const toggle = () => {
         setOpen(prevState => !prevState)
@@ -29,6 +38,30 @@ const DataTable = ({merchant}) => {
     React.useReducer(reducer, initialState);
 
     const apiUrl = `/merchant/${merchant.id}/giftcode`
+
+    const fetchAllDataForCSV = async () => {
+        try {
+            const params = {
+                allmerch: true, 
+                ...filter, 
+            };
+            const response = await axios.get(apiUrl, { params });
+               
+            const formattedData = response.data.map(item => {
+                return {
+                    ...item,
+                    adjusted_redemption_datetime: formatDateTime(item.redemption_datetime)
+                };
+            });
+            setAllDataCSV(formattedData);
+        } catch (error) {
+            console.error("Error fetching all data for CSV: ", error);
+        }
+    };
+    
+    useEffect(() => {
+        fetchAllDataForCSV();
+    }, [filter]);
 
     const { isLoading, error, data, isSuccess } = useQuery(
         ['giftcodes', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
@@ -47,6 +80,12 @@ const DataTable = ({merchant}) => {
             staleTime: Infinity,
         }
     );
+
+    const transformedData = data ? data.results.map(item => ({
+        ...item,
+        adjusted_redemption_datetime: formatDateTime(item.redemption_datetime)
+    })) : [];
+    
 
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
@@ -68,7 +107,7 @@ const DataTable = ({merchant}) => {
         state: { pageIndex, pageSize, sortBy }
     } = useTable({
         columns,
-        data: data ? data.results : [],
+        data: data ? transformedData : [],
         initialState: {
             pageIndex: queryPageIndex,
             pageSize: queryPageSize,
@@ -88,6 +127,7 @@ const DataTable = ({merchant}) => {
     );
     // const [statusFilterValue, setStatusFilterValue] = useState("");
     const manualPageSize = []
+
     
     useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger} );
 
@@ -108,12 +148,14 @@ const DataTable = ({merchant}) => {
                             <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter} config={{label:'codes', keyword:false, dateRange: true, type: 'redeemed'}} />
                         </Col>
                         <Col md={2} className="text-right pr-0">
-                            <div 
-                            style={{maxWidth:'200px'}}
-                            className="btn btn-primary account__btn account__btn--small"
-                            onClick={()=>toggle()}
-                            >Upload Gift Codes
-                            </div>
+                            <CSVLink 
+                                data={allDataCSV}
+                                filename={"exported_data.csv"}
+                                className="btn btn-primary account__btn account__btn--small"
+                                style={{maxWidth:'200px'}}
+                            >
+                                Export to CSV
+                            </CSVLink>
                         </Col>
                     </Row>
                     <table {...getTableProps()} className="table">
@@ -225,5 +267,3 @@ const TableWrapper = ({merchant}) => {
 }
 
 export default TableWrapper;
-
-

@@ -6,79 +6,21 @@ import {PROGRAM_COLUMNS} from "./columns";
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {getFirstDay, dateStrToYmd} from '@/shared/helpers'
 import { Col, Row} from 'reactstrap';
+import {clone} from 'lodash';
 import PointsReserveFilter  from "./PointsReserveFilter";
 import {connect} from "react-redux";
 import {
     reducer,
     fetchApiData,
     initialState,
-   
+    useEffectToDispatch,
+    fetchApiDataExport,
     Sorting
   } from "@/shared/apiTableHelper"
-import {renameChildrenToSubrows} from '@/shared/helpers'
 
 const queryClient = new QueryClient()
 
-const PAGE_CHANGED = 'PAGE_CHANGED';
-const PAGE_SIZE_CHANGED = 'PAGE_SIZE_CHANGED';
-const PAGE_SORT_CHANGED = 'PAGE_SORT_CHANGED'
-const PAGE_FILTER_CHANGED = 'PAGE_FILTER_CHANGED';
-const TOTAL_COUNT_CHANGED = 'TOTAL_COUNT_CHANGED';
-
-// const reducer = (state, { type, payload }) => {
-//   switch (type) {
-//     case PAGE_CHANGED:
-//         return {
-//             ...state,
-//             queryPageIndex: payload,
-//         };
-//     case PAGE_SIZE_CHANGED:
-//         return {
-//             ...state,
-//             queryPageSize: payload,
-//         };
-//     case PAGE_SORT_CHANGED:
-//         return {
-//             ...state,
-//             queryPageSortBy: payload,
-//         };
-//     case PAGE_FILTER_CHANGED:
-//         return {
-//             ...state,
-//             queryPageFilter: payload,
-//         };
-//     case TOTAL_COUNT_CHANGED:
-//         return {
-//             ...state,
-//             totalCount: payload,
-//         };
-//     default:
-//       throw new Error(`Unhandled action type: ${type}`);
-//   }
-// };
-
-const fetchMockData = () => {
-    
-    const data = {
-        results: renameChildrenToSubrows(MOCK_DATA),
-        count: 15
-    };
-    return data;
-};
-
-
 const DataTable = ({organization, programs}) => {
-
-
-const onClickFilterCallback = (from, to) => {
-            
-    if(filter.from === from && filter.to === to)    {
-        alert('No change in filters')
-        return
-    }
-    setFilter({...filter, from, to})
-}
-
 
 const [filter, setFilter] = useState({
     programs: programs,
@@ -89,15 +31,46 @@ const [filter, setFilter] = useState({
     to: dateStrToYmd(new Date())
     });
 
-const handleDownload = ( ) => {
-    alert('downloading...')
-}
+const [useFilter, setUseFilter] = useState(false);
+const [trigger, setTrigger] = useState(0);
+const [exportData, setExportData] = useState([]);
+const [exportHeaders, setExportHeaders] = useState([]);
+const [exportToCsv, setExportToCsv] = useState(false);
+const exportLink = React.createRef();
+
+useEffect(() => {
+    if (exportToCsv) {
+      if (exportLink.current) {
+        setExportToCsv(false);
+        exportLink.current.link.click();
+      }
+    }
+  }, [exportLink])
+
+  const download = async (filterValues) => {
+    let tmpFilter = clone(filterValues);
+    tmpFilter.exportToCsv = 1;
+    tmpFilter.limit = pageSize;
+    tmpFilter.page = pageIndex+1;
+    const response = await fetchApiDataExport(
+      {
+        url: apiUrl,
+        filter: tmpFilter,
+        sortby: queryPageSortBy,
+        trigger: queryTrigger
+      }
+    );
+    setExportData(response.results);
+    setExportHeaders(response.headers);
+    setExportToCsv(true);
+  }
+
 
 const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
 React.useReducer(reducer, initialState);
 
 const apiUrl = `/organization/${organization.id}/report/points-reserve`;
-const {isLoading, error, data, isSuccess} = useQuery(
+const {isLoading, error, data, isSuccess,isFetched, isFetching} = useQuery(
     ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
     () => fetchApiData(
       {
@@ -164,7 +137,7 @@ let program_columns = [
         autoResetSortBy: false,
         autoResetExpanded: false,
         autoResetPage: false,
-        defaultColumn,
+        disableResizing: true
         
     },
     useSortBy,
@@ -175,47 +148,39 @@ let program_columns = [
     );
     // const [statusFilterValue, setStatusFilterValue] = useState("");
     const manualPageSize = []
-    
-    React.useEffect(() => {
-        dispatch({ type: PAGE_CHANGED, payload: pageIndex });
-    }, [pageIndex]);
-
-    React.useEffect(() => {
-        // alert(PAGE_SIZE_CHANGED)
-        dispatch({ type: PAGE_SIZE_CHANGED, payload: pageSize });
-        gotoPage(0);
-    }, [pageSize, gotoPage]);
-
-    useEffect(() => {
-        dispatch({ type: PAGE_SORT_CHANGED, payload: sortBy });
-        gotoPage(0);
-    }, [sortBy, gotoPage]);
-
-    React.useEffect(() => {
-        // alert(PAGE_FILTER_CHANGED)
-        dispatch({ type: PAGE_FILTER_CHANGED, payload: filter });
-        gotoPage(0);
-    }, [filter, gotoPage]);
-
-    React.useEffect(() => {
-        if (data?.count) {
-            dispatch({
-            type: TOTAL_COUNT_CHANGED,
-            payload: data.count,
-            });
-        }
-    }, [data?.count]);
+    useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
 
     if (error) {
         return <p>Error: {JSON.stringify(error)}</p>;
     }
+
+    if (isLoading || !organization?.id) {
+      return <p>Loading...</p>;
+    }
+
+    
+    if (isSuccess)
     return (
             <>
                 <div className='table react-table'>
                     <div className="action-panel">
                         <Row className="mx-0">
                             <Col lg={9} md={9} sm={8}>
-                                <PointsReserveFilter onClickFilterCallback={onClickFilterCallback} />
+                                <PointsReserveFilter filter={filter} 
+                                    setFilter={setFilter} 
+                                    setUseFilter={setUseFilter}
+                                    exportData={exportData} 
+                                    exportLink={exportLink} 
+                                    exportHeaders={exportHeaders}
+                                    download={download}
+                                    config={{
+                                        keyword: false,
+                                        dateRange: true,
+                                        // awardLevels: availableAwardLevels,
+                                        programs: true,
+                                        exportToCsv: true
+                                    }}
+                                    loading={isLoading || isFetching} />
                             </Col>
                         </Row>
                     </div>
@@ -226,19 +191,13 @@ let program_columns = [
                     isSuccess && 
                     <table {...getTableProps()} className="table">
                         <thead>
-                            {headerGroups.map( (headerGroup) => (
+                            {headerGroups.map((headerGroup) => (
                                 <tr {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map( column => (
-                                        <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                            {column.render('Header')}
-                                            {column.isSorted ? <Sorting column={column} /> : ''}
-                                            <div
-                                                {...column.getResizerProps()}
-                                                className={`resizer ${
-                                                    column.isResizing ? 'isResizing' : ''
-                                                }`}
-                                            />
-                                        </th>
+                                    {headerGroup.headers.map(column => (
+                                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                        {column.render('Header')}
+                                        {column.isSorted ? <Sorting column={column}/> : ''}
+                                    </th>
                                     ))}
                                 </tr>
                             ))}

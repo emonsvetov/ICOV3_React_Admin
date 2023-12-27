@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-export const PROGRAM_COLUMNS = [
+export const TABLE_COLUMNS = [
    
     {
         Header: "Program Name",

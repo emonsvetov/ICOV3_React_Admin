@@ -8,10 +8,10 @@ export const PROGRAM_COLUMNS = [
     {
         Header: "Program ID",
         accessor: "id",
+        width: 130,
         Footer:"#",
         disableFilters:true,
-        disableGlobalFilters:true,
-        // sticky:'left'
+        disableGlobalFilters:true
     },
     {
         Header: "Program Name",
@@ -31,5 +31,4 @@ export const PROGRAM_COLUMNS = [
         Footer: "Status",
         filter: 'equals'
     },
-]
-
+];

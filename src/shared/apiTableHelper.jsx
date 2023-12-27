@@ -2,6 +2,7 @@ import React, {useState} from "react"
 import axios from 'axios'
 import SortIcon from 'mdi-react/SortIcon';
 import {Row, Col, Button} from 'reactstrap';
+import Select from 'react-select'
 
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
@@ -260,12 +261,13 @@ export const fetchApiDataExport = async( queryParams )  => {
     }
 };
 
-export const TableFilter = ({ config, filter, setFilter, setUseFilter, download, exportData, exportLink, exportHeaders, loading}) => {
+export const TableFilter = ({ config, filter, setFilter, setUseFilter, download, exportData, exportLink, exportHeaders, loading, inventoryTypes}) => {
 
     const defaultFilters = {
         keyword: '',
         from: defaultFrom,
-        to: defaultTo
+        to: defaultTo,
+        inventoryType: 0,
     }
 
     const finalFilter = {...defaultFilters, ...filter}
@@ -274,7 +276,8 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
     const defaultConfig = {
         label:'term',
         keyword:true,
-        dateRange: false
+        dateRange: false,
+        inventoryType: !!inventoryTypes,
     }
 
     const options = {...defaultConfig, ...config}
@@ -284,6 +287,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
     const [keyword, setKeyword] = React.useState(finalFilter.keyword)
     const [from, setFrom] = React.useState( finalFilter.from )
     const [to, setTo] = React.useState( finalFilter.to )
+    const [inventoryType, setInventoryTypes] = React.useState( finalFilter.inventoryType )
     const [awardLevels, setAwardLevels] = React.useState(finalFilter.awardLevels);
     const [selectedPrograms, setSelectedPrograms] = useState(filter.programs ? filter.programs : []);
     const [selectedMerchants, setSelectedMerchants] = useState(filter.merchants ? filter.merchants : []);
@@ -296,6 +300,9 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
     }
     const onEndChange = ( value ) => {
         setTo(  value )
+    }
+    const onInventoryTypesChange = ( e ) => {
+        setInventoryTypes( e.value )
     }
     const onClickFilter = (reset = false, exportToCsv = 0) => {
         let dataSet = {};
@@ -315,6 +322,9 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
 
         if (options.type) {
             dataSet.type = options.type;
+        }
+        if (options.inventoryType) {
+            dataSet.inventoryType = inventoryType;
         }
         if (options.programs) {
             dataSet.programs = reset ? [] : clone(selectedPrograms);
@@ -386,6 +396,12 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
             }
         }
 
+        if(options.inventoryType) {
+            if(finalFilter.inventoryType !== values.inventoryType)   {
+                change = true
+            }
+        }
+
         if( !change )    {
             alert('No change in filters')
             setUseFilter(false)
@@ -412,6 +428,9 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
         }
         if( options.type ) {
             filters.type = values.type
+        }
+        if( options.inventoryType ) {
+            filters.inventoryType = values.inventoryType
         }
 
         setFilter( filters )
@@ -504,6 +523,26 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                                 </div>
                             </div>
                         </>
+                    }
+                    {options.inventoryType &&
+                    <>
+                        <div className="table-filter-form-col table-filter-form-col2 float-filter">
+                            <div className="form__form-group">
+                                <span className="form__form-group-label">Show</span>
+                                <div className="form__form-group-field">
+                                    <div className="form__form-group-row">
+                                        <Select
+                                            options={inventoryTypes}
+                                            clearable={false}
+                                            className="react-select"
+                                            classNamePrefix="react-select"
+                                            onChange={onInventoryTypesChange}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </>
                     }
                     {options.dateRange &&
                         <>

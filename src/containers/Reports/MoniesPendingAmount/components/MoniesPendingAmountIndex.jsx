@@ -1,17 +1,21 @@
 import React from 'react';
-import { Card, CardBody, Col } from 'reactstrap';
-import MoniesIndexDataTable from './MoniesIndexDataTable';
+import {Card, CardBody, Col} from 'reactstrap';
+import MoniesPendingAmountIndexDataTable from "./MoniesPendingAmountIndexDataTable";
 
-const MoniesPendingAmountIndex = () => {
-  return (
-    <Col md={12}>
-      <Card>
-        <CardBody>
-          <MoniesIndexDataTable />
-        </CardBody>
-      </Card>
-    </Col>
-  )
+
+const MoniesPendingAmountIndex = ({organization}) => {
+
+    const defaultPrograms = []
+
+    return (
+        <Col md={12}>
+            <Card>
+                <CardBody>
+                    <MoniesPendingAmountIndexDataTable programs={defaultPrograms} />
+                </CardBody>
+            </Card>
+        </Col>
+    )
 }
+export default MoniesPendingAmountIndex
 
-export default MoniesPendingAmountIndex;

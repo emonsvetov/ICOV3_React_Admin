@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Col, Container, Row } from 'reactstrap';
-import UnassignedProgramDomainsCard from './components/UnassignedIndex.jsx';
+import UnassignedProgramDomainsCard from './components/UnassignedProgramDomainIndex.jsx';
 
 const UnassignedProgramDomains = () => {
   return (

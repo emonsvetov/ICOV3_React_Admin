@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Col, Container, Row } from 'reactstrap';
 import PointsPurchaseCard from './components/PointsPurchaseIndex.jsx';
 
-const PointsPurchase = () => {
+const PointsPurchaseSummary = () => {
   return (
     <Container className="dashboard">
       <Row>
@@ -18,4 +18,4 @@ const PointsPurchase = () => {
     </Container>
 )}
 
-export default PointsPurchase;
+export default PointsPurchaseSummary;

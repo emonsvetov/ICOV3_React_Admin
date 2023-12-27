@@ -83,7 +83,8 @@ import {
   MoniesPendingAmount,
   ExpirePoints,
   ExpireMonies,
-    TrialBalance,
+  TrialBalance,
+  PointPurchaseSummary
  } from '../Reports';
 
 import TreeView from '../TreeViewBasic';
@@ -190,7 +191,7 @@ const Reports = () => (
     <Route exact path="/reports/monies-pending-amount" component={MoniesPendingAmount} />
     <Route exact path="/reports/expire-points" component={ExpirePoints} />
     <Route exact path="/reports/expire-monies" component={ExpireMonies} />
-      <Route exact path="/reports/trial-balance" component={TrialBalance} />
+    <Route exact path="/reports/trial-balance" component={TrialBalance} />
   </Switch>
 );
 

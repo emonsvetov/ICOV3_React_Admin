@@ -32,11 +32,15 @@ interface SupplierRedemptionFilterProps {
         merchants: any,
         exportCSV: any,
 }
+const today = new Date();
+
+const oneYearAgo = new Date(today);
+oneYearAgo.setFullYear(today.getFullYear() - 1);
 
 export const defFilter = {
     merchants: null,
-    from: '2022-12-31',
-    to: '2023-12-06',
+    from: oneYearAgo.toISOString().split('T')[0],
+    to: today.toISOString().split('T')[0],
     active: true,
     reportKey: 'sku_value',
     codes: null,
@@ -100,7 +104,7 @@ export const SupplierRedemptionFilter: FC<SupplierRedemptionFilterProps> = ({fil
                         </Radio.Group>
                     </Form.Item>
                 </Col>
-                <Col span={6} order={3}>
+                <Col span={6} order={2}>
                     <Form.Item
                         name="from"
                         label="From"
@@ -109,7 +113,7 @@ export const SupplierRedemptionFilter: FC<SupplierRedemptionFilterProps> = ({fil
                         <DatePicker format="DD/MM/YYYY"/>
                     </Form.Item>
                 </Col>
-                <Col span={6} order={2}>
+                <Col span={6} order={3}>
                     <Form.Item
                         name="to"
                         label="To"

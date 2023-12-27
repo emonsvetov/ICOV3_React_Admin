@@ -30,7 +30,6 @@ const SupplierRedemptionIndex: FC<SupplierRedemptionIndexProps> = () => {
 
     const getDataReport = async () => {
         const merchantsApiUrl = `/organization/1/report/supplier-redemption`
-        console.log(params)
         try {
             const response = await axios.get(merchantsApiUrl, {params});
             setDataReport(response.data);

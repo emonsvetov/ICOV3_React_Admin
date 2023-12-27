@@ -260,11 +260,15 @@ export const isArray = function(a) {
           day = '0' + day;
       return [year, month, day].join('-');
   }
+  
   export const dateStrToYmd = dateString => {
-      let date = new Date( dateString )
-      if( !isValidDateObj(date) ) return dateString;
-      return date.toISOString().split('T')[0]
-  }
+    let date = new Date(dateString);
+    if (!isValidDateObj(date)) return dateString;
+
+    // Adjust the date to correspond to the start of the day in the local timezone
+    date = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+    return date.toISOString().split('T')[0];
+  };
   
   export const isValidDateObj = d => {
       return ( Object.prototype.toString.call(d) === "[object Date]" && !isNaN(d.getTime()) );
