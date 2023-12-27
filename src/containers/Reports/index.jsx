@@ -10,7 +10,7 @@ export { default as PointsReserve } from './PointsReserve';
 export { default as ProgramStatus } from './ProgramStatus';
 export { default as SupplierRedemption } from './SupplierRedemption';
 export { default as UnassignedProgramDomains } from './UnassignedProgramDomains';
-export { default as MoniesPendingAmount } from './MoniesPendingAmount';
+export { default as DepositsReceived } from './DepositsReceived';
 export { default as ExpirePoints } from './ExpirePoints';
 export { default as ExpireMonies } from './ExpireMonies';
 export { default as ParticipantStatusSummary} from "./ParticipantStatusSummary"
