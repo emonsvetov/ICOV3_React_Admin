@@ -81,7 +81,7 @@ import {
   ParticipantAccountSummary,
   ParticipantAccountSubProgram,
   UnassignedProgramDomains,
-  MoniesPendingAmount,
+  DepositsReceived,
   ExpirePoints,
   ExpireMonies,
   TrialBalance,
@@ -190,7 +190,7 @@ const Reports = () => (
     <Route exact path="/reports/participant-status-summary" component={ParticipantStatusSummary} />
     <Route exact path="/reports/participant-account-summary" component={ParticipantAccountSummary} />
     <Route exact path="/reports/unassigned-program-domains" component={UnassignedProgramDomains} />
-    <Route exact path="/reports/monies-pending-amount" component={MoniesPendingAmount} />
+    <Route exact path="/reports/deposits-received" component={DepositsReceived} />
     <Route exact path="/reports/expire-points" component={ExpirePoints} />
     <Route exact path="/reports/expire-monies" component={ExpireMonies} />
     <Route exact path="/reports/trial-balance" component={TrialBalance} />
