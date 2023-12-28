@@ -6,7 +6,9 @@ export const TABLE_COLUMNS = [
     Header: "Codes",
     accessor: "code",
     width: 200,
-    Cell: ({ row, value }) => { return <Link to={`/orders/view/${row.original.id}`} >{value}</Link>},
+    Cell: ({ row, value }) => {
+      console.log(row)
+      return <Link to={`/reports/orders/view/${row.original.id}`} >{value}</Link>},
   },
   {
     Header: "Pin",

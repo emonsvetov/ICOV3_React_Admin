@@ -64,6 +64,7 @@ import EditDomain from '../Domain/edit_domain';
 import OrdersIndex from '../PhysicalOrders/index';
 import EditOrder from '../PhysicalOrders/edit_order';
 import TangoOrder from '../PhysicalOrders/tango_order';
+import GlobalOrder from '../Reports/Orders/view_order';
 
 import {
   AwardDetail,
@@ -179,6 +180,7 @@ const Reports = () => (
     <Route exact path="/reports/cash-deposit" component={CashDeposit} />
     <Route exact path="/reports/inventory" component={Inventory} />
     <Route exact path="/reports/orders" component={Orders} />
+    <Route exact path="/reports/orders/view/:id" component={GlobalOrder} />
     <Route exact path="/reports/inventory-order" component={InventoryOrder} />
     <Route exact path="/reports/journal-detailed" component={JournalDetailed} />
     <Route exact path="/reports/points-purchase-summary" component={PointsPurchaseSummary} />
