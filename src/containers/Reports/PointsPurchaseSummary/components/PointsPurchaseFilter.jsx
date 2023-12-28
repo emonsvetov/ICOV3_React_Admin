@@ -1,124 +1,172 @@
 import React, {useState, useEffect} from "react";
-import { Field, Form } from 'react-final-form';
-import { Button, Row, Col } from 'reactstrap';
+import {Field, Form} from 'react-final-form';
+import {Button, Row, Col} from 'reactstrap';
 import renderSelectField from '@/shared/components/form/Select'
 import {connect} from 'react-redux'
 import {CSVLink} from "react-csv";
-const prepareList = () =>{
+import {isEqual, clone, cloneDeep} from 'lodash';
+import ProgramsHierarchy from '@/shared/components/ProgramsHierarchy'
+import Select from "react-select";
+
+const prepareList = () => {
     let y = new Date().getFullYear();
     let list = [];
-    for (var i = y; i > y -7; i --){
+    for (var i = y; i > y - 7; i--) {
         list.push({label: i, value: i})
-    }    
+    }
     return list;
 }
 
-const Filter = ({ 
-    filter,
-    setFilter,
-    setUseFilter,
-    download,
-    exportData,
-    exportLink,
-    exportHeaders
-}) => {
-    
+const Filter = ({
+                    filter,
+                    setFilter,
+                    setUseFilter,
+                    download,
+                    exportData,
+                    exportLink,
+                    exportHeaders
+                }) => {
+
+    const options = {
+        'dateRange': false,
+        'programs': true,
+        'keyword': false,
+        'exportToCsv': true,
+        'createdOnly': false,
+        'reportKey': true,
+        'programId': false,
+        'year': true,
+    }
+
     const YEAR_LIST = prepareList();
-    const [targetYear, setTargetYear] = React.useState({label: new Date().getFullYear(), value: new Date().getFullYear()})
-    const [participant, setParticipant] = React.useState(null);
-    const [programId, setProgramId] = React.useState([]);
-    const [selected, setSelected] = useState([]);
-    const handleSelect = (event, nodeIds) => {
-        setSelected(nodeIds)
-    };
-  
-  const finalFilter = {...filter}
-const onClickFilterCallback = (values) => {
-    let change = false;
 
-    if (finalFilter.year !== values) {
-        change = true
+    const [targetYear, setTargetYear] = useState({
+        label: new Date().getFullYear(),
+        value: new Date().getFullYear()
+    })
+
+    const [selectedPrograms, setSelectedPrograms] = useState(filter.programs ? filter.programs : []);
+
+    const finalFilter = {...filter}
+    let previous = cloneDeep(finalFilter);
+
+    const onClickFilter = (reset = false, exportToCsv = 0) => {
+        let dataSet = {}
+        if (options.programs) {
+            dataSet.programs = reset ? [] : clone(selectedPrograms)
+        }
+        if (options.year) {
+            dataSet.year = targetYear
+        }
+
+        onClickFilterCallback(dataSet)
+        previous = dataSet;
+        if (reset) {
+            setTargetYear({label: new Date().getFullYear(), value: new Date().getFullYear()})
+            setSelectedPrograms([]);
+        }
     }
 
-    if (!change) {
-        alert('No change in filters')
-        setUseFilter(false)
-        return
+    const onClickFilterCallback = (values) => {
+        console.log(values)
+        let change = false;
+
+        if (options.programs) {
+            if (!isEqual(values.programs, previous.programs)) {
+                change = true
+            }
+        }
+
+        if (options.year) {
+            if (finalFilter.year !== values.year) {
+                change = true
+            }
+        }
+
+        if (!change) {
+            alert('No change in filters')
+            setUseFilter(false)
+            return
+        }
+
+        let filters = {}
+        if (options.year) {
+            filters.year = values.year.value
+            filters.targetYear = values.year
+        }
+        if (options.programs) {
+            filters.programs = values.programs
+        }
+        // filters.programs = filter.programs
+
+        setFilter(filters)
+        setUseFilter(true)
     }
 
-    let filters = {}
-    filters.year = values;
-
-    setFilter({...filter, year:values})
-    setUseFilter(true)
+    const handleChangeYear = (value) => {
+        setTargetYear(value)
     }
 
-const onClickFilter = (e) => {
-    if (e.action == "export") {
-        download(filter)
-    }
-    else  {
-        onClickFilterCallback( targetYear.value)
-    }
-}
-const handleChange = (field, selected) => {
-    if(field == "year")
-        setTargetYear(selected);
-    else
-        setParticipant(selected);
-};
-    
-return (
-    <Form onSubmit={onClickFilter}
-        initialValues={{
-            year: targetYear
-        }}
-    >
-        {({ handleSubmit, form, submitting, pristine, values }) => (
-            <form className="form" onSubmit={handleSubmit}>
-            <Row>
-                <div className='col-md-6 col-sm-12'>
+
+    return (
+        <Row>
+            {options.programs &&
+                <div className="table-filter-form-col table-filter-form-col1 float-filter"
+                     style={{paddingTop: 4}}>
                     <div className="form__form-group">
-                        <span className="form__form-group-label">
-                            Target Year
-                        </span>
                         <div className="form__form-group-field">
                             <div className="form__form-group-row">
-                                <Field 
-                                    name="year"
-                                    options={YEAR_LIST}
-                                    component={renderSelectField}
-                                    parse={value => {
-                                        handleChange('year', value)
-                                        return value;
-                                    }}
+
+                                <ProgramsHierarchy
+                                    defaultPrograms={options.programs}
+                                    selectedPrograms={selectedPrograms}
+                                    setSelectedPrograms={setSelectedPrograms}
                                 />
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                
-                <div className="col-md-6 col-sm-12 d-flex align-items-end">
-                    <Button 
-                        type="submit"
-                        onClick={() => {
-                            form.change("action", "submit");
-                        }}
-                        disabled={submitting} 
-                        className="btn btn-sm btn-primary" 
-                        color="#ffffff"
-                    >Filter</Button>
-                    <Button
-                         type="submit"
-                         onClick={() => {
-                             form.change("action", "export");
-                         }}
-                        disabled={submitting} 
-                        className="btn btn-sm btn-success" 
-                        color="#ffffff"
-                    >Export CSV
-                     <CSVLink
+            }
+
+            <div className="table-filter-form-col table-filter-form-col2 float-filter col">
+                <div className="form__form-group col-md-12" style={{maxWidth: 150}}>
+                            <span className="form__form-group-label">
+                                Target Year
+                            </span>
+                    <div className="form__form-group-field">
+                        <div className="form__form-group-row">
+                            <Select
+                                name="year"
+                                value={targetYear}
+                                onChange={handleChangeYear}
+                                options={YEAR_LIST}
+                                clearable={false}
+                                className="react-select"
+                                classNamePrefix="react-select"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <Col className="align-items-center max-height-32px pl-1">
+                <Button
+                    onClick={()=>onClickFilter()}
+                    className="btn btn-sm btn-primary"
+                    color="#ffffff"
+                >Filter</Button>
+                <Button
+                    onClick={()=>onClickFilter(true)}
+                    className="btn btn-sm btn-primary"
+                    color="#ffffff"
+                >Reset</Button>
+                {options.exportToCsv &&
+                    <>
+            <span
+                className="btn btn-sm btn-primary mr-2 text-white pointer"
+                onClick={() => { download(filter) }}
+            >Export to CSV</span>
+                        <CSVLink
                             data={exportData}
                             headers={exportHeaders}
                             filename="report.csv"
@@ -126,22 +174,17 @@ return (
                             ref={exportLink}
                             target="_blank"
                         />
-                    </Button>
-                    
-                </div>
-            </Row>
-            </form>
-        )}
-    </Form>
-
-    
-)
+                    </>
+                }
+            </Col>
+        </Row>
+    )
 }
 
 const mapStateToProps = (state) => {
     return {
-      auth: state.auth,
-      organization: state.organization,
+        auth: state.auth,
+        organization: state.organization,
     };
-  };
-  export default connect(mapStateToProps)(Filter);
+};
+export default connect(mapStateToProps)(Filter);
