@@ -24,6 +24,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
           <>
             <SidebarLink title="Cash Deposit" route="/reports/cash-deposit" />
             <SidebarLink title="Inventory" route="/reports/inventory" />
+            <SidebarLink title="Orders" route="/reports/orders" />
             <SidebarLink title="Journal Detailed" route="/reports/journal-detailed" />
             <SidebarLink title="Points Reserve" route="/reports/points-reserve" />
             <SidebarLink title="Program Status" route="/reports/program-status" />
@@ -83,7 +84,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
               <SidebarLink title="Inventory Order" route="/reports/inventory-order"/>
               <SidebarLink title="Deposit" route="/reports/deposit"/>
               <SidebarLink title="Unassigned Program Domains" route="/reports/unassigned-program-domains"/>
-              <SidebarLink title="Monies Pending Amount" route="/reports/monies-pending-amount"/>
+              <SidebarLink title="Deposits Received" route="/reports/deposits-received"/>
               {/*<SidebarLink title="Participant Status Summary" route="/reports/participant-status-summary"/>*/}
               {/* <SidebarLink title="Participant Account Summary" route="/reports/participant-account-summary"/> */}
 
