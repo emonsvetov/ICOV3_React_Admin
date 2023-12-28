@@ -26,12 +26,18 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
     { 'label': 'Real Codes', 'value': 1 },
     { 'label': 'Virtual Codes', 'value': 2 },
   ];
+  const purchasesByV2 = [
+    { 'label': 'All', 'value': 0 },
+    { 'label': 'Yes', 'value': 2 },
+    { 'label': 'No', 'value': 1 },
+  ];
 
   const defaultFilters = {
     keyword: '',
     from: defaultFrom,
     to: defaultTo,
     orderStatus: 0,
+    purchaseByV2: 0,
     inventoryType: 0,
     merchants: [],
   }
@@ -44,7 +50,8 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
     keyword: true,
     dateRange: true,
     merchants: true,
-    orderStatus: false,
+    orderStatus: true,
+    purchaseByV2: true,
     inventoryType: true,
   }
 
@@ -56,6 +63,7 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
   const [from, setFrom] = React.useState( finalFilter.from )
   const [to, setTo] = React.useState( finalFilter.to )
   const [inventoryType, setInventoryTypes] = React.useState( finalFilter.inventoryType )
+  const [purchaseByV2, setPurchaseByV2] = React.useState( finalFilter.purchaseByV2 )
   const [orderStatus, setOrderStatuses] = React.useState( finalFilter.orderStatus )
   const [awardLevels, setAwardLevels] = React.useState(finalFilter.awardLevels);
   const [selectedPrograms, setSelectedPrograms] = useState(filter.programs ? filter.programs : []);
@@ -72,6 +80,9 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
   }
   const onInventoryTypesChange = ( e ) => {
     setInventoryTypes( e.value )
+  }
+  const onPurchasesByV2Change = ( e ) => {
+    setPurchaseByV2( e.value )
   }
   const onOrderStatusesChange = ( e ) => {
     setOrderStatuses( e.value )
@@ -97,6 +108,9 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
     }
     if (options.inventoryType) {
       dataSet.inventoryType = inventoryType;
+    }
+    if (options.purchaseByV2) {
+      dataSet.purchaseByV2 = purchaseByV2;
     }
     if (options.orderStatus) {
       dataSet.orderStatus = orderStatus;
@@ -177,6 +191,12 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
       }
     }
 
+    if(options.purchaseByV2) {
+      if(finalFilter.purchaseByV2 !== values.purchaseByV2)   {
+        change = true
+      }
+    }
+
     if(options.orderStatus) {
       if(finalFilter.orderStatus !== values.orderStatus)   {
         change = true
@@ -212,6 +232,9 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
     }
     if( options.inventoryType ) {
       filters.inventoryType = values.inventoryType
+    }
+    if( options.purchaseByV2 ) {
+      filters.purchaseByV2 = values.purchaseByV2
     }
     if( options.orderStatus ) {
       filters.orderStatus = values.orderStatus
@@ -294,46 +317,7 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
               </div>
             </>
             }
-            {options.orderStatus &&
-            <>
-              <div className="table-filter-form-col table-filter-form-col2 float-filter">
-                <div className="form__form-group">
-                  <span className="form__form-group-label">Status</span>
-                  <div className="form__form-group-field">
-                    <div className="form__form-group-row">
-                      <Select
-                          options={orderStatuses}
-                          clearable={false}
-                          className="react-select"
-                          classNamePrefix="react-select"
-                          onChange={onOrderStatusesChange}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-            }
-            {options.inventoryType &&
-            <>
-              <div className="table-filter-form-col table-filter-form-col2 float-filter">
-                <div className="form__form-group">
-                  <span className="form__form-group-label">Type</span>
-                  <div className="form__form-group-field">
-                    <div className="form__form-group-row">
-                      <Select
-                          options={inventoryTypes}
-                          clearable={false}
-                          className="react-select"
-                          classNamePrefix="react-select"
-                          onChange={onInventoryTypesChange}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-            }
+
             {options.dateRange &&
             <>
               <div className="table-filter-form-col table-filter-form-col2 float-filter">
@@ -368,21 +352,81 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
             }
             {options.keyword &&
             <>
-            <div className="table-filter-form-col table-filter-form-col2 float-filter">
-              <div className="form__form-group">
-                <span className="form__form-group-label">Search</span>
-                <div className="form__form-group-field">
-                  <div className="form__form-group-row">
-                    <input
-                        value={keyword}
-                        onChange={onKeywordChange}
-                        type="text"
-                        placeholder={`Search ${options.label}`}
-                    />
+              <div className="table-filter-form-col table-filter-form-col2 float-filter">
+                <div className="form__form-group">
+                  <span className="form__form-group-label">Search</span>
+                  <div className="form__form-group-field">
+                    <div className="form__form-group-row">
+                      <input
+                          value={keyword}
+                          onChange={onKeywordChange}
+                          type="text"
+                          placeholder={`Search ${options.label}`}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </>
+            }
+            {options.inventoryType &&
+            <>
+              <div className="table-filter-form-col table-filter-form-col2 float-filter">
+                <div className="form__form-group">
+                  <span className="form__form-group-label">Type</span>
+                  <div className="form__form-group-field">
+                    <div className="form__form-group-row">
+                      <Select
+                          options={inventoryTypes}
+                          clearable={false}
+                          className="react-select"
+                          classNamePrefix="react-select"
+                          onChange={onInventoryTypesChange}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+            }
+            {options.orderStatus &&
+            <>
+              <div className="table-filter-form-col table-filter-form-col2 float-filter">
+                <div className="form__form-group">
+                  <span className="form__form-group-label">Status</span>
+                  <div className="form__form-group-field">
+                    <div className="form__form-group-row">
+                      <Select
+                          options={orderStatuses}
+                          clearable={false}
+                          className="react-select"
+                          classNamePrefix="react-select"
+                          onChange={onOrderStatusesChange}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+            }
+            {options.purchaseByV2 &&
+            <>
+              <div className="table-filter-form-col table-filter-form-col2 float-filter">
+                <div className="form__form-group">
+                  <span className="form__form-group-label">Purchased By V2</span>
+                  <div className="form__form-group-field">
+                    <div className="form__form-group-row">
+                      <Select
+                          options={purchasesByV2}
+                          clearable={false}
+                          className="react-select"
+                          classNamePrefix="react-select"
+                          onChange={onPurchasesByV2Change}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </>
             }
           </div>
