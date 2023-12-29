@@ -10,12 +10,14 @@ import {Button,Row} from "reactstrap";
 
 import ProgramStatusDropdown from './ProgramStatusDropdown'
 
+const INC_PROGRAM_SEARCH_KEYWORD="IncProgramSearchKeyword"
+
 const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true}) => {
-    let IncProgramSearchKeyword = localStorage.getItem("IncProgramSearchKeyword")
+    let incProgramSearchKeyword = localStorage.getItem(INC_PROGRAM_SEARCH_KEYWORD)
     const [status, setStatus] = React.useState('')
     const [orgOptions, setOrgOptions] = React.useState([])
     const [org, setOrg] = React.useState('')
-    const [keyword, setKeyword] = React.useState(()=> IncProgramSearchKeyword !== null ? IncProgramSearchKeyword: "" )
+    const [keyword, setKeyword] = React.useState(()=> incProgramSearchKeyword !== null ? incProgramSearchKeyword: "" )
 
     const onOrgChange = (selectedOption) => {
         setOrg(selectedOption.value)
@@ -30,13 +32,13 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true
         event.preventDefault();
         if( reset ) {
             setKeyword('');
-            localStorage.removeItem("IncProgramSearchKeyword")
+            localStorage.removeItem(INC_PROGRAM_SEARCH_KEYWORD)
             setOrg('');
             setStatus('');
             onClickFilterCallback('', '', '')
         } else {
             onClickFilterCallback(status, keyword, org)
-            localStorage.setItem("IncProgramSearchKeyword",keyword)
+            localStorage.setItem(INC_PROGRAM_SEARCH_KEYWORD,keyword)
         }
     }
     useEffect(() => {
@@ -52,7 +54,7 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true
                 })
             }
         }
-              if (IncProgramSearchKeyword) onClickFilterCallback(status, keyword, org)
+              if (incProgramSearchKeyword) onClickFilterCallback(status, keyword, org)
          
     }, [organization, auth])
     let orgPlaceholder = 'All'
