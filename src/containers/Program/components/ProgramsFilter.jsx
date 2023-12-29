@@ -11,10 +11,12 @@ import {Button,Row} from "reactstrap";
 import ProgramStatusDropdown from './ProgramStatusDropdown'
 
 const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true}) => {
+    let localStorageKeyword = localStorage.getItem("ProgramPhasekeyword")
     const [status, setStatus] = React.useState('')
     const [orgOptions, setOrgOptions] = React.useState([])
     const [org, setOrg] = React.useState('')
-    const [keyword, setKeyword] = React.useState('')
+    const [keyword, setKeyword] = React.useState(()=> localStorageKeyword !== null ? localStorageKeyword: "" )
+
     const onOrgChange = (selectedOption) => {
         setOrg(selectedOption.value)
     };
@@ -28,11 +30,13 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true
         event.preventDefault();
         if( reset ) {
             setKeyword('');
+            localStorage.removeItem("ProgramPhasekeyword")
             setOrg('');
             setStatus('');
             onClickFilterCallback('', '', '')
         } else {
             onClickFilterCallback(status, keyword, org)
+            localStorage.setItem("ProgramPhasekeyword",keyword)
         }
     }
     useEffect(() => {
@@ -48,6 +52,9 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true
                 })
             }
         }
+              if (localStorageKeyword !== null ) {
+                onClickFilterCallback(status, keyword, org)
+         }
     }, [organization, auth])
     let orgPlaceholder = 'All'
     if (org) {
@@ -92,7 +99,7 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true
             </div>
             <div className="col-md-4 pl-0 ">
                 <p className="">&nbsp;</p>
-                <div className='flex'>
+                <div className='max-height-32px'>
                     <Button
                       type='submit'
                       className="btn btn-sm btn-primary"
