@@ -165,6 +165,16 @@
     border-radius: 0px;
 }
 
+:where(.css-dev-only-do-not-override-6j9yrn).ant-tree-select-dropdown .ant-select-tree-checkbox-checked .ant-select-tree-checkbox-inner {
+    background-color: #4ce1b6;
+    border-color: #4ce1b6;
+}
+
+:where(.css-dev-only-do-not-override-6j9yrn).ant-tree-select-dropdown .ant-select-tree-checkbox-wrapper-checked:not(.ant-select-tree-checkbox-wrapper-disabled):hover .ant-select-tree-checkbox-inner, :where(.css-dev-only-do-not-override-6j9yrn).ant-tree-select-dropdown .ant-select-tree-checkbox-checked:not(.ant-select-tree-checkbox-disabled):hover .ant-select-tree-checkbox-inner {
+    background-color: #4ce1b6;
+    border-color: transparent;
+}
+
 :where(.css-dev-only-do-not-override-6j9yrn).ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before {
     background-color: #4ce1b6;
 }
