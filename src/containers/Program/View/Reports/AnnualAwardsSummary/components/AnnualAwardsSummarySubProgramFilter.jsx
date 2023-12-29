@@ -1,8 +1,9 @@
 import React, {FC, useEffect, useState} from 'react';
 import {any} from "prop-types";
-import {Button, Col, Form, Radio, Row, Select, Space, Switch, Table} from "antd";
+import {Button, Col, Form, Radio, Row, Select, Space, Switch, Table, TreeSelect} from "antd";
 import {Option} from "antd/lib/mentions";
 
+const { SHOW_PARENT } = TreeSelect;
 
 interface AnnualAwardsSummarySubProgramFilterProps
 {
@@ -13,7 +14,7 @@ interface AnnualAwardsSummarySubProgramFilterProps
 
 export const defFilter = {
     programs: '',
-    viewAllPrograms: false,
+    viewAllPrograms: true,
     month: '1',
     year: new Date().getFullYear(),
     programId: 0
@@ -22,6 +23,8 @@ export const defFilter = {
 export const AnnualAwardsSummarySubProgramFilter: FC<AnnualAwardsSummarySubProgramFilterProps> = ({programs, filters, exportCSV}) => {
     const [filter, setFilter] = useState(defFilter);
     const [selectYearOptions, setSelectYearOptions] = useState([]);
+    const [value, setValue] = useState([]);
+    const [treeData, setTreeData] = useState(programs);
     const onFinish = (values) => {
         const updatedFilter = {...filter};
 
@@ -34,7 +37,7 @@ export const AnnualAwardsSummarySubProgramFilter: FC<AnnualAwardsSummarySubProgr
         }
 
         if (values.programs) {
-            updatedFilter.programs = values.programs.join(',')
+            updatedFilter.programs = values.programs.map(item => item.value).join(',');
         }
 
         if (values.active) {
@@ -45,9 +48,13 @@ export const AnnualAwardsSummarySubProgramFilter: FC<AnnualAwardsSummarySubProgr
     };
 
     useEffect(() => {
+        setTreeData(programs);
+    }, [programs])
+
+    useEffect(() => {
         const currentYear = defFilter.year;
         const yearOptions = [];
-
+        setTreeData(programs);
         for (let i = 0; i < 15; i++) {
             const year = currentYear - i;
             yearOptions.push({ value: String(year), label: String(year) });
@@ -55,6 +62,18 @@ export const AnnualAwardsSummarySubProgramFilter: FC<AnnualAwardsSummarySubProgr
 
         setSelectYearOptions(yearOptions);
     }, []);
+
+    const tProps = {
+        treeData,
+        value,
+        treeCheckable: true,
+        showCheckedStrategy: SHOW_PARENT,
+        placeholder: 'Please select',
+        style: {
+            width: '100%',
+        },
+        treeCheckStrictly: true,
+    };
 
     return (<Row className="table-filter-form form action-panel">
         <Form
@@ -67,17 +86,13 @@ export const AnnualAwardsSummarySubProgramFilter: FC<AnnualAwardsSummarySubProgr
                     <Form.Item
                         name="programs"
                         label="View for Program">
-                        <Select mode="multiple" placeholder="Please select programs">
-                            {programs.map(item => (
-                                <Option value={item.account_holder_id}>{item.name}</Option>
-                            ))}
-                        </Select>
+                        <TreeSelect {...tProps} />
                     </Form.Item>
                 </Col>
                 <Col span={1} order={2}></Col>
                 <Col span={3} order={3}>
                     <Form.Item name="active"
-                               label="Active Merchants"
+                               label="Active Programs"
                                valuePropName="checked"
                                initialValue={defFilter.viewAllPrograms}>
                         <Switch/>
@@ -91,18 +106,18 @@ export const AnnualAwardsSummarySubProgramFilter: FC<AnnualAwardsSummarySubProgr
                         label="">
                         <Select
                             options={[
-                                { value: '0', label: 'January' },
-                                { value: '1', label: 'February' },
-                                { value: '2', label: 'March'},
-                                { value: '3', label: 'April'},
-                                { value: '4', label: 'May'},
-                                { value: '5', label: 'June'},
-                                { value: '6', label: 'July'},
-                                { value: '7', label: 'August'},
-                                { value: '8', label: 'September'},
-                                { value: '9', label: 'October'},
-                                { value: '10', label: 'November'},
-                                { value: '11', label: 'December'},
+                                { value: '1', label: 'January' },
+                                { value: '2', label: 'February' },
+                                { value: '3', label: 'March'},
+                                { value: '4', label: 'April'},
+                                { value: '5', label: 'May'},
+                                { value: '6', label: 'June'},
+                                { value: '7', label: 'July'},
+                                { value: '8', label: 'August'},
+                                { value: '9', label: 'September'},
+                                { value: '10', label: 'October'},
+                                { value: '11', label: 'November'},
+                                { value: '12', label: 'December'},
                             ]}
                         />
                     </Form.Item>

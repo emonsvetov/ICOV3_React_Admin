@@ -37,7 +37,9 @@ export const AnnualAwardsSummarySubProgramTable: FC<AnnualAwardsSummarySubProgra
                     return <Table.Summary fixed>
                         <Table.Summary.Row>
                             {columns.map(item => (
-                                <Table.Summary.Cell index={item.key}>{total[item.key]}</Table.Summary.Cell>
+                                <Table.Summary.Cell key={item.key}>
+                                    {total[item.key] < 0 ? `(${Math.abs(total[item.key])})` : total[item.key]}
+                                </Table.Summary.Cell>
                             ))}
                         </Table.Summary.Row>
                     </Table.Summary>
