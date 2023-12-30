@@ -1,10 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Card, CardBody, Col } from "reactstrap";
+import React, {useState} from "react";
+import {Card, CardBody, Col} from "reactstrap";
 import OrdersTable from "./OrdersTable";
-import axios from "axios";
-import { isEmpty } from "@/shared/helpers";
-import { connect } from "react-redux";
-import { getAllPrograms } from "@/shared/apiHelper.jsx";
+import {connect} from "react-redux";
 
 const OrdersIndex = ({ organization }) => {
   const [defaultPrograms, setDefaultPrograms] = useState([]);

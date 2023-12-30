@@ -1,10 +1,14 @@
 import React from "react";
+import { Link } from 'react-router-dom'
 
 export const TABLE_COLUMNS = [
   {
     Header: "Codes",
     accessor: "code",
     width: 200,
+    Cell: ({ row, value }) => {
+      console.log(row)
+      return <Link to={`/reports/orders/view/${row.original.id}`} >{value}</Link>},
   },
   {
     Header: "Pin",
@@ -85,6 +89,11 @@ export const TABLE_COLUMNS = [
   {
     Header: "Tango RA Number",
     accessor: "tango_reference_order_id",
+    width: 120,
+  },
+  {
+    Header: "Tango Request Number",
+    accessor: "tango_request_id",
     width: 120,
   },
   {

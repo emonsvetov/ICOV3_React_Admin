@@ -35,8 +35,13 @@ const DataTable = ({organization, programs}) => {
         createdOnly: false,
         reportKey: 'sku_value',
         programId: 1,
-        year:new Date().getFullYear()
+        year:new Date().getFullYear(),
+        targetYear:{
+            label: new Date().getFullYear(),
+            value: new Date().getFullYear()
+        },
     });
+
     // var [data, setData] = useState([]);
     let {programId} = useParams();
     const exportLink = React.createRef();
@@ -82,9 +87,9 @@ const DataTable = ({organization, programs}) => {
     const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
     React.useReducer(reducer, initialState);
 
-    const apiUrl = `/organization/${organization.id}/report/points-purchase`;
+    const apiUrl = `/organization/${organization.id}/report/points-purchase-summary`;
     const { isLoading, error, data, isSuccess } = useQuery(
-        ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+        ['points-purchase-summary', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
         () => fetchApiData(
             {
                 url: apiUrl,
@@ -257,51 +262,6 @@ const DataTable = ({organization, programs}) => {
                         </tfoot>
                     </table>
                     }
-                {(rows.length > 0) && (
-                    <>
-                        <ReactTablePagination
-                        page={page}
-                        gotoPage={gotoPage}
-                        previousPage={previousPage}
-                        nextPage={nextPage}
-                        canPreviousPage={canPreviousPage}
-                        canNextPage={canNextPage}
-                        pageOptions={pageOptions}
-                        pageSize={pageSize}
-                        pageIndex={pageIndex}
-                        pageCount={pageCount}
-                        setPageSize={setPageSize}
-                        manualPageSize={manualPageSize}
-                        dataLength={totalCount}
-                        />
-                        <div className="pagination justify-content-end mt-2">
-                            <span>
-                            Go to page:{' '}
-                            <input
-                                type="number"
-                                value={pageIndex + 1}
-                                onChange={(e) => {
-                                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                                gotoPage(page);
-                                }}
-                                style={{ width: '100px' }}
-                            />
-                            </span>{' '}
-                            <select
-                            value={pageSize}
-                            onChange={(e) => {
-                                setPageSize(Number(e.target.value));
-                            }}
-                            >
-                            {[10, 20, 30, 40, 50].map((pageSize) => (
-                                <option key={pageSize} value={pageSize}>
-                                Show {pageSize}
-                                </option>
-                            ))}
-                            </select>
-                        </div>
-                    </>
-                )}
                 </div>
             </>
     )
