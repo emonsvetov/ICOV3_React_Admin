@@ -108,7 +108,7 @@ const DataTable = ({merchant}) => {
                 <div className='table react-table available-table'>
                     <Row>
                         <Col md={10}>
-                            <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter} config={{label:'codes'}} />
+                            <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter} config={{label:'codes', sku:true, type:'available'}} />
                         </Col>
                         <Col md={2} className="text-right pr-0">
                             <div 
