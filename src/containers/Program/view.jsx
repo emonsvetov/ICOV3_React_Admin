@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { getProgramAction } from '@/redux/actions/programActions';
 import axios from 'axios'
+import {getProgramById} from "@/shared/apiHelper"
+import { NULL } from 'sass';
 
 const PUBLIC_URL = `${process.env.PUBLIC_URL}`;
 const GeneralIcon = `${PUBLIC_URL}/img/icon/general.svg`;
@@ -22,7 +24,9 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
     const [isOpen, setOpen] = useState(false);
     const [depositBalance, setDepositBalance] = useState(0);
     const [financialBalance, setFinancialBalance] = useState(0);
+    const [parentProgramPath,setParentProgramPath] = useState(null)
     let history = useHistory();
+  
      useEffect(()=> {
         if (organization && program)
         axios.get(`/organization/${organization?.id}/program/${program?.id}/getBalance`)
@@ -37,6 +41,25 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
             dispatch(getProgramAction(organizationId, id))
         }
     },[id, organization])
+
+    useEffect(()=>{
+        if (program?.parent_id && organization?.id) {
+            getProgramById(organization?.id,program?.parent_id).then((response)=>{
+                if (response.id == id) {
+                    setParentProgramPath(null)
+                return;
+                }
+                else{
+                    setParentProgramPath( 
+                        {
+                          id: response.id,
+                          name:response.name
+                        } 
+                     ) 
+                }
+            })
+        }
+    },[program,organization,id,setParentProgramPath])
 
     const toggle = (name=null) => {
         if( name ) setModalName(name)
@@ -55,7 +78,8 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
             <Row>
                 <Col md={6}>
                     <h3 className="page-title">All Programs</h3>
-                    <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/program">Programs</Link> / {program.name} {!!program.is_demo && <span style={{color: 'red'}}>Demo Mode</span>}</h3>
+                    <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/program">Programs</Link>
+                     {parentProgramPath !== null ? <>/<Link className="" to={`/program/view/${parentProgramPath.id}`}>{parentProgramPath.name}</Link></>: ""}/ {program.name} {!!program.is_demo && <span style={{color: 'red'}}>Demo Mode</span>}</h3>
                     <p> (Organization: {organizationId} - {organizationName})</p>
                 </Col>
                 <Col md={6} className='text-right'>
