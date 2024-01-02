@@ -1,11 +1,11 @@
-import React, {FC, useEffect, useMemo, useRef, useState} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import { Card, CardBody, Col } from 'reactstrap';
 import SupplierRedemptionSubFilter, {defFilter}from "./SupplierRedemptionSubFilter";
 import SupplierRedemptionTable from "../../../../../Reports/SupplierRedemption/components/SupplierRedemptionTable";
 import axios from "axios";
 import {isEmpty} from '@/shared/helpers'
 import {CSVLink} from "react-csv";
-import {any} from "prop-types";
+
 
 interface SupplierRedemptionIndexProps
 {

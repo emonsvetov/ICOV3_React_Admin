@@ -14,12 +14,9 @@ import { USER_DETAIL_CHANGE_LOGS_COLUMNS } from "./columns";
 import SortIcon from "mdi-react/SortIcon";
 import SortAscendingIcon from "mdi-react/SortAscendingIcon";
 import SortDescendingIcon from "mdi-react/SortDescendingIcon";
-import ReactTablePagination from "@/shared/components/table/components/ReactTablePagination";
 import UserDetailsChangeLogsFilter from "./UserDetailChangeLogsFilter";
 import { Col, Row } from "reactstrap";
-import axios from "axios";
 import { clone } from "lodash";
-import { renameChildrenToSubrows } from "@/shared/helpers";
 import {
   reducer,
   fetchApiData,

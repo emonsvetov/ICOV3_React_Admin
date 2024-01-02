@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 
 import getOrganizationList from '@/service/getOrganizationList';
 import {labelizeNamedData} from '@/shared/helpers'
-import {Button,Row} from "reactstrap";
+import {Button} from "reactstrap";
 
 import ProgramStatusDropdown from './ProgramStatusDropdown'
 

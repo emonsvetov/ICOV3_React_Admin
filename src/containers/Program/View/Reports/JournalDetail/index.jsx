@@ -1,6 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import { Link } from 'react-router-dom';
-import { Col, Container, Row, Card, CardBody } from 'reactstrap';
 // import {withRouter} from "react-router-dom";
 // import {connect} from "react-redux";
 import { useParams } from "react-router-dom";

@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {useExpanded,  usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
-import {Link, useParams} from 'react-router-dom'
+import {useParams} from 'react-router-dom'
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {Col, Row} from 'reactstrap';

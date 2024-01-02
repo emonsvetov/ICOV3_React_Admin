@@ -1,7 +1,8 @@
 import React, { useState} from 'react'
 import ProgramsHierarchy from '@/shared/components/ProgramsHierarchy'
 import {connect} from 'react-redux'
-
+import {dateStrToYmd} from '@/shared/helpers';
+import DatePicker from 'react-datepicker';
 import {Button, Col, Row} from "reactstrap";
 import {CSVLink} from "react-csv";
 import {getFirstDay} from '@/shared/helpers'
@@ -21,8 +22,8 @@ const TrialBalanceFilter = (
         exportHeaders
     }) => {
     const options = {
-        'dateRange': false,
-        'programs': true,
+        'dateRange': true,
+        'programs': false,
         'keyword': false,
         'exportToCsv': true,
         'createdOnly': false,
@@ -46,6 +47,10 @@ const TrialBalanceFilter = (
 
     const onClickFilter = (reset = false, exportToCsv = 0) => {
         let dataSet = {}
+        if (options.dateRange) {
+            dataSet.from = dateStrToYmd(reset ? defaultFrom : from)
+            dataSet.to = dateStrToYmd(reset ? defaultTo : to)
+        }
         if (options.programs) {
             dataSet.programs = reset ? [] : clone(selectedPrograms)
         }
@@ -57,7 +62,16 @@ const TrialBalanceFilter = (
         previous = dataSet;
         if (reset) {
             setSelectedPrograms([]);
+            setFrom(defaultFrom);
+            setTo(defaultTo);
         }
+    }
+
+    const onStartChange = (value) => {
+        setFrom(value)
+    }
+    const onEndChange = (value) => {
+        setTo(value)
     }
 
     const onClickFilterCallback = (values) => {
@@ -65,6 +79,11 @@ const TrialBalanceFilter = (
 
         if (options.programs) {
             if (!isEqual(values.programs, previous.programs)) {
+                change = true
+            }
+        }
+        if (options.dateRange) {
+            if (finalFilter.from !== values.from || finalFilter.to !== values.to) {
                 change = true
             }
         }
@@ -79,9 +98,11 @@ const TrialBalanceFilter = (
         if (options.programs) {
             filters.programs = values.programs
         }
-        if (options.programs) {
-            filters.programs = values.programs
+        if (options.dateRange) {
+            filters.from = values.from
+            filters.to = values.to
         }
+
         filters.programId = filter.programId
         filters.programs = filter.programs
 
@@ -108,6 +129,38 @@ const TrialBalanceFilter = (
                                 </div>
                             </div>
                         </div>
+                    }
+                    {options.dateRange &&
+                        <>
+                            <div className="table-filter-form-col table-filter-form-col2 float-filter">
+                                <div className="form__form-group">
+                                    <span className="form__form-group-label">From</span>
+                                    <div className="form__form-group-field">
+                                        <div className="form__form-group-row">
+                                            <DatePicker
+                                                dateFormat="MM/dd/yyyy"
+                                                selected={from}
+                                                onChange={onStartChange}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="table-filter-form-col table-filter-form-col2 float-filter">
+                                <div className="form__form-group">
+                                    <span className="form__form-group-label">To</span>
+                                    <div className="form__form-group-field">
+                                        <div className="form__form-group-row">
+                                            <DatePicker
+                                                dateFormat="MM/dd/yyyy"
+                                                selected={to}
+                                                onChange={onEndChange}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </>
                     }
                     <div className="clearfix">&nbsp;</div>
                     <div className="clearfix">&nbsp;</div>

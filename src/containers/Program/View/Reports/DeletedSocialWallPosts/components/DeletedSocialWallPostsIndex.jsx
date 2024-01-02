@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { Card, CardBody, Col } from 'reactstrap';
 import DeletedSocialWallPostsTable from './DeletedSocialWallPostsTable';
-import axios from "axios";
 import {isEmpty} from '@/shared/helpers'
 import {connect} from "react-redux";
 import { getAllPrograms } from '@/shared/apiHelper.jsx';

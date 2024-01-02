@@ -3,7 +3,6 @@ import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useF
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import {PROGRAM_COLUMNS} from "./columns";
 import {useParams} from 'react-router-dom'
-import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import { Col, Row} from 'reactstrap';
 import PointsPurchaseFilter  from "./PointsPurchaseFilter";
 import { clone} from 'lodash';

@@ -3,7 +3,7 @@ import DepositBalanceTable from './DepositBalanceTable';
 import {isEmpty} from '@/shared/helpers'
 import {connect} from "react-redux";
 import { getAllPrograms } from '@/shared/apiHelper.jsx';
-import {withRouter, useParams} from "react-router-dom";
+import { useParams} from "react-router-dom";
 
 
 const DepositBalanceIndex = ({ organization }) => {

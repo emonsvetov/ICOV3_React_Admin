@@ -1,6 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Col, Container, Row } from 'reactstrap';
+import { Container, Row } from 'reactstrap';
 import ParticipantAccountSummaryCard from './components/ParticipantAccountSummaryIndex.jsx';
 
 const ParticipantAccountSummary = ({program}) => {

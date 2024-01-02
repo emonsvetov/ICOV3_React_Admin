@@ -1,13 +1,10 @@
 import React, {useState} from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Modal, ModalBody, ModalHeader, Button, ButtonToolbar, Row, Col, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
+import { Button, ButtonToolbar, Row, Col, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 import classnames from 'classnames';
-import { Form, Field } from 'react-final-form';
 import axios from 'axios'
-import {useDispatch, sendFlashMessage} from "@/shared/components/flash";
-import formValidation from "@/shared/validation/program-accounting";
-import Tabs from "./Tabs";
+
 
 const InsertIconModal = ({isOpen, theme, rtl}) => {
   

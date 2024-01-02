@@ -1,15 +1,13 @@
-import React, {useState, useMemo} from "react";
+import React, {useState,useEffect, useMemo} from "react";
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
-
+import axios from "axios"
 import {REDEEMED_GIFT_CODES_COULMNS}  from "./columns";
-
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import UploadGiftCodesModal  from "./UploadGiftCodesModal";
 import { Row, Col } from 'reactstrap';
 import { format, subHours } from 'date-fns';
 import { CSVLink } from 'react-csv';
-
 import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter, Sorting} from "@/shared/apiTableHelper"
 
 const queryClient = new QueryClient()

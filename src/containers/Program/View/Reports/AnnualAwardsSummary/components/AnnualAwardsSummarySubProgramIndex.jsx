@@ -1,5 +1,4 @@
 import React, {FC, useEffect, useRef, useState} from 'react';
-import {any} from "prop-types";
 import AnnualAwardsSummarySubProgramTable from "./AnnualAwardsSummarySubProgramTable"
 import AnnualAwardsSummarySubProgramFilter, {defFilter} from "./AnnualAwardsSummarySubProgramFilter"
 import {CSVLink} from "react-csv";
@@ -31,7 +30,6 @@ const AnnualAwardsSummarySubProgramIndex: FC<AnnualAwardsSummarySubProgramIndexP
     const exportLink = useRef();
 
     const handleFilterChange = (value) => {
-
         setParams(prevState => {
             return {
                 ...value,
@@ -45,11 +43,23 @@ const AnnualAwardsSummarySubProgramIndex: FC<AnnualAwardsSummarySubProgramIndexP
         exportLink.current.link.click();
     }
 
+    const convertToTreeData = (data, parentId = null) => {
+        const filteredData = data.filter(item => item.parent_id === parentId);
+
+        return filteredData.map(item => ({
+            title: item.name,
+            value: String(item.account_holder_id),
+            key: String(item.account_holder_id),
+            children: convertToTreeData(data, item.id),
+        }));
+    };
+
     const getProgram = async () =>{
         getAllPrograms("minimal=true&limit=99999999&programId=" + programid)
             .then(response => {
                 const progarmData = response?.data ? response.data : [];
-                setSubPrograms(response.data);
+                const treeData = convertToTreeData(response.data);
+                setSubPrograms(treeData);
                 const result = progarmData.map(x => x.account_holder_id)
                 setDefaultPrograms(result);
                 setParams(prevState => ({
@@ -68,7 +78,7 @@ const AnnualAwardsSummarySubProgramIndex: FC<AnnualAwardsSummarySubProgramIndexP
                 const res = response.data
                 setDataAwards(res.awards);
                 setDataReward(res.rewards);
-                //setCsvData([...Object.values(res.data), res.config.total]);
+                //setCsvData(Object.values(res.awards.data));
             } catch (e) {}
         }
     }
@@ -86,8 +96,8 @@ const AnnualAwardsSummarySubProgramIndex: FC<AnnualAwardsSummarySubProgramIndexP
     return (<>
         <div style={{display: "none"}}>
             {/*<CSVLink*/}
-            {/*    data={Object.values(csvData)}*/}
-            {/*    headers={data.config.columns}*/}
+            {/*    data={csvData}*/}
+            {/*    headers={Object.values(dataReward.columans)}*/}
             {/*    filename="report.csv"*/}
             {/*    className="hidden"*/}
             {/*    ref={exportLink}*/}

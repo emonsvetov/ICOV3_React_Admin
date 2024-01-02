@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {useExpanded,  usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
+import {useExpanded, usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {Col, Row} from 'reactstrap';
@@ -16,14 +16,19 @@ import {
     Sorting
 } from "@/shared/apiTableHelper"
 
-import { clone} from 'lodash';
+import {clone} from 'lodash';
 import TrialBalanceFilter from "./TrialBalanceFilter";
+import {getFirstDay} from '@/shared/helpers'
 
 const queryClient = new QueryClient()
 
 const DataTable = ({organization, programs}) => {
+
+    const defaultFrom = getFirstDay();
     const [filter, setFilter] = useState({
         programs: programs,
+        from: defaultFrom,
+        to: new Date(),
         createdOnly: false,
         reportKey: 'sku_value',
         programId: 1
@@ -89,6 +94,8 @@ const DataTable = ({organization, programs}) => {
 
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
+    // console.log(data)
+
     const {
         getTableProps,
         getTableBodyProps,
@@ -150,7 +157,8 @@ const DataTable = ({organization, programs}) => {
                         <Row className="mx-0">
                             <Col>
                                 <TrialBalanceFilter
-                                    filter={filter} setFilter={setFilter} useFilter={useFilter} setUseFilter={setUseFilter}
+                                    filter={filter} setFilter={setFilter} useFilter={useFilter}
+                                    setUseFilter={setUseFilter}
                                     exportData={exportData} exportLink={exportLink} exportHeaders={exportHeaders}
                                     download={download}/>
                             </Col>
@@ -175,91 +183,120 @@ const DataTable = ({organization, programs}) => {
                             ))}
                             </thead>
                             <tbody className="table table--bordered" {...getTableBodyProps()} >
-                            {page.map(row => {
-                                prepareRow(row);
-                                return (
-                                    <>
-                                        <tr {...row.getRowProps()} key={row.id}>
-                                            {
-                                                row.cells.map(cell => {
-                                                    return <td {...cell.getCellProps()} key={cell.column.id + row.id}>
-                                                        <span>{cell.render('Cell')}</span>
-                                                    </td>
+                            {page.map((row, rowIndex) => {
+
+                                if (rowIndex > 0) return
+                                return Object.entries(row.original).map(([indexAccountHolder, rowAccountHolder], i) => {
+                                    // console.log(row)
+                                    // console.log(val)
+
+                                    // console.log(Object.keys(rowAccountHolder).length)
+                                    let rowSpan = Object.keys(rowAccountHolder).length;
+
+                                    return (
+                                        <>
+                                            <tr key={i}>
+                                                <td rowSpan={rowSpan}>
+                                                    {indexAccountHolder}
+                                                </td>
+                                                {Object.entries(rowAccountHolder).map(([indexAccount, rowAccount], i2) => {
+                                                    if (i2 > 0) return;
+                                                    let el1 =
+                                                        <>
+                                                            <td>
+                                                                {indexAccount}
+                                                            </td>
+                                                        </>
+                                                    let el = Object.entries(rowAccount).map(([indexValue, value], i3) => {
+                                                        return (
+                                                            <>
+                                                                <td>
+                                                                    {value === 0 ? '' : value}
+                                                                </td>
+                                                            </>
+                                                        )
+                                                    })
+                                                    el.unshift(el1)
+                                                    return el;
                                                 })
-                                            }
-                                        </tr>
-                                    </>
-                                )
+                                                }
+                                            </tr>
+                                            {rowSpan > 1 && Object.entries(rowAccountHolder).map(([indexAccount, rowAccount], i0) => {
+                                                if (i0 > 0) return;
+
+                                                let finalRow = Object.entries(rowAccountHolder).map(([indexAccount, rowAccount], i2) => {
+                                                    if (i2 === 0) return;
+                                                    let el1 =
+                                                        <>
+                                                            <td>
+                                                                {indexAccount}
+                                                            </td>
+                                                        </>
+                                                    let el = Object.entries(rowAccount).map(([indexValue, value], i3) => {
+                                                        return (
+                                                            <>
+                                                                <td>
+                                                                    {value === 0 ? '' : value}
+                                                                </td>
+                                                            </>
+                                                        )
+                                                    })
+                                                    el.unshift(el1)
+                                                    el = <>
+                                                        <tr>{el}</tr>
+                                                    </>
+                                                    return el;
+                                                })
+                                                return finalRow;
+
+                                                {/*</tr>*/
+                                                }
+                                            })}
+                                        </>
+                                    )
+                                })
+
                             })}
                             </tbody>
                             <tfoot>
-                            {footerGroups.map((footerGroup) => (
-                                <tr {...footerGroup.getFooterGroupProps()}>
-                                    {footerGroup.headers.map(column => (
-                                        <th {...column.getFooterProps()}>{column.render('Footer')}</th>
-                                    ))}
-                                </tr>
-                            ))}
+                                {page.map((row, rowIndex) => {
+                                    if (rowIndex === 0) return;
+
+                                    let finalRow = Object.entries(row.original).map(([indexAccountHolder, rowAccountHolder], i) => {
+                                        return (
+                                            <>
+                                                <td key={i}>
+                                                    {rowAccountHolder}
+                                                </td>
+                                            </>
+                                        )
+                                    });
+                                    let el1 =
+                                        <>
+                                            <td>Total</td>
+                                            <td></td>
+                                        </>
+                                    finalRow.unshift(el1)
+
+                                    finalRow = <>
+                                        <tr>{finalRow}</tr>
+                                    </>
+                                    return finalRow;
+                                })}
                             </tfoot>
                         </table>
                     }
 
-                    {(rows.length > 0) && (
-                        <>
-                            <ReactTablePagination
-                                page={page}
-                                gotoPage={gotoPage}
-                                previousPage={previousPage}
-                                nextPage={nextPage}
-                                canPreviousPage={canPreviousPage}
-                                canNextPage={canNextPage}
-                                pageOptions={pageOptions}
-                                pageSize={pageSize}
-                                pageIndex={pageIndex}
-                                pageCount={pageCount}
-                                setPageSize={setPageSize}
-                                manualPageSize={manualPageSize}
-                                dataLength={totalCount}
-                            />
-                            <div className="pagination justify-content-end mt-2">
-                                <span>
-                                Go to page:{' '}
-                                    <input
-                                        type="number"
-                                        value={pageIndex + 1}
-                                        onChange={(e) => {
-                                            const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                                            gotoPage(page);
-                                        }}
-                                        style={{ width: '100px' }}
-                                    />
-                                </span>{" "}
-                                <select
-                                    className="ml-2"
-                                    value={pageSize}
-                                    onChange={(e) => {
-                                        setPageSize(Number(e.target.value));
-                                    }}
-                                >
-                                    {[10, 20, 30, 40, 50].map((pageSize) => (
-                                        <option key={pageSize} value={pageSize}>
-                                            Show {pageSize}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </>
-                    )}
                 </div>
             </>
         )
 }
 
 const TableWrapper = ({organization, programs}) => {
-    if (!organization || !programs ) return 'Loading...'
+    if (!organization || !programs) return 'Loading...'
     return (
         <QueryClientProvider client={queryClient}>
-            <DataTable organization={organization}  programs={programs}/>
+            <DataTable organization={organization} programs={programs}/>
         </QueryClientProvider>
     )
 }

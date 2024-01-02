@@ -1,6 +1,6 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useParams } from 'react-router-dom';
-import { Col, Container, Row, Card, CardBody, NavItem, NavLink, Nav, TabPane, Button, TabContent } from 'reactstrap';
+import { Col, Container, Row, Card, CardBody, NavItem, NavLink, Nav, TabPane, TabContent } from 'reactstrap';
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import axios from "axios";

@@ -1,6 +1,8 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Card, CardBody, Col} from 'reactstrap';
 import CashDepositIndexDataTable from './CashDepositIndexDataTable';
+import { getAllPrograms } from '@/shared/apiHelper.jsx';
+import {isEmpty} from '@/shared/helpers'
 // import axios from "axios";
 // import {isEmpty} from '@/shared/helpers'
 // import {withRouter} from "react-router-dom";
@@ -9,26 +11,25 @@ import CashDepositIndexDataTable from './CashDepositIndexDataTable';
 
 const CashDepositIndex = ({organization}) => {
 
-  const defaultPrograms = []
 
-  // const [defaultPrograms, setDefaultPrograms] = useState([]);
+    const [defaultPrograms, setDefaultPrograms] = useState([]);
+    useEffect(() => {
+        if (isEmpty(defaultPrograms)) {
+            getAllPrograms("minimal=true&limit=99999999")
+                .then(response => {
+                    const data = response?.data ? response.data : [];
+                    const result = data.map(x => x.account_holder_id)
+                    setDefaultPrograms(result);
+                })
+        }
+    })
 
-  // useEffect(() => {
-  //   if ( organization?.id ){
-  //     getPrograms( organization.id, "minimal=true" )
-  //     .then( response => {
-  //       const data = response?.data ? response.data : [];
-  //       const result = data.map(x => x.account_holder_id)
-  //       setDefaultPrograms(result);
-  //     })
-  //   }
-  // }, [organization])
+    if (isEmpty(defaultPrograms)) {
+        return <p>Loading...</p>;
+    }
 
-  // if (isEmpty(defaultPrograms)) {
-  //   return <p>Loading...</p>;
-  // }
 
-  return (
+    return (
     <Col md={12}>
       <Card>
         <CardBody>

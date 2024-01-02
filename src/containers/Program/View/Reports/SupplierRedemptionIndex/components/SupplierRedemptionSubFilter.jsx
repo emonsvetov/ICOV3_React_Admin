@@ -4,20 +4,14 @@ import {
     Button,
     DatePicker,
     Col,
-    ColorPicker, Flex,
     Form,
-    InputNumber,
     Radio,
-    Rate,
     Row,
     Select,
-    Slider,
     Space,
     Switch,
-    Upload,
 } from 'antd';
-import {any} from "prop-types";
-import {CSVLink} from "react-csv";
+
 
 const { Option } = Select;
 

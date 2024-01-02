@@ -12,7 +12,7 @@ import { sendFlashMessage} from "@/shared/components/flash";
 import axios from 'axios'
 import renderSelectField from '@/shared/components/form/Select'
 import { getProgramAction } from '@/redux/actions/programActions';
-import {isEqual, clone} from 'lodash';
+import { clone } from 'lodash';
 
 const prepareForValidation = values => {
     // console.log(values)
