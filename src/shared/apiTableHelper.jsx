@@ -285,6 +285,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
     // console.log(options)
 
     const [keyword, setKeyword] = React.useState(finalFilter.keyword)
+    const [sku, setSku] = React.useState(finalFilter.sku)
     const [from, setFrom] = React.useState( finalFilter.from )
     const [to, setTo] = React.useState( finalFilter.to )
     const [inventoryType, setInventoryTypes] = React.useState( finalFilter.inventoryType )
@@ -294,6 +295,9 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
 
     const onKeywordChange = (e) => {
         setKeyword( e.target.value )
+    }
+    const onSkuChange = (e) => {
+        setSku( e.target.value )
     }
     const onStartChange = ( value ) => {
         setFrom( value)
@@ -309,6 +313,10 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
 
         if (options.keyword) {
             dataSet.keyword = reset ? '' : keyword;
+        }
+
+        if (options.sku) {
+            dataSet.sku = reset ? '' : sku;
         }
 
         if (options.dateRange) {
@@ -365,6 +373,12 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
             }
         }
 
+        if(options.sku) {
+            if(finalFilter.sku !== values.sku)   {
+                change = true
+            }
+        }
+
         if(options.programs) {
             if(!isEqual(finalFilterPrograms, values.programs))   {
                 finalFilterPrograms = clone(values.programs);
@@ -410,6 +424,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
 
         let filters = {}
         if( options.keyword ) filters.keyword = values.keyword
+        if( options.sku ) filters.sku = values.sku
         if( options.programs ) {
             filters.programs = values.programs
         }
@@ -505,6 +520,24 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                                 </div>
                             </div>
                         </div>
+                    }
+                    {options.sku &&
+                    <>
+                    <div className="table-filter-form-col table-filter-form-col1 mt-2">
+                        <div className="form__form-group">
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <input
+                                        value={sku}
+                                        onChange={onSkuChange}
+                                        type="text"
+                                        placeholder={`Search sku`}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </>
                     }
                     {options.date &&
                         <>
