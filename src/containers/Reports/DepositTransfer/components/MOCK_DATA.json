@@ -1,7 +1,7 @@
 [
-    {"date" : "10-11-2023" , "from_program" : "Incentco Global Solutions" , "to_program" :"SHRM 2022" , "transferred_by" : "abc", "amount" : 100.3 },
-    {"date" : "08-19-2023" , "from_program" : "Incentco Global Solutions" , "to_program" :"INTERFACE 2022" , "transferred_by" : "xyz", "amount" : 50.3},
-    {"date" : "05-07-2023" , "from_program" : "Incentco Global Solutions " , "to_program" : "Momentum Rewards" , "transferred_by" : "adam", "amount" : 450.3},
-    {"date" : "07-22-2023" , "from_program" : "Incentco Global Solutions" , "to_program" : "Incentco Global Solutions copy" , "transferred_by" : "henry", "amount" : 310.3 }
+    {"date" : "10-11-2023" , "from_program" : "Incentco Global Solutions" , "to_program" :"SHRM 2022" , "transferred_by" : "", "amount" : 100.3 },
+    {"date" : "08-19-2023" , "from_program" : "Incentco Global Solutions" , "to_program" :"INTERFACE 2022" , "transferred_by" : "", "amount" : 50.3},
+    {"date" : "05-07-2023" , "from_program" : "Incentco Global Solutions " , "to_program" : "Momentum Rewards" , "transferred_by" : "", "amount" : 450.3},
+    {"date" : "07-22-2023" , "from_program" : "Incentco Global Solutions" , "to_program" : "Incentco Global Solutions copy" , "transferred_by" : "", "amount" : 310.3 }
     
 ]
