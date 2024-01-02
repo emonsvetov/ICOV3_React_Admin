@@ -7,7 +7,7 @@ import { withRouter } from 'react-router-dom';
 import { getProgramAction } from '@/redux/actions/programActions';
 import axios from 'axios'
 import {getProgramById} from "@/shared/apiHelper"
-import { NULL } from 'sass';
+
 
 const PUBLIC_URL = `${process.env.PUBLIC_URL}`;
 const GeneralIcon = `${PUBLIC_URL}/img/icon/general.svg`;
@@ -47,13 +47,12 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
             getProgramById(organization?.id,program?.parent_id).then((response)=>{
                 if (response.id == id) {
                     setParentProgramPath(null)
-                return;
-                }
-                else{
+                   return;
+                }else{
                     setParentProgramPath( 
                         {
                           id: response.id,
-                          name:response.name
+                          name: response.name
                         } 
                      ) 
                 }
