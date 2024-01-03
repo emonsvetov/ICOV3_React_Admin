@@ -1,11 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {Card, CardBody, Col} from 'reactstrap';
 import ExpirePointsIndexDataTable from './ExpirePointsIndexDataTable';
-import axios from "axios";
 import {isEmpty} from '@/shared/helpers'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
-import { getPrograms } from '@/shared/apiHelper.jsx';
 import { getAllPrograms } from '@/shared/apiHelper.jsx';
 
 const ExpirePointsIndex = ({organization}) => {

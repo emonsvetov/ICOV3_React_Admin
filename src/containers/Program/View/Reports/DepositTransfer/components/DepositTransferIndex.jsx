@@ -3,7 +3,7 @@ import DepositTransferTable from './DepositTransferTable';
 import {isEmpty} from '@/shared/helpers'
 import {connect} from "react-redux";
 import { getAllPrograms } from '@/shared/apiHelper.jsx';
-import {withRouter, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 
 
 const DepositTransferIndex = ({ organization }) => {

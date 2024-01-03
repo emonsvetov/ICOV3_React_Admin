@@ -1,23 +1,17 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useState} from 'react';
 import dayjs from 'dayjs';
 import {
     Button,
     DatePicker,
     Col,
-    ColorPicker, Flex,
     Form,
-    InputNumber,
     Radio,
-    Rate,
     Row,
     Select,
-    Slider,
     Space,
     Switch,
-    Upload,
 } from 'antd';
-import {any} from "prop-types";
-import {CSVLink} from "react-csv";
+
 
 const { Option } = Select;
 

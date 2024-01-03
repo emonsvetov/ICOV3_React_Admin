@@ -1,5 +1,5 @@
 import React, {useMemo, useState, useEffect} from "react";
-import { useTable, useSortBy, usePagination, useGlobalFilter, useFilters, useExpanded, useQuery } from "react-table";
+import { useTable, useSortBy, usePagination, useGlobalFilter, useFilters, useExpanded } from "react-table";
 // import MOCK_DATA from "./MOCK_DATA.json";
 import { PROGRAM_COLUMNS } from "./columns";
 import SortIcon from 'mdi-react/SortIcon';

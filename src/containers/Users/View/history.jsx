@@ -1,23 +1,14 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import {Col, Container, Row, Card, CardBody, NavItem, NavLink, Nav, TabPane, Button, TabContent} from 'reactstrap';
-import {Link, useParams} from 'react-router-dom'
-import axios from 'axios'
-import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
-import {connect} from 'react-redux'
-import {withRouter} from 'react-router-dom'
-import {isEmpty} from '@/shared/helpers'
+import React, { useMemo, useState} from 'react';
+import {Col, Row, } from 'reactstrap';
+import { useQuery} from 'react-query'
 import {useExpanded, useFlexLayout, usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {reducer, useEffectToDispatch, fetchApiData, initialState, TableFilter} from "@/shared/apiTableHelper"
-import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
-import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 import SortIcon from "mdi-react/SortIcon";
 import SortAscendingIcon from "mdi-react/SortAscendingIcon";
 import SortDescendingIcon from "mdi-react/SortDescendingIcon";
-import {toCurrency, toPoints} from '@/shared/helpers'
-import { fetchRoles, fetchUserPrograms, fetchUserProgramRoles } from "@/shared/apiHelper"
+import {toPoints} from '@/shared/helpers'
 
-const queryClient = new QueryClient()
 
 const ViewUserHistory = ({organization, user, programs}) => {
 
@@ -28,7 +19,6 @@ const ViewUserHistory = ({organization, user, programs}) => {
     const [userProgramIds, setUserProgramIds] = useState(null)
     const [filter, setFilter] = useState({programs: programs});
 
-    let {programId, userId} = useParams();
 
     let columns = useMemo(() => HISTORY_COLUMNS, [])
 

@@ -4,8 +4,6 @@ import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import {TABLE_COLUMNS} from "./columns";
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {Col, Row} from 'reactstrap';
-import {renameChildrenToSubrows} from '@/shared/helpers'
-import MOCK_DATA from "./MOCK_DATA.json"
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {
@@ -17,8 +15,8 @@ import {
   TableFilter,
   Sorting
 } from "@/shared/apiTableHelper"
-import {clone} from 'lodash';
-import {getFirstDay} from '@/shared/helpers'
+import {getFirstDay} from '@/shared/helpers';
+import { clone} from 'lodash';
 
 const queryClient = new QueryClient()
 
@@ -32,14 +30,7 @@ const DataTable = ({organization, programs}) => {
   const [exportToCsv, setExportToCsv] = useState(false);
   const exportLink = React.createRef();
 
-  const fetchMockData = () => {
-    
-    const data = {
-        results: renameChildrenToSubrows(MOCK_DATA),
-        count: 15
-    };
-    return data;
-};
+ 
 
 
   let columns = useMemo(() => TABLE_COLUMNS, [])
@@ -47,23 +38,19 @@ const DataTable = ({organization, programs}) => {
   const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
     React.useReducer(reducer, initialState);
 
-  //const apiUrl = `/organization/${organization.id}/report/cash-deposit`; //enable api after creation
+  const apiUrl = `/organization/${organization.id}/report/deposit-transfers`;
   const {isLoading, error, data, isSuccess, isFetching} = useQuery(
-    ['programs',
-    //apiUrl, 
-    queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
-    () =>
-    fetchMockData()
-    // fetchApiData(
-    //   {
-    //     //url: apiUrl,
-    //     page: queryPageIndex,
-    //     size: queryPageSize,
-    //     filter,
-    //     sortby: queryPageSortBy,
-    //     trigger: queryTrigger
-    //   }
-    // )
+    ['programReportDepositTransfer',apiUrl,queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+    () => fetchApiData(
+      {
+        url: apiUrl,
+        page: queryPageIndex,
+        size: queryPageSize,
+        filter,
+        sortby: queryPageSortBy,
+        trigger: queryTrigger
+      }
+    )
     ,
     {
       keepPreviousData: true,
@@ -81,20 +68,20 @@ const DataTable = ({organization, programs}) => {
   }, [exportLink])
 
   const download = async (filterValues) => {
-    // let tmpFilter = clone(filterValues);
-    // tmpFilter.exportToCsv = 1;
+    let tmpFilter = clone(filterValues);
+    tmpFilter.exportToCsv = 1;
 
-    // const response = await fetchApiDataExport(
-    //   {
-    //   // url: apiUrl,
-    //     filter: tmpFilter,
-    //     sortby: queryPageSortBy,
-    //     trigger: queryTrigger
-    //   }
-    // );
-    // setExportData(response.results);
-    // setExportHeaders(response.headers);
-    // setExportToCsv(true);
+    const response = await fetchApiDataExport(
+      {
+        url: apiUrl,
+        filter: tmpFilter,
+        sortby: queryPageSortBy,
+        trigger: queryTrigger
+      }
+    );
+    setExportData(response.results);
+    setExportHeaders(response.headers);
+    setExportToCsv(true);
   }
 
   const totalPageCount = Math.ceil(totalCount / queryPageSize)

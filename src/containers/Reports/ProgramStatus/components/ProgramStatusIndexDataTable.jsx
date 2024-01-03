@@ -9,7 +9,6 @@ import {
 } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { TABLE_COLUMNS } from "./columns";
-import ReactTablePagination from "@/shared/components/table/components/ReactTablePagination";
 import { Col, Row } from "reactstrap";
 import { getFirstDay } from "@/shared/helpers";
 

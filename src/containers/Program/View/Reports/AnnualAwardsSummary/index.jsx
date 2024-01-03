@@ -1,5 +1,4 @@
 import React,{FC} from 'react';
-import {any} from "prop-types";
 import AnnualAwardsSummarySubProgramIndex from "./components/AnnualAwardsSummarySubProgramIndex";
 
 interface AnnualAwardsSummarySubProgramProps {

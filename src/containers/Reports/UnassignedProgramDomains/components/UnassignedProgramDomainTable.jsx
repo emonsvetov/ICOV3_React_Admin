@@ -5,7 +5,6 @@ import ReactTablePagination from '@/shared/components/table/components/ReactTabl
 import { Col, Row } from 'reactstrap';
 import { PROGRAM_COLUMNS } from './columns';
 import { connect } from 'react-redux';
-import { clone } from 'lodash';
 import { reducer, useEffectToDispatch, fetchApiData, fetchApiDataExport, initialState, Sorting } from "@/shared/apiTableHelper";
 import UnassignedProgramDomainFilter from './UnassignedProgramDomainFilter';
 

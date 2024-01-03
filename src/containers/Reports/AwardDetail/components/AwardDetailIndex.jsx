@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Card, CardBody, Col} from 'reactstrap';
 import AwardDetailIndexDataTable from './AwardDetailIndexDataTable';
-import axios from "axios";
 import {isEmpty} from '@/shared/helpers'
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";

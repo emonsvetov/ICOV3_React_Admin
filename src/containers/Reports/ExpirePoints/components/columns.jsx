@@ -1,6 +1,6 @@
 import {Link} from 'react-router-dom';
-import React, {useMemo} from 'react';
-import {toCurrency, toPoints} from '@/shared/helpers'
+import React from 'react';
+import { toPoints} from '@/shared/helpers'
 
 const RenderActions = ({row}) => {
   return (

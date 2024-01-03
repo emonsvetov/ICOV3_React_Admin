@@ -1,4 +1,3 @@
-import { toPoints} from '@/shared/helpers'
 export const TABLE_COLUMNS = [
   {
     Header: "Program ID",

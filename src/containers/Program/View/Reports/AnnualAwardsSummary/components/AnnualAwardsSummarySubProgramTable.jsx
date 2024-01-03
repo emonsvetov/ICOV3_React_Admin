@@ -1,5 +1,4 @@
 import React, {FC, useEffect, useState} from 'react';
-import {any} from "prop-types";
 import {Table} from "antd";
 import { Typography } from 'antd';
 const { Title } = Typography;

@@ -1,6 +1,4 @@
 import React from "react";
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import { TreeView } from '@material-ui/lab';
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";

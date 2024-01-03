@@ -1,6 +1,5 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { Card, CardBody, Col } from 'reactstrap';
-import FolderPlusOutlineIcon from 'mdi-react/FolderPlusOutlineIcon';
 import AddUserForm from './AddUserForm';
 
 const AddUser = () => (

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import {Col, Container, Row, Card, CardBody, NavItem, NavLink, Nav, TabPane, Button, TabContent} from 'reactstrap';
+import React, { useState } from 'react';
+import {Col, Container, Row, Card, CardBody, NavItem, NavLink, Nav, TabPane, TabContent} from 'reactstrap';
 import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
 import classnames from "classnames";
@@ -12,8 +12,7 @@ import ViewUserProfile from "./View/profile";
 import ViewUserHistory from "./View/history";
 import ViewUserGiftCodesRedeemed from "./View/giftCodesRedeemed";
 import ViewUserChangeLogs from "./View/changeLogs";
-import { fetchRoles, fetchUserPrograms, fetchUserProgramRoles } from "@/shared/apiHelper"
-import {login} from "../App/auth";
+import { fetchUserPrograms } from "@/shared/apiHelper"
 
 const queryClient = new QueryClient()
 

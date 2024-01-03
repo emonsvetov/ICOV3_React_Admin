@@ -1,17 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {Col, Container, Row, Card, CardBody, NavItem, NavLink, Nav, TabPane, Button, TabContent} from 'reactstrap';
-import {Link, useParams} from 'react-router-dom'
-import axios from 'axios'
-import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
-import {connect} from 'react-redux'
-import {withRouter} from 'react-router-dom'
-import {isEmpty} from '@/shared/helpers'
+import React from 'react';
+import {Col, Row} from 'reactstrap';
 
-const queryClient = new QueryClient()
+
 
 const ProgramViewUserProfile = ({organization, data}) => {
 
-    let {programId, userId} = useParams();
+    
 
     if (!organization?.id || !data) {
         return <p>Loading...</p>;

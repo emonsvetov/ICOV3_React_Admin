@@ -1,5 +1,4 @@
-import {toPoints} from '@/shared/helpers'
-import {Link} from "react-router-dom";
+
 
 export const TABLE_COLUMNS = [
     {

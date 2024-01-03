@@ -1,7 +1,5 @@
-import React, {useState, useEffect} from "react";
-import {Field, Form} from 'react-final-form';
+import React, {useState} from "react";
 import {Button, Row, Col} from 'reactstrap';
-import renderSelectField from '@/shared/components/form/Select'
 import {connect} from 'react-redux'
 import {CSVLink} from "react-csv";
 import {isEqual, clone, cloneDeep} from 'lodash';
