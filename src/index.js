@@ -7,15 +7,12 @@ const rootElement = document.getElementById('root');
 
 const root = createRoot(rootElement);
 
-// root.render(
-//     <React.StrictMode>
-//         <App />
-//     </React.StrictMode>
-// );
-
 root.render(
+    <React.StrictMode>
         <App />
+    </React.StrictMode>
 );
+
 
 // If you want your app to work offline and load faster,
 // you can change unregister() to register() below.
