@@ -1,14 +1,12 @@
 import React, {FC, useEffect, useState} from 'react';
 import {any} from "prop-types";
 import {Button, Col, Form, Radio, Row, Select, Space, Switch, Table, TreeSelect} from "antd";
-import {Option} from "antd/lib/mentions";
 
 const { SHOW_PARENT } = TreeSelect;
 
 interface AnnualAwardsSummarySubProgramFilterProps
 {
     filters: any,
-    exportCSV: any,
     programs: any
 }
 
@@ -17,14 +15,16 @@ export const defFilter = {
     viewAllPrograms: true,
     month: '1',
     year: new Date().getFullYear(),
-    programId: 0
+    programId: 0,
+    exportToCsv: 0,
 }
 
-export const AnnualAwardsSummarySubProgramFilter: FC<AnnualAwardsSummarySubProgramFilterProps> = ({programs, filters, exportCSV}) => {
+export const AnnualAwardsSummarySubProgramFilter: FC<AnnualAwardsSummarySubProgramFilterProps> = ({programs, filters}) => {
     const [filter, setFilter] = useState(defFilter);
     const [selectYearOptions, setSelectYearOptions] = useState([]);
     const [value, setValue] = useState([]);
     const [treeData, setTreeData] = useState(programs);
+    const [eCsv, setECsv] = useState(0);
     const onFinish = (values) => {
         const updatedFilter = {...filter};
 
@@ -44,7 +44,13 @@ export const AnnualAwardsSummarySubProgramFilter: FC<AnnualAwardsSummarySubProgr
             updatedFilter.active = values.active
         }
 
+        if (eCsv){
+            updatedFilter.exportToCsv = 1;
+        }else {
+            updatedFilter.exportToCsv = 0;
+        }
         filters(updatedFilter);
+        setECsv(0);
     };
 
     useEffect(() => {
@@ -74,6 +80,7 @@ export const AnnualAwardsSummarySubProgramFilter: FC<AnnualAwardsSummarySubProgr
         },
         treeCheckStrictly: true,
     };
+
 
     return (<Row className="table-filter-form form action-panel">
         <Form
@@ -138,12 +145,11 @@ export const AnnualAwardsSummarySubProgramFilter: FC<AnnualAwardsSummarySubProgr
                     <Space size="small">
                         <Button type="primary" htmlType="submit">Search</Button>
                         <Button htmlType="reset">Clear</Button>
-                        <a style={{fontSize: 12}} onClick={() => {
-                            exportCSV();
-                        }}>Export to CSV</a>
+                        <Button type="link" htmlType="submit" onClick={()=>{
+                            setECsv(1);
+                        }}>Export to CSV</Button>
                     </Space>
                 </Col>
-
             </Row>
         </Form>
     </Row>)

@@ -40,17 +40,13 @@ const AnnualAwardsSummarySubProgramIndex: FC<AnnualAwardsSummarySubProgramIndexP
         });
     }
 
-    const handleCSVExport = (value) => {
-        exportLink.current.link.click();
-    }
-
     const convertToTreeData = (data, parentId = null) => {
         const filteredData = data.filter(item => item.parent_id === parentId);
 
-        return filteredData.map(item => ({
+        return filteredData.map((item, index) => ({
             title: item.name,
-            value: String(item.account_holder_id),
-            key: String(item.account_holder_id),
+            value: `${item.account_holder_id}_${index}`,
+            key: `${item.account_holder_id}_${index}`,
             children: convertToTreeData(data, item.id),
         }));
     };
@@ -72,18 +68,32 @@ const AnnualAwardsSummarySubProgramIndex: FC<AnnualAwardsSummarySubProgramIndexP
     }
 
     const getDataReport = async () => {
-        if (params.programId > 0 && params.programs !== ''){
+
+        if (params.programId > 0 && params.programs !== '' && params.exportToCsv === 0){
             const apiUrl = `/organization/1/report/annual-awards-summaryAdmin`
             try {
                 const response = await axios.get(apiUrl, {params});
                 const res = response.data
                 setDataAwards(res.awards);
                 setDataReward(res.rewards);
-                //setCsvData(Object.values(res.awards.data));
+            } catch (e) {}
+        }
+
+        if (params.exportToCsv === 1) {
+            const apiUrl = `/organization/1/report/annual-awards-summaryAdmin`
+            try {
+                const response = await axios.get(apiUrl, {params});
+                const res = response.data
+                setCsvData(res);
             } catch (e) {}
         }
     }
 
+    useEffect(() => {
+        if (csvData && csvData.length > 0) {
+            exportLink.current.link.click();
+        }
+    }, [csvData]);
 
     useEffect(() => {
         getProgram();
@@ -96,18 +106,17 @@ const AnnualAwardsSummarySubProgramIndex: FC<AnnualAwardsSummarySubProgramIndexP
 
     return (<>
         <div style={{display: "none"}}>
-            {/*<CSVLink*/}
-            {/*    data={csvData}*/}
-            {/*    headers={Object.values(dataReward.columans)}*/}
-            {/*    filename="report.csv"*/}
-            {/*    className="hidden"*/}
-            {/*    ref={exportLink}*/}
-            {/*    target="_blank"*/}
-            {/*></CSVLink>*/}
+            <CSVLink
+                data={csvData}
+                filename="report.csv"
+                className="hidden"
+                ref={exportLink}
+                target="_blank"
+            ></CSVLink>
         </div>
         <Card>
             <CardBody>
-                <AnnualAwardsSummarySubProgramFilter programs={subPrograms} filters={handleFilterChange} exportCSV={handleCSVExport}/>
+                <AnnualAwardsSummarySubProgramFilter programs={subPrograms} filters={handleFilterChange} />
                 <AnnualAwardsSummarySubProgramTable dataReport={dataAwards}/>
                 <AnnualAwardsSummarySubProgramTable dataReport={dataReward}/>
             </CardBody>
