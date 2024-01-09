@@ -65,7 +65,9 @@
 
     .form__form-group {
       display: flex;
-      flex-wrap: wrap;
+      justify-content: space-between; // Adjust this based on your spacing needs
+      align-items: center;
+      flex: 1;
     }
 
     .form__form-group-field {

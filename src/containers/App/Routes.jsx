@@ -64,11 +64,13 @@ import EditDomain from '../Domain/edit_domain';
 import OrdersIndex from '../PhysicalOrders/index';
 import EditOrder from '../PhysicalOrders/edit_order';
 import TangoOrder from '../PhysicalOrders/tango_order';
+import GlobalOrder from '../Reports/Orders/view_order';
 
 import {
   AwardDetail,
   CashDeposit,
   Inventory,
+  Orders,
   InventoryOrder,
   JournalDetailed,
   PointsPurchaseSummary,
@@ -80,10 +82,11 @@ import {
   ParticipantAccountSummary,
   ParticipantAccountSubProgram,
   UnassignedProgramDomains,
-  MoniesPendingAmount,
+  DepositsReceived,
   ExpirePoints,
   ExpireMonies,
-    TrialBalance,
+  TrialBalance,
+  PointPurchaseSummary
  } from '../Reports';
 
 import TreeView from '../TreeViewBasic';
@@ -176,6 +179,8 @@ const Reports = () => (
     <Route exact path="/reports/award-detail" component={AwardDetail} />
     <Route exact path="/reports/cash-deposit" component={CashDeposit} />
     <Route exact path="/reports/inventory" component={Inventory} />
+    <Route exact path="/reports/orders" component={Orders} />
+    <Route exact path="/reports/orders/view/:id" component={GlobalOrder} />
     <Route exact path="/reports/inventory-order" component={InventoryOrder} />
     <Route exact path="/reports/journal-detailed" component={JournalDetailed} />
     <Route exact path="/reports/points-purchase-summary" component={PointsPurchaseSummary} />
@@ -187,10 +192,10 @@ const Reports = () => (
     <Route exact path="/reports/participant-status-summary" component={ParticipantStatusSummary} />
     <Route exact path="/reports/participant-account-summary" component={ParticipantAccountSummary} />
     <Route exact path="/reports/unassigned-program-domains" component={UnassignedProgramDomains} />
-    <Route exact path="/reports/monies-pending-amount" component={MoniesPendingAmount} />
+    <Route exact path="/reports/deposits-received" component={DepositsReceived} />
     <Route exact path="/reports/expire-points" component={ExpirePoints} />
     <Route exact path="/reports/expire-monies" component={ExpireMonies} />
-      <Route exact path="/reports/trial-balance" component={TrialBalance} />
+    <Route exact path="/reports/trial-balance" component={TrialBalance} />
   </Switch>
 );
 

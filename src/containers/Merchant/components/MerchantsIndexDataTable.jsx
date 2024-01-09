@@ -107,7 +107,7 @@ const DataTable = ({organization}) => {
     return (
             <>
                 <div className='table react-table merchant-table'>
-                    <form className="form form--horizontal">
+                    <form className="form form--horizontal action-panel">
                         <div className="form__form-group pb-4">
                             <div className="col-md-9 col-lg-9">
                               <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter}
@@ -121,7 +121,7 @@ const DataTable = ({organization}) => {
                             </div>
                             <div className="col-md-3 col-lg-3 text-right pr-0">
                                 <Link style={{maxWidth:'200px'}}
-                                className="btn btn-primary account__btn account__btn--small"
+                                className="btn btn-success account__btn account__btn--small"
                                 to="/merchants/add"
                                 >Add new merchant
                                 </Link>

@@ -2,6 +2,7 @@ import React, {useState} from "react"
 import axios from 'axios'
 import SortIcon from 'mdi-react/SortIcon';
 import {Row, Col, Button} from 'reactstrap';
+import Select from 'react-select'
 
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
@@ -260,12 +261,13 @@ export const fetchApiDataExport = async( queryParams )  => {
     }
 };
 
-export const TableFilter = ({ config, filter, setFilter, setUseFilter, download, exportData, exportLink, exportHeaders, loading}) => {
+export const TableFilter = ({ config, filter, setFilter, setUseFilter, download, exportData, exportLink, exportHeaders, loading, inventoryTypes}) => {
 
     const defaultFilters = {
         keyword: '',
         from: defaultFrom,
-        to: defaultTo
+        to: defaultTo,
+        inventoryType: 0,
     }
 
     const finalFilter = {...defaultFilters, ...filter}
@@ -274,7 +276,8 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
     const defaultConfig = {
         label:'term',
         keyword:true,
-        dateRange: false
+        dateRange: false,
+        inventoryType: !!inventoryTypes,
     }
 
     const options = {...defaultConfig, ...config}
@@ -282,8 +285,10 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
     // console.log(options)
 
     const [keyword, setKeyword] = React.useState(finalFilter.keyword)
+    const [sku, setSku] = React.useState(finalFilter.sku)
     const [from, setFrom] = React.useState( finalFilter.from )
     const [to, setTo] = React.useState( finalFilter.to )
+    const [inventoryType, setInventoryTypes] = React.useState( finalFilter.inventoryType )
     const [awardLevels, setAwardLevels] = React.useState(finalFilter.awardLevels);
     const [selectedPrograms, setSelectedPrograms] = useState(filter.programs ? filter.programs : []);
     const [selectedMerchants, setSelectedMerchants] = useState(filter.merchants ? filter.merchants : []);
@@ -291,17 +296,27 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
     const onKeywordChange = (e) => {
         setKeyword( e.target.value )
     }
+    const onSkuChange = (e) => {
+        setSku( e.target.value )
+    }
     const onStartChange = ( value ) => {
         setFrom( value)
     }
     const onEndChange = ( value ) => {
         setTo(  value )
     }
+    const onInventoryTypesChange = ( e ) => {
+        setInventoryTypes( e.value )
+    }
     const onClickFilter = (reset = false, exportToCsv = 0) => {
         let dataSet = {};
 
         if (options.keyword) {
             dataSet.keyword = reset ? '' : keyword;
+        }
+
+        if (options.sku) {
+            dataSet.sku = reset ? '' : sku;
         }
 
         if (options.dateRange) {
@@ -315,6 +330,9 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
 
         if (options.type) {
             dataSet.type = options.type;
+        }
+        if (options.inventoryType) {
+            dataSet.inventoryType = inventoryType;
         }
         if (options.programs) {
             dataSet.programs = reset ? [] : clone(selectedPrograms);
@@ -355,6 +373,12 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
             }
         }
 
+        if(options.sku) {
+            if(finalFilter.sku !== values.sku)   {
+                change = true
+            }
+        }
+
         if(options.programs) {
             if(!isEqual(finalFilterPrograms, values.programs))   {
                 finalFilterPrograms = clone(values.programs);
@@ -386,6 +410,12 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
             }
         }
 
+        if(options.inventoryType) {
+            if(finalFilter.inventoryType !== values.inventoryType)   {
+                change = true
+            }
+        }
+
         if( !change )    {
             alert('No change in filters')
             setUseFilter(false)
@@ -394,6 +424,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
 
         let filters = {}
         if( options.keyword ) filters.keyword = values.keyword
+        if( options.sku ) filters.sku = values.sku
         if( options.programs ) {
             filters.programs = values.programs
         }
@@ -412,6 +443,9 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
         }
         if( options.type ) {
             filters.type = values.type
+        }
+        if( options.inventoryType ) {
+            filters.inventoryType = values.inventoryType
         }
 
         setFilter( filters )
@@ -487,6 +521,24 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                             </div>
                         </div>
                     }
+                    {options.sku &&
+                    <>
+                    <div className="table-filter-form-col table-filter-form-col1 mt-2">
+                        <div className="form__form-group">
+                            <div className="form__form-group-field">
+                                <div className="form__form-group-row">
+                                    <input
+                                        value={sku}
+                                        onChange={onSkuChange}
+                                        type="text"
+                                        placeholder={`Search sku`}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </>
+                    }
                     {options.date &&
                         <>
                             <div className="table-filter-form-col table-filter-form-col2 float-filter">
@@ -504,6 +556,26 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                                 </div>
                             </div>
                         </>
+                    }
+                    {options.inventoryType &&
+                    <>
+                        <div className="table-filter-form-col table-filter-form-col2 float-filter">
+                            <div className="form__form-group">
+                                <span className="form__form-group-label">Show</span>
+                                <div className="form__form-group-field">
+                                    <div className="form__form-group-row">
+                                        <Select
+                                            options={inventoryTypes}
+                                            clearable={false}
+                                            className="react-select"
+                                            classNamePrefix="react-select"
+                                            onChange={onInventoryTypesChange}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </>
                     }
                     {options.dateRange &&
                         <>
@@ -548,13 +620,13 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                 >Filter</Button>
                 <Button
                     onClick={()=>onClickFilter(true)}
-                    className="btn btn-sm btn-primary"
+                    className="btn btn-sm btn-secondary"
                     color="#ffffff"
                 >Reset</Button>
                 {options.exportToCsv &&
                     <>
             <span
-                className="btn btn-sm btn-primary mr-2 text-white pointer"
+                className="btn btn-sm btn-success mr-2 text-white pointer"
                 onClick={() => { download(filter) }}
             >Export to CSV</span>
                         <CSVLink

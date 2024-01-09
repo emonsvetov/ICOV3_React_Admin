@@ -33,6 +33,11 @@ const DataTable = ({organization, merchants}) => {
   const [filterValues, setFilterValues] = useState([]);
   const [columns, setColumns] = useState([{Header: 'Cost Basis', accessor: 'cost_basis'}]);
   const exportLink = React.createRef();
+  const inventoryTypes = [
+    { 'label': 'All Codes', 'value': 0 },
+    { 'label': 'Real Codes', 'value': 1 },
+    { 'label': 'Virtual Codes', 'value': 2 },
+  ];
 
   const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
     React.useReducer(reducer, initialState);
@@ -101,109 +106,103 @@ const DataTable = ({organization, merchants}) => {
         }
     };
 
-  const updateColumns = useCallback((data) => {
-    if (data) {
-      let resultArr = [];
-      let report = Object.values(data.results.report);
-      for (let key in report) {
-        let item = report[key];
-        let tmpColumns = [];
+    const updateColumns = useCallback((data) => {
+        if (data) {
+            let resultArr = [];
+            let report = Object.values(data.results.report);
+            for (let key in report) {
+                let item = report[key];
+                let tmpColumns = [];
 
-        resultArr = [
-          {
-            Header: 'Merchant Name',
-            accessor: 'name',
-            width: 200
-          }
-        ];
-        /** Promotional Codes On Hand */
-        let innerObject = Object.keys(item.on_hand);
-        for (let innerKey in innerObject) {
-          let innerItem = innerObject[innerKey];
-            let headerValue = parseInt(innerItem, 10);
-            tmpColumns.push(
-            {
-              id: "on_hand" + innerKey,
-              Header: "$" + headerValue,
-              accessor: (row) => { return row.on_hand[innerItem]; },
-              width: 100
-            },
-          )
+                resultArr = [
+                    {
+                        Header: 'Merchant Name',
+                        accessor: 'name',
+                        width: 200
+                    }
+                ];
+
+                /** Promotional Codes On Hand */
+                let innerObject = Object.keys(item.on_hand);
+                for (let innerKey in innerObject) {
+                    let innerItem = innerObject[innerKey];
+                    let headerValue = parseInt(innerItem, 10);
+                    tmpColumns.push({
+                        id: "on_hand" + innerKey,
+                        Header: "$" + headerValue,
+                        accessor: (row) => row.on_hand[innerItem],
+                        Cell: ({ value }) => value ? Math.round(value).toString() : '-',
+                        width: 100
+                    });
+                }
+                resultArr.push({
+                    id: 'promotional',
+                    Header: () => (
+                        <div style={{ textAlign: 'left', borderTop: '1px solid #eff1f5', paddingTop: 6 }}>Promotional Codes On Hand</div>
+                    ),
+                    className: 'align-center',
+                    Footer: "",
+                    columns: tmpColumns
+                });
+
+                /** Optimal Inventory Limits */
+                tmpColumns = [];
+                innerObject = Object.keys(item.optimal_values);
+                for (let innerKey in innerObject) {
+                    let innerItem = innerObject[innerKey];
+                    tmpColumns.push({
+                        id: "optimal_values" + innerKey,
+                        Header: "$" + innerItem,
+                        accessor: (row) => row.optimal_values[innerItem],
+                        Cell: ({ value }) => value ? Math.floor(value).toString() : '-',
+                        width: 100
+                    });
+                }
+                resultArr.push({
+                    id: 'optimal',
+                    Header: () => (
+                        <div style={{ textAlign: 'left', borderTop: '1px solid #eff1f5', paddingTop: 6 }}>Optimal Inventory Limits</div>
+                    ),
+                    className: 'align-center',
+                    Footer: "",
+                    columns: tmpColumns
+                });
+
+                /** %Remaining */
+                tmpColumns = [];
+                innerObject = Object.keys(item.percent_remaining);
+                for (let innerKey in innerObject) {
+                    let innerItem = innerObject[innerKey];
+                    tmpColumns.push({
+                        id: "percent_remaining" + innerKey,
+                        Header: "$" + Math.round(innerItem),
+                        accessor: (row) => row.percent_remaining[innerItem],
+                        Cell: ({ value }) => value ? Math.round(value).toString() * 100 + '%' : '-',
+                        width: 100
+                    });
+                }
+                resultArr.push({
+                    id: 'remaining',
+                    Header: () => (
+                        <div style={{ textAlign: 'left', borderTop: '1px solid #eff1f5', paddingTop: 6 }}>%Remaining</div>
+                    ),
+                    className: 'align-center',
+                    Footer: "",
+                    columns: tmpColumns
+                });
+
+                resultArr.push({
+                    Header: 'Cost Basis',
+                    accessor: 'cost_basis',
+                    Cell: ({ value }) => '$' + Math.round(value).toString(),
+                    width: 150
+                });
+                break;
+            }
+            setColumns(resultArr);
         }
-        resultArr.push(
-          {
-            id: 'promotional',
-            Header: () => (
-              <div style={{textAlign: 'center', borderTop: '1px solid #eff1f5', paddingTop: 6}}>Promotional Codes On
-                Hand</div>),
-            className: 'align-center',
-            Footer: "",
-            columns: tmpColumns
-          }
-        );
-        /** Optimal Inventory Limits */
-        tmpColumns = [];
-        innerObject = Object.keys(item.optimal_values);
-        for (let innerKey in innerObject) {
-          let innerItem = innerObject[innerKey];
-          tmpColumns.push(
-            {
-              id: "optimal_values" + innerKey,
-              Header: "$" + innerItem,
-              accessor: (row) => { return row.optimal_values[innerItem]; },
-              width: 100
-            },
-          )
-        }
-        resultArr.push(
-          {
-            id: 'optimal',
-            Header: () => (
-              <div style={{textAlign: 'center', borderTop: '1px solid #eff1f5', paddingTop: 6}}>Optimal Inventory
-                Limits</div>),
-            className: 'align-center',
-            Footer: "",
-            columns: tmpColumns
-          }
-        );
-        /** %Remaining */
-        tmpColumns = [];
-        innerObject = Object.keys(item.percent_remaining);
-        for (let innerKey in innerObject) {
-          let innerItem = innerObject[innerKey];
-          tmpColumns.push(
-            {
-              id: "percent_remaining" + innerKey,
-              Header: "$" + innerItem,
-              accessor: (row) => { return row.percent_remaining[innerItem]; },
-              width: 100
-            },
-          )
-        }
-        resultArr.push(
-          {
-            id: 'remaining',
-            Header: () => (
-              <div style={{textAlign: 'center', borderTop: '1px solid #eff1f5', paddingTop: 6}}>%Remaining</div>),
-            className: 'align-center',
-            Footer: "",
-            columns: tmpColumns
-          }
-        );
-        resultArr.push(
-          {
-            Header: 'Cost Basis',
-            accessor: 'cost_basis',
-            Cell: ({row, value}) => {
-              return toCurrency(value);
-            },
-            width: 150
-          });
-        break;
-      }
-      setColumns(resultArr);
-    }
-  }, []);
+    }, []);
+
 
   useEffect(() => {
     updateColumns(data);
@@ -272,11 +271,12 @@ const DataTable = ({organization, merchants}) => {
               <Col>
                 <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter}
                              exportData={exportData} exportLink={exportLink} exportHeaders={exportHeaders}
-                             download={download}
+                             download={download} inventoryTypes={inventoryTypes}
 
                              config={{
                                keyword: false,
                                dateRange: false,
+                               inventoryTypes: true,
                                date: true,
                                merchants: true,
                                exportToCsv: true
@@ -334,52 +334,6 @@ const DataTable = ({organization, merchants}) => {
               </tfoot>
             </table>
           }
-
-          {(rows.length > 0) && (
-            <>
-              <ReactTablePagination
-                page={page}
-                gotoPage={gotoPage}
-                previousPage={previousPage}
-                nextPage={nextPage}
-                canPreviousPage={canPreviousPage}
-                canNextPage={canNextPage}
-                pageOptions={pageOptions}
-                pageSize={pageSize}
-                pageIndex={pageIndex}
-                pageCount={pageCount}
-                setPageSize={setPageSize}
-                manualPageSize={manualPageSize}
-                dataLength={totalCount}
-              />
-              <div className="pagination justify-content-end mt-2">
-                            <span>
-                            Go to page:{' '}
-                              <input
-                                type="number"
-                                value={pageIndex + 1}
-                                onChange={(e) => {
-                                  const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                                  gotoPage(page);
-                                }}
-                                style={{width: '100px'}}
-                              />
-                            </span>{' '}
-                <select
-                  value={pageSize}
-                  onChange={(e) => {
-                    setPageSize(Number(e.target.value));
-                  }}
-                >
-                  {[10, 20, 30, 40, 50].map((pageSize) => (
-                    <option key={pageSize} value={pageSize}>
-                      Show {pageSize}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </>
-          )}
         </div>
       </>
     )

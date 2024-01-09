@@ -12,6 +12,7 @@ import DigitalMediaModal from "./DigitalMediaModal";
 import EventsDataModal from '../components/event/EventsDataModal';
 import EmailTemplateModal from '../EmailTemplate/IndexDataModal'
 import ActivateLiveModeProgramModal from "./ActivateLiveModeProgramModal";
+import ReportsModal from "./ReportsModal";
 
 const MainModalWrapper = ({name, isOpen, setOpen, toggle}) => {
   const props = {
@@ -60,6 +61,9 @@ const MainModalWrapper = ({name, isOpen, setOpen, toggle}) => {
       }
       {
         name === 'activateLiveMode' && <ActivateLiveModeProgramModal {...props} />
+      }
+      {
+        name === 'reports' && <ReportsModal {...props} />
       }
     </>
   )

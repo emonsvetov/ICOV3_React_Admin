@@ -150,7 +150,7 @@ const DataTable = ({organization, program, programs}) => {
       <>
         <div className='table react-table report-table'>
           <div className="action-panel">
-            <Row className="mx-0">
+            <Row className="form__form-group mx-0">
               <Col>
                 <ParticipantAccountSummaryFilter
                   filter={filter} setFilter={setFilter} useFilter={useFilter} setUseFilter={setUseFilter}
@@ -252,6 +252,32 @@ const DataTable = ({organization, program, programs}) => {
                 manualPageSize={manualPageSize}
                 dataLength={totalCount}
               />
+              <div className="pagination justify-content-end mt-2">
+                <span>
+                Go to page:{' '}
+                <input
+                    type="number"
+                    value={pageIndex + 1}
+                    onChange={(e) => {
+                    const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                    gotoPage(page);
+                    }}
+                    style={{ width: '100px' }}
+                />
+                </span>{' '}
+                <select
+                value={pageSize}
+                onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                }}
+                >
+                {[10, 20, 30, 40, 50].map((pageSize) => (
+                    <option key={pageSize} value={pageSize}>
+                    Show {pageSize}
+                    </option>
+                ))}
+                </select>
+            </div>
             </>
           )}
         </div>

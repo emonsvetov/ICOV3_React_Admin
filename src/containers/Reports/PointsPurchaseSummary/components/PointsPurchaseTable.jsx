@@ -1,28 +1,25 @@
 import React, {useState, useEffect, useMemo} from "react";
 import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
-import MOCK_DATA from "./MOCK_DATA.json";
 import {PROGRAM_COLUMNS} from "./columns";
-import SortIcon from 'mdi-react/SortIcon';
-import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
-import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
+import {useParams} from 'react-router-dom'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import { Col, Row} from 'reactstrap';
 import PointsPurchaseFilter  from "./PointsPurchaseFilter";
-import { Link } from 'react-router-dom';
-import axios from 'axios'
+import { clone} from 'lodash';
+import {connect} from "react-redux";
+import {
+    reducer,
+    useEffectToDispatch,
+    fetchApiData,
+    fetchApiDataExport,
+    initialState,
+   
+    Sorting
+} from "@/shared/apiTableHelper"
 
-import {renameChildrenToSubrows} from '@/shared/helpers'
 
 const queryClient = new QueryClient()
-
-const initialState = {
-    queryPageIndex: 0,
-    queryPageSize: 10,
-    totalCount: null,
-    queryPageFilter:{},
-    queryPageSortBy: [],
-};
 
 const PAGE_CHANGED = 'PAGE_CHANGED';
 const PAGE_SIZE_CHANGED = 'PAGE_SIZE_CHANGED';
@@ -30,96 +27,46 @@ const PAGE_SORT_CHANGED = 'PAGE_SORT_CHANGED'
 const PAGE_FILTER_CHANGED = 'PAGE_FILTER_CHANGED';
 const TOTAL_COUNT_CHANGED = 'TOTAL_COUNT_CHANGED';
 
-const reducer = (state, { type, payload }) => {
-  switch (type) {
-    case PAGE_CHANGED:
-        return {
-            ...state,
-            queryPageIndex: payload,
-        };
-    case PAGE_SIZE_CHANGED:
-        return {
-            ...state,
-            queryPageSize: payload,
-        };
-    case PAGE_SORT_CHANGED:
-        return {
-            ...state,
-            queryPageSortBy: payload,
-        };
-    case PAGE_FILTER_CHANGED:
-        return {
-            ...state,
-            queryPageFilter: payload,
-        };
-    case TOTAL_COUNT_CHANGED:
-        return {
-            ...state,
-            totalCount: payload,
-        };
-    default:
-      throw new Error(`Unhandled action type: ${type}`);
-  }
-};
-
-const fetchMockData = () => {
-    
-    const data = {
-        results: renameChildrenToSubrows(MOCK_DATA),
-        count: 15
-    };
-    return data;
-};
-const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
-    // const offset = page * pageSize;
-    const params = []
-    let paramStr = ''
-    if( pageFilterO ) {
-        if(pageFilterO.status !== 'undefined' && pageFilterO.status) params.push(`status=${pageFilterO.status}`)
-        if(pageFilterO.keyword !== 'undefined' && pageFilterO.keyword) params.push(`keyword=${pageFilterO.keyword}`)
-        // console.log(params)
-        paramStr = params.join('&')
-    }
-    if( pageSortBy.length > 0 ) {
-        const sortParams = pageSortBy[0];
-        const sortyByDir = sortParams.desc ? 'desc' : 'asc'
-        paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
-    }
-    try {
-        const response = await axios.get(
-        `/organization/1/program?page=${page}&limit=${pageSize}&${paramStr}`
-        );
-        // console.log(response)
-        if( response.data.length === 0) return {results:[],count:0}
-        const data = {
-            results: renameChildrenToSubrows(response.data.data),
-            count: response.data.total
-        };
-        // console.log(data)
-        return data;
-    } catch (e) {
-        throw new Error(`API error:${e?.message}`);
-    }
-};
-
-const DataTable = () => {
+const DataTable = ({organization, programs}) => {
 
     
-    const [filter, setFilter] = useState({programId:[], year:'', participant:''});
+    const [filter, setFilter] = useState({
+        programs: programs,
+        createdOnly: false,
+        reportKey: 'sku_value',
+        programId: 1,
+        year:new Date().getFullYear(),
+        targetYear:{
+            label: new Date().getFullYear(),
+            value: new Date().getFullYear()
+        },
+    });
+
     // var [data, setData] = useState([]);
+    let {programId} = useParams();
+    const exportLink = React.createRef();
+    const [useFilter, setUseFilter] = useState(false);
+    const [trigger, setTrigger] = useState(0);
+    const [exportData, setExportData] = useState([]);
+    const [exportHeaders, setExportHeaders] = useState([]);
+    const [exportToCsv, setExportToCsv] = useState(false);
 
-    const onClickFilterCallback = (programId, year, participant) => {
-        // alert(JSON.stringify({status, keyword}))
-        // alert(JSON.stringify(filter))
-        if(filter.programId === programId && filter.year === year && filter.participant === participant)    {
-            alert('No change in filters')
-            return
-        }
-        setFilter({programId, year, participant});
-        // alert(status, keyword)
-    }
-    const handleDownload = ( ) => {
-        alert('downloading')
+    const download = async (filterValues) => {
+        let tmpFilter = clone(filterValues);
+        tmpFilter.exportToCsv = 1;
+        tmpFilter.limit = pageSize;
+        tmpFilter.page = pageIndex+1;
+        const response = await fetchApiDataExport(
+            {
+                url: apiUrl,
+                filter: tmpFilter,
+                sortby: queryPageSortBy,
+                trigger: queryTrigger
+            }
+        );
+        setExportData(response.results);
+        setExportHeaders(response.headers);
+        setExportToCsv(true);
     }
     
     let program_columns = [
@@ -137,21 +84,38 @@ const DataTable = () => {
         []
     )
 
-    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
+    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
     React.useReducer(reducer, initialState);
 
+    const apiUrl = `/organization/${organization.id}/report/points-purchase-summary`;
     const { isLoading, error, data, isSuccess } = useQuery(
-        ['programs', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
-        () => fetchMockData(),
+        ['points-purchase-summary', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+        () => fetchApiData(
+            {
+                url: apiUrl,
+                page: queryPageIndex,
+                size: queryPageSize,
+                filter,
+                sortby: queryPageSortBy,
+                trigger: queryTrigger
+            }
+        ),
         {
             keepPreviousData: true,
             staleTime: Infinity,
         }
     );
+    
+    useEffect(() => {
+        if (exportToCsv) {
+            if (exportLink.current) {
+                setExportToCsv(false);
+                exportLink.current.link.click();
+            }
+        }
+    }, [exportLink])
 
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
-
-    // console.log(data)
 
     const {
         getTableProps,
@@ -194,7 +158,8 @@ const DataTable = () => {
     );
     // const [statusFilterValue, setStatusFilterValue] = useState("");
     const manualPageSize = []
-    
+    useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
+
     React.useEffect(() => {
         dispatch({ type: PAGE_CHANGED, payload: pageIndex });
     }, [pageIndex]);
@@ -236,7 +201,9 @@ const DataTable = () => {
                     <div className="action-panel">
                         <Row className="mx-0">
                             <Col lg={12} md={12} sm={12}>
-                                <PointsPurchaseFilter onClickFilterCallback={onClickFilterCallback} />
+                                <PointsPurchaseFilter  filter={filter} setFilter={setFilter} useFilter={useFilter} setUseFilter={setUseFilter}
+                                    exportData={exportData} exportLink={exportLink} exportHeaders={exportHeaders}
+                                    download={download} />
                             </Col>
                         </Row>
                     </div>
@@ -295,76 +262,23 @@ const DataTable = () => {
                         </tfoot>
                     </table>
                     }
-                {(rows.length > 0) && (
-                    <>
-                        <ReactTablePagination
-                        page={page}
-                        gotoPage={gotoPage}
-                        previousPage={previousPage}
-                        nextPage={nextPage}
-                        canPreviousPage={canPreviousPage}
-                        canNextPage={canNextPage}
-                        pageOptions={pageOptions}
-                        pageSize={pageSize}
-                        pageIndex={pageIndex}
-                        pageCount={pageCount}
-                        setPageSize={setPageSize}
-                        manualPageSize={manualPageSize}
-                        dataLength={totalCount}
-                        />
-                        <div className="pagination justify-content-end mt-2">
-                            <span>
-                            Go to page:{' '}
-                            <input
-                                type="number"
-                                value={pageIndex + 1}
-                                onChange={(e) => {
-                                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                                gotoPage(page);
-                                }}
-                                style={{ width: '100px' }}
-                            />
-                            </span>{' '}
-                            <select
-                            value={pageSize}
-                            onChange={(e) => {
-                                setPageSize(Number(e.target.value));
-                            }}
-                            >
-                            {[10, 20, 30, 40, 50].map((pageSize) => (
-                                <option key={pageSize} value={pageSize}>
-                                Show {pageSize}
-                                </option>
-                            ))}
-                            </select>
-                        </div>
-                    </>
-                )}
                 </div>
             </>
     )
 }
 
-const Sorting = ({ column }) => (
-    <span className="react-table__column-header sortable">
-      {column.isSortedDesc === undefined ? (
-        <SortIcon />
-      ) : (
-        <span>
-          {column.isSortedDesc
-            ? <SortAscendingIcon />
-            : <SortDescendingIcon />}
-        </span>
-      )}
-    </span>
-  );
-
-const TableWrapper = () => {
+const TableWrapper = ({organization, programs}) => {
+    if (!organization || !programs ) return 'Loading...'
     return (
         <QueryClientProvider client={queryClient}>
-            <DataTable />
+            <DataTable organization={organization}  programs={programs}/>
         </QueryClientProvider>
     )
 }
 
-export default TableWrapper;
+const mapStateToProps = (state) => {
+    return {
+      organization: state.organization,
+    };
+  };
+  export default connect(mapStateToProps)(TableWrapper);
