@@ -294,8 +294,6 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
         }
       })
       .catch(error => {
-        console.log(error)
-        console.log(JSON.stringify(error.response.data.errors));
         dispatch(sendFlashMessage(JSON.stringify(error.response.data.errors), 'alert-danger'))
         setLoading(false)
         throw new Error(`API error:${error?.message}`);
@@ -382,7 +380,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                           isClearable
                                           isDisabled={isLoading}
                                           isLoading={isLoading}
-                                          options={menuItems}
+                                          options={mediaTypes}
                                           onCreateOption={selectCreateOption}
                                           placeholder='Select or Create a Menu Category'
                                           onChange={value =>
