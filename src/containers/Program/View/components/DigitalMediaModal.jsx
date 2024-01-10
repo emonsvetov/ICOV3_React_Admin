@@ -55,7 +55,6 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   const [media, setMedia] = useState([]);
   const [mediaTypes, setMediaTypes] = useState([]);
   const [mediaType, setMediaType] = useState('');
-  let [template, setTemplate] = useState(null);
   const [uploadedMeta, setUploadedMeta] = useState({});
   const [iconMeta, setIconMeta] = useState({});
   const [fileName, setFileName] = React.useState("");
@@ -80,13 +79,13 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
             url: row.menu_link,
             id: row.program_media_type_id,
             menu_link:row.menu_link,
-            label:row.name
+            label: toTitleCase(row.name)
           })
         }
         else {
           options.push({
             value: row.program_media_type_id,
-            label: row.name
+            label: toTitleCase(row.name)
           });
          
         }
@@ -347,6 +346,12 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
     setTab(2);
   }
 
+  function toTitleCase(str) {
+    return str.toLowerCase().replace(/(?:^|\s)\w/g, function(match) {
+      return match.toUpperCase();
+    })
+  }
+
   return (
     <Modal className={`modal-program modal-lg`} {...modalProps}>
       <CloseButton onClick={toggle}/>
@@ -374,13 +379,14 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                 {({ input, meta }) => (
                                   <div className="form__form-group">
                                     <div className="form__form-group-field">
-                                      <div className="form__form-group-row">
+                                      <div className="form__form-group-row" style={{position: '', marginTop: '0px', textTransform:"capitalize"}}>
                                         <CreatableSelect
                                           name="category"
                                           isClearable
                                           isDisabled={isLoading}
                                           isLoading={isLoading}
                                           options={mediaTypes}
+                                          style={{textTransform:"loweracase"}}
                                           onCreateOption={selectCreateOption}
                                           placeholder='Select or Create a Menu Category'
                                           onChange={value =>
@@ -499,7 +505,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                       <Row>
                         <Col md="12">
                           <div className="form__form-group">
-                            <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
+                            <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px', textTransform:"capitalize"}}>
                               <CreatableSelect
                                   name="category"
                                   isClearable
@@ -512,6 +518,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                     getIframe(value.value)
                                   }
                                 />
+
                             </div>
                           </div>
                           <div className="form__form-group">
