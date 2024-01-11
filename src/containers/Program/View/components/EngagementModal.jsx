@@ -27,7 +27,7 @@ const EngagementModal = ({
   rtl,
 }) => {
   const [loading, setLoading] = useState(false);
-  console.log(data)
+
   const onSubmitForm = async (values) => {
     setLoading(true);
     data = { ...data, ...values };
