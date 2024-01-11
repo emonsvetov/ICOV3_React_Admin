@@ -27,10 +27,11 @@ const EngagementModal = ({
   rtl,
 }) => {
   const [loading, setLoading] = useState(false);
-
+  console.log(data)
   const onSubmitForm = async (values) => {
     setLoading(true);
     data = { ...data, ...values };
+    // console.log(values)
     // console.log(data);return;
     // alert(JSON.stringify(data))
     try {
@@ -107,6 +108,7 @@ const EngagementModal = ({
                     <CheckboxField
                       name="uses_social_wall"
                       label="Enable Social Wall"
+                      checked={data?.uses_social_wall}
                     />
                   </div>
                 </Col>
@@ -115,6 +117,7 @@ const EngagementModal = ({
                     <CheckboxField
                       name="allow_hierarchy_to_view_social_wall"
                       label="Other programs in this hierarchy can view this programs social wall"
+                      checked={data?.allow_hierarchy_to_view_social_wall}
                     />
                   </div>
                 </Col>
@@ -123,6 +126,7 @@ const EngagementModal = ({
                     <CheckboxField
                       name="can_view_hierarchy_social_wall"
                       label="This program can view other programs social wall"
+                      checked={data?.can_view_hierarchy_social_wall}
                     />
                   </div>
                 </Col>
@@ -133,6 +137,7 @@ const EngagementModal = ({
                     <CheckboxField
                       name="managers_can_post_social_wall_messages"
                       label="Managers can post messages"
+                      checked={data?.managers_can_post_social_wall_messages}
                     />
                   </div>
                 </Col>
@@ -141,6 +146,7 @@ const EngagementModal = ({
                     <CheckboxField
                       name="social_wall_separation"
                       label="Allow participants to view the social wall of any program he is not currently logged into"
+                      checked={data?.social_wall_separation}
                     />
                   </div>
                 </Col>
@@ -149,6 +155,7 @@ const EngagementModal = ({
                     <CheckboxField
                       name="remove_social_from_pending_deactivation"
                       label="Remove Social From Pending Deactivation View"
+                      checked={data?.remove_social_from_pending_deactivation}
                     />
                   </div>
                 </Col>
@@ -164,6 +171,7 @@ const EngagementModal = ({
                     <CheckboxField
                       name="uses_leaderboards"
                       label="Enable Leaderboards"
+                      checked={data?.uses_leaderboards}
                     />
                   </div>
                 </Col>
@@ -172,6 +180,7 @@ const EngagementModal = ({
                     <CheckboxField
                       name="allow_view_leaderboards_not_logged_into"
                       label="Allow participants to view leaderboards of any program he is not currently logged into"
+                      checked={data?.allow_view_leaderboards_not_logged_into}
                     />
                   </div>
                 </Col>
@@ -180,6 +189,7 @@ const EngagementModal = ({
                     <CheckboxField
                       name="share_siblings_leader_board"
                       label="Share sibling leaderboards"
+                      checked={data?.share_siblings_leader_board}
                     />
                   </div>
                 </Col>
@@ -190,6 +200,7 @@ const EngagementModal = ({
                     <CheckboxField
                       name="use_one_leaderboard"
                       label="Use one leaderboard"
+                      checked={data?.use_one_leaderboard}
                     />
                   </div>
                 </Col>
@@ -205,6 +216,7 @@ const EngagementModal = ({
                   <div className="form__form-group">
                     <CheckboxField
                       name="uses_peer2peer"
+                      checked={data?.uses_peer2peer}
                       label="Enable Peer to Peer"
                     />
                   </div>
@@ -214,6 +226,7 @@ const EngagementModal = ({
                     <CheckboxField
                       name="allow_award_peers_not_logged_into"
                       label="Allow participants to award peers in any program he is not currently logged into"
+                      checked={data?.allow_award_peers_not_logged_into}
                     />
                   </div>
                 </Col>
@@ -222,6 +235,7 @@ const EngagementModal = ({
                     <CheckboxField
                       name="allow_search_peers_not_logged_into"
                       label="Allow participants to search for peers in any program he is not currently logged into"
+                      checked={data?.allow_search_peers_not_logged_into}
                     />
                   </div>
                 </Col>
@@ -232,6 +246,7 @@ const EngagementModal = ({
                     <CheckboxField
                       name="uses_hierarchy_peer2peer"
                       label="Use hierarchy peer 2 peer"
+                      checked={data?.uses_hierarchy_peer2peer}
                     />
                   </div>
                 </Col>
@@ -240,6 +255,7 @@ const EngagementModal = ({
                     <CheckboxField
                       name="share_siblings_peer2peer"
                       label="Share sibling's peer to peer"
+                      checked={data?.share_siblings_peer2peer}
                     />
                   </div>
                 </Col>
@@ -256,6 +272,7 @@ const EngagementModal = ({
                     <CheckboxField
                       name="uses_goal_tracker"
                       label="Enable goal tracker"
+                      checked={data?.uses_goal_tracker}
                     />
                   </div>
                 </Col>
@@ -268,12 +285,13 @@ const EngagementModal = ({
               <Row>
                     <Col sm="6" md="6" lg="4" xl="4">
                       <div className="form__form-group">
-                        <CheckboxField name="uses_units" label="Uses units" />
+                        <CheckboxField name="uses_units" label="Uses units" checked={data?.uses_units}/>
                       </div>
                       <div className="form__form-group">
                         <CheckboxField
                           name="allow_multiple_participants_per_unit"
                           label="Allow multiple participants per unit"
+                          checked={data?.allow_multiple_participants_per_unit}
                         />
                       </div>
                     </Col>
@@ -282,12 +300,14 @@ const EngagementModal = ({
                         <CheckboxField
                           name="enable_how_are_you_feeling"
                           label="How are you feeling"
+                          checked={data?.enable_how_are_you_feeling}
                         />
                       </div>
                       <div className="form__form-group">
                         <CheckboxField
                           name="enable_referrals"
                           label="Referrals"
+                          checked={data?.enable_referrals}
                         />
                       </div>
                     </Col>
@@ -296,6 +316,7 @@ const EngagementModal = ({
                         <CheckboxField
                           name="allow_milestone_award"
                           label="Allow Milestone Awards"
+                          checked={data?.allow_milestone_award}
                         />
                       </div>
                     </Col>
