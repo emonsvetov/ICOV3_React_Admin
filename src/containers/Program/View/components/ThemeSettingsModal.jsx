@@ -15,9 +15,7 @@ import { ColorPicker } from 'material-ui-color';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {getThemeByName, resetTheme, getTheme, deleteThemeMedia} from '@/service/program/programTheme'
-
 import renderSelectOptionsField from '@/shared/components/form/SelectOptions';
-
 import WYSIWYGEditor from '@/shared/components/form/WYSIWYGEditor'
 import { THEME_FONT_FAMILIES  } from './ThemeData';
 
@@ -37,6 +35,8 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
     const [currentTheme, setCurrentTheme] = useState("Default");
+    const [welcome_message, setWelcomeMessage] = useState();
+    const [part_HomeMessage, setPart_HomeMessage] = useState();
     let [template, setTemplate] = useState({})
     // console.log(program)
     const validate = values => {
@@ -193,7 +193,7 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
         {
           getTheme(program.organization_id, program.id)
           .then( theme => {
-            console.log(theme)
+
             setTemplate(theme ? theme : {})
           })
         }
@@ -398,6 +398,7 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                         <Field
                                           name="welcome_message"
                                           component={WYSIWYGEditor}
+                                          onChange={setWelcomeMessage}
                                         />
                                     </div>
                                 </div>
@@ -411,6 +412,7 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                         <Field
                                           name="participant_homepage_message"
                                           component={WYSIWYGEditor}
+                                          onChange={setPart_HomeMessage}
                                         />
                                     </div>
                                 </div>
