@@ -62,6 +62,7 @@ import ViewDomain from '../Domain/view_domain';
 import EditDomain from '../Domain/edit_domain';
 
 import OrdersIndex from '../PhysicalOrders/index';
+import MigrationIndex from '../Migration/index';
 import EditOrder from '../PhysicalOrders/edit_order';
 import TangoOrder from '../PhysicalOrders/tango_order';
 import GlobalOrder from '../Reports/Orders/view_order';
@@ -168,6 +169,12 @@ const PhysicalOrders = () => (
   </Switch>
 );
 
+const Migration = () => (
+    <Switch>
+        <Route exact path="/migration" component={MigrationIndex} />
+    </Switch>
+);
+
 const TangoOrders = () => (
   <Switch>
     <Route exact path="/tango-orders/details/:id" component={TangoOrder} />
@@ -242,6 +249,7 @@ const privateRoutes = () => {
         <PrivateRoute path="/import" component={Imports} />
         <PrivateRoute path="/domains" component={Domains} />
         <PrivateRoute path="/physical-orders" component={PhysicalOrders} />
+        <PrivateRoute path="/migration" component={Migration} />
         <PrivateRoute path="/tango-orders" component={TangoOrders} />
         <PrivateRoute path="/" component={Reports} />
         <PrivateRoute path="/treeview" component={TreeView} />
