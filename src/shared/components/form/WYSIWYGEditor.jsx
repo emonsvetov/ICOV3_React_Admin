@@ -2,26 +2,22 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Editor } from '@tinymce/tinymce-react'
 import { renderComponentField } from '@/shared/components/form/FormField'
+import ReactQuill from "react-quill"
+import 'react-quill/dist/quill.snow.css'
+
 var _wysiwyg_flag = true //this is an ugly hack to set initialValue only once!
 const WYSIWYGEditor = ({
     onChange, value, name
 }) => {
+    const [content, setContent] = React.useState();
     const handleChange = (e) => {
-        _wysiwyg_flag = false
-        onChange(e.target.getContent());
+        setContent(e)
+        onChange(e)
     }
     return (
-        <Editor
-            textareaName={name}
-            initialValue={_wysiwyg_flag ? value : null}
-            init={{
-                plugins: 'link image code lists',
-                toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code | numlist bullist',
-                branding:false
-            }}
-            onChange={handleChange}
-            apiKey='gon1mvhgbsxhewi5urhgihbk3xq8oo6sw88hs1p399e8ar2z'
-        />
+        <ReactQuill 
+        value={_wysiwyg_flag ? value : null}
+        onChange={handleChange} />
     );
 }
 

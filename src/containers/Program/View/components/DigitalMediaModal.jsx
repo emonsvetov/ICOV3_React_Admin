@@ -55,7 +55,6 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   const [media, setMedia] = useState([]);
   const [mediaTypes, setMediaTypes] = useState([]);
   const [mediaType, setMediaType] = useState('');
-  let [template, setTemplate] = useState(null);
   const [uploadedMeta, setUploadedMeta] = useState({});
   const [iconMeta, setIconMeta] = useState({});
   const [fileName, setFileName] = React.useState("");
@@ -65,6 +64,8 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   const [tempLink, setTempLink] = useState()
   const [menuItems, setMenuItems] = useState([]);
   const [currentMenuItem, setCurrentMenuItem] = useState();
+  const MAX_SIZE = 10485760
+  const [fileUploadSizeError, setFileUploadSizeError] = useState(false)
 
   const loadMediTypes = async () => {
     try {
@@ -80,13 +81,13 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
             url: row.menu_link,
             id: row.program_media_type_id,
             menu_link:row.menu_link,
-            label:row.name
+            label: toTitleCase(row.name)
           })
         }
         else {
           options.push({
             value: row.program_media_type_id,
-            label: row.name
+            label: toTitleCase(row.name)
           });
          
         }
@@ -137,6 +138,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   }, []);
 
   const getUploadParams = ({meta}) => {
+    
     const headers = {
       'Authorization': axios.defaults.headers.common['Authorization'],
     }
@@ -249,11 +251,15 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   }
 
   const handleChangeStatus = ({meta, file}, status) => {
+    
     if (status === 'done') {
       if (!fileName) {
         setFileName(meta.name.substr(0, meta.name.lastIndexOf('.')));
       }
       setUploadedMeta(meta);
+    }
+    if (status === "error_file_size"){
+      setFileUploadSizeError(true)
     }
   }
 
@@ -294,8 +300,6 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
         }
       })
       .catch(error => {
-        console.log(error)
-        console.log(JSON.stringify(error.response.data.errors));
         dispatch(sendFlashMessage(JSON.stringify(error.response.data.errors), 'alert-danger'))
         setLoading(false)
         throw new Error(`API error:${error?.message}`);
@@ -322,7 +326,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
 
     let data = new FormData();
     data.append('program_media_type_id', id);
-   debugger
+   
     axios.post(deleteUrl, data)
       .then((res) => {        
         if (res.status === 200) {
@@ -347,6 +351,12 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
 
   const setFormsTab = () => {
     setTab(2);
+  }
+
+  function toTitleCase(str) {
+    return str.toLowerCase().replace(/(?:^|\s)\w/g, function(match) {
+      return match.toUpperCase();
+    })
   }
 
   return (
@@ -376,13 +386,14 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                 {({ input, meta }) => (
                                   <div className="form__form-group">
                                     <div className="form__form-group-field">
-                                      <div className="form__form-group-row">
+                                      <div className="form__form-group-row" style={{position: '', marginTop: '0px', textTransform:"capitalize"}}>
                                         <CreatableSelect
                                           name="category"
                                           isClearable
                                           isDisabled={isLoading}
                                           isLoading={isLoading}
-                                          options={menuItems}
+                                          options={mediaTypes}
+                                          style={{textTransform:"loweracase"}}
                                           onCreateOption={selectCreateOption}
                                           placeholder='Select or Create a Menu Category'
                                           onChange={value =>
@@ -411,6 +422,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                 name="media_upload"
                                 inputContent="Select Preview Image"
                                 maxFiles={1}
+                                maxSizeBytes ={MAX_SIZE}    
                                 onSubmit={false}
                                 onChangeStatus={handleUploadIcon}
                               />
@@ -427,11 +439,14 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                 inputContent="Select File"
                                 maxFiles={1}
                                 onSubmit={false}
+                                maxSizeBytes ={MAX_SIZE}
                                 onChangeStatus={handleChangeStatus}
                               />
                             </div>
+                            {fileUploadSizeError && <p className="form__form-group-error">File Size is too big</p>}
                           </div>
                         </Col>
+         
                         <Col md="4">
                           <div>
                             <Field name="name">
@@ -501,7 +516,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                       <Row>
                         <Col md="12">
                           <div className="form__form-group">
-                            <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
+                            <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px', textTransform:"capitalize"}}>
                               <CreatableSelect
                                   name="category"
                                   isClearable
@@ -514,6 +529,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                     getIframe(value.value)
                                   }
                                 />
+
                             </div>
                           </div>
                           <div className="form__form-group">

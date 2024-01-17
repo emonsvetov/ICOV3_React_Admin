@@ -12,9 +12,10 @@ import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 
 const patchRole4Select = (user) => {
     if( user.roles.length > 0)  {
+        let tmp = Object.values(user.roles).filter(key => key.name === 'Admin' || key.name === 'Super Admin' )
         user.role_id = {
-            value:user.roles[0].id,
-            label: user.roles[0].name
+            value:tmp[0].id,
+            label: tmp[0].name
         }
     }
     return user
@@ -67,8 +68,10 @@ const EditUserForm = ({organization}) => {
         // setLoading(true)
         // console.log(values)
         // values = unpatchSelect(values, ["role_id"], ["roles"])
-        if(!config.roleDisable && values.role_id.value) {
-            values.roles = [values.role_id.value]
+        if(!config.roleDisable && values.role_id) {
+            if (values.role_id) {
+                values.roles = [values.role_id.value]
+            }
         }   else    {
             delete(values["roles"]);
         }
@@ -100,6 +103,7 @@ const EditUserForm = ({organization}) => {
     // console.log(roles)
 
     user = patchRole4Select(user)
+    user.user_status_id = String(user.user_status_id ? user.user_status_id : "")
     config = {...config, ...{roles}}
 
     // console.log(user)
