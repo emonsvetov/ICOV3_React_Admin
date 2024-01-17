@@ -13,7 +13,6 @@ import {isEmpty} from '@/shared/helpers'
 import {Field, Form} from "react-final-form";
 //import ScriptTag from 'react-script-tag';
 // import {formatBytes, formatDuration} from "react-dropzone-uploader/dist/utils";
-// import {input} from 'react-dropzone-uploader/dist/utils';
 
 const fileTypes = [
   'application/pdf',
@@ -263,8 +262,6 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       setFileUploadSizeError(true)
     }
   }
-
-  const handleSubmitZone = (files) => { ; console.log(files.map(f => f.meta)) }
 
   const handleUploadIcon = ({meta, file}, status) => {
     if (status === 'done') {
