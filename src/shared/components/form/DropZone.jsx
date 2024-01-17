@@ -17,6 +17,7 @@ const DropZoneField = ({
     onChange(value.filter((val, i) => i !== index));
   };
 
+  const MAX_SIZE = 10485760
 
   let showTitle = false;
   if (uploadTitle?.displayAlways){
@@ -37,6 +38,7 @@ const DropZoneField = ({
         accept="image/jpeg, image/png"
         name={name}
         multiple={false}
+        maxSize={MAX_SIZE}
         onDrop={(fileToUpload) => {
           onDrop(fileToUpload);
         }}
