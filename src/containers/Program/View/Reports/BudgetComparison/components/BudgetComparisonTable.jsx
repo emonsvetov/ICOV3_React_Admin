@@ -6,7 +6,7 @@ import { Col, Row} from 'reactstrap';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {clone} from 'lodash';
-import BudgetComparisonFilter from "/BudgetComparisonFilter";
+import BudgetComparisonFilter from "./BudgetComparisonFilter";
 import {
     reducer,
     useEffectToDispatch,
