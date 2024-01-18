@@ -85,7 +85,7 @@ const FormFields = ({form, values, submitting, pristine, config = {
                                   {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                               </div>
                           </div>
-                          {!config.isProgram && (<em>Program roles to be assigned within a Program</em>)}
+                          {/*{!config.isProgram && (<em>Program roles to be assigned within a Program</em>)}*/}
                       </div>
                   )}
                   </Field>
