@@ -11,6 +11,7 @@ import SupplierRedemptionIndex from "../Reports/SupplierRedemptionIndex";
 import JournalDetailed from "../Reports/JournalDetail";
 import DepositTransfer from "../Reports/DepositTransfer";
 import DepositBalance from "../Reports/DepositBalance";
+import BudgetComparison from "./BudgetComparison";
 import PointsPurchase from "../Reports/PointsPurchase";
 import ParticipantAccountSummary from '../Reports/ParticipantAccountSummary'
 import UserDetailsChangeLogs from "../Reports/UserDetailsChangeLog";
@@ -173,6 +174,17 @@ const ProgramReport = ({organization}) => {
                   >
                       Deleted Social Wall Posts
                   </NavLink>
+                    <NavLink
+                        className={classnames({
+                            active:
+                                currentActiveTab === '11'
+                        })}
+                        onClick={() => {
+                            togglePan('11');
+                        }}
+                    >
+                        Budget Comparison
+                    </NavLink>
                 </Nav>
               </Col>
             </Row>
@@ -234,6 +246,12 @@ const ProgramReport = ({organization}) => {
                       <DeletedSocialWallPosts program={program}/>
                 }
               </TabPane>
+                <TabPane tabId="11">
+                    {
+                        currentActiveTab != 11 ? 'Loading...' :
+                            <BudgetComparison program={program}/>
+                    }
+                </TabPane>
             </TabContent>
           </CardBody>
         </Card>
