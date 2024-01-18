@@ -27,6 +27,7 @@
     "final-form": "^4.20.4",
     "final-form-arrays": "^3.0.2",
     "material-ui-color": "^1.2.0",
+    "material-ui-color-picker": "^3.5.1",
     "mdi-react": "^7.4.0",
     "prop-types": "^15.7.2",
     "rc-time-picker": "^3.7.3",
