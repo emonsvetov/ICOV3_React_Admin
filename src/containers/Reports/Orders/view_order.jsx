@@ -125,7 +125,7 @@ const ViewOrder = ({organization}) => {
                             return (
                                 <Col md="6" lg="4" xl="4">
                                     <Card>
-                                        <CardBody className='view-tabbed-menu'>
+                                        <CardBody className=''>
 
                                             <table className={'table'}>
                                                 <tbody className={'table table--bordered'}>
@@ -161,7 +161,7 @@ const ViewOrder = ({organization}) => {
                             return (
                                 <Col md="6" lg="6" xl="6">
                                     <Card>
-                                        <CardBody className='view-tabbed-menu'>
+                                        <CardBody className=''>
 
                                             <table className={'table'}>
                                                 <tbody className={'table table--bordered'}>
