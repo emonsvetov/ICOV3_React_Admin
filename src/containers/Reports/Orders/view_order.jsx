@@ -13,35 +13,79 @@ const ViewOrder = ({organization}) => {
     let [order, setOrder] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
     let { id } = useParams();
-    const fields = [
+
+    const transformBool = (order, value) => {
+        switch (value) {
+            case 'purchased_by_v2':
+            case 'virtual_inventory':
+            case 'medium_info_is_test':
+                return order[value] === 1 ? 'yes' : 'no';
+
+            case 'redemption_value':
+            case 'sku_value':
+            case 'cost_basis':
+                return `$${parseFloat(order[value]).toFixed(2)}`
+
+            case 'discount':
+                return `${parseFloat(order[value]).toFixed(2)}%`;
+
+            case 'redemption_url':
+                return order[value].length ? <Link to={{pathname: order[value]}}>{order[value]}</Link> : '';
+
+            default:
+                return order[value];
+        }
+
+    }
+
+    const fieldsColumn1 = [
         { 'label': 'Code', 'value': 'code' },
-        { 'label': 'Cost Basis', 'value': 'cost_basis' },
+        { 'label': 'Pin', 'value': 'pin' },
+        { 'label': 'Merchant ID', 'value': 'merchant_id' },
         { 'label': 'Created', 'value': 'created_at' },
+        { 'label': 'Updated', 'value': 'updated_at' },
         { 'label': 'Deleted', 'value': 'deleted_at' },
-        { 'label': 'Discount', 'value': 'discount' },
         { 'label': 'Encryption', 'value': 'encryption' },
         { 'label': 'Expiration Date', 'value': 'expiration_date' },
         { 'label': 'Factor Valuation', 'value': 'factor_valuation' },
-        { 'label': 'Medium info is test', 'value': 'medium_info_is_test' },
-        { 'label': 'Merchant ID', 'value': 'merchant_id' },
-        { 'label': 'Pin', 'value': 'pin' },
+    ];
+
+    const fieldsColumn2 = [
         { 'label': 'Purchase Date', 'value': 'purchase_date' },
-        { 'label': 'Purchased by v2', 'value': 'purchased_by_v2' },
-        { 'label': 'Redeemed Merchant ID', 'value': 'redeemed_merchant_id' },
-        { 'label': 'Redeemed Program ID', 'value': 'redeemed_program_id' },
-        { 'label': 'Redeemed User ID', 'value': 'redeemed_user_id' },
-        { 'label': 'Redemption Date', 'value': 'redemption_date' },
-        { 'label': 'Redemption DateTime', 'value': 'redemption_datetime' },
-        { 'label': 'Redemption Url', 'value': 'redemption_url' },
-        { 'label': 'Redemption Value', 'value': 'redemption_value' },
-        { 'label': 'Sku Value', 'value': 'sku_value' },
         { 'label': 'Tango Reference Order ID', 'value': 'tango_reference_order_id' },
         { 'label': 'Tango Request ID', 'value': 'tango_request_id' },
-        { 'label': 'Updated', 'value': 'updated_at' },
         { 'label': 'v2 Medium Info ID', 'value': 'v2_medium_info_id' },
         { 'label': 'v2 Sync Status', 'value': 'v2_sync_status' },
+        { 'label': 'Purchased by v2', 'value': 'purchased_by_v2' },
         { 'label': 'Virtual Inventory', 'value': 'virtual_inventory' },
+        { 'label': 'Medium info is test', 'value': 'medium_info_is_test' },
     ];
+
+    const fieldsDate = [
+
+        { 'label': 'Sku Value', 'value': 'sku_value' },
+        { 'label': 'Cost Basis', 'value': 'cost_basis' },
+        { 'label': 'Discount', 'value': 'discount' },
+    ]
+
+    const fieldsRedemption = [
+        { 'label': 'Redemption Date', 'value': 'redemption_datetime' },
+        { 'label': 'Redemption Url', 'value': 'redemption_url' },
+        { 'label': 'Redemption Value', 'value': 'redemption_value' },
+    ];
+
+    const fieldsRedeemed = [
+        { 'label': 'Redeemed Program ID', 'value': 'redeemed_program_id' },
+        { 'label': 'Redeemed User ID', 'value': 'redeemed_user_id' },
+        { 'label': 'Redeemed Merchant ID', 'value': 'redeemed_merchant_id' },
+    ];
+
+    const tables = [
+        { 'label': 'Redeemed', 'fields': fieldsRedeemed },
+        { 'label': 'Dates', 'fields': fieldsDate },
+        { 'label': 'Redemption', 'fields': fieldsRedemption },
+    ]
+
 
 
     const fetchOrder = async (id) => {
@@ -67,27 +111,82 @@ const ViewOrder = ({organization}) => {
     }
     if (order) {
 
-        const listItems = fields.map((field) =>
-            <li>{field.label} - { order[field.value] }</li>
-        );
-
-        { console.log(order) }
         return (
             <Container className="dashboard">
                 <Row>
                     <Col md={6}>
-                        <h3 className="page-title">{order.code}</h3>
+                        <h3 className="page-title">Order ID - {order.id}</h3>
                         <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link> / <Link className="" to="/reports/orders">Orders</Link> / { id }</h3>
                     </Col>
                 </Row>
                 <Row>
-                    <Col md={12}>
-                        <Card>
-                            <CardBody className='view-tabbed-menu'>
-                                <ul>{listItems}</ul>
-                            </CardBody>
-                        </Card>
-                    </Col>
+                    {
+                        tables.map(table => {
+                            return (
+                                <Col md="6" lg="4" xl="4">
+                                    <Card>
+                                        <CardBody className='view-tabbed-menu'>
+
+                                            <table className={'table'}>
+                                                <tbody className={'table table--bordered'}>
+                                                {table.fields.map( row => {
+                                                    return (
+                                                        <tr {...row}>
+                                                            <td>
+                                                                {row.label}
+                                                            </td>
+                                                            <td>
+                                                                { transformBool(order, row.value) }
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                })}
+                                                </tbody>
+                                            </table>
+
+                                        </CardBody>
+                                    </Card>
+                                </Col>
+                            )
+                        })
+                    }
+
+                </Row>
+                <Row>
+                    {
+                        [
+                            {'label': '', fields: fieldsColumn1},
+                            {'label': '', fields: fieldsColumn2},
+                        ].map(table => {
+                            return (
+                                <Col md="6" lg="6" xl="6">
+                                    <Card>
+                                        <CardBody className='view-tabbed-menu'>
+
+                                            <table className={'table'}>
+                                                <tbody className={'table table--bordered'}>
+                                                {table.fields.map( row => {
+                                                    return (
+                                                        <tr {...row}>
+                                                            <td>
+                                                                {row.label}
+                                                            </td>
+                                                            <td>
+                                                                { transformBool(order, row.value) }
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                })}
+                                                </tbody>
+                                            </table>
+
+                                        </CardBody>
+                                    </Card>
+                                </Col>
+                            )
+                        })
+                    }
+
                 </Row>
             </Container>
         )
