@@ -54,7 +54,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
       break;
       case 'migration':
         return (
-          <SidebarLink title="Migration"  icon="database" route="/migration" />
+          <SidebarLink title="V2 Program Migration"  icon="database" route="/migration" />
         )
       break;
       default:
