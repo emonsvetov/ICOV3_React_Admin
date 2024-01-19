@@ -90,6 +90,7 @@ import {
  } from '../Reports';
 
 import TreeView from '../TreeViewBasic';
+import BudgetComparison from "../Program/View/Reports/BudgetComparison";
 
 const Pages = () => (
   <Switch>
@@ -187,6 +188,7 @@ const Reports = () => (
     <Route exact path="/reports/points-reserve" component={PointsReserve} />
     <Route exact path="/reports/program-status" component={ProgramStatus} />
     <Route exact path="/reports/supplier-redemption" component={SupplierRedemption} />
+      <Route exact path="/reports/budget-comparison" component={BudgetComparison} />
     <Route exact path="/reports/deposit" component={Deposit} />
     <Route exact path="/reports/deposit-transfer" component={DepositTransfer} />
     <Route exact path="/reports/participant-status-summary" component={ParticipantStatusSummary} />
