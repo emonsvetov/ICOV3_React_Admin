@@ -247,10 +247,5 @@ export const HISTORY_COLUMNS = [
         Header: "Amount",
         accessor: "amount",
         Cell: ({ row, value }) => { return toPoints(value); },
-    },
-    {
-        Header: "Event Total",
-        accessor: "event_total",
-        Cell: ({ row, value }) => { return toPoints(value); },
-    },
+    }
 ]
