@@ -59,7 +59,7 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true
         <form className="form__form-group" onSubmit={onClickFilter}>
         
         {useOrg && auth?.isSuperAdmin &&
-            <div className="col-md-4 px-0 pr-3" >
+            <div className="col-md-3 px-0 pr-3" >
                 <p className="">Organization</p>
                 <div>
                     <Select
@@ -73,13 +73,13 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true
                     />
                 </div>
             </div>}
-            <div className="col-md-4 px-0" style={{maxWidth:"100px"}}>
+            <div className="col-md-3 px-0" style={{maxWidth:"100px"}}>
                 <p className="">Program Status</p>
                 <div >
                     <ProgramStatusDropdown value={status} onChange={onStatusChange} organization={organization} />
                 </div>
             </div>
-            <div className="col-md-4" >
+            <div className="col-md-3" >
                 <p className="">Keyword</p>
                 <div>
                     <input 
@@ -90,7 +90,7 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true
                     />
                 </div>
             </div>
-            <div className="col-md-4 pl-0 ">
+            <div className="col-md-3 pl-0 ">
                 <p className="">&nbsp;</p>
                 <div className='flex'>
                     <Button

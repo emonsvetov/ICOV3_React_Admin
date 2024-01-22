@@ -180,7 +180,6 @@ const DataTable = ({organization, programs}) => {
               {page.map(row => {
                 prepareRow(row);
                 return (
-                  <>
                     <tr {...row.getRowProps()} key={row.id}>
                       {
                         row.cells.map(cell => {
@@ -190,7 +189,6 @@ const DataTable = ({organization, programs}) => {
                         })
                       }
                     </tr>
-                  </>
                 )
               })}
               </tbody>

@@ -234,19 +234,15 @@ const DataTable = ({organization}) => {
                 <div className='table react-table'>
                     <div className="form form--horizontal action-panel">
                         <div className="form__form-group pb-4">
-                            <div className="col-md-9 col-lg-9">
-                                <ProgramFilter onClickFilterCallback={onClickFilterCallback} organization={organization} />
-                            </div>
-                            <div className="col-md-2 col-md-3 text-right " >
+                            <ProgramFilter onClickFilterCallback={onClickFilterCallback} organization={organization} />
+
+                            <Link 
                             
-                                <Link 
-                                
-                                className="btn btn-sm  btn-success"
-                                to="/program/add"
-                                > <div  className='text-center'><FolderPlusOutlineIcon size={34} color='#70bbfd' /></div>
-                                  {" "} New Program
-                                </Link>
-                            </div>
+                            className="btn btn-sm  btn-success"
+                            to="/program/add"
+                            > <div  className='text-center'><FolderPlusOutlineIcon size={34} color='#70bbfd' /></div>
+                                {" "} New Program
+                            </Link>
                         </div>
                     </div>
                     <table {...getTableProps()} className="table">

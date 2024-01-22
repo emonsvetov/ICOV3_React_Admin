@@ -11,6 +11,7 @@ import axios from 'axios'
 import {setOrganization, setSuOrganization} from '@/redux/actions/organizationActions';
 import {setAuthUser} from '@/redux/actions/userActions';
 import {sendFlashMessage, FlashMessage} from "@/shared/components/flash";
+import {ConfigProvider} from "antd";
 
 require('dotenv').config()
 axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL + '/api/v1';  
@@ -87,10 +88,32 @@ const App = () => {
 }
 
 const AppProvider = () => {
-  return (
-    <Provider store={store}>
-      <App />
-    </Provider>
+    return (
+        <Provider store={store}>
+            <ConfigProvider
+                theme={{
+                    token: {
+                        colorPrimary: '#4ce1b6',
+                        borderRadius: 2,
+                        colorBgContainer: '#ffffff',
+                    },
+                    components: {
+                        Button: {
+                            colorPrimary: '#70bbfd',
+                            algorithm: true,
+                        },
+                        Table: {
+                            fontSize: '13px',
+                            cellPadding: '10px',
+                            cellPaddingBlock: 4,
+                            stickyScrollBarBg: '#4ce1b6',
+                        },
+                    },
+                }}
+            >
+                <App/>
+            </ConfigProvider>
+        </Provider>
   )
 }
 

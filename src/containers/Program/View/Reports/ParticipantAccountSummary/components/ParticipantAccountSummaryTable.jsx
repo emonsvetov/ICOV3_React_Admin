@@ -19,6 +19,7 @@ import {
 
 import { clone} from 'lodash';
 import ParticipantAccountSummaryFilter from "./ParticipantAccountSummaryFilter";
+import {useParams} from "react-router-dom";
 
 const queryClient = new QueryClient()
 
@@ -31,6 +32,8 @@ const DataTable = ({organization, program, programs}) => {
     from: dateStrToYmd(getFirstDay()),
     to: dateStrToYmd(new Date())
   });
+  let {programId} = useParams();
+
   const [useFilter, setUseFilter] = useState(false);
   const [trigger, setTrigger] = useState(0);
   const [exportData, setExportData] = useState([]);
@@ -43,22 +46,22 @@ const DataTable = ({organization, program, programs}) => {
 
   const apiUrl = `/organization/${organization.id}/report/participant-account-summary`;
   const {isLoading, error, data, isSuccess} = useQuery(
-    ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
-    () => fetchApiData(
-      {
-        url: apiUrl,
-        page: queryPageIndex,
-        size: queryPageSize,
-        filter,
-        sortby: queryPageSortBy,
-        trigger: queryTrigger
-      }
-    ),
-    {
-      keepPreviousData: true,
-      staleTime: Infinity,
-    }
-  );
+        [['participantAccountSummary', programId], apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+        () => fetchApiData(
+            {
+                url: apiUrl,
+                page: queryPageIndex,
+                size: queryPageSize,
+                filter,
+                sortby: queryPageSortBy,
+                trigger: queryTrigger
+            }
+        ),
+        {
+            keepPreviousData: false,
+            staleTime: Infinity,
+        }
+    );
 
   useEffect(() => {
     if (exportToCsv) {

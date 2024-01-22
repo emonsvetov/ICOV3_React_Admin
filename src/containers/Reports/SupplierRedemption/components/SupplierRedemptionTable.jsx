@@ -36,7 +36,7 @@ const SupplierRedemptionTable: FC<SupplierRedemptionTableProps> = ({dataReport})
                             <Table.Summary.Cell index={0}>Total</Table.Summary.Cell>
                             {columns.map(item => (
                                 item.footer !== 'Total' && (
-                                    <Table.Summary.Cell index={item.key}>{item.footer}</Table.Summary.Cell>)
+                                    <Table.Summary.Cell key={item.key} index={item.key}>{item.footer}</Table.Summary.Cell>)
                             ))}
                         </Table.Summary.Row>
                     </Table.Summary>

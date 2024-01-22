@@ -10,12 +10,40 @@ import {sendFlashMessage} from "@/shared/components/flash";
 import formValidation from "@/shared/validation/program-accounting";
 import { getProgramAction } from '@/redux/actions/programActions';
 
+const prepareForValidation = values => {
+
+    const clean = {
+        transaction_fee: values?.transaction_fee ?? null,
+        administrative_fee: values?.administrative_fee ?? null,
+        balance_threshold: values?.balance_threshold ?? null,
+        bill_parent_program: values?.bill_parent_program ?? null,
+        calculation: values?.calculation ?? null,
+        convenience_fee: values?.convenience_fee ?? null,
+        country: values?.country ?? null,
+        deposit_fee: values?.deposit_fee ?? null,
+        discount_rebate_percentage: values?.discount_rebate_percentage ?? null,
+        expiration_rebate_percentage: values?.expiration_rebate_percentage ?? null,
+        fee_amount: values?.fee_amount ?? null,
+        fixed_fee: values?.fixed_fee ?? null,
+        invoice_po_number: values?.invoice_po_number ?? null,
+        is_pay_in_advance: values?.is_pay_in_advance ?? null,
+        low_balance_email: values?.low_balance_email ?? null,
+        monthly_usage_fee: values?.monthly_usage_fee ?? null,
+        percent_total_spend_rebate: values?.percent_total_spend_rebate ?? null,
+        reserve_percentage: values?.reserve_percentage ?? null,
+    }
+    return {...values, ...clean}
+}
+
+
 const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle, theme, rtl}) => {
     const [loading, setLoading] = useState(false)
 
     const onSubmitForm = async(values) => {
+
         setLoading(true)
-        data  = {...data, ...values}
+
+        data  = {...data, ...prepareForValidation(values)}
         // alert(JSON.stringify(data))
         try {
             const response = await axios.put(`/organization/${data.organization_id}/program/${data.id}`, data);
@@ -105,6 +133,8 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                             <CheckboxField 
                                 name="use_budget_cascading"
                                 label="Use budget cascading"
+                                checked={data.use_budget_cascading}
+                                onChange={() => {data.use_budget_cascading = !data.use_budget_cascading}}
                             />
                         </div>
                     </Col>
@@ -112,6 +142,8 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                         <CheckboxField 
                             name="budget_summary"
                             label="Enable budget summary"
+                            checked={data.budget_summary}
+                            onChange={() => {data.budget_summary = !data.budget_summary}}
                         />
                     </Col>
                 </Row>
@@ -138,6 +170,8 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                             <CheckboxField 
                                 name="is_pay_in_advance"
                                 label="Pay in advance"
+                                checked={data.is_pay_in_advance}
+                                onChange={() => {data.is_pay_in_advance = !data.is_pay_in_advance}}
                             />
                         </div>
                     </Col>
@@ -146,6 +180,8 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                             <CheckboxField 
                                 name="create_invoices"
                                 label="Create invoice"
+                                checked={data.create_invoices}
+                                onChange={() => {data.create_invoices = !data.create_invoices}}
                             />
                         </div>
                     </Col>
@@ -154,6 +190,8 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                             <CheckboxField 
                                 name="allow_creditcard_deposits"
                                 label="Allow credit card deposit"
+                                checked={data.allow_creditcard_deposits}
+                                onChange={() => {data.allow_creditcard_deposits = !data.allow_creditcard_deposits}}
                             />
                         </div>
                     </Col>
@@ -408,6 +446,8 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                             <CheckboxField
                               name="send_balance_threshold_notification"
                               label="Send the Low Deposit Balance Notification"
+                              checked={data.send_balance_threshold_notification}
+                              onChange={() => {data.send_balance_threshold_notification = !data.send_balance_threshold_notification}}
                             />
                         </div>
                     </Col>
