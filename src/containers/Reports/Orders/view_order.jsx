@@ -171,7 +171,7 @@ const ViewOrder = ({organization}) => {
                                                             <td>
                                                                 {row.label}
                                                             </td>
-                                                            <td>
+                                                            <td style={{'word-break': 'break-all'}}>
                                                                 { transformBool(order, row.value) }
                                                             </td>
                                                         </tr>
