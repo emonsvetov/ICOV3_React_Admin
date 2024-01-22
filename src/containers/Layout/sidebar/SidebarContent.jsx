@@ -52,6 +52,11 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
           <SidebarLink title="Physical Orders"  icon="file-empty" route="/physical-orders" />
         )
       break;
+      case 'migration':
+        return (
+          <SidebarLink title="V2 Program Migration"  icon="database" route="/migration" />
+        )
+      break;
       default:
       break;
     }
@@ -99,6 +104,10 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
         {
             auth?.isSuperAdmin &&
             <ProtectedLink type="physicalorders"/>
+        }
+        {
+            auth?.isSuperAdmin &&
+            <ProtectedLink type="migration"/>
         }
         <SidebarLink title="Domains"  icon="layers" route="/domains" />
       </ul>

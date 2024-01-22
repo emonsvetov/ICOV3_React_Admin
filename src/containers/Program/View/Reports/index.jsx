@@ -11,11 +11,11 @@ import SupplierRedemptionIndex from "../Reports/SupplierRedemptionIndex";
 import JournalDetailed from "../Reports/JournalDetail";
 import DepositTransfer from "../Reports/DepositTransfer";
 import DepositBalance from "../Reports/DepositBalance";
+import BudgetComparison from "./BudgetComparison";
 import PointsPurchase from "../Reports/PointsPurchase";
 import ParticipantAccountSummary from '../Reports/ParticipantAccountSummary'
 import UserDetailsChangeLogs from "../Reports/UserDetailsChangeLog";
 import DeletedSocialWallPosts from '../Reports/DeletedSocialWallPosts'
-import AnnualAwardsSummarySubProgram from "./AnnualAwardsSummary";
 const ProgramReport = ({organization}) => {
   // Tabs Panel
   const [currentActiveTab, setCurrentActiveTab] = useState('1');
@@ -183,7 +183,7 @@ const ProgramReport = ({organization}) => {
                             togglePan('11');
                         }}
                     >
-                        Annual Awards Summary
+                        Budget Comparison
                     </NavLink>
                 </Nav>
               </Col>
@@ -249,7 +249,7 @@ const ProgramReport = ({organization}) => {
                 <TabPane tabId="11">
                     {
                         currentActiveTab != 11 ? 'Loading...' :
-                            <AnnualAwardsSummarySubProgram program={program}/>
+                            <BudgetComparison program={program}/>
                     }
                 </TabPane>
             </TabContent>

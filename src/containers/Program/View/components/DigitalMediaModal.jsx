@@ -63,6 +63,8 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   const [tempLink, setTempLink] = useState()
   const [menuItems, setMenuItems] = useState([]);
   const [currentMenuItem, setCurrentMenuItem] = useState();
+  const MAX_SIZE = 10485760
+  const [fileUploadSizeError, setFileUploadSizeError] = useState(false)
 
   const loadMediTypes = async () => {
     try {
@@ -135,6 +137,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   }, []);
 
   const getUploadParams = ({meta}) => {
+    
     const headers = {
       'Authorization': axios.defaults.headers.common['Authorization'],
     }
@@ -247,11 +250,15 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   }
 
   const handleChangeStatus = ({meta, file}, status) => {
+    
     if (status === 'done') {
       if (!fileName) {
         setFileName(meta.name.substr(0, meta.name.lastIndexOf('.')));
       }
       setUploadedMeta(meta);
+    }
+    if (status === "error_file_size"){
+      setFileUploadSizeError(true)
     }
   }
 
@@ -318,7 +325,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
 
     let data = new FormData();
     data.append('program_media_type_id', id);
-   debugger
+   
     axios.post(deleteUrl, data)
       .then((res) => {        
         if (res.status === 200) {
@@ -414,6 +421,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                 name="media_upload"
                                 inputContent="Select Preview Image"
                                 maxFiles={1}
+                                maxSizeBytes ={MAX_SIZE}    
                                 onSubmit={false}
                                 onChangeStatus={handleUploadIcon}
                               />
@@ -430,11 +438,14 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                 inputContent="Select File"
                                 maxFiles={1}
                                 onSubmit={false}
+                                maxSizeBytes ={MAX_SIZE}
                                 onChangeStatus={handleChangeStatus}
                               />
                             </div>
+                            {fileUploadSizeError && <p className="form__form-group-error">File Size is too big</p>}
                           </div>
                         </Col>
+         
                         <Col md="4">
                           <div>
                             <Field name="name">

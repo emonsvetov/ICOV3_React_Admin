@@ -64,10 +64,6 @@ const EditUserForm = ({organization}) => {
     }
     
     const onSubmit = values => {
-        // values["organization_id"] = 1
-        // setLoading(true)
-        // console.log(values)
-        // values = unpatchSelect(values, ["role_id"], ["roles"])
         if(!config.roleDisable && values.role_id) {
             if (values.role_id) {
                 values.roles = [values.role_id.value]
@@ -76,18 +72,13 @@ const EditUserForm = ({organization}) => {
             delete(values["roles"]);
         }
         delete(values["role_id"]);
-        // console.log(values)
-        // return
         axios.put(`/organization/${organization.id}/user/${user.id}`, values)
         .then( (res) => {
-            // console.log(res)
             if(res.status == 200)  {
                 window.location = `/users/view/${user.id}?message=User saved successfully`
             }
         })
         .catch( error => {
-            //console.log(error.response.data);
-            // setError(error.response.data.errors);
             dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))
             setLoading(false)
         })
@@ -99,14 +90,9 @@ const EditUserForm = ({organization}) => {
 
     if( !roles || !user || !organization?.id) return 'Loading...'
 
-    // console.log(user)
-    // console.log(roles)
-
     user = patchRole4Select(user)
     user.user_status_id = String(user.user_status_id ? user.user_status_id : "")
     config = {...config, ...{roles}}
-
-    // console.log(user)
     return (
     <Form
         onSubmit={onSubmit}

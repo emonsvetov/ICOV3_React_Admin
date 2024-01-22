@@ -133,7 +133,7 @@ const ViewUser = ({ organization }) => {
                                 </Row>
                                 <TabContent activeTab={currentActiveTab} className="tabContent">
                                     <TabPane tabId="1" className="tabPane">
-                                        <ViewUserProfile data={data} organization={organization} />
+                                        <ViewUserProfile programs={userProgramIds} data={data} organization={organization} />
                                     </TabPane>
                                     <TabPane tabId="2" className="tabPane">
                                         <ViewUserHistory programs={userProgramIds} user={data} organization={organization} />

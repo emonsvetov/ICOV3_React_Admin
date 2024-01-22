@@ -31,7 +31,7 @@ const AddSubmerchantModal = ({isOpen, setOpen, toggle, theme, rtl, merchant, org
     const fetchMerchants = async ( ) => {
         try {
             console.log('fetching merchants')
-            const response = await axios.get(`/organization/${organization.id}/merchant?minimal=true`);
+            const response = await axios.get(`/merchant/${merchant.id}/not-in-hierarchy`);
             // console.log(response);
             return response.data;
         } catch (e) {
@@ -42,7 +42,7 @@ const AddSubmerchantModal = ({isOpen, setOpen, toggle, theme, rtl, merchant, org
     const fetchSubMerchants = async ( ) => {
         try {
             console.log('fetching sub merchants')
-            const response = await axios.get(`/merchant/${merchant.id}/submerchant?minimal=true`);
+            const response = await axios.get(`/merchant/${merchant.id}/in-hierarchy`);
             // console.log(response);
             return flatten(response.data)
             // return response.data;

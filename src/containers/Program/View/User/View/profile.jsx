@@ -1,17 +1,32 @@
-import React from 'react';
-import {Col, Row, } from 'reactstrap';
-import {useParams} from 'react-router-dom'
+import React, {useEffect, useState} from 'react';
+import {Col, Container, Row, Card, CardBody, NavItem, NavLink, Nav, TabPane, Button, TabContent} from 'reactstrap';
+import {Link, useParams} from 'react-router-dom'
+import axios from 'axios'
+import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
+import {connect} from 'react-redux'
+import {withRouter} from 'react-router-dom'
+import {isEmpty} from '@/shared/helpers'
+import ProgramViewUserHistory from "./history";
+import getUserPointBalance from '../../../../../service/getUserBalances';
 
-
-
+const queryClient = new QueryClient()
 
 const ProgramViewUserProfile = ({organization, program, data}) => {
 
     let {programId, userId} = useParams();
+    const [ pointsBalance, setPointsBalance] = useState();
+    // if (!program?.id || !organization?.id || !data) {
+    //     return <p>Loading...</p>;
+    // }
 
-    if (!program?.id || !organization?.id || !data) {
-        return <p>Loading...</p>;
-    }
+    useEffect(() => {
+        if (organization?.id && programId && userId) {
+            getUserPointBalance(organization.id,programId, userId)
+                .then(point=> {
+                    setPointsBalance(point)
+                })
+        }
+    },[organization])
 
     const fullName = `${data.first_name} ${data.last_name}`
     return (
@@ -102,6 +117,46 @@ const ProgramViewUserProfile = ({organization, program, data}) => {
                 </Col>
                 <Col md="10" lg="10" xl="10" sm="10">
                     <p>{data.supervisor_employee_number}</p>
+                </Col>
+            </Row>
+            <Row>
+                <Col md="2" lg="2" xl="2" sm="2" className='label'>
+                    <p>Points Earned:</p>
+                </Col>
+                <Col md="10" lg="10" xl="10" sm="10">
+                    <p>{pointsBalance?.amount}</p>
+                </Col>
+            </Row>
+            <Row>
+                <Col md="2" lg="2" xl="2" sm="2" className='label'>
+                    <p>Points Redeemed:</p>
+                </Col>
+                <Col md="10" lg="10" xl="10" sm="10">
+                    <p>{pointsBalance?.redeemedBalance}</p>
+                </Col>
+            </Row>
+            <Row>
+                <Col md="2" lg="2" xl="2" sm="2" className='label'>
+                    <p>Points Balance:</p>
+                </Col>
+                <Col md="10" lg="10" xl="10" sm="10">
+                    <p>{pointsBalance?.point}</p>
+                </Col>
+            </Row>
+            <Row>
+                <Col md="2" lg="2" xl="2" sm="2" className='label'>
+                    <p>Peer Allocation Balance:</p>
+                </Col>
+                <Col md="10" lg="10" xl="10" sm="10">
+                    <p>{pointsBalance?.peerBalance}</p>
+                </Col>
+            </Row>
+            <Row>
+                <Col md="2" lg="2" xl="2" sm="2" className='label'>
+                    <p>Points Expired :</p>
+                </Col>
+                <Col md="10" lg="10" xl="10" sm="10">
+                    <p>{pointsBalance?.expiredBalance}</p>
                 </Col>
             </Row>
         </>

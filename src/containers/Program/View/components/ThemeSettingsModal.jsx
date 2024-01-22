@@ -11,13 +11,13 @@ import {useDispatch, flashSuccess, flashError} from "@/shared/components/flash";
 import {mapFormDataUploads, unpatchMedia, patchMediaURL, removeFields, isEmpty} from '@/shared/helpers'
 import classnames from 'classnames';
 import Slider from "@/shared/components/form/Slider"
-import { ColorPicker } from 'material-ui-color';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {getThemeByName, resetTheme, getTheme, deleteThemeMedia} from '@/service/program/programTheme'
 import renderSelectOptionsField from '@/shared/components/form/SelectOptions';
 import WYSIWYGEditor from '@/shared/components/form/WYSIWYGEditor'
 import { THEME_FONT_FAMILIES  } from './ThemeData';
+import ColorPicker from 'material-ui-color-picker'
 
 const MEDIA_FIELDS = ['small_logo', 'big_logo', 'hero_banner', 'slider_01', 'slider_02', 'slider_03']
 const THEME_IMAGE = {
@@ -386,7 +386,12 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                         <div className="form__form-group">
                             <span className="form__form-group-label thick">Theme Color</span>
                             <div className="form__form-group-field flex-column">
-                                <ColorPicker onChange={updateThemeColorHandler} value={selectedThemeColor} />
+                                <ColorPicker
+                                    name="theme_color"
+                                    floatingLabelText={selectedThemeColor}
+                                    value={selectedThemeColor}
+                                    onChange={color =>{if (color) setSelectedThemeColor(color)}}
+                                />
                             </div>
                         </div>
                         <p>&nbsp;</p>
@@ -544,13 +549,23 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                 <div className="form__form-group">
                                     <span className="form__form-group-label thick">Color</span>
                                     <div className="form__form-group-field flex-column">
-                                        <ColorPicker onChange={updateColorHandler} value={selectedColor} />
+                                        <ColorPicker
+                                            name="color"
+                                            floatingLabelText = {selectedColor}
+                                            value={selectedColor}
+                                            onChange={color =>{if (color) setSelectedColor(color)}}
+                                        />
                                     </div>
                                 </div>
                                 <div className="form__form-group">
                                     <span className="form__form-group-label thick">Background Color</span>
                                     <div className="form__form-group-field flex-column">
-                                        <ColorPicker onChange={updateBGColorHandler} value={selectedBGColor} />
+                                        <ColorPicker
+                                            name="background_color"
+                                            floatingLabelText={selectedBGColor}
+                                            value={selectedBGColor}
+                                            onChange={color =>{if (color) setSelectedBGColor(color)}}
+                                        />
                                     </div>
                                 </div>
                             </Col>
