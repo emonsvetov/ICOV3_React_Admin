@@ -16,6 +16,7 @@ import PointsPurchase from "../Reports/PointsPurchase";
 import ParticipantAccountSummary from '../Reports/ParticipantAccountSummary'
 import UserDetailsChangeLogs from "../Reports/UserDetailsChangeLog";
 import DeletedSocialWallPosts from '../Reports/DeletedSocialWallPosts'
+import AnnualAwardsSummarySubProgram from "./AnnualAwardsSummary";
 const ProgramReport = ({organization}) => {
   // Tabs Panel
   const [currentActiveTab, setCurrentActiveTab] = useState('1');
@@ -185,6 +186,17 @@ const ProgramReport = ({organization}) => {
                     >
                         Budget Comparison
                     </NavLink>
+                    <NavLink
+                        className={classnames({
+                            active:
+                                currentActiveTab === '12'
+                        })}
+                        onClick={() => {
+                            togglePan('12');
+                        }}
+                    >
+                        Annual Awards Summary
+                    </NavLink>
                 </Nav>
               </Col>
             </Row>
@@ -250,6 +262,12 @@ const ProgramReport = ({organization}) => {
                     {
                         currentActiveTab != 11 ? 'Loading...' :
                             <BudgetComparison program={program}/>
+                    }
+                </TabPane>
+                <TabPane tabId="12">
+                    {
+                        currentActiveTab != 12 ? 'Loading...' :
+                            <AnnualAwardsSummarySubProgram program={program}/>
                     }
                 </TabPane>
             </TabContent>
