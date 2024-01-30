@@ -428,3 +428,13 @@ export const isArray = function(a) {
       || event_type_name == "Milestone Award"
   }
   
+  export const formatDate =  (value, dayFormat = "2-digit", monthFormat = '2-digit', yearFormat = 'numeric') => {
+      const date = new Date(value);
+      const formattedDate = date.toLocaleDateString("en-US", {
+        year: yearFormat,
+        month: monthFormat,
+        day:dayFormat
+      });
+      return formattedDate;
+  }
+
