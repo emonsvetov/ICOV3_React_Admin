@@ -20,7 +20,7 @@ import {
 import {clone} from 'lodash';
 import TrialBalanceFilter from "./TrialBalanceFilter";
 import {getFirstDay} from '@/shared/helpers'
-
+import { StickyContainer, Sticky } from "react-sticky";
 const queryClient = new QueryClient()
 
 const DataTable = ({organization, programs}) => {
@@ -171,27 +171,24 @@ const DataTable = ({organization, programs}) => {
                     {
                         isSuccess &&
                         <table {...getTableProps()} className="table table-striped report-table">
-                            <thead>
-                            {headerGroups.map((headerGroup) => (
-                                <tr {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map(column => (
-                                        <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                            {column.render('Header')}
-                                            {column.isSorted ? <Sorting column={column}/> : ''}
-                                        </th>
-                                    ))}
-                                </tr>
-                            ))}
-                            </thead>
+                                    <thead>
+                                        {headerGroups.map((headerGroup) => (
+                                            <tr {...headerGroup.getHeaderGroupProps()}>
+                                                {headerGroup.headers.map(column => (
+                                                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                                        {column.render('Header')}
+                                                        {column.isSorted ? <Sorting column={column}/> : ''}
+                                                    </th>
+                                                ))}
+                                            </tr>
+                                        ))}
+                                    </thead>
                             <tbody className="table table--bordered" {...getTableBodyProps()} >
                             {page.map((row, rowIndex) => {
 
                                 if (rowIndex > 0) return
                                 return Object.entries(row.original).map(([indexAccountHolder, rowAccountHolder], i) => {
-                                    // console.log(row)
-                                    // console.log(val)
-
-                                    // console.log(Object.keys(rowAccountHolder).length)
+    
                                     let rowSpan = Object.keys(rowAccountHolder).length;
 
                                     return (

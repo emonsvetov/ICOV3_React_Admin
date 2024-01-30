@@ -19,6 +19,7 @@ import {
 } from "@/shared/apiTableHelper"
 import {clone} from 'lodash';
 import {getFirstDay, formatCurrency} from '@/shared/helpers'
+import { StickyContainer, Sticky } from "react-sticky";
 
 const queryClient = new QueryClient()
 
@@ -116,9 +117,6 @@ const DataTable = ({organization, programs}) => {
         }
     }, [exportLink]);
 
-
-
-
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
     const {
@@ -128,7 +126,6 @@ const DataTable = ({organization, programs}) => {
         footerGroups,
         rows,
         prepareRow,
-        rowSpanHeaders,
         page,
         pageCount,
         pageOptions,
@@ -138,29 +135,28 @@ const DataTable = ({organization, programs}) => {
         nextPage,
         canNextPage,
         setPageSize,
-        state: {pageIndex, pageSize, sortBy}
+        state: { pageIndex, pageSize, sortBy }
     } = useTable({
-            columns: columns,
-            data: data ? Object.values(data.results) : [],
-            initialState: {
-                pageIndex: queryPageIndex,
-                pageSize: queryPageSize,
-                sortBy: queryPageSortBy,
-            },
-            manualPagination: true, // Tell the usePagination
-            pageCount: data ? totalPageCount : null,
-            autoResetSortBy: false,
-            autoResetExpanded: false,
-            autoResetPage: false,
-            disableResizing: true,
-            autoResetHiddenColumns: false,
-            striped: true
+        columns,
+        data: data ?  Object.values(data.results) : [],
+        initialState: {
+            pageIndex: queryPageIndex,          
+            pageSize: queryPageSize,
+            sortBy: queryPageSortBy,
         },
-        useSortBy,
-        useExpanded,
-        usePagination,
-        useResizeColumns,
-        // useFlexLayout,
+        manualPagination: true, // Tell the usePagination
+        pageCount: data ? totalPageCount : null,
+        autoResetSortBy: false,
+        autoResetExpanded: false,
+        autoResetPage: false,
+        disableResizing: true
+        
+    },
+    useSortBy,
+    useExpanded,
+    usePagination,
+    useResizeColumns, 
+    useFlexLayout,
     );
 
     const manualPageSize = []
@@ -176,7 +172,7 @@ const DataTable = ({organization, programs}) => {
 
     if (isSuccess)
         return (
-            <>
+            <StickyContainer>
                 <div className='table react-table report-table'>
                     <div className="action-panel">
                         <Row className="mx-0">
@@ -199,48 +195,52 @@ const DataTable = ({organization, programs}) => {
                         (isLoading || isFetching) && <p className="text-center">Loading...</p>
                     }
                     {
-                        // ref={r => { csvLinkTable = r; }}
-                        isSuccess &&
+                        isSuccess && 
+                        
                         <table {...getTableProps()} className="table">
-                            <thead>
-                            {headerGroups.map((headerGroup) => (
-                                <tr {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map(column => (
-                                        <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                            {column.render('Header')}
-                                            {column.isSorted ? <Sorting column={column}/> : ''}
-                                        </th>
-                                    ))}
-                                </tr>
-                            ))}
-                            </thead>
+                    
+                            <Sticky  topOffset={80}>
+                                {({ style }) => (
+                                    <thead style={{...style, top: '60px'}}> 
+                                        {headerGroups.map((headerGroup) => (
+                                            <tr {...headerGroup.getHeaderGroupProps()}>
+                                                {headerGroup.headers.map(column => (
+                                                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                                    {column.render('Header')}
+                                                    {column.isSorted ? <Sorting column={column}/> : ''}
+                                                </th>
+                                                ))}
+                                            </tr>
+                                        ))}
+                                    </thead>
+                                )}
+                            </Sticky>
+                    
                             <tbody className="table table--bordered" {...getTableBodyProps()}>
-                            {page.map(row => {
-                                prepareRow(row);
-                                const subCount = (row.id.match(/\./g) || []).length
-                                return (
-                                    <tr {...row.getRowProps()}>
-                                        {
-                                            row.cells.map(cell => {
-                                                // console.log(cell)
-                                                const paddingLeft = subCount * 20
-                                                return <td {...cell.getCellProps()}><span
-                                                    style={cell.column.Header === '#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span>
-                                                </td>
-                                            })
-                                        }
-                                    </tr>
-                                )
-                            })}
+                                {page.map( row => {
+                                    prepareRow(row);
+                                    const subCount = (row.id.match(/\./g) || []).length
+                                    return (
+                                        <tr {...row.getRowProps()}>
+                                            {
+                                                row.cells.map( cell => {
+                                                    // console.log(cell)
+                                                    const paddingLeft = subCount * 20
+                                                    return <td {...cell.getCellProps()}><span style={cell.column.Header==='#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span></td>
+                                                })
+                                            }
+                                        </tr>
+                                    )
+                                })}
                             </tbody>
                             <tfoot>
-                            {footerGroups.map((footerGroup) => (
-                                <tr {...footerGroup.getFooterGroupProps()}>
-                                    {footerGroup.headers.map(column => (
-                                        <th {...column.getFooterProps()}>{column.render('Footer')}</th>
-                                    ))}
-                                </tr>
-                            ))}
+                                {footerGroups.map( (footerGroup) => (
+                                    <tr {...footerGroup.getFooterGroupProps()}>
+                                        {footerGroup.headers.map( column => (
+                                            <th {...column.getFooterProps()}>{column.render('Footer')}</th>
+                                        ))}
+                                    </tr>
+                                ))}
                             </tfoot>
                         </table>
                     }
@@ -291,7 +291,7 @@ const DataTable = ({organization, programs}) => {
                         </>
                     )}
                 </div>
-            </>
+            </StickyContainer>
         )
 }
 

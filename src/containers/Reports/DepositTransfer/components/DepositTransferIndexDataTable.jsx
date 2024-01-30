@@ -19,6 +19,7 @@ import {
 } from "@/shared/apiTableHelper"
 import {clone} from 'lodash';
 import {getFirstDay} from '@/shared/helpers'
+import { StickyContainer, Sticky } from "react-sticky";
 
 const queryClient = new QueryClient()
 
@@ -151,7 +152,7 @@ const DataTable = ({organization, programs}) => {
 
   if (isSuccess)
     return (
-      <>
+      <StickyContainer>
         <div className='table react-table report-table'>
           <div className="action-panel">
             <Row className="form__form-group mx-0">
@@ -178,18 +179,22 @@ const DataTable = ({organization, programs}) => {
             // ref={r => { csvLinkTable = r; }}
             isSuccess &&
             <table {...getTableProps()} className="table">
-              <thead>
-              {headerGroups.map((headerGroup) => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map(column => (
-                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                      {column.render('Header')}
-                      {column.isSorted ? <Sorting column={column}/> : ''}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-              </thead>
+              <Sticky  topOffset={80}>
+                {({ style }) => (
+                    <thead style={{...style, top:'60px'}}>
+                {headerGroups.map((headerGroup) => (
+                  <tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map(column => (
+                      <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                        {column.render('Header')}
+                        {column.isSorted ? <Sorting column={column}/> : ''}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+                </thead>
+              )}
+              </Sticky> 
               <tbody className="table table--bordered" {...getTableBodyProps()}>
               {page.map(row => {
                 prepareRow(row);
@@ -267,7 +272,7 @@ const DataTable = ({organization, programs}) => {
             </>
           )}
         </div>
-      </>
+      </StickyContainer>
     )
 }
 

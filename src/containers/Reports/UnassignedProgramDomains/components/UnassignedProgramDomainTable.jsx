@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useExpanded, usePagination, useResizeColumns, useSortBy, useTable } from 'react-table';
+import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import { Col, Row } from 'reactstrap';
@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { clone } from 'lodash';
 import { reducer, useEffectToDispatch, fetchApiData, fetchApiDataExport, initialState, Sorting } from "@/shared/apiTableHelper";
 import UnassignedProgramDomainFilter from './UnassignedProgramDomainFilter';
+import { StickyContainer, Sticky } from "react-sticky";
 
 const queryClient = new QueryClient();
 
@@ -42,16 +43,16 @@ const DataTable = ({ organization, programs }) => {
         }
     );
 
-    const filteredData = useMemo(() => {
-        if (!data || !data.results) return [];
-        return data.results.filter(item => {
-            const itemName = item.name ? item.name.toLowerCase() : '';
-            const itemRootName = item.root_name ? item.root_name.toLowerCase() : '';
-            const filterKeyword = filter.keyword.toLowerCase();
-            const filterRootProgramName = filter.rootProgramName.toLowerCase();
-            return itemName.includes(filterKeyword) && itemRootName.includes(filterRootProgramName);
-        });
-    }, [data, filter]);
+    // const filteredData = useMemo(() => {
+    //     if (!data || !data.results) return [];
+    //     return data.results.filter(item => {
+    //         const itemName = item.name ? item.name.toLowerCase() : '';
+    //         const itemRootName = item.root_name ? item.root_name.toLowerCase() : '';
+    //         const filterKeyword = filter.keyword.toLowerCase();
+    //         const filterRootProgramName = filter.rootProgramName.toLowerCase();
+    //         return itemName.includes(filterKeyword) && itemRootName.includes(filterRootProgramName);
+    //     });
+    // }, [data, filter]);
 
     function objectToCSV(data) {
         const csvRows = data.map(row =>
@@ -89,11 +90,11 @@ const DataTable = ({ organization, programs }) => {
         }
     };
 
-    useEffect(() => {
-        if (data && data.total) {
-            dispatch({ type: 'TOTAL_COUNT_CHANGED', payload: data.total });
-        }
-    }, [data]);
+    // useEffect(() => {
+    //     if (data && data.total) {
+    //         dispatch({ type: 'TOTAL_COUNT_CHANGED', payload: data.total });
+    //     }
+    // }, [data]);
 
     useEffect(() => {
         if (exportToCsv) {
@@ -104,7 +105,6 @@ const DataTable = ({ organization, programs }) => {
         }
     }, [exportLink])
 
-
     let columns = useMemo(() => PROGRAM_COLUMNS, []);
     const totalPageCount = Math.ceil(totalCount / queryPageSize);
 
@@ -112,9 +112,10 @@ const DataTable = ({ organization, programs }) => {
         getTableProps,
         getTableBodyProps,
         headerGroups,
+        footerGroups,
+        rows,
         prepareRow,
         page,
-        rows,
         pageCount,
         pageOptions,
         gotoPage,
@@ -125,16 +126,26 @@ const DataTable = ({ organization, programs }) => {
         setPageSize,
         state: { pageIndex, pageSize, sortBy }
     } = useTable({
-            columns,
-            data: filteredData,
-            initialState: { pageIndex: queryPageIndex, pageSize: queryPageSize, sortBy: queryPageSortBy },
-            manualPagination: true,
-            pageCount: totalPageCount,
+        columns,
+        data: data ? data.results : [],
+        initialState: {
+            pageIndex: queryPageIndex,          
+            pageSize: queryPageSize,
+            sortBy: queryPageSortBy,
         },
-        useSortBy,
-        useExpanded,
-        usePagination,
-        useResizeColumns
+        manualPagination: true, // Tell the usePagination
+        pageCount: data ? totalPageCount : null,
+        autoResetSortBy: false,
+        autoResetExpanded: false,
+        autoResetPage: false,
+        disableResizing: true
+        
+    },
+    useSortBy,
+    useExpanded,
+    usePagination,
+    useResizeColumns, 
+    useFlexLayout,
     );
 
     useEffectToDispatch(dispatch, { pageIndex, pageSize, gotoPage, sortBy, filter, data, queryTrigger });
@@ -143,7 +154,7 @@ const DataTable = ({ organization, programs }) => {
     if (error) return <p>Error: {JSON.stringify(error)}</p>;
 
     return (
-        <>
+        <StickyContainer>
             <div className='table react-table report-table'>
                 <div className="action-panel">
                     <Row className="mx-0">
@@ -154,34 +165,55 @@ const DataTable = ({ organization, programs }) => {
                         </Col>
                     </Row>
                 </div>
-                {isSuccess && (
-                    <table {...getTableProps()} className="table table-striped report-table">
-                        <thead>
-                        {headerGroups.map(headerGroup => (
-                            <tr {...headerGroup.getHeaderGroupProps()}>
-                                {headerGroup.headers.map(column => (
-                                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                        {column.render('Header')}
-                                        {column.isSorted ? <Sorting column={column} /> : ''}
-                                    </th>
+                {
+                    isSuccess &&
+                    <table {...getTableProps()} className="table">
+             
+                        <Sticky  topOffset={80}>
+                            {({ style }) => (
+                                <thead style={{...style, top: '60px'}}> 
+                                    {headerGroups.map((headerGroup) => (
+                                        <tr {...headerGroup.getHeaderGroupProps()}>
+                                            {headerGroup.headers.map(column => (
+                                            <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                                {column.render('Header')}
+                                                {column.isSorted ? <Sorting column={column}/> : ''}
+                                            </th>
+                                            ))}
+                                        </tr>
+                                    ))}
+                                </thead>
+                            )}
+                        </Sticky>
+             
+                    <tbody className="table table--bordered" {...getTableBodyProps()}>
+                        {page.map( row => {
+                            prepareRow(row);
+                            const subCount = (row.id.match(/\./g) || []).length
+                            return (
+                                <tr {...row.getRowProps()}>
+                                    {
+                                        row.cells.map( cell => {
+                                            // console.log(cell)
+                                            const paddingLeft = subCount * 20
+                                            return <td {...cell.getCellProps()}><span style={cell.column.Header==='#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span></td>
+                                        })
+                                    }
+                                </tr>
+                            )
+                        })}
+                    </tbody>
+                    <tfoot>
+                        {footerGroups.map( (footerGroup) => (
+                            <tr {...footerGroup.getFooterGroupProps()}>
+                                {footerGroup.headers.map( column => (
+                                    <th {...column.getFooterProps()}>{column.render('Footer')}</th>
                                 ))}
                             </tr>
                         ))}
-                        </thead>
-                        <tbody {...getTableBodyProps()}>
-                        {page.map(row => {
-                            prepareRow(row);
-                            return (
-                                <tr {...row.getRowProps()}>
-                                    {row.cells.map(cell => {
-                                        return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
-                                    })}
-                                </tr>
-                            );
-                        })}
-                        </tbody>
-                    </table>
-                )}
+                    </tfoot>
+                </table>
+                }
                 {(rows.length > 0) && (
                     <ReactTablePagination
                         page={page}
@@ -199,7 +231,7 @@ const DataTable = ({ organization, programs }) => {
                     />
                 )}
             </div>
-        </>
+        </StickyContainer>
     );
 };
 
