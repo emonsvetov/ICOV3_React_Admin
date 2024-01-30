@@ -19,13 +19,11 @@ const ProgramViewUserProfile = ({organization, program, data}) => {
     }
 
     useEffect(() => {
-        if (organization?.id && programId && userId) {
-            getUserPointBalance(organization.id,programId, userId)
-                .then(point=> {
+        getUserPointBalance(organization.id,programId, userId)
+            .then(point=> {
                     setPointsBalance(point)
-                })
-        }
-    },[organization])
+        })
+    },[])
 
     const fullName = `${data.first_name} ${data.last_name}`
     return (

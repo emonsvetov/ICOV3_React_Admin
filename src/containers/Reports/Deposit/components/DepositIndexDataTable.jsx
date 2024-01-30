@@ -10,7 +10,7 @@ import ReactTablePagination from '@/shared/components/table/components/ReactTabl
 import DepositFilter  from "./DepositFilter";
 import { Col, Row} from 'reactstrap';
 import axios from 'axios'
-
+import { StickyContainer, Sticky } from "react-sticky";
 import {renameChildrenToSubrows} from '@/shared/helpers'
 
 const queryClient = new QueryClient()
@@ -104,7 +104,6 @@ const DataTable = () => {
 
     const [filter, setFilter] = useState({from:'', to:'', invoiceNumber:'', programName:'', programId:''});
 
-
     const handleDownload = async () => {
         if (data && data.results) {
             const csvString = convertArrayToCSV(data.results);
@@ -119,7 +118,6 @@ const DataTable = () => {
             alert("No data to download");
         }
     };
-
 
     const onClickFilterCallback = (from, to, invoiceNumber, programName, programId) => {
 
@@ -189,7 +187,7 @@ const DataTable = () => {
         columns,
         data: data ? data.results : [],
         initialState: {
-            pageIndex: queryPageIndex,
+            pageIndex: queryPageIndex,          
             pageSize: queryPageSize,
             sortBy: queryPageSortBy,
         },
@@ -198,13 +196,13 @@ const DataTable = () => {
         autoResetSortBy: false,
         autoResetExpanded: false,
         autoResetPage: false,
-        defaultColumn,
-
+        disableResizing: true
+        
     },
     useSortBy,
     useExpanded,
     usePagination,
-    useResizeColumns,
+    useResizeColumns, 
     useFlexLayout,
     );
     // const [statusFilterValue, setStatusFilterValue] = useState("");
@@ -243,121 +241,116 @@ const DataTable = () => {
         return <p>Error: {JSON.stringify(error)}</p>;
     }
     return (
-            <>
-                <div className='table react-table'>
-                    <div className="action-panel">
-                        <Row className="flex mx-0">
-                            <Col lg={9} md={9} sm={8}>
-                                <DepositFilter onClickFilterCallback={onClickFilterCallback} />
-                                <button onClick={handleDownload} className="btn btn-success">
-                                    Export to CSV
-                                </button>
-                            </Col>
-                        </Row>
-                    </div>
-                    {
-                         isLoading && <p>Loading...</p>
-                    }
-                    {
-                    isSuccess &&
-                    <table {...getTableProps()} className="table">
-                        <thead>
-                            {headerGroups.map( (headerGroup) => (
-                                <tr {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map( column => (
-                                        <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                            {column.render('Header')}
-                                            {column.isSorted ? <Sorting column={column} /> : ''}
-                                            <div
-                                                {...column.getResizerProps()}
-                                                className={`resizer ${
-                                                    column.isResizing ? 'isResizing' : ''
-                                                }`}
-                                            />
-                                        </th>
-                                    ))}
-                                </tr>
-                            ))}
-                        </thead>
-                        <tbody className="table table--bordered" {...getTableBodyProps()}>
-                            {page.map( row => {
-                                prepareRow(row);
-                                // console.log(row)
-                                const subCount = (row.id.match(/\./g) || []).length
-                                // const paddingCount = subCount > 0 ? Number(subCount) + 3 : 0;
-                                // console.log(subCount)
-                                return (
-                                    <tr {...row.getRowProps()}>
-                                        {
-                                            row.cells.map( cell => {
-                                                // console.log(cell)
-                                                const paddingLeft = subCount * 20
-                                                return <td {...cell.getCellProps()}><span style={cell.column.Header==='#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span></td>
-                                            })
-                                        }
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                        <tfoot>
-                            {footerGroups.map( (footerGroup) => (
-                                <tr {...footerGroup.getFooterGroupProps()}>
-                                    {footerGroup.headers.map( column => (
-                                        <th {...column.getFooterProps()}>{column.render('Footer')}</th>
-                                    ))}
-                                </tr>
-                            ))}
-                        </tfoot>
-                    </table>
-                    }
-
-                {(rows.length > 0) && (
-                    <>
-                        <ReactTablePagination
-                            page={page}
-                            gotoPage={gotoPage}
-                            previousPage={previousPage}
-                            nextPage={nextPage}
-                            canPreviousPage={canPreviousPage}
-                            canNextPage={canNextPage}
-                            pageOptions={pageOptions}
-                            pageSize={pageSize}
-                            pageIndex={pageIndex}
-                            pageCount={pageCount}
-                            setPageSize={setPageSize}
-                            manualPageSize={manualPageSize}
-                            dataLength={totalCount}
-                        />
-                        <div className="pagination justify-content-end mt-2">
-                            <span>
-                            Go to page:{' '}
-                            <input
-                                type="number"
-                                value={pageIndex + 1}
-                                onChange={(e) => {
-                                const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                                gotoPage(page);
-                                }}
-                                style={{ width: '100px' }}
-                            />
-                            </span>{' '}
-                            <select
-                            value={pageSize}
-                            onChange={(e) => {
-                                setPageSize(Number(e.target.value));
-                            }}
-                            >
-                            {[10, 20, 30, 40, 50].map((pageSize) => (
-                                <option key={pageSize} value={pageSize}>
-                                Show {pageSize}
-                                </option>
-                            ))}
-                            </select>
-                        </div>
-                    </>
-                )}
+        <StickyContainer>
+            <div className='table react-table'>
+                <div className="action-panel">
+                    <Row className="flex mx-0">
+                        <Col lg={9} md={9} sm={8}>
+                            <DepositFilter onClickFilterCallback={onClickFilterCallback} />
+                            <button onClick={handleDownload} className="btn btn-success">
+                                Export to CSV
+                            </button>
+                        </Col>
+                    </Row>
                 </div>
-            </>
+                {
+                        isLoading && <p>Loading...</p>
+                }
+                {
+                isSuccess &&
+                <table {...getTableProps()} className="table">
+                     <Sticky  topOffset={80}>
+                            {({ style }) => (
+                                <thead style={{...style, top: '60px'}}> 
+                                    {headerGroups.map((headerGroup) => (
+                                        <tr {...headerGroup.getHeaderGroupProps()}>
+                                            {headerGroup.headers.map(column => (
+                                            <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                                {column.render('Header')}
+                                                {column.isSorted ? <Sorting column={column}/> : ''}
+                                            </th>
+                                            ))}
+                                        </tr>
+                                    ))}
+                                </thead>
+                            )}
+                        </Sticky>
+                    <tbody className="table table--bordered" {...getTableBodyProps()}>
+                        {page.map( row => {
+                            prepareRow(row);
+                            const subCount = (row.id.match(/\./g) || []).length
+                            return (
+                                <tr {...row.getRowProps()}>
+                                    {
+                                        row.cells.map( cell => {
+                                            // console.log(cell)
+                                            const paddingLeft = subCount * 20
+                                            return <td {...cell.getCellProps()}><span style={cell.column.Header==='#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span></td>
+                                        })
+                                    }
+                                </tr>
+                            )
+                        })}
+                    </tbody>
+                    <tfoot>
+                        {footerGroups.map( (footerGroup) => (
+                            <tr {...footerGroup.getFooterGroupProps()}>
+                                {footerGroup.headers.map( column => (
+                                    <th {...column.getFooterProps()}>{column.render('Footer')}</th>
+                                ))}
+                            </tr>
+                        ))}
+                    </tfoot>
+                </table>
+                }
+
+            {(rows.length > 0) && (
+                <>
+                    <ReactTablePagination
+                        page={page}
+                        gotoPage={gotoPage}
+                        previousPage={previousPage}
+                        nextPage={nextPage}
+                        canPreviousPage={canPreviousPage}
+                        canNextPage={canNextPage}
+                        pageOptions={pageOptions}
+                        pageSize={pageSize}
+                        pageIndex={pageIndex}
+                        pageCount={pageCount}
+                        setPageSize={setPageSize}
+                        manualPageSize={manualPageSize}
+                        dataLength={totalCount}
+                    />
+                    <div className="pagination justify-content-end mt-2">
+                        <span>
+                        Go to page:{' '}
+                        <input
+                            type="number"
+                            value={pageIndex + 1}
+                            onChange={(e) => {
+                            const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                            gotoPage(page);
+                            }}
+                            style={{ width: '100px' }}
+                        />
+                        </span>{' '}
+                        <select
+                        value={pageSize}
+                        onChange={(e) => {
+                            setPageSize(Number(e.target.value));
+                        }}
+                        >
+                        {[10, 20, 30, 40, 50].map((pageSize) => (
+                            <option key={pageSize} value={pageSize}>
+                            Show {pageSize}
+                            </option>
+                        ))}
+                        </select>
+                    </div>
+                </>
+            )}
+            </div>
+        </StickyContainer>
     )
 }
 

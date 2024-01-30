@@ -20,13 +20,14 @@ const SupplierRedemptionTable: FC<SupplierRedemptionTableProps> = ({dataReport})
         setData(dataArray)
     }, [dataReport])
 
-    return (<>
+    return (
+    <>
         <Table
             style={{fontFamily: "Roboto", fontSize: '13px', lineHeight: '1.6'}}
             columns={thColumns}
             dataSource={data}
             pagination={false}
-            scroll={{x: 2000, y: null}}
+            scroll={{x: 2000, y: 500}}
             bordered
             className='table'
             summary={() => {
@@ -44,8 +45,10 @@ const SupplierRedemptionTable: FC<SupplierRedemptionTableProps> = ({dataReport})
                     return false;
                 }
             }}
+            sticky
         />
-    </>);
+    </>
+    );
 };
 
 export default SupplierRedemptionTable;
