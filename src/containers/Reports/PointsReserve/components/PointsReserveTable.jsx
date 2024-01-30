@@ -42,14 +42,14 @@ const [exportHeaders, setExportHeaders] = useState([]);
 const [exportToCsv, setExportToCsv] = useState(false);
 const exportLink = React.createRef();
 
-    useEffect(() => {
-        if (exportToCsv) {
-        if (exportLink.current) {
-            setExportToCsv(false);
-            exportLink.current.link.click();
-        }
-        }
-    }, [exportLink])
+useEffect(() => {
+    if (exportToCsv) {
+      if (exportLink.current) {
+        setExportToCsv(false);
+        exportLink.current.link.click();
+      }
+    }
+  }, [exportLink])
 
   const download = async (filterValues) => {
     let tmpFilter = clone(filterValues);
