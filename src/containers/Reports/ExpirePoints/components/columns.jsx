@@ -1,6 +1,6 @@
 import {Link} from 'react-router-dom';
 import React, {useMemo} from 'react';
-import {toCurrency, toPoints, formatMMYYDD} from '@/shared/helpers'
+import {toCurrency, toPoints, formatDate} from '@/shared/helpers'
 
 const RenderActions = ({row}) => {
   return (
@@ -37,7 +37,7 @@ export const TABLE_COLUMNS = [
   {
     Header: "Expiring Date",
     accessor: "expire_date",
-    Cell: ({ row, value }) => { return formatMMYYDD(value); },
+    Cell: ({ row, value }) => { return formatDate(value); },
   },
   {
     Header: "Amount Expiring",

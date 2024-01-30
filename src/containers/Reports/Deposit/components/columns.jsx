@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import React, { useMemo } from 'react';
-import { formatMMYYDD } from '../../../../shared/helpers';
+import { formatDate } from '../../../../shared/helpers';
 export const PROGRAM_COLUMNS = [
    
     {
@@ -48,7 +48,7 @@ export const PROGRAM_COLUMNS = [
     {
         Header: "Posting Date",
         accessor: "posting_date",
-        Cell: ({ row, value }) => { return formatMMYYDD(value); },
+        Cell: ({ row, value }) => { return formatDate(value); },
     },
     {
         Header: "Posted By",
