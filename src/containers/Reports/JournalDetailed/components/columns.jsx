@@ -1,3 +1,6 @@
+import React from 'react';
+import AddIcon from 'mdi-react/AddIcon';
+import MinusIcon from 'mdi-react/MinusIcon';
 const footerRenderer  = (info, field) => {
   const { rows, flatRows } = info;
   const totalValue = rows.reduce((sum, row) => Number(row.values[field]) + sum, 0)
@@ -8,6 +11,33 @@ export const JOURNAL_DETAILED_COLUMNS = [
     {
       Header: 'General Info',
       columns: [
+        {
+          // Build our expander column
+          id: 'expander', // Make sure it has an ID
+          Header: ({getToggleAllRowsExpandedProps, isAllRowsExpanded}) => (
+              <span {...getToggleAllRowsExpandedProps()}>
+              {isAllRowsExpanded ? '' : ''}
+            </span>
+          ),
+          Cell: ({row}) =>
+              // Use the row.canExpand and row.getToggleRowExpandedProps prop getter
+              // to build the toggle for expanding a row
+              row.canExpand ? (
+                  <span
+                      {...row.getToggleRowExpandedProps({
+                          style: {
+                              // We can even use the row.depth property
+                              // and paddingLeft to indicate the depth
+                              // of the row
+                              paddingLeft: `${row.depth * 2}rem`,
+                          },
+                      })}
+                  >
+                {row.isExpanded ? <MinusIcon className="chevron-expand"/> : <AddIcon className="chevron-expand"/>}
+              </span>
+              ) : null,
+          width: 70
+      },
         {
             Header: "Program Name",
             accessor: "name",

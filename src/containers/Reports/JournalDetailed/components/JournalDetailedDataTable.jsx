@@ -78,7 +78,7 @@ const DataTable = ({organization, programs}) => {
 
     const apiUrl = `/organization/${organization.id}/report/journal-detailed`;
     const {isLoading, error, data, isSuccess, isFetched, isFetching} = useQuery(
-      ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+      ['journal-detailed', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
       () => fetchApiData(
         {
           url: apiUrl,
@@ -97,7 +97,7 @@ const DataTable = ({organization, programs}) => {
 
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
-    // console.log(data)
+    console.log(data)
 
     const {
       getTableProps,
@@ -148,7 +148,7 @@ const DataTable = ({organization, programs}) => {
     if (isLoading || !organization?.id) {
       return <p>Loading...</p>;
     }
-
+ 
     if (isSuccess)
     return (
       <StickyContainer>
@@ -204,11 +204,15 @@ const DataTable = ({organization, programs}) => {
                 <tbody className="table table--bordered" {...getTableBodyProps()}>
                 {page.map(row => {
                   prepareRow(row);
+      
                   return (
                     <tr {...row.getRowProps()}>
                       {
                         row.cells.map(cell => {
-                          return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                          return <td {...cell.getCellProps()}>
+                            {cell.render('Cell')}
+                           
+                          </td>
                         })
                       }
                     </tr>
