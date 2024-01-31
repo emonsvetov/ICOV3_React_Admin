@@ -16,7 +16,7 @@ export const JOURNAL_DETAILED_COLUMNS = [
         },
         {
           Header: "Program ID",
-          accessor: "id",
+          accessor: "account_holder_id",
           Footer:"",
           maxWidth: 100,
         },
