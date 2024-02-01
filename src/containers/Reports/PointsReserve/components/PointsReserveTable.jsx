@@ -148,6 +148,7 @@ let program_columns = [
     useResizeColumns, 
     useFlexLayout,
     );
+    console.log(data)
     // const [statusFilterValue, setStatusFilterValue] = useState("");
     const manualPageSize = []
     useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
