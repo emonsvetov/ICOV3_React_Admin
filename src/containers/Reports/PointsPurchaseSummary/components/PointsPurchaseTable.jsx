@@ -78,7 +78,7 @@ const DataTable = ({organization, programs}) => {
     const defaultColumn = React.useMemo(
         () => ({
           minWidth: 30,
-          width: 150,
+          width: 100,
           maxWidth: 400,
         }),
         []
@@ -105,7 +105,6 @@ const DataTable = ({organization, programs}) => {
             staleTime: Infinity,
         }
     );
-    
     useEffect(() => {
         if (exportToCsv) {
             if (exportLink.current) {
@@ -193,7 +192,6 @@ const DataTable = ({organization, programs}) => {
     if (error) {
         return <p>Error: {JSON.stringify(error)}</p>;
     }
-
     return (
         <StickyContainer>
                 <div className='table react-table'>
@@ -239,6 +237,7 @@ const DataTable = ({organization, programs}) => {
                                 prepareRow(row);
                                 // console.log(row)
                                 const subCount = (row.id.match(/\./g) || []).length
+
                                 // const paddingCount = subCount > 0 ? Number(subCount) + 3 : 0;
                                 // console.log(subCount)
                                 return (
@@ -246,6 +245,7 @@ const DataTable = ({organization, programs}) => {
                                         {
                                             row.cells.map( cell => {
                                                 // console.log(cell)
+                                        
                                                 const paddingLeft = subCount * 20
                                                 return <td {...cell.getCellProps()}>
                                                             <span style={cell.column.Header==='#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}

@@ -11,6 +11,12 @@ export const PROGRAM_COLUMNS = [
         // sticky:'left'
     },
     {
+        Header: "Program ID",
+        accessor: "account_holder_id",
+        Footer:"",
+        maxWidth: 100,
+    },
+    {
         Header: "Root Program Name",
         accessor: "root_name",
     },
@@ -22,7 +28,7 @@ export const PROGRAM_COLUMNS = [
     {
         Header: "Monies Deposited",
         accessor: "monies_deposited",
-        Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(4)}`},
+        Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(

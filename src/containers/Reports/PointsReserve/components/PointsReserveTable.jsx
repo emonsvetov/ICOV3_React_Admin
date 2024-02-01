@@ -79,8 +79,6 @@ const {isLoading, error, data, isSuccess,isFetched, isFetching} = useQuery(
     () => fetchApiData(
       {
         url: apiUrl,
-        page: queryPageIndex,
-        size: queryPageSize,
         filter,
         sortby: queryPageSortBy,
         trigger: queryTrigger
@@ -148,6 +146,7 @@ let program_columns = [
     useResizeColumns, 
     useFlexLayout,
     );
+ 
     // const [statusFilterValue, setStatusFilterValue] = useState("");
     const manualPageSize = []
     useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
@@ -237,52 +236,7 @@ let program_columns = [
                     </tfoot>
                 </table>
                 }
-            
-            {(rows.length > 0) && (
-                <>
-                    <ReactTablePagination
-                    page={page}
-                    gotoPage={gotoPage}
-                    previousPage={previousPage}
-                    nextPage={nextPage}
-                    canPreviousPage={canPreviousPage}
-                    canNextPage={canNextPage}
-                    pageOptions={pageOptions}
-                    pageSize={pageSize}
-                    pageIndex={pageIndex}
-                    pageCount={pageCount}
-                    setPageSize={setPageSize}
-                    manualPageSize={manualPageSize}
-                    dataLength={totalCount}
-                    />
-                    <div className="pagination justify-content-end mt-2">
-                        <span>
-                        Go to page:{' '}
-                        <input
-                            type="number"
-                            value={pageIndex + 1}
-                            onChange={(e) => {
-                            const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                            gotoPage(page);
-                            }}
-                            style={{ width: '100px' }}
-                        />
-                        </span>{' '}
-                        <select
-                        value={pageSize}
-                        onChange={(e) => {
-                            setPageSize(Number(e.target.value));
-                        }}
-                        >
-                        {[10, 20, 30, 40, 50].map((pageSize) => (
-                            <option key={pageSize} value={pageSize}>
-                            Show {pageSize}
-                            </option>
-                        ))}
-                        </select>
-                    </div>
-                </>
-            )}
+        
             </div>
         </StickyContainer>
     )

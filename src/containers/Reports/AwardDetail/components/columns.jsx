@@ -20,11 +20,6 @@ export const TABLE_COLUMNS = [
     width: 95
   },
   {
-    Header: "Event",
-    accessor: "event_name",
-    width: 100
-  },
-  {
     Header: "GL Code",
     accessor: "ledger_code",
     width: 80

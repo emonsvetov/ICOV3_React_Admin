@@ -17,7 +17,22 @@ const SupplierRedemptionTable: FC<SupplierRedemptionTableProps> = ({dataReport})
         setColumns(dataReport.config.columns);
         setThColumns(dataReport.config.columns);
         var dataArray = Object.values(dataReport.data);
-        setData(dataArray)
+        let datas = []
+        dataArray.map(data => {
+            if (data.avg_discount_percent) {
+                let temp = {};
+                temp.avg_discount_percent = data.avg_discount_percent + "%";
+                temp.percent_total_cost = data.percent_total_cost + "%";
+                temp.total_cost_basis = "$" + data.total_cost_basis ;
+                temp.total_premium = "$" + data.total_premium;
+                temp.total_redemption_value = "$" + data.total_redemption_value;
+                temp.total_cost_basis = "$" + data.total_cost_basis;
+                temp.percent_total_redemption_value = data.percent_total_redemption_value + "%"
+                datas.push({...data, ...temp})
+            }
+           
+        })
+        setData(datas)
     }, [dataReport])
 
     return (
