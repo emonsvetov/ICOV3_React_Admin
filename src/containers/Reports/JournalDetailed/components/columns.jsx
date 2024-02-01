@@ -162,18 +162,19 @@ export const JOURNAL_DETAILED_COLUMNS = [
             Cell: ({ row, value }) => { return `$${value}`},
             Footer: (info) => footerRenderer(info, 'codes_redeemed_cost'),
         },
-        {
-            Header: "Program Funds net transfers",
-            accessor: "program_funds_net_transfers",
-            Cell: ({ row, value }) => { return `$${value}`},
-            Footer: (info) => footerRenderer(info, 'program_funds_net_transfers'),
-        },
+     
         {
             Header: "Program refunds for monies pending",
             accessor: "program_refunds_for_monies_pending",
             Cell: ({ row, value }) => { return `$${value}`},
             Footer: (info) => footerRenderer(info, 'program_refunds_for_monies_pending'),
         },
+        {
+          Header: "Program Funds net transfers",
+          accessor: "program_funds_net_transfers",
+          Cell: ({ row, value }) => { return `$${value}`},
+          Footer: (info) => footerRenderer(info, 'program_funds_net_transfers'),
+      },
         {
             Header: "Total Spend Rebate",
             accessor: "total_spend_rebate",
