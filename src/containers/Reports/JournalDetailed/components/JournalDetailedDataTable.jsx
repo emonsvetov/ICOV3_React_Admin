@@ -146,7 +146,6 @@ const DataTable = ({organization, programs}) => {
     if (isLoading || !organization?.id) {
       return <p>Loading...</p>;
     }
- 
     if (isSuccess)
     return (
       <StickyContainer>
