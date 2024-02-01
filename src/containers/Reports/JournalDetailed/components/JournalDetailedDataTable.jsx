@@ -97,8 +97,6 @@ const DataTable = ({organization, programs}) => {
 
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
-    console.log(data)
-
     const {
       getTableProps,
       getTableBodyProps,
@@ -204,7 +202,6 @@ const DataTable = ({organization, programs}) => {
                 <tbody className="table table--bordered" {...getTableBodyProps()}>
                 {page.map(row => {
                   prepareRow(row);
-      
                   return (
                     <tr {...row.getRowProps()}>
                       {

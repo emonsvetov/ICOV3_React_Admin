@@ -105,7 +105,6 @@ const DataTable = ({organization, programs}) => {
             staleTime: Infinity,
         }
     );
-    console.log(data)
     useEffect(() => {
         if (exportToCsv) {
             if (exportLink.current) {
@@ -193,7 +192,6 @@ const DataTable = ({organization, programs}) => {
     if (error) {
         return <p>Error: {JSON.stringify(error)}</p>;
     }
-    
     return (
         <StickyContainer>
                 <div className='table react-table'>
