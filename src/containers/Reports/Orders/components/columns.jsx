@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from 'react-router-dom'
+import { formatDate } from "../../../../shared/helpers";
 
 export const TABLE_COLUMNS = [
   {
@@ -53,7 +54,7 @@ export const TABLE_COLUMNS = [
     Header: "Redeemed On",
     accessor: "redemption_datetime",
     Cell: ({ row, value }) => {
-      return `${value}`;
+      return `${formatDate(value)}`;
     },
     width: 100,
   },

@@ -1,44 +1,30 @@
 import { Link } from 'react-router-dom';
 import React, { useMemo } from 'react';
-
+import { jsdate2ymd } from '../../../../shared/helpers';
 export const TABLE_COLUMNS = [
-   
     {
         Header: "Program Name",
         accessor: "name",
-        Footer:"Total",
-        
-    },
-    {
-        Header: "Parent Program Name",
-        accessor: "parent_name",
+        Footer: "Total",
     },
     {
         Header: "Date of deposit",
-        accessor: "deposit_date",
-        
+        accessor: "date_paid",
+        Cell: ({ row, value }) => { return jsdate2ymd(value); },
     },
     {
         Header: "Amount of deposit",
         accessor: "amount",
-        Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(4)}`},
-        Footer: (info) => {
-            const { rows, flatRows } = info;
-            const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.amount) + sum, 0),
-              [rows],
-            );
-            return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
-        },
+
     },
     {
         Header: "Notes",
-        accessor: "note",
+        accessor: "notes",
     },
     {
         Header: "Invoice",
-        accessor: "invoice",
-    }
-    
-]
+        accessor: "invoice_number",
+    },
+];
+
 

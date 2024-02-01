@@ -22,7 +22,11 @@ const ProgramViewUserProfile = ({organization, data, programs}) => {
                     setPointsBalance(point)
                 })
         }
-    },[organization])
+    },[])
+
+    if (!organization?.id || !data) {
+        return <p>Loading...</p>;
+    }
 
     if (!organization?.id || !data) {
         return <p>Loading...</p>;

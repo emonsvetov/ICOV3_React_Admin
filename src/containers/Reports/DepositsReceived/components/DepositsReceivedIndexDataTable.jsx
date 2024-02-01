@@ -4,6 +4,7 @@ import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import {TABLE_COLUMNS} from "./columns";
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {Col, Row} from 'reactstrap';
+import MoniesFilter from "../../MoniesPendingAmount/components/MoniesFilter";
 
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
@@ -18,12 +19,13 @@ import {
 } from "@/shared/apiTableHelper"
 import {clone} from 'lodash';
 import {getFirstDay, formatCurrency} from '@/shared/helpers'
+import { StickyContainer, Sticky } from "react-sticky";
 
 const queryClient = new QueryClient()
 
 const DataTable = ({organization, programs}) => {
     const defaultFrom = getFirstDay();
-    const [filter, setFilter] = useState({programs: programs, awardLevels: [], from: defaultFrom, to: new Date()});
+    const [filter, setFilter] = useState({programs: programs,from: defaultFrom, to: new Date()});
     const [useFilter, setUseFilter] = useState(false);
     const [trigger, setTrigger] = useState(0);
     const [exportData, setExportData] = useState([]);
@@ -55,6 +57,57 @@ const DataTable = ({organization, programs}) => {
         }
     );
 
+    function objectToCSV(data) {
+        // Convert the object into an array
+        const dataArray = Object.values(data);
+
+        // Check if dataArray is empty
+        if (dataArray.length === 0) {
+            console.error('Data array is empty.');
+            return '';
+        }
+
+        // Create CSV rows from the array
+        const csvRows = dataArray.map(row =>
+            Object.values(row).map(value => JSON.stringify(value, replacer)).join(',')
+        );
+
+        return csvRows.join('\r\n');
+
+        function replacer(key, value) {
+            return value === null || value === undefined ? '' : value;
+        }
+    }
+
+    const download = async (filterValues) => {
+        let tmpFilter = { ...filterValues, exportToCsv: 1 };
+
+        const response = await fetchApiDataExport({
+            url: apiUrl,
+            filter: tmpFilter,
+            sortby: queryPageSortBy,
+            trigger: queryTrigger
+        });
+
+        if (response.results && typeof response.results.data === 'object') {
+            // Check if the data is an object and has properties
+            if (Object.keys(response.results.data).length > 0) {
+                const csvData = objectToCSV(response.results.data);
+                if (csvData) {
+                    setExportData(csvData);
+                    setExportHeaders(Object.keys(response.results.data[0]));
+                    setExportToCsv(true);
+                } else {
+                    console.error('Failed to serialize data for CSV export');
+                }
+            } else {
+                console.error('Data object is empty:', response.results.data);
+            }
+        } else {
+            console.error('Data is not in the expected object format:', response.results);
+        }
+    };
+
     useEffect(() => {
         if (exportToCsv) {
             if (exportLink.current) {
@@ -62,32 +115,7 @@ const DataTable = ({organization, programs}) => {
                 exportLink.current.link.click();
             }
         }
-    }, [exportLink])
-
-    const download = async (filterValues) => {
-        let tmpFilter = clone(filterValues);
-        tmpFilter.exportToCsv = 1;
-
-        const response = await fetchApiDataExport(
-            {
-                url: apiUrl,
-                filter: tmpFilter,
-                sortby: queryPageSortBy,
-                trigger: queryTrigger
-            }
-        );
-
-        const formattedExportData = response.results.map((row) => {
-            return Object.keys(row).reduce((acc, key) => {
-                acc[key] = formatCurrency(row[key]);
-                return acc;
-            }, {});
-        });
-
-        setExportData(formattedExportData);
-        setExportHeaders(response.headers);
-        setExportToCsv(true);
-    }
+    }, [exportLink]);
 
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
@@ -107,27 +135,28 @@ const DataTable = ({organization, programs}) => {
         nextPage,
         canNextPage,
         setPageSize,
-        state: {pageIndex, pageSize, sortBy}
+        state: { pageIndex, pageSize, sortBy }
     } = useTable({
-            columns,
-            data: data ? data.results : [],
-            initialState: {
-                pageIndex: queryPageIndex,
-                pageSize: queryPageSize,
-                sortBy: queryPageSortBy,
-            },
-            manualPagination: true, // Tell the usePagination
-            pageCount: data ? totalPageCount : null,
-            autoResetSortBy: false,
-            autoResetExpanded: false,
-            autoResetPage: false,
-            disableResizing: true
+        columns,
+        data: data ?  Object.values(data.results) : [],
+        initialState: {
+            pageIndex: queryPageIndex,          
+            pageSize: queryPageSize,
+            sortBy: queryPageSortBy,
         },
-        useSortBy,
-        useExpanded,
-        usePagination,
-        useResizeColumns,
-        useFlexLayout,
+        manualPagination: true, // Tell the usePagination
+        pageCount: data ? totalPageCount : null,
+        autoResetSortBy: false,
+        autoResetExpanded: false,
+        autoResetPage: false,
+        disableResizing: true
+        
+    },
+    useSortBy,
+    useExpanded,
+    usePagination,
+    useResizeColumns, 
+    useFlexLayout,
     );
 
     const manualPageSize = []
@@ -137,13 +166,13 @@ const DataTable = ({organization, programs}) => {
         return <p>Error: {JSON.stringify(error)}</p>;
     }
 
-    if (isLoading || !organization?.id) {
+    if (isLoading) {
         return <p>Loading...</p>;
     }
 
     if (isSuccess)
         return (
-            <>
+            <StickyContainer>
                 <div className='table react-table report-table'>
                     <div className="action-panel">
                         <Row className="mx-0">
@@ -166,48 +195,52 @@ const DataTable = ({organization, programs}) => {
                         (isLoading || isFetching) && <p className="text-center">Loading...</p>
                     }
                     {
-                        // ref={r => { csvLinkTable = r; }}
-                        isSuccess &&
+                        isSuccess && 
+                        
                         <table {...getTableProps()} className="table">
-                            <thead>
-                            {headerGroups.map((headerGroup) => (
-                                <tr {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map(column => (
-                                        <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                            {column.render('Header')}
-                                            {column.isSorted ? <Sorting column={column}/> : ''}
-                                        </th>
-                                    ))}
-                                </tr>
-                            ))}
-                            </thead>
+                    
+                            <Sticky  topOffset={80}>
+                                {({ style }) => (
+                                    <thead style={{...style, top: '60px'}}> 
+                                        {headerGroups.map((headerGroup) => (
+                                            <tr {...headerGroup.getHeaderGroupProps()}>
+                                                {headerGroup.headers.map(column => (
+                                                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                                    {column.render('Header')}
+                                                    {column.isSorted ? <Sorting column={column}/> : ''}
+                                                </th>
+                                                ))}
+                                            </tr>
+                                        ))}
+                                    </thead>
+                                )}
+                            </Sticky>
+                    
                             <tbody className="table table--bordered" {...getTableBodyProps()}>
-                            {page.map(row => {
-                                prepareRow(row);
-                                const subCount = (row.id.match(/\./g) || []).length
-                                return (
-                                    <tr {...row.getRowProps()}>
-                                        {
-                                            row.cells.map(cell => {
-                                                // console.log(cell)
-                                                const paddingLeft = subCount * 20
-                                                return <td {...cell.getCellProps()}><span
-                                                    style={cell.column.Header === '#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span>
-                                                </td>
-                                            })
-                                        }
-                                    </tr>
-                                )
-                            })}
+                                {page.map( row => {
+                                    prepareRow(row);
+                                    const subCount = (row.id.match(/\./g) || []).length
+                                    return (
+                                        <tr {...row.getRowProps()}>
+                                            {
+                                                row.cells.map( cell => {
+                                                    // console.log(cell)
+                                                    const paddingLeft = subCount * 20
+                                                    return <td {...cell.getCellProps()}><span style={cell.column.Header==='#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span></td>
+                                                })
+                                            }
+                                        </tr>
+                                    )
+                                })}
                             </tbody>
                             <tfoot>
-                            {footerGroups.map((footerGroup) => (
-                                <tr {...footerGroup.getFooterGroupProps()}>
-                                    {footerGroup.headers.map(column => (
-                                        <th {...column.getFooterProps()}>{column.render('Footer')}</th>
-                                    ))}
-                                </tr>
-                            ))}
+                                {footerGroups.map( (footerGroup) => (
+                                    <tr {...footerGroup.getFooterGroupProps()}>
+                                        {footerGroup.headers.map( column => (
+                                            <th {...column.getFooterProps()}>{column.render('Footer')}</th>
+                                        ))}
+                                    </tr>
+                                ))}
                             </tfoot>
                         </table>
                     }
@@ -258,7 +291,7 @@ const DataTable = ({organization, programs}) => {
                         </>
                     )}
                 </div>
-            </>
+            </StickyContainer>
         )
 }
 
