@@ -66,6 +66,7 @@ import MigrationIndex from '../Migration/index';
 import EditOrder from '../PhysicalOrders/edit_order';
 import TangoOrder from '../PhysicalOrders/tango_order';
 import GlobalOrder from '../Reports/Orders/view_order';
+import CronJobsIndex from '../CronJobs/index';
 
 import {
   AwardDetail,
@@ -123,6 +124,12 @@ const Merchants = () => (
     <Route exact path="/merchants/add" component={AddMerchant} />
     <Route exact path="/merchants/view/:id" component={ViewMerchant} />
     <Route exact path="/merchants/edit/:id" component={EditMerchant} />
+  </Switch>
+);
+
+const CronJobs = () => (
+  <Switch>
+    <Route exact path="/cron-jobs" component={CronJobsIndex} />
   </Switch>
 );
 
@@ -244,6 +251,7 @@ const privateRoutes = () => {
         <PrivateRoute path="/pages" component={Pages} />
         <PrivateRoute path="/program" component={Programs} />
         <PrivateRoute path="/merchants" component={Merchants} />
+        <PrivateRoute path="/cron-jobs" component={CronJobs} />
         <PrivateRoute path="/users" component={Users} />
         <PrivateRoute path="/roles" component={Roles} />
         <PrivateRoute path="/permissions" component={Permissions} />

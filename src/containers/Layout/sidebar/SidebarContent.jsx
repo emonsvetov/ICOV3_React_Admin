@@ -19,6 +19,11 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
           <SidebarLink title="Merchants"  icon="store" route="/merchants" />
         );
       break;
+      case 'cron_jobs':
+        return (
+          <SidebarLink title="Cron Jobs"  icon="hand" route="/cron-jobs" />
+        );
+      break;
       case 'reports':
         return (
           <>
@@ -57,6 +62,11 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
           <SidebarLink title="V2 Program Migration"  icon="database" route="/migration" />
         )
       break;
+      case 'migration':
+        return (
+            <SidebarLink title="V2 Program Migration"  icon="database" route="/migration" />
+        )
+      break;
       default:
       break;
     }
@@ -76,6 +86,10 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
         {
           auth?.isSuperAdmin &&
             <ProtectedLink type="merchants"/>
+        }
+        {
+          auth?.isSuperAdmin &&
+          <ProtectedLink type="cron_jobs"/>
         }
         <SidebarCategory title="Import" icon="download">
           <SidebarLink title="All Imported Files" route="/import/list" />
