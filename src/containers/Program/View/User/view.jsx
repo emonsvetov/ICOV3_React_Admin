@@ -12,6 +12,7 @@ import ProgramViewUserProfile from "./View/profile";
 import ProgramViewUserHistory from "./View/history";
 import ProgramViewUserGiftCodesRedeemed from "./View/giftCodesRedeemed";
 import ProgramViewUserChangeLogs from "./View/changeLogs";
+import { ReclaimPoints } from './View/ReclaimPoints';
 
 const queryClient = new QueryClient()
 
@@ -101,8 +102,15 @@ const ProgramViewUser = ({organization}) => {
                                               setTrigger={setTrigger}/>
                         <Card>
                             <CardBody className='infoview'>
+                                <Row style={{ margin:0 }}>
+                                    <Col md="11" className="text-right">
+                                    </Col>
+                                    <Col md="1" className="text-right">
+                                        <Link className="" onClick={toggleEdit} to="#">Edit</Link>
+                                    </Col>
+                                </Row>
                                 <Row>
-                                    <Col md="7" >
+                                    <Col md="12" >
                                         <Nav tabs>
                                             <NavItem>
                                                 <NavLink
@@ -156,10 +164,20 @@ const ProgramViewUser = ({organization}) => {
                                                     Change Logs
                                                 </NavLink>
                                             </NavItem>
+                                            <NavItem>
+                                                <NavLink
+                                                    className={classnames({
+                                                        active:
+                                                            currentActiveTab === '5'
+                                                    })}
+                                                    onClick={() => {
+                                                        togglePan('5');
+                                                    }}
+                                                >
+                                                    Reclaim Points
+                                                </NavLink>
+                                            </NavItem>
                                         </Nav>
-                                    </Col>
-                                    <Col md="5"  className="text-right">
-                                        <Link className="" onClick={toggleEdit} to="#">Edit</Link>
                                     </Col>
                                 </Row>
                                 <TabContent activeTab={currentActiveTab} className="tabContent">
@@ -186,6 +204,12 @@ const ProgramViewUser = ({organization}) => {
                                             currentActiveTab != 4 ? 'Loading...' :
                                                 <ProgramViewUserChangeLogs user={data} organization={organization}
                                                                         program={program}/>
+                                        }
+                                    </TabPane>
+                                    <TabPane tabId="5">
+                                        {
+                                            currentActiveTab != 5 ? 'Loading...' :
+                                                <ReclaimPoints user={data} organization={organization} program={program}/>
                                         }
                                     </TabPane>
                                 </TabContent>

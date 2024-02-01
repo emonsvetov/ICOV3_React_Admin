@@ -98,6 +98,7 @@ const AppProvider = () => {
                         colorBgContainer: '#ffffff',
                     },
                     components: {
+                        hoverBorderColor: '#4ce1b6',
                         Button: {
                             colorPrimary: '#70bbfd',
                             algorithm: true,

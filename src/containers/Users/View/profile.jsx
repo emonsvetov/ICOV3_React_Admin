@@ -28,6 +28,9 @@ const ProgramViewUserProfile = ({organization, data, programs}) => {
         return <p>Loading...</p>;
     }
 
+    if (!organization?.id || !data) {
+        return <p>Loading...</p>;
+    }
     const fullName = `${data.first_name} ${data.last_name}`
     return (
         <>
