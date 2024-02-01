@@ -87,12 +87,8 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
               <ProtectedLink type="reports"/>
               <SidebarLink title="Award Detail" route="/reports/award-detail"/>
               <SidebarLink title="Inventory Order" route="/reports/inventory-order"/>
-              <SidebarLink title="Deposit" route="/reports/deposit"/>
+              <SidebarLink title="Invoice Created" route="/reports/deposit"/>
               <SidebarLink title="Unassigned Program Domains" route="/reports/unassigned-program-domains"/>
-              <SidebarLink title="Deposits Received" route="/reports/deposits-received"/>
-              {/*<SidebarLink title="Participant Status Summary" route="/reports/participant-status-summary"/>*/}
-              {/* <SidebarLink title="Participant Account Summary" route="/reports/participant-account-summary"/> */}
-
             </SidebarCategory>
         }
         {
