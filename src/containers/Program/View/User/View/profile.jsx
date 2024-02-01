@@ -14,9 +14,6 @@ const ProgramViewUserProfile = ({organization, program, data}) => {
 
     let {programId, userId} = useParams();
     const [ pointsBalance, setPointsBalance] = useState();
-    if (!program?.id || !organization?.id || !data) {
-        return <p>Loading...</p>;
-    }
 
     useEffect(() => {
         if (organization?.id && programId && userId) {
@@ -30,7 +27,6 @@ const ProgramViewUserProfile = ({organization, program, data}) => {
     if (!program?.id || !organization?.id || !data) {
         return <p>Loading...</p>;
     }
-
     const fullName = `${data.first_name} ${data.last_name}`
     return (
         <>
