@@ -55,7 +55,10 @@ const SupplierRedemptionIndex: FC<SupplierRedemptionIndexProps> = () => {
     }
 
     const handleFilterChange = (value) => {
-        setParams(value);
+        let payload = value;
+        if (payload.codes == -1)
+            delete payload.codes;
+        setParams(payload);
     }
 
     const handleCSVExport = (value) => {
@@ -77,7 +80,6 @@ const SupplierRedemptionIndex: FC<SupplierRedemptionIndexProps> = () => {
     if (isEmpty(defaultMerchants)) {
         return <p>Loading...</p>;
     }
-
 
     return (
 
