@@ -1,5 +1,6 @@
 import React from 'react';
 import AddIcon from 'mdi-react/AddIcon';
+import {Link} from 'react-router-dom';
 import MinusIcon from 'mdi-react/MinusIcon';
 const footerRenderer  = (info, field) => {
   const { rows, flatRows } = info;
@@ -42,13 +43,19 @@ export const JOURNAL_DETAILED_COLUMNS = [
             Header: "Program Name",
             accessor: "name",
             Footer:"Page Total",
-            minWidth: 170,
+            Cell: ({row, value}) => {
+              const space = row.original.dinamicDepth === 1 ? '' : ' • ';
+              const boldRow = row.original.dinamicDepth === 1;
+              return <div style={boldRow ? {fontWeight: 'bold'} : {}}>{space.repeat(row.original.dinamicDepth)}<Link
+                  to={`/program/view/${row.original.id}`}>{value}</Link></div>
+          },
+            minWidth: 200,
         },
         {
-          Header: "Program ID",
+          Header: "Program Account Holder ID",
           accessor: "account_holder_id",
           Footer:"",
-          maxWidth: 100,
+
         },
         {
           Header: "Deposits",
