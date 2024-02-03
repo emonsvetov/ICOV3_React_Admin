@@ -42,12 +42,12 @@ export const TABLE_COLUMNS = [
   {
     Header: "Amount Expiring",
     accessor: "amount_expiring",
-    Cell: ({ row, value }) => { return toPoints(value); },
+    Cell: ({ row, value }) => { return <span>{`$${parseFloat(value).toFixed(2)}`}</span>; },
   },
   {
     Header: "Current Balance",
     accessor: "balance",
-    Cell: ({ row, value }) => { return toPoints(value); },
+    Cell: ({ row, value }) => { return <span>{`$${parseFloat(value).toFixed(2)}`}</span>; },
   },
 
 
