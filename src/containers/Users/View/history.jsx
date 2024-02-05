@@ -255,16 +255,6 @@ export const HISTORY_COLUMNS = [
         accessor: "event_notes",
     },
     {
-        Header: "Debit",
-        accessor: "is_credit",
-        Cell: ({row, value}) => value ? 'yes' : '',
-    },
-    {
-        Header: "Credit",
-        accessor: "is_credit2",
-        Cell: ({row, value}) => !value ? 'yes' : '',
-    },
-    {
         Header: "Transaction Date",
         accessor: "event_date"
     },
@@ -272,10 +262,5 @@ export const HISTORY_COLUMNS = [
         Header: "Amount",
         accessor: "amount",
         Cell: ({ row, value }) => { return toPoints(value); },
-    },
-    {
-        Header: "Event Total",
-        accessor: "event_total",
-        Cell: ({ row, value }) => { return toPoints(value); },
-    },
+    }
 ]

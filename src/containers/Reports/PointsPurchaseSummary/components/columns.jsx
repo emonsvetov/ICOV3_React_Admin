@@ -47,8 +47,13 @@ export const PROGRAM_COLUMNS = [
             return <div style={boldRow ? {fontWeight: 'bold'} : {}}>{space.repeat(row.original.dinamicDepth)}<Link
                 to={`/program/view/${row.original.id}`}>{value}</Link></div>
         },
-        width: 250
     },
+    {
+        Header: "Program ID",
+        accessor: "account_holder_id",
+        Footer:"",
+        maxWidth: 100,
+      },
     {
         Header: "Eligible Participants",
         accessor: "participants_count",
@@ -80,6 +85,7 @@ export const PROGRAM_COLUMNS = [
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
+    
     },
     {
         Header: "Feb",
@@ -210,7 +216,7 @@ export const PROGRAM_COLUMNS = [
         },
     },
     {
-        Header: "oct",
+        Header: "Oct",
         accessor: "month_10",
         Cell: ({row, value}) => {
             const boldRow = row.original.dinamicDepth === 1;

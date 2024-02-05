@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import React, { useMemo } from 'react';
-
+import { formatDate } from '../../../../shared/helpers';
 export const PROGRAM_COLUMNS = [
    
     {
@@ -9,6 +9,12 @@ export const PROGRAM_COLUMNS = [
         Footer:"Total",
         
         // sticky:'left'
+    },
+    {
+        Header: "Program ID",
+        accessor: "account_holder_id",
+        Footer:"",
+        maxWidth: 100,
     },
     {
         Header: "Root Program Name",
@@ -22,7 +28,7 @@ export const PROGRAM_COLUMNS = [
     {
         Header: "Monies Deposited",
         accessor: "monies_deposited",
-        Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(4)}`},
+        Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
@@ -48,6 +54,7 @@ export const PROGRAM_COLUMNS = [
     {
         Header: "Posting Date",
         accessor: "posting_date",
+        Cell: ({ row, value }) => { return formatDate(value); },
     },
     {
         Header: "Posted By",

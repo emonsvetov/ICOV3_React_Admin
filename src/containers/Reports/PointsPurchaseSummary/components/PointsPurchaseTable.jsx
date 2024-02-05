@@ -17,7 +17,7 @@ import {
    
     Sorting
 } from "@/shared/apiTableHelper"
-
+import { StickyContainer, Sticky } from "react-sticky";
 
 const queryClient = new QueryClient()
 
@@ -78,7 +78,7 @@ const DataTable = ({organization, programs}) => {
     const defaultColumn = React.useMemo(
         () => ({
           minWidth: 30,
-          width: 150,
+          width: 100,
           maxWidth: 400,
         }),
         []
@@ -105,7 +105,6 @@ const DataTable = ({organization, programs}) => {
             staleTime: Infinity,
         }
     );
-    
     useEffect(() => {
         if (exportToCsv) {
             if (exportLink.current) {
@@ -193,10 +192,8 @@ const DataTable = ({organization, programs}) => {
     if (error) {
         return <p>Error: {JSON.stringify(error)}</p>;
     }
-
-    
     return (
-            <>
+        <StickyContainer>
                 <div className='table react-table'>
                     <div className="action-panel">
                         <Row className="mx-0">
@@ -213,29 +210,34 @@ const DataTable = ({organization, programs}) => {
                     {
                     isSuccess &&
                     <table {...getTableProps()} className="table">
-                        <thead>
-                            {headerGroups.map( (headerGroup) => (
-                                <tr {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map( column => (
-                                        <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                            {column.render('Header')}
-                                            {column.isSorted ? <Sorting column={column} /> : ''}
-                                            <div
-                                                {...column.getResizerProps()}
-                                                className={`resizer ${
-                                                    column.isResizing ? 'isResizing' : ''
-                                                }`}
-                                            />
-                                        </th>
-                                    ))}
-                                </tr>
-                            ))}
-                        </thead>
-                        <tbody className="table table--bordered" {...getTableBodyProps()}>
+                        <Sticky  topOffset={80}>
+                            {({ style }) => (
+                                <thead style={{...style, top:'60px'}}>
+                                        {headerGroups.map( (headerGroup) => (
+                                            <tr {...headerGroup.getHeaderGroupProps()}>
+                                                {headerGroup.headers.map( column => (
+                                                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                                        {column.render('Header')}
+                                                        {column.isSorted ? <Sorting column={column} /> : ''}
+                                                        <div
+                                                            {...column.getResizerProps()}
+                                                            className={`resizer ${
+                                                                column.isResizing ? 'isResizing' : ''
+                                                            }`}
+                                                        />
+                                                    </th>
+                                                ))}
+                                            </tr>
+                                        ))}
+                                </thead>
+                            )}
+                        </Sticky> 
+                        <tbody {...getTableBodyProps()} className="table table--bordered" >
                             {page.map( row => {
                                 prepareRow(row);
                                 // console.log(row)
                                 const subCount = (row.id.match(/\./g) || []).length
+
                                 // const paddingCount = subCount > 0 ? Number(subCount) + 3 : 0;
                                 // console.log(subCount)
                                 return (
@@ -243,8 +245,12 @@ const DataTable = ({organization, programs}) => {
                                         {
                                             row.cells.map( cell => {
                                                 // console.log(cell)
+                                        
                                                 const paddingLeft = subCount * 20
-                                                return <td {...cell.getCellProps()}><span style={cell.column.Header==='#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span></td>
+                                                return <td {...cell.getCellProps()}>
+                                                            <span style={cell.column.Header==='#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}
+                                                            </span>
+                                                        </td>
                                             })
                                         }
                                     </tr>
@@ -263,7 +269,7 @@ const DataTable = ({organization, programs}) => {
                     </table>
                     }
                 </div>
-            </>
+        </StickyContainer>
     )
 }
 

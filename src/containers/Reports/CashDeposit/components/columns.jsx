@@ -1,4 +1,4 @@
-import {formatCurrency} from '@/shared/helpers'
+import {formatCurrency, formatDate} from '@/shared/helpers'
 
 export const TABLE_COLUMNS = [
 
@@ -9,7 +9,7 @@ export const TABLE_COLUMNS = [
   },
   {
     Header: "Program ID",
-    accessor: "program_id",
+    accessor: "program_account_holder_id",
     width: 95
   },
   {
@@ -25,7 +25,8 @@ export const TABLE_COLUMNS = [
   {
     Header: "Date of Deposit",
     accessor: "date_of_deposit",
-    width: 150
+    width: 150,
+    Cell: ({ row, value }) => { return formatDate(value); },
   },
   {
     Header: "Total Amount received",

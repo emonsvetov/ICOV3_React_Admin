@@ -62,9 +62,11 @@ import ViewDomain from '../Domain/view_domain';
 import EditDomain from '../Domain/edit_domain';
 
 import OrdersIndex from '../PhysicalOrders/index';
+import MigrationIndex from '../Migration/index';
 import EditOrder from '../PhysicalOrders/edit_order';
 import TangoOrder from '../PhysicalOrders/tango_order';
 import GlobalOrder from '../Reports/Orders/view_order';
+import CronJobsIndex from '../CronJobs/index';
 
 import {
   AwardDetail,
@@ -90,6 +92,7 @@ import {
  } from '../Reports';
 
 import TreeView from '../TreeViewBasic';
+import BudgetComparison from "../Program/View/Reports/BudgetComparison";
 
 const Pages = () => (
   <Switch>
@@ -121,6 +124,12 @@ const Merchants = () => (
     <Route exact path="/merchants/add" component={AddMerchant} />
     <Route exact path="/merchants/view/:id" component={ViewMerchant} />
     <Route exact path="/merchants/edit/:id" component={EditMerchant} />
+  </Switch>
+);
+
+const CronJobs = () => (
+  <Switch>
+    <Route exact path="/cron-jobs" component={CronJobsIndex} />
   </Switch>
 );
 
@@ -168,6 +177,12 @@ const PhysicalOrders = () => (
   </Switch>
 );
 
+const Migration = () => (
+    <Switch>
+        <Route exact path="/migration" component={MigrationIndex} />
+    </Switch>
+);
+
 const TangoOrders = () => (
   <Switch>
     <Route exact path="/tango-orders/details/:id" component={TangoOrder} />
@@ -187,6 +202,7 @@ const Reports = () => (
     <Route exact path="/reports/points-reserve" component={PointsReserve} />
     <Route exact path="/reports/program-status" component={ProgramStatus} />
     <Route exact path="/reports/supplier-redemption" component={SupplierRedemption} />
+      <Route exact path="/reports/budget-comparison" component={BudgetComparison} />
     <Route exact path="/reports/deposit" component={Deposit} />
     <Route exact path="/reports/deposit-transfer" component={DepositTransfer} />
     <Route exact path="/reports/participant-status-summary" component={ParticipantStatusSummary} />
@@ -235,6 +251,7 @@ const privateRoutes = () => {
         <PrivateRoute path="/pages" component={Pages} />
         <PrivateRoute path="/program" component={Programs} />
         <PrivateRoute path="/merchants" component={Merchants} />
+        <PrivateRoute path="/cron-jobs" component={CronJobs} />
         <PrivateRoute path="/users" component={Users} />
         <PrivateRoute path="/roles" component={Roles} />
         <PrivateRoute path="/permissions" component={Permissions} />
@@ -242,6 +259,7 @@ const privateRoutes = () => {
         <PrivateRoute path="/import" component={Imports} />
         <PrivateRoute path="/domains" component={Domains} />
         <PrivateRoute path="/physical-orders" component={PhysicalOrders} />
+        <PrivateRoute path="/migration" component={Migration} />
         <PrivateRoute path="/tango-orders" component={TangoOrders} />
         <PrivateRoute path="/" component={Reports} />
         <PrivateRoute path="/treeview" component={TreeView} />

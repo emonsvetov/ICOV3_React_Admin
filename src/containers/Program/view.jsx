@@ -22,6 +22,7 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
     const [isOpen, setOpen] = useState(false);
     const [depositBalance, setDepositBalance] = useState(0);
     const [financialBalance, setFinancialBalance] = useState(0);
+    const locale = new Intl.Locale('en-US');
     let history = useHistory();
      useEffect(()=> {
         if (organization && program)
@@ -68,10 +69,10 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
                     }
                      <div className="program-balance" style={{marginTop:'10px'}}>
                         <p>Deposit Balance:
-                            <span style={{marginLeft:'10px', }}>${depositBalance}</span>
+                            <span style={{marginLeft:'10px', }}>${depositBalance.toLocaleString(locale)}</span>
                         </p>
                         <p style={{marginTop: '0px', marginBottom:'10px'}}>Financial Balance:
-                            <span style={{marginLeft:'10px', }}>${financialBalance}</span>
+                            <span style={{marginLeft:'10px', }}>${financialBalance.toLocaleString(locale)}</span>
                         </p>
                     </div>
                 </Col>

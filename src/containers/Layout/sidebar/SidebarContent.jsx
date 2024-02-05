@@ -19,6 +19,11 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
           <SidebarLink title="Merchants"  icon="store" route="/merchants" />
         );
       break;
+      case 'cron_jobs':
+        return (
+          <SidebarLink title="Cron Jobs"  icon="hand" route="/cron-jobs" />
+        );
+      break;
       case 'reports':
         return (
           <>
@@ -52,6 +57,16 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
           <SidebarLink title="Physical Orders"  icon="file-empty" route="/physical-orders" />
         )
       break;
+      case 'migration':
+        return (
+          <SidebarLink title="V2 Program Migration"  icon="database" route="/migration" />
+        )
+      break;
+      case 'migration':
+        return (
+            <SidebarLink title="V2 Program Migration"  icon="database" route="/migration" />
+        )
+      break;
       default:
       break;
     }
@@ -72,6 +87,10 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
           auth?.isSuperAdmin &&
             <ProtectedLink type="merchants"/>
         }
+        {
+          auth?.isSuperAdmin &&
+          <ProtectedLink type="cron_jobs"/>
+        }
         <SidebarCategory title="Import" icon="download">
           <SidebarLink title="All Imported Files" route="/import/list" />
           <SidebarLink title="Import" route="/import" />
@@ -82,12 +101,8 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
               <ProtectedLink type="reports"/>
               <SidebarLink title="Award Detail" route="/reports/award-detail"/>
               <SidebarLink title="Inventory Order" route="/reports/inventory-order"/>
-              <SidebarLink title="Deposit" route="/reports/deposit"/>
+              <SidebarLink title="Invoice Created" route="/reports/deposit"/>
               <SidebarLink title="Unassigned Program Domains" route="/reports/unassigned-program-domains"/>
-              <SidebarLink title="Deposits Received" route="/reports/deposits-received"/>
-              {/*<SidebarLink title="Participant Status Summary" route="/reports/participant-status-summary"/>*/}
-              {/* <SidebarLink title="Participant Account Summary" route="/reports/participant-account-summary"/> */}
-
             </SidebarCategory>
         }
         {
@@ -99,6 +114,10 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
         {
             auth?.isSuperAdmin &&
             <ProtectedLink type="physicalorders"/>
+        }
+        {
+            auth?.isSuperAdmin &&
+            <ProtectedLink type="migration"/>
         }
         <SidebarLink title="Domains"  icon="layers" route="/domains" />
       </ul>

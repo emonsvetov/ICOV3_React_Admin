@@ -1,6 +1,6 @@
 import {Link} from 'react-router-dom';
 import React, {useMemo} from 'react';
-import {toCurrency, toPoints} from '@/shared/helpers'
+import {toCurrency, toPoints, formatDate} from '@/shared/helpers'
 
 export const TABLE_COLUMNS = [
 
@@ -20,11 +20,6 @@ export const TABLE_COLUMNS = [
     width: 95
   },
   {
-    Header: "Event",
-    accessor: "event_name",
-    width: 100
-  },
-  {
     Header: "GL Code",
     accessor: "ledger_code",
     width: 80
@@ -37,7 +32,6 @@ export const TABLE_COLUMNS = [
   {
     Header: "Date",
     accessor: "posting_timestamp",
-    width: 90
   },
   {
     id: 'to',

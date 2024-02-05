@@ -318,7 +318,7 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField 
-                                name=""
+                                name="allocate"
                                 label="Allocate cost to program for premium merchants"
                             />
                         </div>

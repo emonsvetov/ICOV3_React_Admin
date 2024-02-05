@@ -12,6 +12,7 @@ import {getFirstDay} from '@/shared/helpers'
 
 import {fetchApiData, initialState, reducer, Sorting, useEffectToDispatch} from "@/shared/apiTableHelper";
 import OrdersFilter from "./OrdersFilter";
+import {Sticky, StickyContainer} from 'react-sticky';
 
 const queryClient = new QueryClient();
 
@@ -147,7 +148,7 @@ const DataTable = ({ organization }) => {
 
   if (isSuccess)
     return (
-      <>
+      <StickyContainer>
         <div className="table react-table available-table">
             <OrdersFilter
                 filter={filter}
@@ -159,27 +160,31 @@ const DataTable = ({ organization }) => {
                 exportHeaders={exportHeaders}
             />
           <table {...getTableProps()} className="table">
-            <thead>
-              {headerGroups.map((headerGroup) => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map((column, i) => (
-                    <th
-                      className={`cell-column-${i}`}
-                      {...column.getHeaderProps(column.getSortByToggleProps())}
-                    >
-                      {column.render("Header")}
-                      {column.isSorted ? <Sorting column={column} /> : ""}
-                      <div
-                        {...column.getResizerProps()}
-                        className={`resizer ${
-                          column.isResizing ? "isResizing" : ""
-                        }`}
-                      />
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
+              <Sticky  topOffset={80}>
+                {({ style }) => (
+                  <thead style={{...style, top: '60px'}}> 
+                    {headerGroups.map((headerGroup) => (
+                      <tr {...headerGroup.getHeaderGroupProps()}>
+                        {headerGroup.headers.map((column, i) => (
+                          <th
+                            className={`cell-column-${i}`}
+                            {...column.getHeaderProps(column.getSortByToggleProps())}
+                          >
+                            {column.render("Header")}
+                            {column.isSorted ? <Sorting column={column} /> : ""}
+                            <div
+                              {...column.getResizerProps()}
+                              className={`resizer ${
+                                column.isResizing ? "isResizing" : ""
+                              }`}
+                            />
+                          </th>
+                        ))}
+                      </tr>
+                    ))}
+                  </thead>
+                )}
+              </Sticky>
             <tbody className="table table--bordered" {...getTableBodyProps()}>
               {page.map((row) => {
                 prepareRow(row);
@@ -261,7 +266,7 @@ const DataTable = ({ organization }) => {
             </div>
           </>
         )}
-      </>
+      </StickyContainer>
     );
 };
 
