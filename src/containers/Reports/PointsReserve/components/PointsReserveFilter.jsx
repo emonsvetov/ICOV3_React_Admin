@@ -9,9 +9,19 @@ import {getFirstDay} from '@/shared/helpers'
 import {dateStrToYmd} from '@/shared/helpers';
 import {isEqual, clone, cloneDeep} from 'lodash';
 import {CheckBoxField} from '@/shared/components/form/CheckBox';
+import Select from "react-select";
 
 const defaultFrom = getFirstDay()
 const defaultTo = new Date()
+
+const prepareList = () => {
+  let y = new Date().getFullYear();
+  let list = [];
+  for (var i = y; i > y - 7; i--) {
+      list.push({label: i, value: i})
+  }
+  return list;
+}
 
 const PointsReserveFilter = (
   {
@@ -24,26 +34,33 @@ const PointsReserveFilter = (
     exportHeaders
   }) => {
   const options = {
-    'dateRange': true,
     'programs': true,
     'exportToCsv': true,
+    'year':true,
     'createdOnly': false,
     'reportKey': true,
     'programId': true,
   }
-  const [from, setFrom] = React.useState(defaultFrom)
-  const [to, setTo] = React.useState(defaultTo)
   const [createdOnly, setCreatedOnly] = React.useState(false)
   const [reportKey, setReportKey] = React.useState('sku_value')
   const [selectedPrograms, setSelectedPrograms] = useState(filter.programs ? filter.programs : []);
   const finalFilter = {...filter}
-  let previous = cloneDeep(finalFilter);
+  const [targetYear, setTargetYear] = useState({
+    label: new Date().getFullYear(),
+    value: new Date().getFullYear()
+})
 
+
+  const handleChangeYear = (value) => {
+    setTargetYear(value)
+  }
+
+  let previous = cloneDeep(finalFilter);
+  const YEAR_LIST = prepareList();
   const onClickFilter = (reset = false, exportToCsv = 0) => {
     let dataSet = {}
-    if (options.dateRange) {
-      dataSet.from = dateStrToYmd(reset ? defaultFrom : from)
-      dataSet.to = dateStrToYmd(reset ? defaultTo : to)
+    if (options.year) {
+      dataSet.year = targetYear
     }
     if (options.programs) {
       dataSet.programs = reset ? [] : clone(selectedPrograms)
@@ -57,7 +74,6 @@ const PointsReserveFilter = (
     if (options.programId) {
       dataSet.programId = filter.programId
     }
-
     onClickFilterCallback(dataSet)
     previous = dataSet;
     if (reset) {
@@ -83,6 +99,11 @@ const PointsReserveFilter = (
         change = true
       }
     }
+    if (options.year) {
+      if (finalFilter.year !== values.year) {
+          change = true
+      }
+   }
     if (options.createdOnly) {
       if (finalFilter.createdOnly !== values.createdOnly) {
         change = true
