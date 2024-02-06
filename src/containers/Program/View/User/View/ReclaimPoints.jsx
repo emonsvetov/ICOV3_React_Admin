@@ -11,7 +11,9 @@ interface ReclaimPointsProps {
 }
 
 const columns: TableColumnsType<DataType> = [
-    { title: 'Points Value', dataIndex: 'points_value', key: 'points_value' },
+    { title: 'Award Value', dataIndex: 'points_value', key: 'points_value',render: (text) => (
+        <span>$ {text}</span>
+        ),},
     { title: 'Date Awarded', dataIndex: 'date_awarded', key: 'date_awarded' },
     { title: 'Event', dataIndex: 'event', key: 'event' },
     { title: 'Award Credit', dataIndex: 'award_credit', key: 'award_credit' },
@@ -36,6 +38,8 @@ export const ReclaimPoints: FC<ReclaimPointsProps> = ({user, organization, progr
     const [reclaimItems, setReclaimItems] = useState([]);
     const [reasonNotesValues, setReasonNotesValues] = useState({});
     const [dataItems, setDataItems] = useState([]);
+    const [userBalance, setUserBalance] = useState(0);
+    const [reclaimPointsSum, setReclaimPointsSum] = useState(0);
 
     const handleReclaimPoints = () => {
         reclaimItems.map(value => {
@@ -63,6 +67,7 @@ export const ReclaimPoints: FC<ReclaimPointsProps> = ({user, organization, progr
         try {
             const response = await axios.get(merchantsApiUrl, {});
             setDataItems(response.data.data);
+            setUserBalance(response.data.balance);
         } catch (e) {
         }
     }
@@ -81,6 +86,16 @@ export const ReclaimPoints: FC<ReclaimPointsProps> = ({user, organization, progr
     }
 
     useEffect(() => {
+        let sum = 0;
+        dataItems.forEach(item => {
+            if (reclaimItems.includes(item.key)) {
+                sum += parseFloat(item.points_value);
+            }
+        });
+        setReclaimPointsSum(sum);
+    }, [reclaimItems, dataItems]);
+
+    useEffect(() => {
         getDataReport();
     }, [])
 
@@ -88,11 +103,14 @@ export const ReclaimPoints: FC<ReclaimPointsProps> = ({user, organization, progr
         <>
             <Row style={{marginBottom: 10}}>
                 <Col span={8}>
-                    <Button type="primary" onClick={handleReclaimPoints}>
+                    <Button type="primary" onClick={handleReclaimPoints} disabled={userBalance < reclaimPointsSum || reclaimPointsSum <= 0}>
                         Reclaim Points
                     </Button>
                 </Col>
-                <Col span={8} offset={8}>
+                <Col span={11}></Col>
+                <Col span={5}>
+                    Balance <span style={{ color: userBalance > 0 ? 'green' : userBalance < 0 ? 'red' : 'grey' }}> ${userBalance} </span>
+                    Reclaim Points Sum <span style={{ color: reclaimPointsSum > userBalance ? 'red' : 'inherit' }}> {reclaimPointsSum}$ </span>
                 </Col>
             </Row>
             <Table
