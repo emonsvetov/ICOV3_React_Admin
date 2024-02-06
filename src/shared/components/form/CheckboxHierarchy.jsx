@@ -39,7 +39,7 @@ export const CheckboxHierarchy = ({name, fields, setFields, options, isRoot, isC
     for (let object of options) {
       subOptions.push(object[attr]);
       if (object.children && object.children.length) {
-        return findChildrenOptionId(object.children, subOptions)
+        subOptions = findChildrenOptionId(object.children, subOptions)
       }
     }
     return subOptions;
@@ -49,6 +49,7 @@ export const CheckboxHierarchy = ({name, fields, setFields, options, isRoot, isC
     let tmpFields = fields;
     let subOptions = [];
     for (let option of options) {
+      subOptions = [];
       if (option.children && option.children.length) {
         subOptions = findChildrenOptionId(option.children, subOptions);
       }
