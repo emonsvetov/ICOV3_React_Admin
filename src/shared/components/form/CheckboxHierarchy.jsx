@@ -153,7 +153,7 @@ export const CheckboxHierarchy = ({name, fields, setFields, options, isRoot, isC
         options.map(option => (
           <div className={categoryClass} key={`checkbox-${option[attr]}`}>
             <div className="form__form-group-input-wrap" style={{whiteSpace: 'nowrap'}}>
-              {option.children.length > 0 ? (
+              {option.children?.length > 0 ? (
                 <span className="lnr lnr-chevron-right" onClick={expand}/>
               ) : (
                 <span className="lnr"/>
