@@ -1,15 +1,15 @@
 import React from "react";
 import { Link } from 'react-router-dom'
-import { formatDate } from "../../../../shared/helpers";
+import { formatDate, maskString } from "../../../../shared/helpers";
 
 export const TABLE_COLUMNS = [
   {
     Header: "Codes",
     accessor: "code",
-    width: 200,
+    width: 150,
     Cell: ({ row, value }) => {
       console.log(row)
-      return <Link to={`/reports/orders/view/${row.original.id}`} >{value}</Link>},
+      return <Link to={`/reports/orders/view/${row.original.id}`} >{maskString(value)}</Link>},
   },
   {
     Header: "Pin",
@@ -49,6 +49,7 @@ export const TABLE_COLUMNS = [
   {
     Header: "Redemption URL",
     accessor: "redemption_url",
+    width: 200,
   },
   {
     Header: "Redeemed On",
@@ -99,7 +100,10 @@ export const TABLE_COLUMNS = [
   },
   {
     Header: "Tango Redeemption Time",
-    width: 120,
+    width: 130,
     accessor: "adjusted_redemption_datetime",
+    Cell: ({ row, value }) => {
+      return `${formatDate(value)}`;
+    },
   },
 ];
