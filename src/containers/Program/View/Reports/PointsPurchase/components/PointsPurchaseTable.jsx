@@ -83,7 +83,7 @@ const DataTable = ({organization, programs}) => {
     const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
     React.useReducer(reducer, initialState);
 
-    const apiUrl = `/organization/${organization.id}/report/points-purchase`;
+    const apiUrl = `/organization/${organization.id}/report/points-purchase-summary`;
 
     const { isLoading, error, data, isSuccess } = useQuery(
         ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],

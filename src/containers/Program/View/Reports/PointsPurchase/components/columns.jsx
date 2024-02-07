@@ -184,6 +184,70 @@ export const PROGRAM_COLUMNS = [
         },
     },
     {
+        Header: "Q1",
+        accessor: "Q1",
+        Cell: ({row, value}) => {
+            const boldRow = row.original.dinamicDepth === 1;
+            return <div style={boldRow ? {fontWeight: 'bold'} : {}}>{`$${parseFloat(value).toFixed(2)}`}</div>
+        },
+        Footer: (info) => {
+            const {rows, flatRows} = info;
+            const totalValue = useMemo(
+                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.Q1) + sum : 0 + sum, 0),
+                [rows],
+            );
+            return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
+        },
+    },
+    {
+        Header: "Q2",
+        accessor: "Q2",
+        Cell: ({row, value}) => {
+            const boldRow = row.original.dinamicDepth === 1;
+            return <div style={boldRow ? {fontWeight: 'bold'} : {}}>{`$${parseFloat(value).toFixed(2)}`}</div>
+        },
+        Footer: (info) => {
+            const {rows, flatRows} = info;
+            const totalValue = useMemo(
+                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.Q2) + sum : 0 + sum, 0),
+                [rows],
+            );
+            return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
+        },
+    },
+    {
+        Header: "Q3",
+        accessor: "Q3",
+        Cell: ({row, value}) => {
+            const boldRow = row.original.dinamicDepth === 1;
+            return <div style={boldRow ? {fontWeight: 'bold'} : {}}>{`$${parseFloat(value).toFixed(2)}`}</div>
+        },
+        Footer: (info) => {
+            const {rows, flatRows} = info;
+            const totalValue = useMemo(
+                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.Q3) + sum : 0 + sum, 0),
+                [rows],
+            );
+            return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
+        },
+    },
+    {
+        Header: "Q4",
+        accessor: "Q4",
+        Cell: ({row, value}) => {
+            const boldRow = row.original.dinamicDepth === 1;
+            return <div style={boldRow ? {fontWeight: 'bold'} : {}}>{`$${parseFloat(value).toFixed(2)}`}</div>
+        },
+        Footer: (info) => {
+            const {rows, flatRows} = info;
+            const totalValue = useMemo(
+                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.Q4) + sum : 0 + sum, 0),
+                [rows],
+            );
+            return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
+        },
+    },
+    {
         Header: "Per Participant",
         accessor: "per_participant",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
