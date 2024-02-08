@@ -47,9 +47,10 @@ export const PROGRAM_COLUMNS = [
             return <div style={boldRow ? {fontWeight: 'bold'} : {}}>{space.repeat(row.original.dinamicDepth)}<Link
                 to={`/program/view/${row.original.id}`}>{value}</Link></div>
         },
+        width: 200
     },
     {
-        Header: "Program ID",
+        Header: "Program Account Holder ID",
         accessor: "account_holder_id",
         Footer:"",
         maxWidth: 100,
