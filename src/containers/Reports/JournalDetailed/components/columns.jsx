@@ -70,6 +70,12 @@ export const JOURNAL_DETAILED_COLUMNS = [
           Footer: (info) => footerRenderer(info, 'deposit_reversal')
         },
         {
+          Header: "Program Funds net transfers",
+          accessor: "program_funds_net_transfers",
+          Cell: ({ row, value }) => { return `$${value}`},
+          Footer: (info) => footerRenderer(info, 'program_funds_net_transfers'),
+      },
+        {
           Header: "Points Purchased",
           accessor: "points_purchased",
           Cell: ({ row, value }) => { return `$${value}`},
@@ -93,12 +99,7 @@ export const JOURNAL_DETAILED_COLUMNS = [
           Cell: ({ row, value }) => { return `$${value}`},
           Footer: (info) => footerRenderer(info, 'net_points_purchased')
         },
-        {
-          Header: "Points Redeemed",
-          accessor: "points_redeemed",
-          Cell: ({ row, value }) => { return `$${value}`},
-          Footer: (info) => footerRenderer(info, 'points_redeemed')
-        },
+  
       ],
       Footer: 'General Info',
     },
@@ -106,12 +107,12 @@ export const JOURNAL_DETAILED_COLUMNS = [
       Header: "Fees",
       columns: [
         {
-            Header: "Setup Fee",
-            accessor: "setup_fee",
-            Cell: ({ row, value }) => { return `${value}%`},
-            Footer: (info) => footerRenderer(info, 'setup_fee'),
-            maxWidth: 70,
-        },
+          Header: "Deposit Fee",
+          accessor: "deposit_fee",
+          Cell: ({ row, value }) => { return `${value}%`},
+          Footer: (info) => footerRenderer(info, 'deposit_fee'),
+          maxWidth: 70,
+      },
         {
             Header: "Fixed Fee",
             accessor: "fixed_fee",
@@ -126,13 +127,7 @@ export const JOURNAL_DETAILED_COLUMNS = [
             Footer: (info) => footerRenderer(info, 'setup_fee'),
             maxWidth: 70,
         },
-        {
-            Header: "Deposit Fee",
-            accessor: "deposit_fee",
-            Cell: ({ row, value }) => { return `${value}%`},
-            Footer: (info) => footerRenderer(info, 'deposit_fee'),
-            maxWidth: 70,
-        },
+      
         {
           Header: "Convenience Fees",
           accessor: "convenience_fees",
@@ -150,13 +145,26 @@ export const JOURNAL_DETAILED_COLUMNS = [
           accessor: "program_pays_for_saas_fees",
           Cell: ({ row, value }) => { return `${value}%`},
           Footer: (info) => footerRenderer(info, 'program_pays_for_saas_fees'),
-        }
+        },
+        {
+          Header: "Setup Fee",
+          accessor: "setup_fee",
+          Cell: ({ row, value }) => { return `${value}%`},
+          Footer: (info) => footerRenderer(info, 'setup_fee'),
+          maxWidth: 70,
+      },
       ],
       Footer: "Fees"
     },
     {
       Header: 'Others',
       columns: [
+        {
+          Header: "Points Redeemed",
+          accessor: "points_redeemed",
+          Cell: ({ row, value }) => { return `$${value}`},
+          Footer: (info) => footerRenderer(info, 'points_redeemed')
+        },
         {
             Header: "Premium From Codes Redeemed",
             accessor: "codes_redeemed_premium",
@@ -176,12 +184,7 @@ export const JOURNAL_DETAILED_COLUMNS = [
             Cell: ({ row, value }) => { return `$${value}`},
             Footer: (info) => footerRenderer(info, 'program_refunds_for_monies_pending'),
         },
-        {
-          Header: "Program Funds net transfers",
-          accessor: "program_funds_net_transfers",
-          Cell: ({ row, value }) => { return `$${value}`},
-          Footer: (info) => footerRenderer(info, 'program_funds_net_transfers'),
-      },
+      
         {
             Header: "Total Spend Rebate",
             accessor: "total_spend_rebate",
