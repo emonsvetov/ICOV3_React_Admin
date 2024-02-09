@@ -35,6 +35,12 @@ export const PROGRAM_COLUMNS = [
     {
         Header: "Program",
         accessor: "name",
+        Cell: ({row, value}) => {
+          const space = row.original.dinamicDepth === 1 ? '' : ' • ';
+          const boldRow = row.original.dinamicDepth === 1;
+          return <div style={boldRow ? {fontWeight: 'bold'} : {}}>{space.repeat(row.original.dinamicDepth)}<Link
+              to={`/program/view/${row.original.id}`}>{value}</Link></div>
+        },
         Footer:"Page Total",
     },
     {
