@@ -437,6 +437,10 @@ export const isArray = function(a) {
       });
       return formattedDate;
   }
+  export const maskString =  (string) => {
+    const maskedCode = string.slice(0, 10) + "****" ;
+    return maskedCode;
+  }
 
 export const dobDisplay = (dob) => {
     const date = new Date(dob);
