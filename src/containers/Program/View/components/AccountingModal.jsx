@@ -9,6 +9,8 @@ import axios from 'axios'
 import {sendFlashMessage} from "@/shared/components/flash";
 import formValidation from "@/shared/validation/program-accounting";
 import { getProgramAction } from '@/redux/actions/programActions';
+import renderSelectField from '@/shared/components/form/Select';
+import {isObject} from "../../../../shared/helpers";
 
 const prepareForValidation = values => {
 
@@ -17,6 +19,8 @@ const prepareForValidation = values => {
         administrative_fee: values?.administrative_fee ?? null,
         balance_threshold: values?.balance_threshold ?? null,
         bill_parent_program: values?.bill_parent_program ?? null,
+        administrative_fee_factor: values?.administrative_fee_factor ?? null,
+        administrative_fee_calculation: values?.administrative_fee_calculation ?? 'participants',
         calculation: values?.calculation ?? null,
         convenience_fee: values?.convenience_fee ?? null,
         country: values?.country ?? null,
@@ -40,14 +44,21 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
     const [loading, setLoading] = useState(false)
 
     const onSubmitForm = async(values) => {
-
         setLoading(true)
+        if (data.program_extras) {
+            if (isObject(values.administrative_fee_calculation)) {
+                data.program_extras.administrative_fee_calculation = values.administrative_fee_calculation.value;
+            } else {
+                data.program_extras.administrative_fee_calculation = values.administrative_fee_calculation;
+            }
 
+            data.program_extras.administrative_fee = values.administrative_fee;
+            data.program_extras.administrative_fee_factor = values.administrative_fee_factor;
+        }
         data  = {...data, ...prepareForValidation(values)}
         // alert(JSON.stringify(data))
         try {
             const response = await axios.put(`/organization/${data.organization_id}/program/${data.id}`, data);
-            // console.log(response)
             setLoading(false)
             if (response.status === 200) {
                 dispatch(
@@ -78,7 +89,6 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
         }
     }
     if( !organization || !data) return 'loading...'
-
     return (
     <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={toggle}>
         <Form
@@ -92,11 +102,13 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
             convenience_fee: data.convenience_fee,
             fixed_fee: data.fixed_fee,
             deposit_fee: data.deposit_fee,
-            administrative_fee: data.administrative_fee,
             bill_parent_program: data.bill_parent_program,
             percent_total_spend_rebate: data.percent_total_spend_rebate,
             expiration_rebate_percentage: data.expiration_rebate_percentage,
             discount_rebate_percentage: data.discount_rebate_percentage,
+            administrative_fee_calculation: data.program_extras? data.program_extras.administrative_fee_calculation: 'participants',
+            administrative_fee: data.program_extras ? data.program_extras.administrative_fee : '0',
+            administrative_fee_factor: data.program_extras ? data.program_extras.administrative_fee_factor: 0,
             reserve_percentage: data.reserve_percentage,
             transaction_fee: data.transaction_fee,
             allow_creditcard_deposits: data.allow_creditcard_deposits,
@@ -169,9 +181,18 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                         <div className="form__form-group">
                             <CheckboxField 
                                 name="is_pay_in_advance"
-                                label="Pay in advance"
-                                checked={data.is_pay_in_advance}
-                                onChange={() => {data.is_pay_in_advance = !data.is_pay_in_advance}}
+                                label="Pay in Advance"
+                                checked={!data.invoice_for_awards}
+                                disabled={data.invoice_for_awards}
+                            />
+                        </div>
+                    </Col>
+                    <Col md="6" lg="4" xl="4">
+                        <div className="form__form-group">
+                            <CheckboxField
+                                name="invoice_for_awards"
+                                label="Invoice for Awards"
+                                checked={data.invoice_for_awards}
                             />
                         </div>
                     </Col>
@@ -278,60 +299,60 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                 </Row>
                 <Row>
                     <Col md="6" lg="4" xl="4">
-                        <Field name="bill_parent_program">
-                        {({ input, meta }) => (
-                            <div className="form__form-group">
-                                <span className="form__form-group-label">Bill parent program</span>
-                                <div className="form__form-group-field">
-                                    <div className="form__form-group-row">
-                                        <input type="text" {...input} placeholder="Bill parent program" />
-                                        {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                        </Field>
+                        <div className="form__form-group">
+                            <CheckboxField
+                                name="bill_direct"
+                                label="Bill parent program"
+                                checked={data.program_extras ? data.program_extras.bill_direct : 0}
+                                onChange={() => {data.program_extras.bill_direct = !data.program_extras.bill_direct}}
+                            />
+                        </div>
                     </Col>
                 </Row>
                 <Row>
                     <Col md="6" lg="4" xl="4">
+                        <Field name="administrative_fee_factor">
+                        {({ input, meta }) => (
+                            <div className="form__form-group">
+                                <span className="form__form-group-label">Custom Factor</span>
+                                <div className="form__form-group-field">
+                                    <div className="form__form-group-row">
+                                        <input type="text" {...input} placeholder="Custom Factor" />
+                                        {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        </Field>
+                    </Col>
+                    <Col md="6" lg="4" xl="4">
+                        <Field name="Calculation">
+                            {({ input, meta }) => (
+                                <div className="form__form-group">
+                                    <span className="form__form-group-label">Calculation</span>
+                                    <Field
+                                        name="administrative_fee_calculation"
+                                        component={renderSelectField}
+                                        options={[
+                                            {label: "Participants", value: "participants"},
+                                            {label: "Units", value: "units"},
+                                            {label: "Custom", value: "custom"}
+                                        ]}
+                                    />
+                                </div>
+                            )}
+                        </Field>
+                    </Col>
+                    <Col md="6" lg="4" xl="4">
                         <Field name="administrative_fee">
-                        {({ input, meta }) => (
-                            <div className="form__form-group">
-                                <span className="form__form-group-label">Admin fee</span>
-                                <div className="form__form-group-field">
-                                    <div className="form__form-group-row">
-                                        <input type="text" {...input} placeholder="Admin fee" />
-                                        {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                        </Field>
-                    </Col>
-                    <Col md="6" lg="4" xl="4">
-                        <Field name="calculation">
-                        {({ input, meta }) => (
-                            <div className="form__form-group">
-                                <span className="form__form-group-label">Calculation</span>
-                                <div className="form__form-group-field">
-                                    <div className="form__form-group-row">
-                                        <input type="text" {...input} placeholder="Calculation" />
-                                        {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                        </Field>
-                    </Col>
-                    <Col md="6" lg="4" xl="4">
-                        <Field name="fee_amount">
                         {({ input, meta }) => (
                             <div className="form__form-group">
                                 <span className="form__form-group-label">Fee amount</span>
                                 <div className="form__form-group-field">
                                     <div className="form__form-group-row">
-                                        <input type="text" {...input} placeholder="Fee amount" />
+                                        <input type="text" {...input}
+                                               placeholder="Fee amount"
+                                        />
                                         {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                                     </div>
                                 </div>
