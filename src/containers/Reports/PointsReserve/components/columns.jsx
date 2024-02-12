@@ -35,6 +35,12 @@ export const PROGRAM_COLUMNS = [
     {
         Header: "Program",
         accessor: "name",
+        Cell: ({row, value}) => {
+          const space = row.original.dinamicDepth === 1 ? '' : ' • ';
+          const boldRow = row.original.dinamicDepth === 1;
+          return <div style={boldRow ? {fontWeight: 'bold'} : {}}>{space.repeat(row.original.dinamicDepth)}<Link
+              to={`/program/view/${row.original.id}`}>{value}</Link></div>
+        },
         Footer:"Page Total",
     },
     {
@@ -91,18 +97,31 @@ export const PROGRAM_COLUMNS = [
           },
     },
     {
-        Header: "Unredeemed",
-        accessor: "value_unredeemed",
-        Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
-        Footer: (info) => {
-            const { rows, flatRows } = info;
-            const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.value_unredeemed) + sum, 0),
-              [rows],
-            );
-            return <span>{`$${parseFloat(totalValue)}`}</span>;
-          },
-    },
+      Header: "Unredeemed points from current year",
+      accessor: "this_unredeemed",
+      Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
+      Footer: (info) => {
+          const { rows, flatRows } = info;
+          const totalValue = useMemo(
+            () => rows.reduce((sum, row) => Number(row.values.this_unredeemed) + sum, 0),
+            [rows],
+          );
+          return <span>{`$${parseFloat(totalValue)}`}</span>;
+        },
+  },
+  {
+    Header: "Unredeemed points from previous year’s award",
+    accessor: "last_unredeemed",
+    Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
+    Footer: (info) => {
+        const { rows, flatRows } = info;
+        const totalValue = useMemo(
+          () => rows.reduce((sum, row) => Number(row.values.last_unredeemed) + sum, 0),
+          [rows],
+        );
+        return <span>{`$${parseFloat(totalValue)}`}</span>;
+      },
+},
     {
         Header: "Paid",
         accessor: "value_paid",

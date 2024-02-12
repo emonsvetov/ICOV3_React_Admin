@@ -31,8 +31,11 @@ const [filter, setFilter] = useState({
     createdOnly: false,
     reportKey: 'sku_value',
     programId: 1,
-    from: dateStrToYmd(getFirstDay()),
-    to: dateStrToYmd(new Date())
+    year:new Date().getFullYear(),
+        targetYear:{
+            label: new Date().getFullYear(),
+            value: new Date().getFullYear()
+        },
     });
 
 const [useFilter, setUseFilter] = useState(false);
