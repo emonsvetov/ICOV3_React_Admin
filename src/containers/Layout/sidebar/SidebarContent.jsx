@@ -21,7 +21,9 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
       break;
       case 'cron_jobs':
         return (
+          <>
           <SidebarLink title="Cron Jobs"  icon="hand" route="/cron-jobs" />
+          </>
         );
       break;
       case 'reports':
@@ -87,10 +89,6 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
           auth?.isSuperAdmin &&
             <ProtectedLink type="merchants"/>
         }
-        {
-          auth?.isSuperAdmin &&
-          <ProtectedLink type="cron_jobs"/>
-        }
         <SidebarCategory title="Import" icon="download">
           <SidebarLink title="All Imported Files" route="/import/list" />
           <SidebarLink title="Import" route="/import" />
@@ -120,6 +118,12 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
             <ProtectedLink type="migration"/>
         }
         <SidebarLink title="Domains"  icon="layers" route="/domains" />
+        {
+          auth?.isSuperAdmin &&
+          <SidebarCategory title="Dev tools" icon="hand">
+            <ProtectedLink type="cron_jobs"/>
+          </SidebarCategory>
+        }
       </ul>
       {
           auth?.isSuperAdmin &&
