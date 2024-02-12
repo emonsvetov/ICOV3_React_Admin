@@ -7,6 +7,7 @@ import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import {isEmpty} from '@/shared/helpers'
 import getUserPointBalance from '../../../service/getUserBalances';
+import {dobDisplay} from '@/shared/helpers'
 const queryClient = new QueryClient()
 
 const ProgramViewUserProfile = ({organization, data, programs}) => {
@@ -103,7 +104,7 @@ const ProgramViewUserProfile = ({organization, data, programs}) => {
                     <p>Birthday:</p>
                 </Col>
                 <Col md="10" lg="10" xl="10" sm="10">
-                    <p>{data.dob}</p>
+                    <p>{dobDisplay(data.dob)}</p>
                 </Col>
             </Row>
             <Row>
