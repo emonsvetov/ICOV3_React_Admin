@@ -227,7 +227,7 @@ export const GIFT_CODES_REDEEMED_COLUMNS = [
 
     {
         Header: "Date",
-        accessor: "redemption_datetime"
+        accessor: "date"
     },
     {
         Header: "Amount",

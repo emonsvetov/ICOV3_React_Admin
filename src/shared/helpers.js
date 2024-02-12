@@ -438,3 +438,11 @@ export const isArray = function(a) {
       return formattedDate;
   }
 
+export const dobDisplay = (dob) => {
+    const date = new Date(dob);
+    if (dob && date.getFullYear() == 1970){
+        return dob.slice(5);
+    }
+    return dob;
+}
+

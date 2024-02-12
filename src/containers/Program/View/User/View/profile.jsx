@@ -6,6 +6,7 @@ import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import {isEmpty} from '@/shared/helpers'
+import {dobDisplay} from '@/shared/helpers'
 import ProgramViewUserHistory from "./history";
 import getUserPointBalance from '../../../../../service/getUserBalances';
 const queryClient = new QueryClient()
@@ -99,7 +100,7 @@ const ProgramViewUserProfile = ({organization, program, data}) => {
                     <p>Birthday:</p>
                 </Col>
                 <Col md="10" lg="10" xl="10" sm="10">
-                    <p>{data.dob}</p>
+                    <p>{dobDisplay(data.dob)}</p>
                 </Col>
             </Row>
             <Row>
