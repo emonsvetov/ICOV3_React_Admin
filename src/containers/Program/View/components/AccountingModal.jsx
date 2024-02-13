@@ -109,9 +109,9 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
             administrative_fee_calculation: data.program_extras? data.program_extras.administrative_fee_calculation: 'participants',
             administrative_fee: data.program_extras ? data.program_extras.administrative_fee : '0',
             administrative_fee_factor: data.program_extras ? data.program_extras.administrative_fee_factor: 0,
+            allow_creditcard_deposits: data.program_extras ? data.program_extras.allow_creditcard_deposits: 0,
             reserve_percentage: data.reserve_percentage,
             transaction_fee: data.transaction_fee,
-            allow_creditcard_deposits: data.allow_creditcard_deposits,
             create_invoices: data.create_invoices,
             is_pay_in_advance: data.is_pay_in_advance,
             country: data.country,
@@ -211,8 +211,10 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                             <CheckboxField 
                                 name="allow_creditcard_deposits"
                                 label="Allow credit card deposit"
-                                checked={data.allow_creditcard_deposits}
-                                onChange={() => {data.allow_creditcard_deposits = !data.allow_creditcard_deposits}}
+                                checked={data.program_extras ? data.program_extras.allow_creditcard_deposits : 0}
+                                onChange={() => {
+                                    data.program_extras.allow_creditcard_deposits = !data.program_extras.allow_creditcard_deposits
+                                }}
                             />
                         </div>
                     </Col>
@@ -224,11 +226,24 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                             <div className="form__form-group">
                                 <span className="form__form-group-label">Transaction fee</span>
                                 <div className="form__form-group-field">
-                                    <div className="form__form-group-row">
-                                        <input type="text" {...input} placeholder="Transaction fee
-    " />
-                                        {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                                    </div>
+                                    {data.program_transaction_fee.map((item, index) => (
+                                        <Row>
+                                            <Col>
+                                                <input
+                                                    width="49%"
+                                                    type="text"
+                                                    value={item.tier_amount}
+                                                />
+                                            </Col>
+                                            <Col>
+                                                <input
+                                                    width="49%"
+                                                    type="text"
+                                                    value={item.transaction_fee}
+                                                />
+                                            </Col>
+                                        </Row>
+                                    ))}
                                 </div>
                             </div>
                         )}
