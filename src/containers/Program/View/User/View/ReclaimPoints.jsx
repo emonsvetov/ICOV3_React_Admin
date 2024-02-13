@@ -98,7 +98,6 @@ export const ReclaimPoints: FC<ReclaimPointsProps> = ({user, organization, progr
             sum += '.00';
         }
         setReclaimPointsSum(sum);
-        setReclaimPointsSum(sum);
         if (userBalance < sum) {
             setReclaimPointsTitle("Reclaim is not possible as it exceeds the current balance")
         }
