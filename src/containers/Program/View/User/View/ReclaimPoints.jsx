@@ -93,7 +93,11 @@ export const ReclaimPoints: FC<ReclaimPointsProps> = ({user, organization, progr
                 sum += parseFloat(item.points_value);
             }
         });
-        sum = parseFloat(sum.toFixed(2))
+        sum = parseFloat(sum.toFixed(2));
+        if(Number.isInteger(sum)) {
+            sum += '.00';
+        }
+        setReclaimPointsSum(sum);
         setReclaimPointsSum(sum);
         if (userBalance < sum) {
             setReclaimPointsTitle("Reclaim is not possible as it exceeds the current balance")
