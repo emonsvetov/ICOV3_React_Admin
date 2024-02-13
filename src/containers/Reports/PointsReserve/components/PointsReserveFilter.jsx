@@ -45,6 +45,8 @@ const PointsReserveFilter = (
   const [reportKey, setReportKey] = React.useState('sku_value')
   const [selectedPrograms, setSelectedPrograms] = useState(filter.programs ? filter.programs : []);
   const finalFilter = {...filter}
+  const [from, setFrom] = useState(defaultFrom);
+  const [to, setTo] = useState(defaultTo);
   const [targetYear, setTargetYear] = useState({
     label: new Date().getFullYear(),
     value: new Date().getFullYear()
