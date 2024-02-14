@@ -124,7 +124,7 @@ const ProgramViewUserProfile = ({organization, program, data}) => {
                     <p>Points Earned:</p>
                 </Col>
                 <Col md="10" lg="10" xl="10" sm="10">
-                    <p>{pointsBalance?.amount}</p>
+                    <p>{pointsBalance?.points}</p>
                 </Col>
             </Row>
             <Row>
@@ -140,7 +140,7 @@ const ProgramViewUserProfile = ({organization, program, data}) => {
                     <p>Points Balance:</p>
                 </Col>
                 <Col md="10" lg="10" xl="10" sm="10">
-                    <p>{pointsBalance?.point}</p>
+                    <p>{pointsBalance?.amount}</p>
                 </Col>
             </Row>
             <Row>
