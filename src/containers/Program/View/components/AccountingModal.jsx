@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
@@ -42,6 +42,7 @@ const prepareForValidation = values => {
 
 const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle, theme, rtl}) => {
     const [loading, setLoading] = useState(false)
+    const [programTransactionFee, setProgramTransactionFee] = useState([])
 
     const onSubmitForm = async(values) => {
         setLoading(true)
@@ -54,6 +55,7 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
 
             data.program_extras.administrative_fee = values.administrative_fee;
             data.program_extras.administrative_fee_factor = values.administrative_fee_factor;
+            data.program_transaction_fee = programTransactionFee;
         }
         data  = {...data, ...prepareForValidation(values)}
         // alert(JSON.stringify(data))
@@ -88,7 +90,39 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
             dispatch(sendFlashMessage('Program could not be updated.' + ' ' + errMessage, 'alert-danger', 'top'))
         }
     }
+
+    useEffect(() => {
+        setProgramTransactionFee(data.program_transaction_fee)
+    }, [data.program_transaction_fee]);
+
     if( !organization || !data) return 'loading...'
+
+    const handleChangeTierAmount = (index, value) => {
+        const newData = [...programTransactionFee];
+        newData[index].tier_amount = value;
+        setProgramTransactionFee(newData)
+    };
+
+
+    const handleChangeTransactionFee = (index, value) => {
+        const newData = [...programTransactionFee];
+        newData[index].transaction_fee = value;
+        setProgramTransactionFee(newData)
+    };
+
+
+    const handleRemoveTier = (index) => {
+        const newData = [...programTransactionFee];
+        newData.splice(index, 1);
+        console.log(newData)
+        setProgramTransactionFee(newData)
+    };
+
+    const handleAddTier = () => {
+        const newData = [...programTransactionFee, { tier_amount: '', transaction_fee: '' }];
+        setProgramTransactionFee(newData)
+    };
+
     return (
     <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={toggle}>
         <Form
@@ -225,26 +259,36 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                         {({ input, meta }) => (
                             <div className="form__form-group">
                                 <span className="form__form-group-label">Transaction fee</span>
-                                <div className="form__form-group-field">
-                                    {data.program_transaction_fee.map((item, index) => (
-                                        <Row>
-                                            <Col>
-                                                <input
-                                                    width="49%"
-                                                    type="text"
+                                    {programTransactionFee.map((item, index) => (
+                                        <Row key={index}>
+                                            <Col md="6" lg="4" xl="4">
+                                               <input
+                                                   style={{width:'90px'}}
+                                                    placeholder="Tier Amount"
+                                                    title="Tier Amount"
                                                     value={item.tier_amount}
+                                                    onChange={(e) => handleChangeTierAmount(index, e.target.value)}
                                                 />
                                             </Col>
-                                            <Col>
+                                            <Col md="6" lg="4" xl="6">
                                                 <input
-                                                    width="49%"
-                                                    type="text"
+                                                    style={{width:'120px'}}
+                                                    placeholder="Transaction Fee"
+                                                    title="Transaction Fee"
                                                     value={item.transaction_fee}
+                                                    onChange={(e) => handleChangeTransactionFee(index, e.target.value)}
                                                 />
+                                            </Col>
+                                            <Col md="4" lg="6" xl="1">
+                                                <span style={{cursor: "pointer",color:'#4ce1b6'}} onClick={() => handleRemoveTier(index)}>Remove</span>
                                             </Col>
                                         </Row>
                                     ))}
-                                </div>
+                                    <Row>
+                                        <Col><span style={{cursor: "pointer",color:'#4ce1b6'}}
+                                                   onClick={handleAddTier}>Add Tier Amount</span></Col>
+                                    </Row>
+
                             </div>
                         )}
                         </Field>
