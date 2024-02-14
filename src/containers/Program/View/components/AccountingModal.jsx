@@ -55,8 +55,8 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
 
             data.program_extras.administrative_fee = values.administrative_fee;
             data.program_extras.administrative_fee_factor = values.administrative_fee_factor;
-            data.program_transaction_fee = programTransactionFee;
         }
+        data.program_transaction_fee = programTransactionFee;
         data  = {...data, ...prepareForValidation(values)}
         // alert(JSON.stringify(data))
         try {
