@@ -17,22 +17,15 @@ const SupplierRedemptionTable: FC<SupplierRedemptionTableProps> = ({dataReport})
         setColumns(dataReport.config.columns);
         setThColumns(dataReport.config.columns);
         var dataArray = Object.values(dataReport.data);
-        let datas = []
         dataArray.map(data => {
-            if (data.avg_discount_percent) {
-                let temp = {};
-                temp.avg_discount_percent = data.avg_discount_percent + "%";
-                temp.percent_total_cost = data.percent_total_cost + "%";
-                temp.total_cost_basis = "$" + data.total_cost_basis ;
-                temp.total_premium = "$" + data.total_premium;
-                temp.total_redemption_value = "$" + data.total_redemption_value;
-                temp.total_cost_basis = "$" + data.total_cost_basis;
-                temp.percent_total_redemption_value = data.percent_total_redemption_value + "%"
-                datas.push({...data, ...temp})
-            }
-           
+            data.avg_discount_percent = data.avg_discount_percent + "%";
+            data.percent_total_cost = data.percent_total_cost + "%";
+            data.total_cost_basis = "$" + data.total_cost_basis ;
+            data.total_premium = "$" + data.total_premium;
+            data.total_redemption_value = "$" + data.total_redemption_value;
+            data.percent_total_redemption_value = data.percent_total_redemption_value + "%"
         })
-        setData(datas)
+        setData(dataArray)
     }, [dataReport])
 
     return (
@@ -42,7 +35,7 @@ const SupplierRedemptionTable: FC<SupplierRedemptionTableProps> = ({dataReport})
             columns={thColumns}
             dataSource={data}
             pagination={false}
-            scroll={{x: 2000, y: 500}}
+            scroll={{x: 'max-content', y: 500}}
             bordered
             className='table'
             summary={() => {
