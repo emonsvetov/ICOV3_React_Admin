@@ -8,8 +8,13 @@ import axios from 'axios'
 
 const MigrationResult = ({isOpen, toggle, theme, data, rtl, migrationResultAccount}) => {
     const [loading, setLoading] = useState(false)
+    const migrationList = !!data.migrations && Object.entries(data.migrations).map(([key,value]) => {
+      return (
+        <div>{key} : <span style={{'color': value ? 'green' : 'red'}}><b>{value.toString()}</b></span></div>
+      );
+    })
 
-    return (
+  return (
         <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen}
                toggle={toggle}>
             <ModalHeader className='w100'>
@@ -28,7 +33,10 @@ const MigrationResult = ({isOpen, toggle, theme, data, rtl, migrationResultAccou
                 <h5 className='thick size16 mb-4'>Program Account Holder Id: {migrationResultAccount}</h5>
                 <Row>
                     <Col md="12">
-                        {data}
+                      {data.success && <div><span style={{'color': 'green'}}><b>Success</b></span></div>}
+                      {!data.success && <div><span style={{'color': 'red'}}><b>Error</b></span> : <span>{data.error}</span></div>}
+                      <div><b>Migration List:</b></div>
+                      {migrationList}
                     </Col>
                 </Row>
             </ModalBody>
