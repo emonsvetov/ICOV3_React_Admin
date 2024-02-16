@@ -433,3 +433,16 @@
 .ant-table-header{
     width: 100%;
 }
+
+.resend-btn{
+    text-decoration: underline;
+    cursor: pointer;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 5px;
+    &:hover {
+        color: $color-blue-hover;
+        text-decoration: none;
+      }
+}

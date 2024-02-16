@@ -9,7 +9,7 @@ import EmailOutlineIcon from 'mdi-react/EmailOutlineIcon';
 import renderCheckBoxField from '../../../shared/components/form/CheckBox';
 import { ApiErrorMessage } from '@/shared/components/flash';
 import {login} from '../../App/auth';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Row } from 'reactstrap';
+import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 
 const axios = require('axios');
 
@@ -18,9 +18,10 @@ const LogInForm = () => {
   const [errors, setErrors] = useState(null);
   const [loading, setLoading] = useState(false);
   const [verificationRequired, setVerificationRequired] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
   const [email, setEmail] = useState();
   const [value, setValue] = useState();
+  const [step, setStep] = useState(1);
+  const dispatch = useDispatch()
 
   const validate = values => {
     let errors = {};
@@ -45,31 +46,36 @@ const LogInForm = () => {
 
   const generate2faSecret = async (values) => {
     try {
+      setLoading(true)
         const response = await axios.post('/generate-2fa-secret', values);
         if (response.status == '200') {
-          if (!modalOpen)
-            setModalOpen(true);
+          setErrors(null);
+          setStep(2)
+          setVerificationRequired(true);
         }
       } catch (error) {
           setErrors(error.response.data);
       }
+      finally{
+        setLoading(false)
+      }
   };
-
-  const toggleModal = () => {
-    setModalOpen(!modalOpen);
-  };
-
-  const enterCode = () => {
-    setVerificationRequired(true);
-    setModalOpen(false)
-  }
 
   const sendAgain = () => {
     generate2faSecret(value)
+    dispatch(sendFlashMessage('New code has been sent again', 'alert-success'))
+  }
+
+  const backToLogin = () => {
+    setVerificationRequired(false);
+    setStep(1)
+    setErrors(null);
   }
 
   const submit = (values) => {
-
+    if(step == 1 ){
+      delete values.code;
+    }
     axios.post('/login', values)
     .then( (res) => {
       if(res.status == 200)  {
@@ -107,11 +113,12 @@ const LogInForm = () => {
              <Field name="code">
              {({ input, meta }) => (
                  <div className="form__form-group">
-                    <h2>Enter 2FA code</h2>
-
+                  <div className='mb-2'>
+                    <h5>Code sent to email <span className='text-blue'>{email}</span></h5>
+                  </div>
                    <div className="form__form-group-field">
                      <div className="form__form-group-row">
-                       <input type="code" {...input} placeholder="2FA Code" />
+                       <input type="code" {...input} placeholder="Enter 2FA code" />
                        {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                      </div>
                  </div>
@@ -168,22 +175,20 @@ const LogInForm = () => {
           </div> */}
           <button type="submit" className="btn btn-primary account__btn account__btn--small" disabled={loading}>Log In</button>
           {/* <Link className="btn btn-primary account__btn account__btn--small" to="/pages/one">Sign In</Link> */}
-          <Link className="btn btn-outline-primary account__btn account__btn--small" to="/signup">Create Account</Link>
+          {!verificationRequired?
+            <Link className="btn btn-outline-primary account__btn account__btn--small" to="/signup">Create Account</Link>:
+          <>
+            <div className='resend-btn'>
+              <a onClick={()=>sendAgain()}>Resend Code</a>
+            </div>
+            <div className='resend-btn'>
+              <a onClick={()=>backToLogin()}>Back</a>
+            </div>
+          </>
+          }
         </form>
         )}
       />
-       <Modal style={{ maxWidth: '700px', width: '80%', display: 'flex', alignItems: 'center', justifyContent: 'center' }} isOpen={modalOpen} toggle={toggleModal}>
-        <ModalBody  className='w100'>
-          <Row className='w100'>
-            <h4>We sent 2FA code to your address <span className='text-blue'>{email}</span> .</h4>
-            <h4>Please enter the code or press "Send again" if you didnt't get it.</h4> 
-          </Row>
-          <div className='d-flex justify-content-between mt-4'>
-            <button type="submit" className="btn btn-primary account__btn--small" disabled={loading} onClick={enterCode}>Enter code</button>
-            <button type="submit" className="btn btn-outline-primary account__btn--small" onClick={sendAgain}>Send again</button>
-          </div>
-        </ModalBody>
-      </Modal>
     </>
 )}
 
