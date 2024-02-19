@@ -24,6 +24,11 @@ const SupplierRedemptionTable: FC<SupplierRedemptionTableProps> = ({dataReport})
             data.total_premium = "$" + data.total_premium;
             data.total_redemption_value = "$" + data.total_redemption_value;
             data.percent_total_redemption_value = data.percent_total_redemption_value + "%"
+            if(data.children){
+                data.children.forEach((item, index )=> {
+                    data.children[index] = { 'name': item.name }
+                })
+            }
         })
         setData(dataArray)
     }, [dataReport])

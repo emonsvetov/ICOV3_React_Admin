@@ -33,13 +33,13 @@ interface SupplierRedemptionSubFilterProps {
     exportCSV: any,
 }
 const today = new Date();
-const oneYearAgo = new Date(today);
-oneYearAgo.setFullYear(today.getFullYear() - 1);
+const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+const lastDay = new Date(today.getFullYear(), today.getMonth()+1, 0);
 
 export const defFilter = {
     merchants: null,
-    from: oneYearAgo.toISOString().split('T')[0],
-    to: today.toISOString().split('T')[0],
+    from: firstDay.toISOString().split('T')[0],
+    to: lastDay.toISOString().split('T')[0],
     active: true,
     reportKey: 'sku_value',
     codes: null,
