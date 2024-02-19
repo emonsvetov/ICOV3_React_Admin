@@ -18,6 +18,7 @@ import {
 } from 'antd';
 import {any} from "prop-types";
 import {CSVLink} from "react-csv";
+import { getFirstDay, getLastDay } from '@/shared/helpers';
 
 const { Option } = Select;
 
@@ -39,8 +40,8 @@ const lastDay = new Date(today.getFullYear(), today.getMonth()+1, 0);
 
 export const defFilter = {
     merchants: null,
-    from: firstDay.toISOString().split('T')[0],
-    to: lastDay.toISOString().split('T')[0],
+    from: getFirstDay().toISOString().split('T')[0],
+    to: getLastDay().toISOString().split('T')[0],
     active: true,
     reportKey: 'sku_value',
     codes: null,

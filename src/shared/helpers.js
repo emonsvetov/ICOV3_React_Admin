@@ -377,7 +377,12 @@ export const isArray = function(a) {
   
   export const getFirstDay = () => {
       let date = new Date();
-      return new Date(date.getFullYear(), 0, 1)
+      return new Date(date.getFullYear(), date.getMonth(), 1)
+  }
+  
+  export const getLastDay = () => {
+    let date = new Date();
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0)
   }
   
   export const setDefaultTheme = (theme) => {
