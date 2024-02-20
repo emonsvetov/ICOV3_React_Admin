@@ -8,9 +8,9 @@ import axios from 'axios'
 
 const MigrationResult = ({isOpen, toggle, theme, data, rtl, migrationResultAccount}) => {
     const [loading, setLoading] = useState(false)
-    const migrationList = !!data.migrations && Object.entries(data.migrations).map(([key,value]) => {
+    const migrationList = data?.migrations && Object.entries(data.migrations).map(([key,value]) => {
       return (
-        <div>{key} : <span style={{'color': value ? 'green' : 'red'}}><b>{value.toString()}</b></span></div>
+        <div>{key} : <span style={{'color': value?.success ? 'green' : 'red'}}><b>{value?.success ? 'OK' : 'FALSE'}</b></span> <span>{value?.info}</span></div>
       );
     })
 
@@ -30,7 +30,7 @@ const MigrationResult = ({isOpen, toggle, theme, data, rtl, migrationResultAccou
                 </Row>
             </ModalHeader>
             <ModalBody className='modal-lg'>
-                <h5 className='thick size16 mb-4'>Program Account Holder Id: {migrationResultAccount}</h5>
+                <h5 className='thick size16 mb-4'>{ migrationResultAccount ? `Program Account Holder Id: ${migrationResultAccount}` : `Global migrations` }</h5>
                 <Row>
                     <Col md="12">
                       {data.success && <div><span style={{'color': 'green'}}><b>Success</b></span></div>}
