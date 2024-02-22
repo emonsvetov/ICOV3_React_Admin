@@ -136,8 +136,13 @@ const DataTable = ({organization, programs}) => {
 
   if (isSuccess)
     return (
-      <StickyContainer>
-        <div className='table react-table report-table'>
+      <div style={{ overflowX: 'scroll' }}>
+        <div className='table react-table report-table' 
+            style={{
+                height: '800px', 
+                width:"max-content"
+            }}
+        >
           <div className="action-panel">
             <Row className="form__form-group mx-0">
               <Col>
@@ -163,9 +168,9 @@ const DataTable = ({organization, programs}) => {
             // ref={r => { csvLinkTable = r; }}
             isSuccess &&
             <table {...getTableProps()} className="table">
-             <Sticky  topOffset={80}>
-                {({ style }) => (
-                    <thead style={{...style, top:'60px'}}>
+             {/* <Sticky  topOffset={80}> */}
+                {/* {({ style }) => ( */}
+                    <thead style={{position: 'sticky', top: 0}}>
                       {headerGroups.map((headerGroup) => (
                         <tr {...headerGroup.getHeaderGroupProps()}>
                           {headerGroup.headers.map(column => (
@@ -177,8 +182,8 @@ const DataTable = ({organization, programs}) => {
                         </tr>
                       ))}
                   </thead>
-                )}
-              </Sticky> 
+                {/* )} */}
+              {/* </Sticky>  */}
               <tbody className="table table--bordered" {...getTableBodyProps()}>
               {page.map(row => {
                 prepareRow(row);
@@ -209,54 +214,8 @@ const DataTable = ({organization, programs}) => {
               </tfoot>
             </table>
           }
-
-          {(rows.length > 0) && (
-            <>
-              <ReactTablePagination
-                page={page}
-                gotoPage={gotoPage}
-                previousPage={previousPage}
-                nextPage={nextPage}
-                canPreviousPage={canPreviousPage}
-                canNextPage={canNextPage}
-                pageOptions={pageOptions}
-                pageSize={pageSize}
-                pageIndex={pageIndex}
-                pageCount={pageCount}
-                setPageSize={setPageSize}
-                manualPageSize={manualPageSize}
-                dataLength={totalCount}
-              />
-              <div className="pagination justify-content-end mt-2">
-                            <span>
-                            Go to page:{' '}
-                              <input
-                                type="number"
-                                value={pageIndex + 1}
-                                onChange={(e) => {
-                                  const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                                  gotoPage(page);
-                                }}
-                                style={{width: '100px'}}
-                              />
-                            </span>{' '}
-                <select
-                  value={pageSize}
-                  onChange={(e) => {
-                    setPageSize(Number(e.target.value));
-                  }}
-                >
-                  {[10, 20, 30, 40, 50].map((pageSize) => (
-                    <option key={pageSize} value={pageSize}>
-                      Show {pageSize}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </>
-          )}
         </div>
-      </StickyContainer>
+      </div>
     )
 }
 
