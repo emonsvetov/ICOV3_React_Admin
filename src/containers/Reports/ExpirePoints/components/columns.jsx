@@ -40,14 +40,21 @@ export const TABLE_COLUMNS = [
     Cell: ({ row, value }) => { return formatDate(value); },
   },
   {
-    Header: "Amount Expiring By Current Year",
-    accessor: "amount_expiring_this_year",
-    Cell: ({ row, value }) => { return <span>{`${parseFloat(value).toFixed(2)}`}</span>; },
-  },
-  {
-    Header: "Amount Expiring By Following Year",
-    accessor: "amount_expiring_next_year",
-    Cell: ({ row, value }) => { return <span>{`${parseFloat(value).toFixed(2)}`}</span>; },
+    id: 'Amount Expiring By',
+    Header: () => (<div style={{textAlign: 'center', borderTop: '1px solid #eff1f5', paddingTop: 6}}>Amount Expiring By</div>),
+    Footer: "",
+    columns: [
+      {
+        Header: "Current Year",
+        accessor: "amount_expiring_this_year",
+        Cell: ({ row, value }) => { return <span>{`${parseFloat(value).toFixed(2)}`}</span>; },
+      },
+      {
+        Header: "Following Year",
+        accessor: "amount_expiring_next_year",
+        Cell: ({ row, value }) => { return <span>{`${parseFloat(value).toFixed(2)}`}</span>; },
+      }
+    ]
   },
   {
     Header: "Current Balance",
