@@ -37,7 +37,7 @@ const initialState = {
   queryPageSize: 10,
   totalCount: null,
   queryPageFilter: {},
-  queryPageSortBy: [{'id': 'name'}, {'desc': 'true'}],
+  queryPageSortBy: [],
 };
 
 const PAGE_CHANGED = "PAGE_CHANGED";
@@ -109,6 +109,11 @@ const DataTable = ({ toggle, organization, program }) => {
         params.push(`keyword=${pageFilterO.keyword}`);
       paramStr = params.join("&");
     }
+
+    if (!pageSortBy.length) {
+      pageSortBy = [{'id': 'name'}, {'desc': 'true'}];
+    }
+
     if (pageSortBy.length > 0) {
       const sortParams = pageSortBy[0];
       const sortyByDir = sortParams.desc ? "desc" : "asc";
@@ -234,7 +239,6 @@ const DataTable = ({ toggle, organization, program }) => {
     {
       Header: "Merchant Name",
       accessor: "name",
-      isSortedDesc: true,
     },
     {
       Header: "Featured",
