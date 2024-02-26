@@ -1,4 +1,4 @@
-import React, { useState} from 'react'
+import React, { useState, useEffect} from 'react'
 import ProgramsHierarchy from '@/shared/components/ProgramsHierarchy'
 import {connect} from 'react-redux'
 
@@ -11,7 +11,6 @@ import {isEqual, clone, cloneDeep} from 'lodash';
 import {CheckBoxField} from '@/shared/components/form/CheckBox';
 import Select from "react-select";
 
-const defaultFrom = getFirstDay()
 const defaultTo = getLastDay()
 
 const PointsReserveFilter = (
@@ -22,7 +21,8 @@ const PointsReserveFilter = (
     download,
     exportData,
     exportLink,
-    exportHeaders
+    exportHeaders,
+    dateFrom
   }) => {
   const options = {
     'programs': true,
@@ -35,8 +35,16 @@ const PointsReserveFilter = (
   }
   const [selectedPrograms, setSelectedPrograms] = useState(filter.programs ? filter.programs : []);
   const finalFilter = {...filter}
-  const [from, setFrom] = React.useState(defaultFrom)
+  const [defaultFrom, setDefaultFrom] = React.useState(null)
+  const [from, setFrom] = React.useState(null)
   const [to, setTo] = React.useState(defaultTo)
+
+  useEffect(() => {
+    if(dateFrom){
+      setDefaultFrom(new Date(dateFrom))
+      setFrom(new Date(dateFrom))
+    }
+  }, [dateFrom])
 
   let previous = cloneDeep(finalFilter);
 

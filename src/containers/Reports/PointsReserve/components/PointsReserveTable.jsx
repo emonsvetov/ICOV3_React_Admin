@@ -31,7 +31,7 @@ const [filter, setFilter] = useState({
     programs: programs,
     createdOnly: false,
     programId: 1,
-    from:getFirstDay(),
+    // from:getFirstDay(),
     to:getLastDay()
     });
 
@@ -40,6 +40,7 @@ const [trigger, setTrigger] = useState(0);
 const [exportData, setExportData] = useState([]);
 const [exportHeaders, setExportHeaders] = useState([]);
 const [exportToCsv, setExportToCsv] = useState(false);
+const [dateFrom, setDateFrom] = useState(null);
 const exportLink = React.createRef();
 
 useEffect(() => {
@@ -89,6 +90,13 @@ const {isLoading, error, data, isSuccess,isFetched, isFetching} = useQuery(
       staleTime: Infinity,
     }
   );
+  
+  useEffect(() => {
+    if(data){
+        let date = data?.results?.date_begin
+        setDateFrom(date);
+    }
+  }, [data])
 
 let program_columns = [
     ...PROGRAM_COLUMNS, 
@@ -126,7 +134,7 @@ let program_columns = [
         state: { pageIndex, pageSize, sortBy }
     } = useTable({
         columns,
-        data: data ? data.results : [],
+        data: data?.results? data.results.data : [],
         initialState: {
             pageIndex: queryPageIndex,          
             pageSize: queryPageSize,
@@ -184,6 +192,7 @@ let program_columns = [
                                     programs: true,
                                     exportToCsv: true
                                 }}
+                                dateFrom = {dateFrom}
                                 loading={isLoading || isFetching} />
                         </Col>
                     </Row>
