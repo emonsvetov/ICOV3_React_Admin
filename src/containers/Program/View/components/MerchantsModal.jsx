@@ -37,7 +37,7 @@ const initialState = {
   queryPageSize: 10,
   totalCount: null,
   queryPageFilter: {},
-  queryPageSortBy: [],
+  queryPageSortBy: [{'id': 'name'}, {'desc': 'true'}],
 };
 
 const PAGE_CHANGED = "PAGE_CHANGED";
@@ -234,6 +234,7 @@ const DataTable = ({ toggle, organization, program }) => {
     {
       Header: "Merchant Name",
       accessor: "name",
+      isSortedDesc: true,
     },
     {
       Header: "Featured",
@@ -515,7 +516,7 @@ const DataTable = ({ toggle, organization, program }) => {
 const Sorting = ({ column }) => (
   <span className="react-table__column-header sortable">
     {column.isSortedDesc === undefined ? (
-      <SortIcon />
+      <SortDescendingIcon />
     ) : (
       <span>
         {column.isSortedDesc ? <SortDescendingIcon /> : <SortAscendingIcon />}
