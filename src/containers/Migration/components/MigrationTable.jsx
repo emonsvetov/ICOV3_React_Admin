@@ -109,6 +109,13 @@ const DataTable = ({organization, programs}) => {
       toggle();
     }
 
+  const runArtisanMigrations = async () => {
+    const response = await axios.get('/v2-deprecated/migrate-artisan');
+    setMigrationResultAccount(false);
+    setMigrationResult(response.data);
+    toggle();
+  }
+
     const TABLE_COLUMNS = [
         {
             Header: "V2 Program Name",
@@ -198,6 +205,7 @@ const DataTable = ({organization, programs}) => {
                     </div>
                     <div className="mb-2" style={{'padding': '4px'}}>
                         <Link to={'#'} onClick={runGlobalMigrations}>Run global migrations</Link>
+                        <span style={{'margin-left': '10px'}}><Link to={'#'} onClick={runArtisanMigrations}>Run artisan migrations</Link></span>
                     </div>
                     {
                         isLoading && <p>Loading...</p>
