@@ -102,7 +102,7 @@ export const PROGRAM_COLUMNS = [
       Footer: "",
       columns: [
         {
-          Header: "Unredeemed points from current year",
+          Header: "current year",
           accessor: "this_unredeemed",
           Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
           Footer: (info) => {
@@ -115,7 +115,7 @@ export const PROGRAM_COLUMNS = [
             },
         },
         {
-          Header: "Unredeemed points from previous year’s award",
+          Header: "previous year",
           accessor: "last_unredeemed",
           Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
           Footer: (info) => {
