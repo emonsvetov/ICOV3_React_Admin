@@ -1,43 +1,21 @@
-import React, { useMemo, useState, useEffect } from "react";
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
+import React, {useMemo, useState, useEffect} from "react";
+import {connect} from 'react-redux';
+import {withRouter} from 'react-router-dom';
+import {ThemeProps, RTLProps} from '@/shared/prop-types/ReducerProps';
 import {
     Modal,
     ModalBody,
 } from "reactstrap";
-import {Button} from 'antd';
+import {Button, Form} from 'antd';
 import CloseButton from "@/shared/components/CloseButton";
-import { Space, Table, Tag } from 'antd';
-import type { TableProps } from 'antd';
-import { Col, Row } from 'antd';
+import {Space, Table} from 'antd';
+import {Col, Row, Checkbox, Input} from 'antd';
 import axios from "axios";
 
-const columns = [
-    {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
-        render: (text) => <a>{text}</a>,
-    },
-    {
-        title: 'Number of Participants',
-        dataIndex: 'number_of_participants',
-        key: 'number_of_participants',
-    },
-    {
-        title: 'Action',
-        key: 'action',
-        render: (_, record) => (
-            <Space size="middle">
-
-            </Space>
-        ),
-    },
-];
-
-const AwardLevelsModal = ({ isOpen, setOpen, toggle, theme, rtl, organization, data }) => {
-    const [dataItems,setDataItems] = useState([]);
+const AwardLevelsModal = ({isOpen, setOpen, toggle, theme, rtl, organization, data}) => {
+    const [dataItems, setDataItems] = useState([]);
+    const [participants, setParticipants] = useState([]);
+    const [action, setAction] = useState('index');
 
     const getDataItems = async () => {
         const response = await axios.get(
@@ -46,9 +24,84 @@ const AwardLevelsModal = ({ isOpen, setOpen, toggle, theme, rtl, organization, d
         setDataItems(response.data)
     };
 
-    useEffect(()=>{
+    const createItems = async (fValue) => {
+        const response = await axios.post(
+            `/organization/${data.organization_id}/program/${data.id}/create-award-level`, fValue);
+        if (response.data.success){
+            getDataItems();
+            setAction('index')
+        }
+    };
+
+    const getParticipants = async (id) => {
+        const response = await axios.post(
+            `/organization/${data.organization_id}/program/${data.id}/award-level-participants`, {
+                id: id
+            });
+        setParticipants(response.data.data);
+        setAction('view')
+    };
+
+
+    useEffect(() => {
         getDataItems();
-    },[]);
+    }, []);
+
+    const onFinish = (values) => {
+        createItems(values);
+    };
+
+    const onFinishFailed = (errorInfo: any) => {
+
+    };
+
+    const viewAwardLevels = (id: any) => {
+        getParticipants(id)
+    };
+
+    const columns = [
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+            render: (text) => <a>{text}</a>,
+        },
+        {
+            title: 'Number of Participants',
+            dataIndex: 'number_of_participants',
+            key: 'number_of_participants',
+        },
+        {
+            title: 'Action',
+            key: 'action',
+            render: (_, record) => (
+                <Space size="middle" style={{color: '#70bbfd', cursor: "pointer"}} onClick={()=>viewAwardLevels(record.id)}>View</Space>
+            ),
+        },
+    ];
+
+    const columnsParticipants = [
+        {
+            title: 'Display Name',
+            dataIndex: 'name',
+            key: 'name',
+            render: (_, record) => (
+                <span size="middle">{record.first_name} {record.last_name}</span>
+            ),
+        },
+        {
+            title: 'Email',
+            dataIndex: 'email',
+            key: 'email',
+        },
+        {
+            title: 'Action',
+            key: 'action',
+            render: (_, record) => (
+                <Space size="middle" style={{color: '#70bbfd', cursor: "pointer"}} onClick={()=>window.open(`/program/${data.id}/user/view/${record.id}`, '_blank')} >View</Space>
+            ),
+        },
+    ];
 
     return (
         <Modal
@@ -56,7 +109,7 @@ const AwardLevelsModal = ({ isOpen, setOpen, toggle, theme, rtl, organization, d
             isOpen={isOpen}
             toggle={toggle}
         >
-            <CloseButton onClick={toggle} />
+            <CloseButton onClick={toggle}/>
             <ModalBody className="modal-lg">
                 <Row>
                     <Col span={24}>
@@ -64,17 +117,88 @@ const AwardLevelsModal = ({ isOpen, setOpen, toggle, theme, rtl, organization, d
                         <h5 className="colorgrey">Programs / Program's Award Levels</h5>
                     </Col>
                 </Row>
-                <Row>
-                    <Col span={20}></Col>
-                    <Col span={4}>
-                        <Button style={{marginLeft:20,marginBottom:5}} type="primary">New Award Level</Button>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col span={24}>
-                        <Table columns={columns} dataSource={dataItems} />
-                    </Col>
-                </Row>
+                {action === 'index' && (
+                    <>
+                        <Row>
+                            <Col span={20}></Col>
+                            <Col span={4}>
+                                <Button style={{marginLeft: 20, marginBottom: 5}} type="primary"
+                                        onClick={() => setAction('edit')}>New Award Level</Button>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={24}>
+                                <Table columns={columns} dataSource={dataItems}/>
+                            </Col>
+                        </Row>
+                    </>
+                )}
+                {action === 'edit' && (
+                    <Form
+                        name="basic"
+                        labelCol={{span: 8}}
+                        wrapperCol={{span: 16}}
+                        style={{maxWidth: 600, marginTop: 10}}
+                        initialValues={{remember: true}}
+                        onFinish={onFinish}
+                        onFinishFailed={onFinishFailed}
+                        autoComplete="off"
+                    >
+                        <Row>
+                            <Col span={17}>
+                                <Form.Item
+                                    name="program_id"
+                                    style={{display: 'none'}}
+                                    initialValue={data.id}
+                                >
+                                    <Input/>
+                                </Form.Item>
+                                <Form.Item
+                                    label="Award Level Name"
+                                    name="name"
+                                    rules={[{required: true, message: 'Please input your "Award Level Name"'}]}
+                                >
+                                    <Input/>
+                                </Form.Item>
+                            </Col>
+                            <Col span={3}>
+                                <Form.Item wrapperCol={{offset: 8, span: 16}}>
+                                    <Button onClick={()=>setAction('index')}>
+                                        Close
+                                    </Button>
+                                </Form.Item>
+                            </Col>
+                            <Col span={4}>
+                                <Form.Item wrapperCol={{offset: 8, span: 16}}>
+                                    <Button type="primary" htmlType="submit">
+                                        Save
+                                    </Button>
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    </Form>
+                )}
+
+                {action === 'view' && (
+                    <>
+                        <Row>
+                            <Col span={21}>
+                            </Col>
+                            <Col span={3}>
+                                <Form.Item wrapperCol={{offset: 8, span: 16}}>
+                                    <Button onClick={() => setAction('index')}>
+                                        Close
+                                    </Button>
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={24}>
+                                <Table columns={columnsParticipants} dataSource={participants}/>
+                            </Col>
+                        </Row>
+                    </>
+                )}
             </ModalBody>
         </Modal>
     );
