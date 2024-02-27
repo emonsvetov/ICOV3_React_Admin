@@ -15,6 +15,7 @@ const InvoiceIcon = `${PUBLIC_URL}/img/icon/invoice.svg`;
 const EngagementIcon = `${PUBLIC_URL}/img/icon/engagement.svg`;
 const MerchantsIcon = `${PUBLIC_URL}/img/icon/merchants.svg`;
 const EventsIcon = `${PUBLIC_URL}/img/icon/events.svg`;
+const participants = `${PUBLIC_URL}/img/icon/participants.svg`;
 
 const ProgramView = ( {dispatch, organization, program, auth} ) => {
     const { id } = useParams()
@@ -310,6 +311,21 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
                                 <Col md={9} className='col-right pl-0'>
                                     <h5>Manager Reports Settings</h5>
                                     <p>Selection of reports that will be available in the program.</p>
+                                </Col>
+                            </Row>
+                        </CardBody>
+                    </Card>
+                </Col>
+                <Col md="6" lg="4" xl="4">
+                    <Card>
+                        <CardBody>
+                            <Row onClick={()=>{toggle('AwardLevels')}}>
+                                <Col md={3} className='col-left'>
+                                    <img src={participants} className="card-img-top" alt="Award Levels"/>
+                                </Col>
+                                <Col md={9} className='col-right pl-0'>
+                                    <h5>Award Levels</h5>
+                                    <p>Program's Award Levels</p>
                                 </Col>
                             </Row>
                         </CardBody>
