@@ -43,7 +43,7 @@ const DataTable = ({organization}) => {
             page: queryPageIndex,
             size: queryPageSize,
             filter,
-            sortby: queryPageSortBy,
+            sortby: queryPageSortBy.length ? queryPageSortBy : [{'id': 'name'}, {'desc': 'true'}],
             trigger: queryTrigger
         }
       ),
