@@ -14,6 +14,10 @@ const MigrationResult = ({isOpen, toggle, theme, data, rtl, migrationResultAccou
       );
     })
 
+  const createMarkup = (value) => {
+    return {__html: value};
+  }
+
   return (
         <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen}
                toggle={toggle}>
@@ -30,12 +34,13 @@ const MigrationResult = ({isOpen, toggle, theme, data, rtl, migrationResultAccou
                 </Row>
             </ModalHeader>
             <ModalBody className='modal-lg'>
-                <h5 className='thick size16 mb-4'>{ migrationResultAccount ? `Program Account Holder Id: ${migrationResultAccount}` : `Global migrations` }</h5>
+                <h5 className='thick size16 mb-4'>{ migrationResultAccount ? `Program Account Holder Id: ${migrationResultAccount}` : data?.info ? `Artisan migration` : `Global migrations` }</h5>
                 <Row>
                     <Col md="12">
+                      {data?.info && <div dangerouslySetInnerHTML={ createMarkup(data.info) }/>}
                       {data.success && <div><span style={{'color': 'green'}}><b>Success</b></span></div>}
-                      {!data.success && <div><span style={{'color': 'red'}}><b>Error</b></span> : <span>{data.error}</span></div>}
-                      <div><b>Migration List:</b></div>
+                      {!data?.info && !data.success && <div><span style={{'color': 'red'}}><b>Error</b></span> : <span>{data.error}</span></div>}
+                      {data.success && <div><b>Migration List:</b></div>}
                       {migrationList}
                     </Col>
                 </Row>

@@ -1,27 +1,17 @@
-import React, { useState} from 'react'
+import React, { useState, useEffect} from 'react'
 import ProgramsHierarchy from '@/shared/components/ProgramsHierarchy'
 import {connect} from 'react-redux'
 
 import {Button, Col, Row} from "reactstrap";
 import DatePicker from "react-datepicker";
 import {CSVLink} from "react-csv";
-import {getFirstDay} from '@/shared/helpers'
+import {getFirstDay, getLastDay} from '@/shared/helpers'
 import {dateStrToYmd} from '@/shared/helpers';
 import {isEqual, clone, cloneDeep} from 'lodash';
 import {CheckBoxField} from '@/shared/components/form/CheckBox';
 import Select from "react-select";
 
-const defaultFrom = getFirstDay()
-const defaultTo = new Date()
-
-const prepareList = () => {
-  let y = new Date().getFullYear();
-  let list = [];
-  for (var i = y; i > y - 7; i--) {
-      list.push({label: i, value: i})
-  }
-  return list;
-}
+const defaultTo = getLastDay()
 
 const PointsReserveFilter = (
   {
@@ -31,48 +21,45 @@ const PointsReserveFilter = (
     download,
     exportData,
     exportLink,
-    exportHeaders
+    exportHeaders,
+    dateFrom
   }) => {
   const options = {
     'programs': true,
     'exportToCsv': true,
-    'year':true,
+    'year':false,
     'createdOnly': false,
-    'reportKey': true,
+    'reportKey': false,
     'programId': true,
+    'dateRange': true
   }
-  const [createdOnly, setCreatedOnly] = React.useState(false)
-  const [reportKey, setReportKey] = React.useState('sku_value')
   const [selectedPrograms, setSelectedPrograms] = useState(filter.programs ? filter.programs : []);
   const finalFilter = {...filter}
-  const [targetYear, setTargetYear] = useState({
-    label: new Date().getFullYear(),
-    value: new Date().getFullYear()
-})
+  const [defaultFrom, setDefaultFrom] = React.useState(null)
+  const [from, setFrom] = React.useState(null)
+  const [to, setTo] = React.useState(defaultTo)
 
-
-  const handleChangeYear = (value) => {
-    setTargetYear(value)
-  }
+  useEffect(() => {
+    if(dateFrom){
+      setDefaultFrom(new Date(dateFrom))
+      setFrom(new Date(dateFrom))
+    }
+  }, [dateFrom])
 
   let previous = cloneDeep(finalFilter);
-  const YEAR_LIST = prepareList();
+
   const onClickFilter = (reset = false, exportToCsv = 0) => {
     let dataSet = {}
-    if (options.year) {
-      dataSet.year = targetYear
-    }
+  
     if (options.programs) {
       dataSet.programs = reset ? [] : clone(selectedPrograms)
     }
-    if (options.createdOnly) {
-      dataSet.createdOnly = reset ? false : createdOnly
-    }
-    if (options.reportKey) {
-      dataSet.reportKey = reset ? 'sku_value' : reportKey
-    }
     if (options.programId) {
       dataSet.programId = filter.programId
+    }
+    if (options.dateRange) {
+      dataSet.from = dateStrToYmd(reset ? defaultFrom : from);
+      dataSet.to = dateStrToYmd(reset ? defaultTo : to);
     }
     onClickFilterCallback(dataSet)
     previous = dataSet;
@@ -80,8 +67,6 @@ const PointsReserveFilter = (
       setFrom(defaultFrom)
       setTo(defaultTo)
       setSelectedPrograms([]);
-      setCreatedOnly(false)
-      setReportKey('sku_value')
     }
   }
 
@@ -126,9 +111,6 @@ const PointsReserveFilter = (
     if (options.programs) {
       filters.programs = values.programs
     }
-    if (options.programs) {
-      filters.programs = values.programs
-    }
     if (options.awardLevels) {
       filters.awardLevels = values.awardLevels
     }
@@ -153,14 +135,6 @@ const PointsReserveFilter = (
   }
   const onEndChange = (value) => {
     setTo(value)
-  }
-
-  const onChangeCreatedOnly = () => {
-    setCreatedOnly(!createdOnly)
-  }
-
-  const onChangeRadio = (value) => {
-    setReportKey(value)
   }
 
   return (
@@ -217,20 +191,6 @@ const PointsReserveFilter = (
           }
           <div className="clearfix">&nbsp;</div>
           <div className="clearfix">&nbsp;</div>
-          {options.createdOnly &&
-            <>
-              <div className="table-filter-form-col table-filter-form-col2 float-filter">
-                <div className="form__form-group">
-                  <div className="form__form-group-field">
-                    <div className="form__form-group-row">
-                      <CheckBoxField name="createdOnly" label="Show participants created only:" checked={createdOnly} onChange={onChangeCreatedOnly}
-                                     type="checkbox"/>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-          }
         </div>
       </Col>
       <Col className="align-items-center max-height-32px pl-1">

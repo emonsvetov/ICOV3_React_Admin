@@ -109,6 +109,11 @@ const DataTable = ({ toggle, organization, program }) => {
         params.push(`keyword=${pageFilterO.keyword}`);
       paramStr = params.join("&");
     }
+
+    if (!pageSortBy.length) {
+      pageSortBy = [{'id': 'name'}, {'desc': 'true'}];
+    }
+
     if (pageSortBy.length > 0) {
       const sortParams = pageSortBy[0];
       const sortyByDir = sortParams.desc ? "desc" : "asc";
@@ -515,7 +520,7 @@ const DataTable = ({ toggle, organization, program }) => {
 const Sorting = ({ column }) => (
   <span className="react-table__column-header sortable">
     {column.isSortedDesc === undefined ? (
-      <SortIcon />
+      <SortDescendingIcon />
     ) : (
       <span>
         {column.isSortedDesc ? <SortDescendingIcon /> : <SortAscendingIcon />}
