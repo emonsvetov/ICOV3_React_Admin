@@ -6,6 +6,8 @@ import {Col, Row} from 'reactstrap';
 import MigrationResultModal from './MigrationResultModal'
 import getV2DeprecatedMigrate from '@/service/getV2DeprecatedMigrate';
 import {connect} from "react-redux";
+import {Link, withRouter} from 'react-router-dom';
+import axios from 'axios';
 import {
     reducer,
     useEffectToDispatch,
@@ -99,6 +101,21 @@ const DataTable = ({organization, programs}) => {
             </>
         )
     }
+
+    const runGlobalMigrations = async () => {
+      const response = await axios.get('/v2-deprecated/migrate-global');
+      setMigrationResultAccount(false);
+      setMigrationResult(response.data);
+      toggle();
+    }
+
+  const runArtisanMigrations = async () => {
+    const response = await axios.get('/v2-deprecated/migrate-artisan');
+    setMigrationResultAccount(false);
+    setMigrationResult(response.data);
+    toggle();
+  }
+
     const TABLE_COLUMNS = [
         {
             Header: "V2 Program Name",
@@ -185,6 +202,10 @@ const DataTable = ({organization, programs}) => {
                                     download={download}/>
                             </Col>
                         </Row>
+                    </div>
+                    <div className="mb-2" style={{'padding': '4px'}}>
+                        <Link to={'#'} onClick={runGlobalMigrations}>Run global migrations</Link>
+                        <span style={{'margin-left': '10px'}}><Link to={'#'} onClick={runArtisanMigrations}>Run artisan migrations</Link></span>
                     </div>
                     {
                         isLoading && <p>Loading...</p>

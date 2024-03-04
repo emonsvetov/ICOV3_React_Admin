@@ -13,6 +13,7 @@ import EventsDataModal from '../components/event/EventsDataModal';
 import EmailTemplateModal from '../EmailTemplate/IndexDataModal'
 import ActivateLiveModeProgramModal from "./ActivateLiveModeProgramModal";
 import ReportsModal from "./ReportsModal";
+import AwardLevelsModal from "./AwardLevelsModal";
 
 const MainModalWrapper = ({name, isOpen, setOpen, toggle}) => {
   const props = {
@@ -65,6 +66,9 @@ const MainModalWrapper = ({name, isOpen, setOpen, toggle}) => {
       {
         name === 'reports' && <ReportsModal {...props} />
       }
+        {
+            name === 'AwardLevels' && <AwardLevelsModal {...props} />
+        }
     </>
   )
 }

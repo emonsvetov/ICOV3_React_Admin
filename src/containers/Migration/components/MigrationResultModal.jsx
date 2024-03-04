@@ -8,8 +8,17 @@ import axios from 'axios'
 
 const MigrationResult = ({isOpen, toggle, theme, data, rtl, migrationResultAccount}) => {
     const [loading, setLoading] = useState(false)
+    const migrationList = data?.migrations && Object.entries(data.migrations).map(([key,value]) => {
+      return (
+        <div>{key} : <span style={{'color': value?.success ? 'green' : 'red'}}><b>{value?.success ? 'OK' : 'FALSE'}</b></span> <span>{value?.info}</span></div>
+      );
+    })
 
-    return (
+  const createMarkup = (value) => {
+    return {__html: value};
+  }
+
+  return (
         <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen}
                toggle={toggle}>
             <ModalHeader className='w100'>
@@ -25,10 +34,14 @@ const MigrationResult = ({isOpen, toggle, theme, data, rtl, migrationResultAccou
                 </Row>
             </ModalHeader>
             <ModalBody className='modal-lg'>
-                <h5 className='thick size16 mb-4'>Program Account Holder Id: {migrationResultAccount}</h5>
+                <h5 className='thick size16 mb-4'>{ migrationResultAccount ? `Program Account Holder Id: ${migrationResultAccount}` : data?.info ? `Artisan migration` : `Global migrations` }</h5>
                 <Row>
                     <Col md="12">
-                        {data}
+                      {data?.info && <div dangerouslySetInnerHTML={ createMarkup(data.info) }/>}
+                      {data.success && <div><span style={{'color': 'green'}}><b>Success</b></span></div>}
+                      {!data?.info && !data.success && <div><span style={{'color': 'red'}}><b>Error</b></span> : <span>{data.error}</span></div>}
+                      {data.success && <div><b>Migration List:</b></div>}
+                      {migrationList}
                     </Col>
                 </Row>
             </ModalBody>

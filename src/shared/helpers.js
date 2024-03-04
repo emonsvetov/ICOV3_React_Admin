@@ -377,7 +377,12 @@ export const isArray = function(a) {
   
   export const getFirstDay = () => {
       let date = new Date();
-      return new Date(date.getFullYear(), 0, 1)
+      return new Date(date.getFullYear(), date.getMonth(), 1)
+  }
+  
+  export const getLastDay = () => {
+    let date = new Date();
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0)
   }
   
   export const setDefaultTheme = (theme) => {
@@ -437,4 +442,16 @@ export const isArray = function(a) {
       });
       return formattedDate;
   }
+  export const maskString =  (string) => {
+    const maskedCode = string.slice(0, 10) + "****" ;
+    return maskedCode;
+  }
+
+export const dobDisplay = (dob) => {
+    const date = new Date(dob);
+    if (dob && date.getFullYear() == 1970){
+        return dob.slice(5);
+    }
+    return dob;
+}
 

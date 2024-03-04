@@ -35,6 +35,12 @@ export const PROGRAM_COLUMNS = [
     {
         Header: "Program",
         accessor: "name",
+        Cell: ({row, value}) => {
+          const space = row.original.dinamicDepth === 1 ? '' : ' • ';
+          const boldRow = row.original.dinamicDepth === 1;
+          return <div style={boldRow ? {fontWeight: 'bold'} : {}}>{space.repeat(row.original.dinamicDepth)}<Link
+              to={`/program/view/${row.original.id}`}>{value}</Link></div>
+        },
         Footer:"Page Total",
     },
     {
@@ -91,43 +97,37 @@ export const PROGRAM_COLUMNS = [
           },
     },
     {
-        Header: "Unredeemed",
-        accessor: "value_unredeemed",
-        Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
-        Footer: (info) => {
-            const { rows, flatRows } = info;
-            const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.value_unredeemed) + sum, 0),
-              [rows],
-            );
-            return <span>{`$${parseFloat(totalValue)}`}</span>;
-          },
-    },
-    {
-        Header: "Paid",
-        accessor: "value_paid",
-        Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
-        Footer: (info) => {
-            const { rows, flatRows } = info;
-            const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.value_paid) + sum, 0),
-              [rows],
-            );
-            return <span>{`$${parseFloat(totalValue)}`}</span>;
-          },
-    },
-    {
-        Header: "Balance",
-        accessor: "balance",
-        Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
-        Footer: (info) => {
-            const { rows, flatRows } = info;
-            const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.balance) + sum, 0),
-              [rows],
-            );
-            return <span>{`$${parseFloat(totalValue)}`}</span>;
-          },
+      id: 'unredeemed-points',
+      Header: () => (<div style={{textAlign: 'center', borderTop: '1px solid #eff1f5', paddingTop: 6}}>Unredeemed points from</div>),
+      Footer: "",
+      columns: [
+        {
+          Header: "current year",
+          accessor: "this_unredeemed",
+          Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
+          Footer: (info) => {
+              const { rows, flatRows } = info;
+              const totalValue = useMemo(
+                () => rows.reduce((sum, row) => Number(row.values.this_unredeemed) + sum, 0),
+                [rows],
+              );
+              return <span>{`$${parseFloat(totalValue)}`}</span>;
+            },
+        },
+        {
+          Header: "previous year",
+          accessor: "last_unredeemed",
+          Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
+          Footer: (info) => {
+              const { rows, flatRows } = info;
+              const totalValue = useMemo(
+                () => rows.reduce((sum, row) => Number(row.values.last_unredeemed) + sum, 0),
+                [rows],
+              );
+              return <span>{`$${parseFloat(totalValue)}`}</span>;
+            },
+        }
+      ]
     },
     {
         Header: "Reserve %",
@@ -139,7 +139,7 @@ export const PROGRAM_COLUMNS = [
               () => rows.reduce((sum, row) => Number(row.values.reserve_percentage) + sum, 0),
               [rows],
             );
-            const avg = Math.round(totalValue / flatRows.length);
+            const avg = Math.round(totalValue / rows.length);
             return <span>{`${parseFloat(avg)}%`}</span>;
           },
     },

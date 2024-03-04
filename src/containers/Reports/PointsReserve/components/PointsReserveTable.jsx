@@ -7,7 +7,7 @@ import SortIcon from 'mdi-react/SortIcon';
 import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
 import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
-import {getFirstDay, dateStrToYmd} from '@/shared/helpers'
+import {getFirstDay, dateStrToYmd, getLastDay} from '@/shared/helpers'
 import { Col, Row} from 'reactstrap';
 import {clone} from 'lodash';
 import PointsReserveFilter  from "./PointsReserveFilter";
@@ -21,7 +21,8 @@ import {
    
     Sorting
   } from "@/shared/apiTableHelper"
-import { StickyContainer, Sticky } from "react-sticky";
+// import { StickyContainer, Sticky } from "react-sticky";
+
 const queryClient = new QueryClient()
 
 const DataTable = ({organization, programs}) => {
@@ -29,10 +30,9 @@ const DataTable = ({organization, programs}) => {
 const [filter, setFilter] = useState({
     programs: programs,
     createdOnly: false,
-    reportKey: 'sku_value',
     programId: 1,
-    from: dateStrToYmd(getFirstDay()),
-    to: dateStrToYmd(new Date())
+    // from:getFirstDay(),
+    to:getLastDay()
     });
 
 const [useFilter, setUseFilter] = useState(false);
@@ -40,6 +40,7 @@ const [trigger, setTrigger] = useState(0);
 const [exportData, setExportData] = useState([]);
 const [exportHeaders, setExportHeaders] = useState([]);
 const [exportToCsv, setExportToCsv] = useState(false);
+const [dateFrom, setDateFrom] = useState(null);
 const exportLink = React.createRef();
 
 useEffect(() => {
@@ -89,6 +90,13 @@ const {isLoading, error, data, isSuccess,isFetched, isFetching} = useQuery(
       staleTime: Infinity,
     }
   );
+  
+  useEffect(() => {
+    if(data){
+        let date = data?.results?.date_begin
+        setDateFrom(date);
+    }
+  }, [data])
 
 let program_columns = [
     ...PROGRAM_COLUMNS, 
@@ -126,7 +134,7 @@ let program_columns = [
         state: { pageIndex, pageSize, sortBy }
     } = useTable({
         columns,
-        data: data ? data.results : [],
+        data: data?.results? data.results.data : [],
         initialState: {
             pageIndex: queryPageIndex,          
             pageSize: queryPageSize,
@@ -160,8 +168,13 @@ let program_columns = [
     }
     if (isSuccess)
     return (
-        <StickyContainer> 
-            <div className='table react-table'>
+        <div style={{ overflowX: 'scroll' }}>
+            <div className='table react-table report-table' 
+                style={{
+                    height: '800px', 
+                    width:"max-content"
+                }}
+            >
                 <div className="action-panel">
                     <Row className="mx-0">
                         <Col lg={9} md={9} sm={8}>
@@ -179,9 +192,11 @@ let program_columns = [
                                     programs: true,
                                     exportToCsv: true
                                 }}
+                                dateFrom = {dateFrom}
                                 loading={isLoading || isFetching} />
                         </Col>
                     </Row>
+                    <div style={{clear: 'both'}}>&nbsp;</div>
                 </div>
                 {
                     isLoading && <p>Loading...</p>
@@ -190,24 +205,20 @@ let program_columns = [
                 isSuccess && 
                 
                 <table {...getTableProps()} className="table">
-             
-                        <Sticky  topOffset={80}>
-                            {({ style }) => (
-                                <thead style={{...style, top: '60px'}}> 
-                                    {headerGroups.map((headerGroup) => (
-                                        <tr {...headerGroup.getHeaderGroupProps()}>
-                                            {headerGroup.headers.map(column => (
-                                            <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                                {column.render('Header')}
-                                                {column.isSorted ? <Sorting column={column}/> : ''}
-                                            </th>
-                                            ))}
-                                        </tr>
-                                    ))}
-                                </thead>
-                            )}
-                        </Sticky>
-             
+                    <thead   
+                        style={{position: 'sticky', top: 0}}
+                    > 
+                        {headerGroups.map((headerGroup) => (
+                            <tr {...headerGroup.getHeaderGroupProps()}>
+                                {headerGroup.headers.map(column => (
+                                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                    {column.render('Header')}
+                                    {column.isSorted ? <Sorting column={column}/> : ''}
+                                </th>
+                                ))}
+                            </tr>
+                        ))}
+                    </thead>
                     <tbody className="table table--bordered" {...getTableBodyProps()}>
                         {page.map( row => {
                             prepareRow(row);
@@ -238,7 +249,7 @@ let program_columns = [
                 }
         
             </div>
-        </StickyContainer>
+        </div>
     )
 }
 

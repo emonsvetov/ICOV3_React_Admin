@@ -35,7 +35,12 @@ export const TABLE_COLUMNS = [
   {
     Header: "Program Name",
     accessor: "name",
-    width: 170,
+     Cell: ({row, value}) => {
+            const space = row.original.program.dinamicDepth === 1 ? '' : ' • ';
+            const boldRow = row.original.program.dinamicDepth === 1;
+            return <div style={boldRow ? {fontWeight: 'bold'} : {}}>{space.repeat(row.original.program.dinamicDepth)}{value}</div>
+        },
+        width: 200
   },
   {
     Header: "# of Participants",

@@ -430,3 +430,21 @@
 .align-right{text-align: right !important;}
 .ledgercode__item-input input, .ledgercode__form-group input{padding: 1px 3px;height: 24px;}
 .ledgercode__form-group{max-width: 150px;float:right;}
+.ant-table-header{
+    width: 100%;
+}
+.ant-table-summary{
+    width: 100%;
+}
+.resend-btn{
+    text-decoration: underline;
+    cursor: pointer;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 5px;
+    &:hover {
+        color: $color-blue-hover;
+        text-decoration: none;
+      }
+}
