@@ -29,7 +29,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
         case 'cron_jobs':
             return (
                 <>
-                    <SidebarLink title="V2 Program Migration"   route="/migration" />
+                    <SidebarLink title="V2 Program Migration" route="/migration" />
                 </>
             );
             break;
@@ -68,12 +68,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
       break;
       case 'migration':
         return (
-          <SidebarLink title="V2 Program Migration"  icon="database" route="/migration" />
-        )
-      break;
-      case 'migration':
-        return (
-            <SidebarLink title="V2 Program Migration"  icon="database" route="/migration" />
+          <SidebarLink title="V2 Program Migration"  route="/migration" />
         )
       break;
       default:
