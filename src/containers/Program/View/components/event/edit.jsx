@@ -198,8 +198,8 @@ const Edit = ({organization, theme, rtl}) => {
         },
         {
             title: 'Award Level Name',
-            dataIndex: 'award_level_id',
-            key: 'award_level_id',
+            dataIndex: 'name',
+            key: 'name',
         },
         {
             title: 'Amount',
@@ -621,7 +621,7 @@ const Edit = ({organization, theme, rtl}) => {
                           className="btn btn-primary"
                           color="#ffffff"
                           onClick={toggleModal}>Add Award Level</Button>
-                      <AddAwardLevel visible={visible} onClose={toggleModal} onSave={handleSave} data={dataAwardLevel} />
+                      <AddAwardLevel visible={visible} onClose={toggleModal} onSave={handleSave} data={dataAwardLevel} programId={programId} organization={program.organization_id}/>
                   </Col>
               </Row>
               <Row>
