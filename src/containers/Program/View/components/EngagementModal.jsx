@@ -305,7 +305,7 @@ const EngagementModal = ({
                           name="uses_units" 
                           label="Uses units" 
                           checked={data?.uses_units}
-                          onChange={() => {data.uses_units = !data.uses_units}}
+                          onChange={() => {data.uses_goal_tracker = !data.uses_goal_tracker}}
                         />
                       </div>
                       <div className="form__form-group">

@@ -34,7 +34,7 @@ const MigrationResult = ({isOpen, toggle, theme, data, rtl, migrationResultAccou
                 </Row>
             </ModalHeader>
             <ModalBody className='modal-lg'>
-                <h5 className='thick size16 mb-4'>{ migrationResultAccount ? `Program Account Holder Id: ${migrationResultAccount}` : data?.info ? `Artisan migrations` : `Global migrations` }</h5>
+                <h5 className='thick size16 mb-4'>{ migrationResultAccount ? `Program Account Holder Id: ${migrationResultAccount}` : data?.info ? `Artisan migration` : `Global migrations` }</h5>
                 <Row>
                     <Col md="12">
                       {data?.info && <div dangerouslySetInnerHTML={ createMarkup(data.info) }/>}

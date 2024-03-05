@@ -29,7 +29,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
         case 'cron_jobs':
             return (
                 <>
-                    <SidebarLink title="V2 Program Migratio"   route="/migration" />
+                    <SidebarLink title="V2 Program Migration"   route="/migration" />
                 </>
             );
             break;
