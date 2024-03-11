@@ -99,28 +99,37 @@ const DataTable = ({organization, programs}) => {
                     // })
 
                   toggle();
-                  MigrationRunner(6);
+                  let id = row.original.account_holder_id;
+                  setMigrationResultAccount(row.original.account_holder_id);
+                  MigrationRunner(id, 1);
 
                 }}>Migrate</a>
             </>
         )
     }
 
-    const MigrationRunner = async (step) => {
+    const MigrationRunner = async (id, step) => {
       try {
-        if (step == -1) {
-          return step;
+        if (!step) {
+          return;
         }
         const response = await axios.get(`/v2-deprecated/migrate/${id}/${step}`);
         let result =  response.data;
+
+        console.log(result, 'result');
+
         let success = result?.success;
         let nextStep = result?.nextStep;
 
-        if (success && nextStep && step > -1) {
-          MigrationRunner(nextStep);
+        //console.log(response, 'response');
+
+        setMigrationResult(result);
+
+        if (success && nextStep) {
+          MigrationRunner(id, nextStep);
         }
 
-        return step;
+        return;
 
       } catch (e) {
         throw new Error(`API error:${e?.message}`);
