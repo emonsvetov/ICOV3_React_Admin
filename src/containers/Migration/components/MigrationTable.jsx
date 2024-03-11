@@ -91,18 +91,43 @@ const DataTable = ({organization, programs}) => {
     const RenderActions = ({row}) => {
         return (
             <>
-                <a className='link' onClick={() => {
-                    getV2DeprecatedMigrate(row.original.account_holder_id).then( response => {
-                        setMigrationResultAccount(row.original.account_holder_id);
-                        setMigrationResult(response);
-                        toggle();
-                    })
+                <a className='link' onClick={async () => {
+                    // getV2DeprecatedMigrate(row.original.account_holder_id).then( response => {
+                    //     setMigrationResultAccount(row.original.account_holder_id);
+                    //     setMigrationResult(response);
+                    //     toggle();
+                    // })
+
+                  toggle();
+                  MigrationRunner(6);
+
                 }}>Migrate</a>
             </>
         )
     }
 
-    const runGlobalMigrations = async () => {
+    const MigrationRunner = async (step) => {
+      try {
+        if (step == -1) {
+          return step;
+        }
+        const response = await axios.get(`/v2-deprecated/migrate/${id}/${step}`);
+        let result =  response.data;
+        let success = result?.success;
+        let nextStep = result?.nextStep;
+
+        if (success && nextStep && step > -1) {
+          MigrationRunner(nextStep);
+        }
+
+        return step;
+
+      } catch (e) {
+        throw new Error(`API error:${e?.message}`);
+      }
+    }
+
+  const runGlobalMigrations = async () => {
       const response = await axios.get('/v2-deprecated/migrate-global');
       setMigrationResultAccount(false);
       setMigrationResult(response.data);
