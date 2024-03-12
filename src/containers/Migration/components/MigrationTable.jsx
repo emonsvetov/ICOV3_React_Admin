@@ -91,23 +91,120 @@ const DataTable = ({organization, programs}) => {
     const RenderActions = ({row}) => {
         return (
             <>
-                <a className='link' onClick={() => {
-                    getV2DeprecatedMigrate(row.original.account_holder_id).then( response => {
-                        setMigrationResultAccount(row.original.account_holder_id);
-                        setMigrationResult(response);
-                        toggle();
-                    })
+                <a className='link' onClick={async () => {
+                  let id = row.original.account_holder_id;
+                  runProgramMigrations(id);
+
                 }}>Migrate</a>
             </>
         )
     }
 
-    const runGlobalMigrations = async () => {
-      const response = await axios.get('/v2-deprecated/migrate-global');
-      setMigrationResultAccount(false);
-      setMigrationResult(response.data);
-      toggle();
+    const MigrationRunner = async (id, step) => {
+      try {
+        if (!step) {
+          return;
+        }
+        const response = await axios.get(`/v2-deprecated/migrate/${id}/${step}`);
+        let result =  response.data;
+
+        let success = result?.success;
+        let nextStep = result?.nextStep;
+
+        setMigrationResult(result);
+
+        if (success && nextStep) {
+          MigrationRunner(id, nextStep);
+        }
+
+        return;
+
+      } catch (e) {
+        throw new Error(`API error:${e?.message}`);
+      }
     }
+
+  const MigrationProgramRunner = async (id, step) => {
+    try {
+
+      const response = await axios.get(`/v2-deprecated/migrate/${id}/${step}`);
+      let result =  response.data;
+
+      let success = result?.success;
+      let nextStep = result?.nextStep;
+
+      if (success) {
+        document.getElementById(`step${step}`).innerHTML = result?.migration?.info ?? '';
+        document.getElementById(`step_result${step}`).innerHTML = result?.migration?.success ? 'OK' : 'FALSE';
+
+        MigrationProgramRunner(id, nextStep);
+      }
+      if (!nextStep || !success) {
+        document.getElementById(`global_success`).innerHTML = result?.success ? 'Success' : 'Error';
+        document.getElementById(`step_result${step}`).innerHTML = result?.migration?.success ? 'OK' : 'FALSE';
+        document.getElementById(`error_text`).innerHTML = result?.error;
+        if (!success) {
+          document.getElementById(`step${step}`).innerHTML = result?.error;
+        }
+      }
+
+    } catch (e) {
+      throw new Error(`API error:${e?.message}`);
+    }
+  }
+
+  const MigrationGlobalRunner = async (step) => {
+    try {
+
+      const response = await axios.get(`/v2-deprecated/migrate-global/${step}`);
+      let result =  response.data;
+
+      let success = result?.success;
+      let nextStep = result?.nextStep;
+
+      if (success) {
+        document.getElementById(`step${step}`).innerHTML = result?.migration?.info ?? '';
+        document.getElementById(`step_result${step}`).innerHTML = result?.migration?.success ? 'OK' : 'FALSE';
+
+        MigrationGlobalRunner(nextStep);
+      }
+      if (!nextStep || !success) {
+        document.getElementById(`global_success`).innerHTML = result?.success ? 'Success' : 'Error';
+        document.getElementById(`step_result${step}`).innerHTML = result?.migration?.success ? 'OK' : 'FALSE';
+        document.getElementById(`error_text`).innerHTML = result?.error;
+        if (!success) {
+          document.getElementById(`step${step}`).innerHTML = result?.error;
+        }
+      }
+
+    } catch (e) {
+      throw new Error(`API error:${e?.message}`);
+    }
+  }
+
+  const getListGlobalMigrations = async () => {
+    const response = await axios.get(`/v2-deprecated/migrate-global/start`);
+    setMigrationResultAccount(false);
+    setMigrationResult(response.data);
+    toggle();
+  }
+
+  const getListProgramMigrations = async (id) => {
+    const response = await axios.get(`/v2-deprecated/migrate/${id}/start`);
+    setMigrationResultAccount(id);
+    setMigrationResult(response.data);
+    toggle();
+  }
+
+  const runProgramMigrations = async (id) => {
+    getListProgramMigrations(id);
+    MigrationProgramRunner(id, 1);
+  }
+
+  const runGlobalMigrations = async (id) => {
+      getListGlobalMigrations(id);
+      MigrationGlobalRunner(1);
+  }
 
   const runArtisanMigrations = async () => {
     const response = await axios.get('/v2-deprecated/migrate-artisan');
