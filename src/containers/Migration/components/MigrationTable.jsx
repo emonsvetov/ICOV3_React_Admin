@@ -92,16 +92,8 @@ const DataTable = ({organization, programs}) => {
         return (
             <>
                 <a className='link' onClick={async () => {
-                    // getV2DeprecatedMigrate(row.original.account_holder_id).then( response => {
-                    //     setMigrationResultAccount(row.original.account_holder_id);
-                    //     setMigrationResult(response);
-                    //     toggle();
-                    // })
-
-                  toggle();
                   let id = row.original.account_holder_id;
-                  setMigrationResultAccount(row.original.account_holder_id);
-                  MigrationRunner(id, 1);
+                  runProgramMigrations(id);
 
                 }}>Migrate</a>
             </>
@@ -116,12 +108,8 @@ const DataTable = ({organization, programs}) => {
         const response = await axios.get(`/v2-deprecated/migrate/${id}/${step}`);
         let result =  response.data;
 
-        console.log(result, 'result');
-
         let success = result?.success;
         let nextStep = result?.nextStep;
-
-        //console.log(response, 'response');
 
         setMigrationResult(result);
 
@@ -136,6 +124,35 @@ const DataTable = ({organization, programs}) => {
       }
     }
 
+  const MigrationProgramRunner = async (id, step) => {
+    try {
+
+      const response = await axios.get(`/v2-deprecated/migrate/${id}/${step}`);
+      let result =  response.data;
+
+      let success = result?.success;
+      let nextStep = result?.nextStep;
+
+      if (success) {
+        document.getElementById(`step${step}`).innerHTML = result?.migration?.info ?? '';
+        document.getElementById(`step_result${step}`).innerHTML = result?.migration?.success ? 'OK' : 'FALSE';
+
+        MigrationProgramRunner(id, nextStep);
+      }
+      if (!nextStep || !success) {
+        document.getElementById(`global_success`).innerHTML = result?.success ? 'Success' : 'Error';
+        document.getElementById(`step_result${step}`).innerHTML = result?.migration?.success ? 'OK' : 'FALSE';
+        document.getElementById(`error_text`).innerHTML = result?.error;
+        if (!success) {
+          document.getElementById(`step${step}`).innerHTML = result?.error;
+        }
+      }
+
+    } catch (e) {
+      throw new Error(`API error:${e?.message}`);
+    }
+  }
+
   const MigrationGlobalRunner = async (step) => {
     try {
 
@@ -145,16 +162,19 @@ const DataTable = ({organization, programs}) => {
       let success = result?.success;
       let nextStep = result?.nextStep;
 
-      if (success && nextStep) {
+      if (success) {
         document.getElementById(`step${step}`).innerHTML = result?.migration?.info ?? '';
         document.getElementById(`step_result${step}`).innerHTML = result?.migration?.success ? 'OK' : 'FALSE';
 
         MigrationGlobalRunner(nextStep);
       }
-      else {
+      if (!nextStep || !success) {
         document.getElementById(`global_success`).innerHTML = result?.success ? 'Success' : 'Error';
         document.getElementById(`step_result${step}`).innerHTML = result?.migration?.success ? 'OK' : 'FALSE';
         document.getElementById(`error_text`).innerHTML = result?.error;
+        if (!success) {
+          document.getElementById(`step${step}`).innerHTML = result?.error;
+        }
       }
 
     } catch (e) {
@@ -169,11 +189,22 @@ const DataTable = ({organization, programs}) => {
     toggle();
   }
 
-  const runGlobalMigrations = async () => {
-      getListGlobalMigrations();
-      // document.getElementById(`step_result1`).innerHTML = 'in';
+  const getListProgramMigrations = async (id) => {
+    const response = await axios.get(`/v2-deprecated/migrate/${id}/start`);
+    setMigrationResultAccount(id);
+    setMigrationResult(response.data);
+    toggle();
+  }
+
+  const runProgramMigrations = async (id) => {
+    getListProgramMigrations(id);
+    MigrationProgramRunner(id, 1);
+  }
+
+  const runGlobalMigrations = async (id) => {
+      getListGlobalMigrations(id);
       MigrationGlobalRunner(1);
-    }
+  }
 
   const runArtisanMigrations = async () => {
     const response = await axios.get('/v2-deprecated/migrate-artisan');
