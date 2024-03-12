@@ -136,11 +136,57 @@ const DataTable = ({organization, programs}) => {
       }
     }
 
+  const MigrationGlobalRunner = async (step) => {
+    try {
+
+      const response = await axios.get(`/v2-deprecated/migrate-global/${step}`);
+      let result =  response.data;
+
+      let success = result?.success;
+      let nextStep = result?.nextStep;
+
+      if (!success) {
+        document.getElementById(`error_text`).innerHTML = result?.error;
+        document.getElementById(`global_success`).innerHTML = result?.success ? 'Success' : 'Error';
+      }
+
+      if (nextStep === 0) {
+        document.getElementById(`global_success`).innerHTML = result?.success ? 'Success' : 'Error';
+        return;
+      }
+
+      document.getElementById(`step_result${step}`).innerHTML = result?.migration?.success ? 'OK' : 'FALSE';
+
+      if (success) {
+        document.getElementById(`step${step}`).innerHTML = result?.migration?.info ?? '';
+      }
+      else {
+        document.getElementById(`step_error${step}`).innerHTML = result?.error;
+        document.getElementById(`step_result${step}`).innerHTML = 'FALSE';
+      }
+
+      if (success && nextStep) {
+        MigrationGlobalRunner(nextStep);
+      }
+
+
+      return;
+
+    } catch (e) {
+      throw new Error(`API error:${e?.message}`);
+    }
+  }
+
+  const getListGlobalMigrations = async () => {
+    const response = await axios.get(`/v2-deprecated/migrate-global/start`);
+    setMigrationResultAccount(false);
+    setMigrationResult(response.data);
+    toggle();
+  }
+
   const runGlobalMigrations = async () => {
-      const response = await axios.get('/v2-deprecated/migrate-global');
-      setMigrationResultAccount(false);
-      setMigrationResult(response.data);
-      toggle();
+      getListGlobalMigrations();
+      MigrationGlobalRunner(1);
     }
 
   const runArtisanMigrations = async () => {
