@@ -145,32 +145,17 @@ const DataTable = ({organization, programs}) => {
       let success = result?.success;
       let nextStep = result?.nextStep;
 
-      if (!success) {
-        document.getElementById(`error_text`).innerHTML = result?.error;
-        document.getElementById(`global_success`).innerHTML = result?.success ? 'Success' : 'Error';
-      }
-
-      if (nextStep === 0) {
-        document.getElementById(`global_success`).innerHTML = result?.success ? 'Success' : 'Error';
-        return;
-      }
-
-      document.getElementById(`step_result${step}`).innerHTML = result?.migration?.success ? 'OK' : 'FALSE';
-
-      if (success) {
-        document.getElementById(`step${step}`).innerHTML = result?.migration?.info ?? '';
-      }
-      else {
-        document.getElementById(`step_error${step}`).innerHTML = result?.error;
-        document.getElementById(`step_result${step}`).innerHTML = 'FALSE';
-      }
-
       if (success && nextStep) {
+        document.getElementById(`step${step}`).innerHTML = result?.migration?.info ?? '';
+        document.getElementById(`step_result${step}`).innerHTML = result?.migration?.success ? 'OK' : 'FALSE';
+
         MigrationGlobalRunner(nextStep);
       }
-
-
-      return;
+      else {
+        document.getElementById(`global_success`).innerHTML = result?.success ? 'Success' : 'Error';
+        document.getElementById(`step_result${step}`).innerHTML = result?.migration?.success ? 'OK' : 'FALSE';
+        document.getElementById(`error_text`).innerHTML = result?.error;
+      }
 
     } catch (e) {
       throw new Error(`API error:${e?.message}`);
@@ -186,6 +171,7 @@ const DataTable = ({organization, programs}) => {
 
   const runGlobalMigrations = async () => {
       getListGlobalMigrations();
+      // document.getElementById(`step_result1`).innerHTML = 'in';
       MigrationGlobalRunner(1);
     }
 
