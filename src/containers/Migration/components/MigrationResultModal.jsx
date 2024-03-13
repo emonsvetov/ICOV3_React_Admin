@@ -10,7 +10,8 @@ const MigrationResult = ({isOpen, toggle, theme, data, rtl, migrationResultAccou
     const [loading, setLoading] = useState(false)
     const migrationList = data?.migrations && Object.entries(data.migrations).map(([key,value]) => {
       return (
-        <div>{key} : <span style={{'color': value?.success ? 'green' : 'red'}}><b>{value?.success ? 'OK' : 'FALSE'}</b></span> <span>{value?.info}</span></div>
+        // <div>{key} : <span style={{'color': value?.success ? 'green' : 'red'}}><b>{value?.success ? 'OK' : 'FALSE'}</b></span> <span>{value?.info}</span></div>
+        <div>{key} : <span id={`step_result` + value?.step}></span> <span id={`step` + value?.step}>{value?.info}</span> <span id={`step_error` + value?.step}></span></div>
       );
     })
 
@@ -34,13 +35,13 @@ const MigrationResult = ({isOpen, toggle, theme, data, rtl, migrationResultAccou
                 </Row>
             </ModalHeader>
             <ModalBody className='modal-lg'>
-                <h5 className='thick size16 mb-4'>{ migrationResultAccount ? `Program Account Holder Id: ${migrationResultAccount}` : data?.info ? `Artisan migration` : `Global migrations` }</h5>
+                <h5 className='thick size16 mb-4'>{ migrationResultAccount ? `Program Account Holder Id: ${migrationResultAccount}` : data?.info ? `Artisan migrations` : `Global migrations` }</h5>
                 <Row>
                     <Col md="12">
-                      {data?.info && <div dangerouslySetInnerHTML={ createMarkup(data.info) }/>}
-                      {data.success && <div><span style={{'color': 'green'}}><b>Success</b></span></div>}
-                      {!data?.info && !data.success && <div><span style={{'color': 'red'}}><b>Error</b></span> : <span>{data.error}</span></div>}
-                      {data.success && <div><b>Migration List:</b></div>}
+                      {data?.info && <div dangerouslySetInnerHTML={ createMarkup(data?.info) }/>}
+                      <div><b><span id={'global_success'}></span></b> <span id={'error_text'}></span></div>
+                      {/*{!data?.info && !data?.success && <div><span style={{'color': 'red'}}><b>Error</b></span> : <span>{data?.error}</span></div>}*/}
+                      {data?.success && <div><b>Migration List:</b></div>}
                       {migrationList}
                     </Col>
                 </Row>
