@@ -269,6 +269,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
             label: toTitleCase(res.data.name)
           }
           setCurrentMenuItem(newMenuItem)
+          setLink('')
           setTempLink('')
           loadMediTypes();
         }
@@ -360,7 +361,6 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   }
 
   const selectCreateIframe = (inputValue) => {
-   if (link === "")
     handleSubmitMenuItem(link, inputValue)
   }
 
@@ -399,6 +399,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   const setMediaTab = () => {
     if(tab !== 1){
       setTempLink('')
+      setLink('')
       setTab(1);
       setCurrentForm(null)
     }
