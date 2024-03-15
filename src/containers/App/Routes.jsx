@@ -50,7 +50,7 @@ import PermissionEdit from '../Permission/edit_permission';
 // import EventsIndex from '../Events/index';
 // import AddEvent from '../Events/add_event';
 import EditEvent from '../Program/View/components/event/edit';
-
+import EditUnit from "../Program/View/components/UnitNumbers/edit"
 import MerchantsIndex from '../Merchant/index';
 import AddMerchant from '../Merchant/add_merchant';
 import ViewMerchant from '../Merchant/view_merchant';
@@ -108,6 +108,7 @@ const Programs = () => (
     <Route exact path="/program/add" component={AddProgram} />
     <Route exact path="/program/view/:id" component={ProgramView} />
     <Route exact path="/program/:programId/event/:eventId/edit" component={EditEvent} />
+    <Route exact path="/program/:programId/unitnumber/:unitId/edit" component={EditUnit} />
     {/* <Route exact path="/program/:programId/merchants" component={Merchant} /> */}
     <Route exact path="/program/:programId/subprograms" component={SubProgram} />
     <Route exact path="/program/:programId/reports" component={ProgramReport} />
