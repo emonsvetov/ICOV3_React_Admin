@@ -261,6 +261,12 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
     if (status === "error_file_size"){
       setFileUploadSizeError(true)
     }
+    else{
+      setFileUploadSizeError(false)
+    }
+    if(status == 'removed'){
+      setFileName('');
+    }
   }
 
   const handleUploadIcon = ({meta, file}, status) => {
