@@ -13,7 +13,14 @@ import {
   flashError,
 } from "@/shared/components/flash";
 
-const UnitNumbersDataModal = ({ isOpen, toggle, data, theme, rtl }) => {
+const UnitNumbersDataModal = ({
+  isOpen,
+  toggle,
+  data,
+  theme,
+  rtl,
+  program,
+}) => {
   const tableConfig = {
     isResizable: true,
     isSortable: false,
@@ -38,19 +45,12 @@ const UnitNumbersDataModal = ({ isOpen, toggle, data, theme, rtl }) => {
     }
   };
 
-  const onClickViewUnitNumbers = (unitNumbers) => {
-    console.log(unitNumbers);
-    // props.setInvoice(unitNumbers)
-    // props.setStep(2)
-  };
-  console.log(data);
-
   useEffect(() => {
     if (data.organization_id && data.id) {
       fetchUnitNumbers(data.organization_id, data.id);
     }
-  }, [data.organization_id, data.id]);
-
+  }, [data.organization_id, data.id, step]);
+  console.log(data);
   const onClickRemove = (unitnumber) => {
     setLoading(true);
     console.log(unitnumber);
@@ -130,7 +130,7 @@ const UnitNumbersDataModal = ({ isOpen, toggle, data, theme, rtl }) => {
               <Button
                 type="submit"
                 onClick={() => props.onStep(1)}
-                className="btn btn-primary"
+                className={data.uses_units ? "btn btn-primary" : "d-none"}
                 color="#ffffff"
               >
                 Add Unit Number
@@ -138,17 +138,22 @@ const UnitNumbersDataModal = ({ isOpen, toggle, data, theme, rtl }) => {
             </ButtonToolbar>
           </Col>
         </Row>
-        <Row className="mb-2">
-          <Col>
-            <h5>Total Units = {programUnitNumbers?.length}</h5>
-          </Col>
-        </Row>
 
-        <ReactTableBase
-          columns={columns}
-          data={programUnitNumbers}
-          tableConfig={tableConfig}
-        />
+        {(data.uses_units && (
+          <>
+            <Row className="mb-2">
+              <Col>
+                <h5>Total Units = {programUnitNumbers?.length}</h5>
+              </Col>
+            </Row>
+            <ReactTableBase
+              columns={columns}
+              data={programUnitNumbers}
+              tableConfig={tableConfig}
+              program={data}
+            />
+          </>
+        )) || <p>Program not use Unit Number</p>}
       </>
     );
   };

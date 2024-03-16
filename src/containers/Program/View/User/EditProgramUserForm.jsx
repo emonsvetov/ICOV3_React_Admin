@@ -20,6 +20,7 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
     const [loading, setLoading] = useState(false)
     const [roles, setRoles] = useState(null)
     const [programRoles, setProgramRoles] = useState(null)
+    const [unitNumberOptions, setUnitNumberOptions] = useState(null);
     let [user, setUser] = useState(null)
 
     React.useEffect( () => {
@@ -42,6 +43,22 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
     React.useEffect( () => {
         
     }, [user])
+    const getUnitNumbers = async () => {
+      try {
+        const response = await axios.get(
+          `/organization/${organization.id}/program/${program.id}/unitnumber`
+        );
+        setUnitNumberOptions(labelizeNamedData(response.data));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    React.useEffect(() => {
+      if (organization && program) {
+        getUnitNumbers();
+      }
+    }, [organization, program]);
 
 
     const getRoles = ( organizationId ) => {
@@ -142,7 +159,7 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
                     </ButtonToolbar>
                 </Col>
             </Row>
-            <ProgramUserFormFields config={config} form={form} submitting={submitting} pristine={pristine} values={values}/>
+            <ProgramUserFormFields config={config} form={form} submitting={submitting} pristine={pristine} values={values} program={program} unitNumberOptions={unitNumberOptions}/>
         </form>
     )}}
     </Form>
