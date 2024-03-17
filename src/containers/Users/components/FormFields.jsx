@@ -154,7 +154,7 @@ const FormFields = ({
             )}
           </Field>
         </Col>
-        {program.uses_units > 0 && (
+        {program?.uses_units > 0 && (
           <Col md="6" lg="4" xl="4">
             <Field name="unit_number">
               {({ input, meta }) => (
