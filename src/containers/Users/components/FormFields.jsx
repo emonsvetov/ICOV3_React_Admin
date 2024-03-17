@@ -11,7 +11,7 @@ import renderSelectField from '@/shared/components/form/Select'
 const defaultConfig = {
   roles:[],
   roleInput: 'checkbox',
-  roleField: 'role_id',
+  roleField: 'roles',
   rolePlaceholder: 'Select Role',
   roleDisable: false,
   isProgram: false,

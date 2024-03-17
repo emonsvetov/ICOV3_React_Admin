@@ -43,7 +43,7 @@ const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
 
     React.useEffect(() => {
       if (organization?.id && program?.id && program?.uses_units) {
-        getUnitNumbers(organization.id, program.id).then( res => {
+        getUnitNumbers(organization.id, program.id, "assignable=1").then( res => {
           setUnitNumberOptions(labelizeNamedData(res));
         })
       }

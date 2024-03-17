@@ -1,8 +1,12 @@
 import axios from 'axios'
-export const getUnitNumbers = async (organizationId, programId) => {
+export const getUnitNumbers = async (organizationId, programId, params="") => {
   try {
+    let url = `/organization/${organizationId}/program/${programId}/unitnumber`
+    if( params != "" ) {
+      url += `?${params}`
+    }
     const response = await axios.get(
-      `/organization/${organizationId}/program/${programId}/unitnumber`
+      url
     )
     return response.data
   } catch (e) {

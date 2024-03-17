@@ -13,7 +13,7 @@ import getUnitNumbers from '@/service/program/getUnitNumbers'
 let config = {
   roles:[],
   roleInput: 'checkbox',
-  roleField: 'role_id',
+  roleField: 'roles',
   rolePlaceholder: 'Select Role',
   roleDisable: false,
   isProgram: false,
@@ -52,7 +52,7 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
 
     React.useEffect(() => {
       if (organization?.id && program?.id && program?.uses_units) {
-        getUnitNumbers(organization.id, program.id).then( res => {
+        getUnitNumbers(organization.id, program.id, "assignable=1").then( res => {
           setUnitNumberOptions(labelizeNamedData(res));
         })
       }

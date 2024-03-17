@@ -19,8 +19,8 @@ export const COLUMNS = [
     },
   },
   {
-    Header: "Number of Participant	",
-    accessor: "number_of_participant",
+    Header: "No. of Participants",
+    accessor: "users_count",
   },
   {
     Header: "Description",
