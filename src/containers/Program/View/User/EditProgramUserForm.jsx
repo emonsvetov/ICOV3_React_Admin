@@ -8,11 +8,17 @@ import {unpatchSelect, labelizeNamedData, buildIdArray} from '@/shared/helpers'
 import {useDispatch, flashSuccess, flashError} from "@/shared/components/flash"
 import ProgramUserFormFields from './ProgramUserFormFields'
 import arrayMutators from "final-form-arrays"
+import getUnitNumbers from '@/service/program/getUnitNumbers'
 
 let config = {
-    roleInput:'checkbox',
-    roleField: 'roles',
-    isProgram: true
+  roles:[],
+  roleInput: 'checkbox',
+  roleField: 'role_id',
+  rolePlaceholder: 'Select Role',
+  roleDisable: false,
+  isProgram: false,
+  unitNumberField: 'unit_number',
+  unitNumberOptions: []
 }
 
 const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}) => {
@@ -20,7 +26,7 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
     const [loading, setLoading] = useState(false)
     const [roles, setRoles] = useState(null)
     const [programRoles, setProgramRoles] = useState(null)
-    const [unitNumberOptions, setUnitNumberOptions] = useState(null);
+    const [unitNumberOptions, setUnitNumberOptions] = useState(config.unitNumberOptions);
     let [user, setUser] = useState(null)
 
     React.useEffect( () => {
@@ -43,20 +49,12 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
     React.useEffect( () => {
         
     }, [user])
-    const getUnitNumbers = async () => {
-      try {
-        const response = await axios.get(
-          `/organization/${organization.id}/program/${program.id}/unitnumber`
-        );
-        setUnitNumberOptions(labelizeNamedData(response.data));
-      } catch (error) {
-        console.log(error);
-      }
-    };
 
     React.useEffect(() => {
-      if (organization && program) {
-        getUnitNumbers();
+      if (organization?.id && program?.id && program?.uses_units) {
+        getUnitNumbers(organization.id, program.id).then( res => {
+          setUnitNumberOptions(labelizeNamedData(res));
+        })
       }
     }, [organization, program]);
 
@@ -81,9 +79,9 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
         if( config.roleInput === 'select')    {
             values = unpatchSelect(values, [config.roleField])
         }
-        
-        // console.log(values)
-        // return
+        if( typeof values.unit_number === 'object') {
+          values = unpatchSelect(values, [config.unitNumberField])
+        }
         // setLoading(true)
         axios.put(`/organization/${program.organization_id}/program/${program.id}/user/${userid}`, values)
         .then( (res) => {
@@ -131,9 +129,13 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
     }
     
     user = {...user, ...{roles: programRoles}}
+    console.log(user.roles)
     user.user_status_id = String(user.user_status_id ? user.user_status_id : "")
     user.unit_number = String(user?.unitNumber?.id ? user.unitNumber.id : "")
-    // console.log(user.user_status_id)
+    // user.unit_number = "2"
+    // // console.log(user.user_status_id)
+    // console.log("user.unit_number")
+    // console.log(typeof user.unit_number)
     return (
     <Form
         onSubmit={onSubmit}
@@ -160,7 +162,9 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
                     </ButtonToolbar>
                 </Col>
             </Row>
-            <ProgramUserFormFields config={config} form={form} submitting={submitting} pristine={pristine} values={values} program={program} unitNumberOptions={unitNumberOptions}/>
+            <ProgramUserFormFields config={{...config, ...{
+              unitNumberOptions
+            }}} form={form} submitting={submitting} pristine={pristine} values={values} program={program}/>
         </form>
     )}}
     </Form>
