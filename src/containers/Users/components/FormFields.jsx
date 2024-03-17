@@ -23,6 +23,7 @@ const FormFields = ({
     isProgram: false,
   },
 }) => {
+  console.log("values")
   const [isSendInvite, setIsSendInvite] = useState(false);
   // console.log(onChangeActive)
   const onChangeSendInvite = (checked) => {

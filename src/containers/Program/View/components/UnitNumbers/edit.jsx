@@ -59,7 +59,7 @@ const Edit = ({ organization }) => {
   }, [programId, organization]);
 
   useEffect(() => {
-    if (unitId && program?.id) {
+    if (unitId && program?.id && program.uses_units) {
       setLoading(true);
       fetchUnitnumber(program.organization_id, program.id, unitId).then(
         (res) => {
@@ -164,7 +164,7 @@ const Edit = ({ organization }) => {
                     <form className="form" onSubmit={handleSubmit}>
                       <Row className="w100">
                         <Col md="6" lg="6" xl="6">
-                          <h3 className="mb-4">Edit Unit Number Information </h3>
+                          <h3 className="mb-4">Edit Unit Number Information</h3>
                         </Col>
                         <Col md="6" lg="6" xl="6" className="text-right">
                           <ButtonToolbar className="modal__footer flex justify-content-right w100">

@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import { ThemeProps, RTLProps } from "@/shared/prop-types/ReducerProps";
 import { Modal, ModalBody, Button, ButtonToolbar, Row, Col } from "reactstrap";
 import ReactTableBase from "@/shared/components/table/ReactTableBase";
@@ -77,16 +77,13 @@ const UnitNumbersDataModal = ({
   const RenderActions = ({ row }) => {
     return (
       <>
-        <span>
-          <Button
-            type="submit"
-            className="btn btn-primary"
-            color="#ffffff"
-            onClick={() => onClickRemove(row.original)}
-          >
-            Delete
-          </Button>
-        </span>
+        <Link
+          className="table-hover text-primary"
+          color="#ffffff"
+          onClick={() => onClickRemove(row.original)}
+        >
+          Delete
+        </Link>
       </>
     );
   };
@@ -153,7 +150,7 @@ const UnitNumbersDataModal = ({
               program={data}
             />
           </>
-        )) || <p>Program not use Unit Number</p>}
+        )) || <p>Program does not use Unit Numbers</p>}
       </>
     );
   };
