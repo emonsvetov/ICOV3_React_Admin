@@ -5,12 +5,9 @@ import {
   Col,
   ButtonToolbar,
   Button,
-  Card,
-  CardBody,
-  Container,
 } from "reactstrap";
 import { connect } from "react-redux";
-import { useParams, useHistory, withRouter } from "react-router-dom";
+import { useParams, withRouter, Route } from "react-router-dom";
 import {
   useDispatch,
   flashSuccess,
@@ -18,6 +15,7 @@ import {
 } from "@/shared/components/flash";
 import axios from "axios";
 import { Table } from "antd";
+
 
 const fetchUnitnumber = async (oId, pId, unitId) => {
   try {
@@ -30,14 +28,12 @@ const fetchUnitnumber = async (oId, pId, unitId) => {
   }
 };
 
-const Edit = ({ organization }) => {
-  const { programId, unitId } = useParams();
+const Edit = ({ organization, onStep, unitId }) => {
+  const { id } = useParams();
   const [program, setProgram] = useState(null);
   const [loading, setLoading] = useState(false);
   let [unitNumber, setUnitnumber] = useState(null);
   const [unitNumberParticipants, setUnitNumberParticipants] = useState([]);
-  const [visible, setVisible] = useState(false);
-  const [dataparticipants, setDatapartiscipants] = useState(null);
   const dispatch = useDispatch();
 
   const fetchProgramData = async (id) => {
@@ -53,10 +49,10 @@ const Edit = ({ organization }) => {
   };
 
   useEffect(() => {
-    if (organization?.id && programId) {
-      fetchProgramData(programId);
+    if (organization?.id && id) {
+      fetchProgramData(id);
     }
-  }, [programId, organization]);
+  }, [id, organization]);
 
   useEffect(() => {
     if (unitId && program?.id && program.uses_units) {
@@ -65,24 +61,23 @@ const Edit = ({ organization }) => {
         (res) => {
           // console.log("res",res)
           setUnitnumber(res);
-          setUnitNumberParticipants(res.eventAwardsLevel);
+          setUnitNumberParticipants(res.users);
           setLoading(false);
         }
       );
     }
   }, [program, unitId]);
 
-  let history = useHistory();
-
   const onSubmit = (values) => {
     axios
       .put(
-        `/organization/${program.organization_id}/program/${programId}/unitnumber/${unitId}`,
+        `/organization/${program.organization_id}/program/${id}/unitnumber/${unitId}`,
         values
       )
       .then((res) => {
         if (res.status == 200) {
           flashSuccess(dispatch, "Unit number saved!");
+          onStep(0);
         }
       })
       .catch((err) => {
@@ -91,15 +86,18 @@ const Edit = ({ organization }) => {
       });
   };
 
-  const onClickCancel = () => {
-    history.goBack();
+  const onClickBack = () => {
+    onStep(0);
   };
-  console.log(unitNumber);
+  // console.log(unitNumber);
   if (loading || !unitNumber) {
     return <p>Loading...</p>;
   }
 
-  const handleParticipantslDelete = (data) => {};
+  // const handleParticipantsView = (data) => {
+  //   navigate(`/home`);
+  //   console.log("Participant edit not implemented yet");
+  // };
 
   const columnsReportParticipants = [
     {
@@ -117,163 +115,109 @@ const Edit = ({ organization }) => {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <>
-          <a
-            style={{ color: "#70bbfd", cursor: "pointer" }}
-            onClick={() => handleParticipantsEdit(record)}
-          >
-            Edit
-          </a>{" "}
-          |
-          <a
-            style={{ color: "#70bbfd", cursor: "pointer" }}
-            onClick={() => handleParticipantslDelete(record)}
-          >
-            {" "}
-            Delete
-          </a>
-        </>
+        <ButtonViewUser user={record} program={program} />
       ),
     },
   ];
 
-  const toggleModal = () => {
-    setDatapartiscipants({
-      id: 0,
-      event_id: unitId,
-      amount: 0,
-      award_level_id: 0,
-    });
-    setVisible(!visible);
-  };
-
-  const handleParticipantsEdit = (data) => {
-    setDatapartiscipants(data);
-    setVisible(!visible);
-  };
-
   if (unitNumber) {
     return (
-      <Container className="dashboard">
-        <Col md={12}>
-          <Card>
-            <CardBody style={{ display: "flex" }}>
-              <Form onSubmit={onSubmit} initialValues={unitNumber}>
-                {({ handleSubmit, form, submitting, pristine, values }) => (
-                  <>
-                    <form className="form" onSubmit={handleSubmit}>
-                      <Row className="w100">
-                        <Col md="6" lg="6" xl="6">
-                          <h3 className="mb-4">Edit Unit Number Information</h3>
-                        </Col>
-                        <Col md="6" lg="6" xl="6" className="text-right">
-                          <ButtonToolbar className="modal__footer flex justify-content-right w100">
-                            <Button
-                              outline
-                              color="primary"
-                              className="mr-3"
-                              onClick={onClickCancel}
-                            >
-                              Cancel
-                            </Button>{" "}
-                            <Button
-                              type="submit"
-                              disabled={loading}
-                              className="btn btn-primary"
-                              color="#ffffff"
-                            >
-                              Save
-                            </Button>
-                          </ButtonToolbar>
-                        </Col>
-                      </Row>
-
-                      <Row>
-                        <Col md="6" lg="4" xl="4">
-                          <Field name="name">
-                            {({ input, meta }) => (
-                              <div className="form__form-group">
-                                <span className="form__form-group-label">
-                                  Unit
-                                </span>
-                                <div className="form__form-group-field">
-                                  <div className="form__form-group-row">
-                                    <input
-                                      type="text"
-                                      {...input}
-                                      placeholder="unit"
-                                    />
-                                    {meta.touched && meta.error && (
-                                      <span className="form__form-group-error">
-                                        {meta.error}
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                          </Field>
-                        </Col>
-                        <Col md="6" lg="4" xl="4">
-                          <Field name="description">
-                            {({ input, meta }) => (
-                              <div className="form__form-group">
-                                <span className="form__form-group-label">
-                                  Description
-                                </span>
-                                <div className="form__form-group-field">
-                                  <div className="form__form-group-row">
-                                    <input type="text" {...input} />
-                                    {meta.touched && meta.error && (
-                                      <span className="form__form-group-error">
-                                        {meta.error}
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                          </Field>
-                        </Col>
-                      </Row>
-                    </form>
-                  </>
-                )}
-              </Form>
-            </CardBody>
-            <Card>
-              <CardBody>
-                <Row>
+      <>
+        <Form onSubmit={onSubmit} initialValues={unitNumber}>
+          {({ handleSubmit, form, submitting, pristine, values }) => (
+            <>
+              <form className="form" onSubmit={handleSubmit}>
+                <Row className="w100">
                   <Col md="6" lg="6" xl="6">
-                    <Button
-                      style={{
-                        cursor: "pointer",
-                        paddingTop: 3,
-                        paddingBottom: 3,
-                      }}
-                      disabled={loading}
-                      className="btn btn-primary"
-                      color="#ffffff"
-                      onClick={toggleModal}
-                    >
-                      Participants
-                    </Button>
+                    <h3 className="mb-4">Edit Unit Number</h3>
+                  </Col>
+                  <Col md="6" lg="6" xl="6" className="text-right">
+                    <ButtonToolbar className="modal__footer flex justify-content-right w100">
+                      <Button
+                        outline
+                        color="primary"
+                        className="mr-3"
+                        onClick={onClickBack}
+                      >
+                        Back
+                      </Button>{" "}
+                      <Button
+                        type="submit"
+                        disabled={loading}
+                        className="btn btn-primary"
+                        color="#ffffff"
+                      >
+                        Save
+                      </Button>
+                    </ButtonToolbar>
                   </Col>
                 </Row>
+
                 <Row>
-                  <Col>
-                    <Table
-                      rowKey="id"
-                      columns={columnsReportParticipants}
-                      dataSource={unitNumberParticipants}
-                    />
+                  <Col md="6" lg="4" xl="4">
+                    <Field name="name">
+                      {({ input, meta }) => (
+                        <div className="form__form-group">
+                          <span className="form__form-group-label">Unit</span>
+                          <div className="form__form-group-field">
+                            <div className="form__form-group-row">
+                              <input
+                                type="text"
+                                {...input}
+                                placeholder="unit"
+                              />
+                              {meta.touched && meta.error && (
+                                <span className="form__form-group-error">
+                                  {meta.error}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </Field>
+                  </Col>
+                  <Col md="6" lg="4" xl="4">
+                    <Field name="description">
+                      {({ input, meta }) => (
+                        <div className="form__form-group">
+                          <span className="form__form-group-label">
+                            Description
+                          </span>
+                          <div className="form__form-group-field">
+                            <div className="form__form-group-row">
+                              <input type="text" {...input} />
+                              {meta.touched && meta.error && (
+                                <span className="form__form-group-error">
+                                  {meta.error}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </Field>
                   </Col>
                 </Row>
-              </CardBody>
-            </Card>
-          </Card>
-        </Col>
-      </Container>
+              </form>
+            </>
+          )}
+        </Form>
+        <Row>
+          <Col md="6" lg="6" xl="6">
+            <h4 className="mb-3">Participants</h4>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Table
+              rowKey="id"
+              columns={columnsReportParticipants}
+              dataSource={unitNumberParticipants}
+            />
+          </Col>
+        </Row>
+      </>
     );
   }
 };
@@ -285,3 +229,14 @@ export default withRouter(
     organization: state.organization,
   }))(Edit)
 );
+
+const ButtonViewUser = ({user, program}) => (
+  <Route render={({ history}) => (
+    <a
+      onClick={() => { history.push(`/program/${program.id}/user/view/${user.id}`) }}
+      className="link"
+    >
+      View
+    </a>
+  )} />
+)

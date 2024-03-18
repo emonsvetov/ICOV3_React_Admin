@@ -12,6 +12,7 @@ import {
   flashSuccess,
   flashError,
 } from "@/shared/components/flash";
+import Edit from "./edit";
 
 const UnitNumbersDataModal = ({
   isOpen,
@@ -27,6 +28,7 @@ const UnitNumbersDataModal = ({
   };
   const dispatch = useDispatch();
   const [step, setStep] = useState(0);
+  const [editableUnitId, setEditableUnitId] = useState(null);
   const [loading, setLoading] = useState(false);
   var [data, setData] = useState(data);
   var [programUnitNumbers, setProgramUnitNumbers] = useState([]);
@@ -74,16 +76,34 @@ const UnitNumbersDataModal = ({
       });
   };
 
+  const onClickEdit = (unitId) => {
+    if (unitId) {
+      setStep(3);
+      setEditableUnitId(unitId);
+    }
+  };
+
   const RenderActions = ({ row }) => {
     return (
       <>
-        <Link
+        <span
+          className="table-hover text-primary "
+          style={{ cursor: "pointer" }}
+          color="#ffffff"
+          onClick={() => onClickEdit(row.original.id)}
+        >
+          Edit
+        </span>{" "}
+        |
+        <span
           className="table-hover text-primary"
+          style={{ cursor: "pointer" }}
           color="#ffffff"
           onClick={() => onClickRemove(row.original)}
         >
+          {" "}
           Delete
-        </Link>
+        </span>
       </>
     );
   };
@@ -168,6 +188,9 @@ const UnitNumbersDataModal = ({
           )}
           {step === 1 && (
             <AddUnitNumbersForm onStep={handleStep} program={data} />
+          )}
+          {step === 3 && editableUnitId && (
+            <Edit onStep={handleStep} unitId={editableUnitId} />
           )}
         </Col>
       </ModalBody>
