@@ -29,7 +29,7 @@ const ProgramViewUser = ({organization, program}) => {
 
     const fetchUser = async (userId) => {
         try {
-            const response = await axios.get(`/organization/${organization.id}/user/${userId}`);
+            const response = await axios.get(`/organization/${program.organization_id}/program/${program.id}/user/${userId}`);
             return response.data;
         } catch (e) {
             throw new Error(`API error:${e?.message}`);

@@ -24,9 +24,9 @@ import getUserPointBalance from "../../../../../service/getUserBalances";
 const queryClient = new QueryClient();
 
 const ProgramViewUserProfile = ({ organization, program, data }) => {
+  console.log(data)
   let { programId, userId } = useParams();
   const [pointsBalance, setPointsBalance] = useState();
-  console.log("program", program);
   useEffect(() => {
     if (organization?.id && programId && userId) {
       getUserPointBalance(organization.id, programId, userId).then((point) => {
@@ -81,7 +81,7 @@ const ProgramViewUserProfile = ({ organization, program, data }) => {
           <p>{data.phone}</p>
         </Col>
       </Row>
-      {program.uses_units && <Row>
+      {program.uses_units && data?.isParticipant && <Row>
         <Col md="2" lg="2" xl="2" sm="2" className="label">
           <p>Unit Number:</p>
         </Col>
