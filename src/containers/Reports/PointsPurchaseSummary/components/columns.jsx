@@ -14,28 +14,28 @@ export const PROGRAM_COLUMNS = [
         // Build our expander column
         id: 'expander', // Make sure it has an ID
         Header: ({getToggleAllRowsExpandedProps, isAllRowsExpanded}) => (
-            <span {...getToggleAllRowsExpandedProps()}>
+          <span {...getToggleAllRowsExpandedProps()}>
             {isAllRowsExpanded ? '' : ''}
           </span>
         ),
         Cell: ({row}) =>
-            // Use the row.canExpand and row.getToggleRowExpandedProps prop getter
-            // to build the toggle for expanding a row
-            row.canExpand ? (
-                <span
-                    {...row.getToggleRowExpandedProps({
-                        style: {
-                            // We can even use the row.depth property
-                            // and paddingLeft to indicate the depth
-                            // of the row
-                            paddingLeft: `${row.depth * 2}rem`,
-                        },
-                    })}
-                >
+          // Use the row.canExpand and row.getToggleRowExpandedProps prop getter
+          // to build the toggle for expanding a row
+          row.canExpand ? (
+            <span
+              {...row.getToggleRowExpandedProps({
+                  style: {
+                      // We can even use the row.depth property
+                      // and paddingLeft to indicate the depth
+                      // of the row
+                      paddingLeft: `${row.depth * 2}rem`,
+                  },
+              })}
+            >
               {row.isExpanded ? <MinusIcon className="chevron-expand"/> : <AddIcon className="chevron-expand"/>}
             </span>
-            ) : null,
-        width: 70
+          ) : null,
+        width: 100
     },
     {
         Header: "Program",
@@ -45,7 +45,7 @@ export const PROGRAM_COLUMNS = [
             const space = row.original.dinamicDepth === 1 ? '' : ' • ';
             const boldRow = row.original.dinamicDepth === 1;
             return <div style={boldRow ? {fontWeight: 'bold'} : {}}>{space.repeat(row.original.dinamicDepth)}<Link
-                to={`/program/view/${row.original.id}`}>{value}</Link></div>
+              to={`/program/view/${row.original.id}`}>{value}</Link></div>
         },
         width: 200
     },
@@ -54,7 +54,7 @@ export const PROGRAM_COLUMNS = [
         accessor: "account_holder_id",
         Footer:"",
         maxWidth: 100,
-      },
+    },
     {
         Header: "Eligible Participants",
         accessor: "participants_count",
@@ -65,8 +65,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.participants_count) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.participants_count) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{totalValue}</span>;
         },
@@ -81,12 +81,12 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_1) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_1) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
-    
+
     },
     {
         Header: "Feb",
@@ -98,8 +98,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_2) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_2) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
@@ -114,8 +114,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_3) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_3) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
@@ -130,8 +130,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_4) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_4) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
@@ -146,8 +146,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_5) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_5) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
@@ -162,8 +162,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_6) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_6) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
@@ -178,8 +178,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_7) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_7) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
@@ -194,8 +194,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_8) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_8) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
@@ -210,8 +210,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_9) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_9) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
@@ -226,8 +226,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_10) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_10) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
@@ -242,8 +242,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_11) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_11) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
@@ -258,8 +258,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_12) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.month_12) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
@@ -274,8 +274,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.YTD) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.YTD) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
@@ -290,8 +290,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.Q1) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.Q1) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
@@ -306,8 +306,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.Q2) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.Q2) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
@@ -322,8 +322,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.Q3) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.Q3) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
@@ -338,8 +338,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.Q4) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.Q4) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
@@ -354,11 +354,27 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.per_participant) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.per_participant) + sum : 0 + sum, 0),
+              [rows],
             );
             const avg = Math.round(totalValue / flatRows.length);
             return <span>{`$${parseFloat(avg).toFixed(2)}`}</span>;
+        },
+    },
+    {
+        Header: "Avg Per Quarter",
+        accessor: "avg_per_quarter",
+        Cell: ({row, value}) => {
+            const boldRow = row.original.dinamicDepth === 1;
+            return <div style={boldRow ? {fontWeight: 'bold'} : {}}>{`$${parseFloat(value).toFixed(2)}`}</div>
+        },
+        Footer: (info) => {
+            const {rows, flatRows} = info;
+            const totalValue = useMemo(
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.avg_per_quarter) + sum : 0 + sum, 0),
+              [rows],
+            );
+            return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
     },
     {
@@ -371,8 +387,24 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.avg_per_month) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.avg_per_month) + sum : 0 + sum, 0),
+              [rows],
+            );
+            return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
+        },
+    },
+    {
+        Header: "Quarter Target",
+        accessor: "quarterly_target",
+        Cell: ({row, value}) => {
+            const boldRow = row.original.dinamicDepth === 1;
+            return <div style={boldRow ? {fontWeight: 'bold'} : {}}>{`$${parseFloat(value).toFixed(2)}`}</div>
+        },
+        Footer: (info) => {
+            const {rows, flatRows} = info;
+            const totalValue = useMemo(
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.quarterly_target) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
@@ -387,8 +419,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.monthly_target) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.monthly_target) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
@@ -403,8 +435,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.annual_target) + sum : 0 + sum, 0),
-                [rows],
+              () => rows.reduce((sum, row) => row.original.dinamicDepth === 1 ? Number(row.values.annual_target) + sum : 0 + sum, 0),
+              [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
