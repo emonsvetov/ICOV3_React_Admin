@@ -55,6 +55,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   const [media, setMedia] = useState([]);
   const [mediaTypes, setMediaTypes] = useState([]);
   const [mediaType, setMediaType] = useState('');
+  const [currentMedia, setCurrentMedia] = useState(null);
   const [uploadedMeta, setUploadedMeta] = useState({});
   const [iconMeta, setIconMeta] = useState({});
   const [fileName, setFileName] = React.useState("");
@@ -64,6 +65,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   const [tempLink, setTempLink] = useState()
   const [menuItems, setMenuItems] = useState([]);
   const [currentMenuItem, setCurrentMenuItem] = useState();
+  const [currentForm, setCurrentForm] = useState(null);
   const MAX_SIZE = 10485760
   const [fileUploadSizeError, setFileUploadSizeError] = useState(false)
 
@@ -99,6 +101,34 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
     }
   }
 
+  const handleChangeMedia = (value) =>{
+    if(value){
+      setCurrentMedia(value)
+      getData(value.value)
+    }
+    else{
+      setCurrentMedia(null)
+      setMedia([])
+    }
+    setFileName('')
+  }
+
+  const handleChangeForms = (value) =>{
+    if(value){
+      setCurrentForm({
+        value: value.value,
+        label: value.label
+      })
+      setCurrentForm(value)
+      getIframe(value.value)
+    }
+    else{
+      setCurrentForm(null)
+      setTempLink('')
+      setLink('')
+    }
+  }
+
   const getData = async (media_type) => {
 
     const url = axios.defaults.baseURL + `/organization/${organization.id}/program/${program.id}/media/${media_type}`;
@@ -109,11 +139,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       const data = response.data;
       setMediaType(media_type);
       setMedia(data);
-      
-      let temp = menuItems.filter(iframe =>  iframe.id === media_type)[0];    
-      setCurrentMenuItem(temp);
-      setTempLink(temp.menu_link);
-
+  
       return data;
     } catch (e) {
       throw new Error(`API error:${e?.message}`);
@@ -124,8 +150,8 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   const getIframe = (value) => {    
     let temp = menuItems.filter(iframe =>  iframe.id === value)[0];    
     setCurrentMenuItem(temp); 
-
-    setTempLink(temp.menu_link);
+    setLink(temp.menu_link || "")
+    setTempLink(temp.menu_link || "");
     getData(temp.id);
   }
 
@@ -161,9 +187,9 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
     setMedia(items);
   };
 
-  const handleSubmit = values => {
+  const onSubmit = values => {
     let saveUrl = `/organization/${organization.id}/program/${program.id}/digital-media`;
-
+    setLoading(true);
     let data = new FormData();
     data.append('file', JSON.stringify(uploadedMeta))
     data.append('icon', JSON.stringify(iconMeta))
@@ -183,6 +209,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
             setDropZoneKey( dropZoneKey );
 
         }
+        setLoading(false)
       })
       .catch(error => {
         console.log(JSON.stringify(error.response.data.errors));
@@ -195,7 +222,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   const saveLinkForIframe = () => {
     let saveUrl = axios.defaults.baseURL +  `/organization/${organization.id}/program/${program.id}/digital-media-type-iframe`;
     let data = new FormData();
-    
+    setLoading(true)
     data.append('program_media_type_id', currentMenuItem.id)
     data.append('name', currentMenuItem.label);
     data.append('is_menu_item', 1);
@@ -205,8 +232,9 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       .then((res) => {
         if (res.status === 200) {
           loadMediTypes();
-          setTempLink("")
+          // setTempLink("")
         }
+        setLoading(false)
       })
       .catch(error => {
         dispatch(sendFlashMessage(JSON.stringify(error.response.data.errors), 'alert-danger'))
@@ -217,6 +245,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
 
   const handleSubmitMenuItem = (linkUrl, inputValue) => {
 
+    setIsLoading(true);
     let saveUrl = axios.defaults.baseURL +  `/organization/${organization.id}/program/${program.id}/digital-media-type`;
 
     let data = new FormData();
@@ -228,20 +257,44 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       .then((res) => {
         // console.log(res)
         if (res.status === 200) {
+          setCurrentForm({
+            value: res.data.program_media_type_id,
+            label: toTitleCase(res.data.name)
+          })
+          let newMenuItem = {
+            value: res.data.program_media_type_id,
+            url: res.data.menu_link,
+            id: res.data.program_media_type_id,
+            menu_link:res.data.menu_link,
+            label: toTitleCase(res.data.name)
+          }
+          setCurrentMenuItem(newMenuItem)
+          setLink('')
+          setTempLink('')
           loadMediTypes();
         }
+        setIsLoading(false)
       })
       .catch(error => {
         dispatch(sendFlashMessage(JSON.stringify(error.response.data.errors), 'alert-danger'))
-        setLoading(false)
+        setIsLoading(false)
         throw new Error(`API error:${error?.message}`);
       });
   }
 
-  const validate = values => {
+  const validate = values => {    
     let errors = {}
-    if (!mediaType){
+    if (!currentMedia){
       errors.category = 'The category field is required.';
+    }
+    if (isEmpty(iconMeta)){
+      errors.icon_upload = 'The preview image field is required.';
+    }
+    if (isEmpty(uploadedMeta)){
+      errors.media_upload = 'The upload field is required.';
+    }
+    if (!fileName){
+      errors.fileName = 'The file name field is required.';
     }
     return errors
   }
@@ -253,13 +306,21 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   const handleChangeStatus = ({meta, file}, status) => {
     
     if (status === 'done') {
-      if (!fileName) {
-        setFileName(meta.name.substr(0, meta.name.lastIndexOf('.')));
+      let name = meta.name.substr(0, meta.name.lastIndexOf('.'));
+      if (!fileName || fileName !== name) {
+        setFileName(name);
       }
       setUploadedMeta(meta);
+      setFileUploadSizeError(false);
     }
     if (status === "error_file_size"){
       setFileUploadSizeError(true)
+    }
+    else{
+      setFileUploadSizeError(false)
+    }
+    if(status == 'removed'){
+      setFileName('');
     }
   }
 
@@ -283,38 +344,35 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
 
     let data = new FormData();
     data.append('name', inputValue);
-    data.append('is_menu_item', 1);
-
+    data.append('is_menu_item', 0);
+    
     axios.post(saveUrl, data)
       .then((res) => {        
         if (res.status === 200) {
-          menuItems.push({
-            id: res.data.program_media_type_id,
-            label: res.data.name,
-            // menu_link: res.data.menu_link,
-            // url: res.data.menu_link,
-            // value: res.data.program_media_type_id
-          });          
-          setMenuItems(menuItems);
+          loadMediTypes();
           setMedia([]);
+          setMediaType(res.data.program_media_type_id)
+          setCurrentMedia({
+            value: res.data.program_media_type_id,
+            label: toTitleCase(res.data.name)
+          })
         }
+        setIsLoading(false)
       })
       .catch(error => {
         dispatch(sendFlashMessage(JSON.stringify(error.response.data.errors), 'alert-danger'))
-        setLoading(false)
+        setIsLoading(false)
         throw new Error(`API error:${error?.message}`);
       });
   }
 
   const selectCreateIframe = (inputValue) => {
-   if (link === "")
     handleSubmitMenuItem(link, inputValue)
   }
 
   const addMenus = () => {
     if (link !== "") {      
-      setLink("");
-      setTempLink(link);     
+      setTempLink(link); 
     }
   
   }
@@ -323,18 +381,17 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
     let id = currentMenuItem.id;
 
     let deleteUrl = axios.defaults.baseURL +  `/organization/${organization.id}/program/${program.id}/digital-media-type-url-delete`;
-
     let data = new FormData();
     data.append('program_media_type_id', id);
    
     axios.post(deleteUrl, data)
       .then((res) => {        
         if (res.status === 200) {
-          let temp_array = [...menuItems];
-          temp_array.splice(id, 1);
-          setMenuItems(temp_array);
+          loadMediTypes();
           setTempLink("");
+          setLink("")
         }
+        setLoading(false)
       })
       .catch(error => {
         console.log(error)
@@ -346,11 +403,20 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   }
 
   const setMediaTab = () => {
-    setTab(1);
+    if(tab !== 1){
+      setTempLink('')
+      setLink('')
+      setTab(1);
+      setCurrentForm(null)
+    }
   }
 
   const setFormsTab = () => {
-    setTab(2);
+    if(tab !== 2){
+      setMedia([])
+      setTab(2);
+      setCurrentMedia(null)
+    }
   }
 
   function toTitleCase(str) {
@@ -367,7 +433,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
           <CardBody className='pt-0'>
               {tab === 1 ?
                 <Form
-                  onSubmit={handleSubmit}
+                  onSubmit={onSubmit}
                   validate={validate}
                   render={({handleSubmit, form, submitting, pristine, values}) => (
                     <form className="form" onSubmit={handleSubmit}>
@@ -378,27 +444,30 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                             <h3>Upload Digital Media</h3>
                             <h5 className="colorgrey">{program.name}</h5>
                             <div style={{paddingTop: '25px', paddingBottom:'25px'}}>
-                              <Button  color="primary" className="mr-3" onClick={()=>setTab(1)}>media</Button>
-                              <Button  color="primary" className="mr-3" onClick={()=>setTab(2)}>forms</Button>
+                              <Button  color="primary" className="mr-3" onClick={setMediaTab}>media</Button>
+                              <Button  color="primary" className="mr-3" onClick={setFormsTab}>forms</Button>
                             </div>
+                          </div>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md="12">
                             <div>
                               <Field name="category">
                                 {({ input, meta }) => (
                                   <div className="form__form-group">
                                     <div className="form__form-group-field">
-                                      <div className="form__form-group-row" style={{position: '', marginTop: '0px', textTransform:"capitalize"}}>
+                                      <div className="form__form-group-row" style={{position: '', marginTop: '0px', textTransform:"capitalize", zIndex: 100}}>
                                         <CreatableSelect
                                           name="category"
                                           isClearable
                                           isDisabled={isLoading}
                                           isLoading={isLoading}
                                           options={mediaTypes}
-                                          style={{textTransform:"loweracase"}}
                                           onCreateOption={selectCreateOption}
                                           placeholder='Select or Create a Menu Category'
-                                          onChange={value =>
-                                            getData(value.value)
-                                          }
+                                          onChange={ handleChangeMedia }
+                                          value={currentMedia}
                                         />
                                         {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                                       </div>
@@ -406,58 +475,68 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                   </div>
                                 )}
                               </Field>
-
-                            </div>
                           </div>
                         </Col>
                       </Row>
                       <Row>
                         <Col md="4">
-                          <div className="form__form-group">
-                            <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
-                              <Dropzone key={dropZoneKey}
-                                getUploadParams={getUploadParams}
-                                accept="image/jpeg, image/png, image/gif"
-                                // accept="image/*,audio/*,video/*"
-                                name="media_upload"
-                                inputContent="Select Preview Image"
-                                maxFiles={1}
-                                maxSizeBytes ={MAX_SIZE}    
-                                onSubmit={false}
-                                onChangeStatus={handleUploadIcon}
-                              />
-                            </div>
-                          </div>
+                          <Field name="icon_upload">
+                            {({input, meta}) => (
+                              <div className="form__form-group">
+                                <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
+                                  <Dropzone key={dropZoneKey}
+                                    getUploadParams={getUploadParams}
+                                    accept="image/jpeg, image/png, image/gif"
+                                    // accept="image/*,audio/*,video/*"
+                                    name="icon_upload"
+                                    inputContent="Select Preview Image"
+                                    maxFiles={1}
+                                    maxSizeBytes ={MAX_SIZE}    
+                                    onSubmit={false}
+                                    onChangeStatus={handleUploadIcon}
+                                  />
+                                  {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                </div>
+                              </div>
+                              )}
+                          </Field>
                         </Col>
                         <Col md="4">
-                          <div className="form__form-group">
-                            <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
-                              <Dropzone key={dropZoneKey}
-                                getUploadParams={getUploadParams}
-                                accept={fileTypes.join(',')}
-                                name="media_upload"
-                                inputContent="Select File"
-                                maxFiles={1}
-                                onSubmit={false}
-                                maxSizeBytes ={MAX_SIZE}
-                                onChangeStatus={handleChangeStatus}
-                              />
-                            </div>
-                            {fileUploadSizeError && <p className="form__form-group-error">File Size is too big</p>}
-                          </div>
+                          <Field name='media_upload'>
+                            {({input, meta}) => (
+                              <div className="form__form-group">
+                                <div className="form__form-group-field  flex-column" style={{position: '', marginTop: '0px'}}>
+                                  <Dropzone key={dropZoneKey}
+                                    getUploadParams={getUploadParams}
+                                    accept={fileTypes.join(',')}
+                                    name="media_upload"
+                                    inputContent="Select File"
+                                    maxFiles={1}
+                                    onSubmit={false}
+                                    maxSizeBytes ={MAX_SIZE}
+                                    onChangeStatus={handleChangeStatus}
+                                  />
+                                </div>
+                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                {fileUploadSizeError && <p className="form__form-group-error">File Size is too big</p>}
+                              </div>
+                            )}
+                          </Field>
                         </Col>
          
                         <Col md="4">
                           <div>
-                            <Field name="name">
+                            <Field name="fileName">
                               {({input, meta}) => (
                                 <div className="form__form-group">
                                   <span className="form__form-group-label">Enter File Name </span>
                                   <div>
                                     <input onChange={onChangeFileName}
+                                          name='fileName'
                                           style={{borderWidth: 1, borderColor: 'gray'}}
                                           type="text" value={fileName}
                                           placeholder="File Name"/>
+                                    {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
                                   </div>
                                 </div>
                               )}
@@ -525,9 +604,8 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                   options={menuItems}
                                   onCreateOption={selectCreateIframe}
                                   placeholder='Select or Create a Menu Category'
-                                  onChange={value =>
-                                    getIframe(value.value)
-                                  }
+                                  onChange={ handleChangeForms }
+                                  value={ currentForm }
                                 />
 
                             </div>
@@ -542,7 +620,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                       placeholder="Link Url"/>
                                 </div>
                                 <div className='col'>      
-                                  <Button  color="primary" className="" onClick={()=>addMenus()}>Add</Button>
+                                  <Button  color="primary" disabled={!link || link === tempLink} className="" onClick={()=>addMenus()}>{!tempLink ? "Add" : "Update"}</Button>
                                 </div>
                               </div>
                           </div>
@@ -584,12 +662,12 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                       <Row>
                         <Col>
                           <div>
-                            <Button onClick={saveIframe} className="btn btn-primary"
+                            <Button onClick={saveIframe} disabled={loading} className="btn btn-primary"
                                     color="#ffffff">Save</Button>
                           </div>
                         </Col>
                       </Row>
-                    </>
+                  </>
     
               }
           </CardBody>
