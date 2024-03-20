@@ -18,6 +18,7 @@ import {
 } from 'antd';
 import {any} from "prop-types";
 import {CSVLink} from "react-csv";
+import { getFirstDay, getLastDay } from '@/shared/helpers';
 
 const { Option } = Select;
 
@@ -34,13 +35,13 @@ interface SupplierRedemptionFilterProps {
 }
 const today = new Date();
 
-const oneYearAgo = new Date(today);
-oneYearAgo.setFullYear(today.getFullYear() - 1);
+const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+const lastDay = new Date(today.getFullYear(), today.getMonth()+1, 0);
 
 export const defFilter = {
     merchants: null,
-    from: oneYearAgo.toISOString().split('T')[0],
-    to: today.toISOString().split('T')[0],
+    from: getFirstDay().toISOString().split('T')[0],
+    to: getLastDay().toISOString().split('T')[0],
     active: true,
     reportKey: 'sku_value',
     codes: null,
@@ -143,7 +144,8 @@ export const SupplierRedemptionFilter: FC<SupplierRedemptionFilterProps> = ({fil
                         label="Merchants"
                         //initialValue={defFilter.merchants}
                     >
-                        <Select mode="multiple" placeholder="Please select merchants">
+                        <Select mode="multiple" placeholder="Please select merchants" filterOption={(input, option) =>
+                            (option?.children ?? '').toLowerCase().includes(input.toLowerCase())}>
                             {merchants.map(item => (
                                 <Option key={item.id} value={item.id}>{item.name}</Option>
                             ))}

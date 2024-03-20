@@ -53,6 +53,46 @@ const MerchantsModal = ({ isOpen, setOpen, toggle, theme, rtl, organization, dat
   );
 };
 const DataTable = ({ toggle, organization, program }) => {
+  const fetchMerchantData = async(
+    page,
+    pageSize,
+    pageFilterO = null,
+    pageSortBy
+  ) => {
+    // const offset = page * pageSize;
+    const params = [];
+    let paramStr = "";
+    if (pageFilterO) {
+      if (pageFilterO.keyword !== "undefined" && pageFilterO.keyword)
+        params.push(`keyword=${pageFilterO.keyword}`);
+      paramStr = params.join("&");
+    }
+
+    if (!pageSortBy.length) {
+      pageSortBy = [{'id': 'name'}, {'desc': 'true'}];
+    }
+
+    if (pageSortBy.length > 0) {
+      const sortParams = pageSortBy[0];
+      const sortyByDir = sortParams.desc ? "desc" : "asc";
+      paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`;
+    }
+    try {
+      const response = await axios.get(
+        `/organization/${program.organization_id}/merchant?page=${page+1}&limit=${pageSize}&${paramStr}`
+      );
+      // console.log(response)
+      if (response.data.length === 0) return { results: [], count: 0 };
+      const data = {
+        results: renameChildrenToSubrows(response.data.data),
+        count: response.data.total,
+      };
+      // console.log(data)
+      return data;
+    } catch (e) {
+      throw new Error(`API error:${e?.message}`);
+    }
+  };
 
   const LOGO_PUBLIC_URL = `${process.env.REACT_APP_API_STORAGE_URL}`;
 
@@ -426,17 +466,17 @@ const DataTable = ({ toggle, organization, program }) => {
       </Container>
     );
 };
-// const Sorting = ({ column }) => (
-//   <span className="react-table__column-header sortable">
-//     {column.isSortedDesc === undefined ? (
-//       <SortIcon />
-//     ) : (
-//       <span>
-//         {column.isSortedDesc ? <SortDescendingIcon /> : <SortAscendingIcon />}
-//       </span>
-//     )}
-//   </span>
-// );
+const Sorting = ({ column }) => (
+  <span className="react-table__column-header sortable">
+    {column.isSortedDesc === undefined ? (
+      <SortDescendingIcon />
+    ) : (
+      <span>
+        {column.isSortedDesc ? <SortDescendingIcon /> : <SortAscendingIcon />}
+      </span>
+    )}
+  </span>
+);
 
 const TableWrapper = ({ toggle, organization, program }) => {
   return (

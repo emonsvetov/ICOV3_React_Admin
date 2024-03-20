@@ -40,6 +40,7 @@ export const ReclaimPoints: FC<ReclaimPointsProps> = ({user, organization, progr
     const [dataItems, setDataItems] = useState([]);
     const [userBalance, setUserBalance] = useState(0);
     const [reclaimPointsSum, setReclaimPointsSum] = useState(0);
+    const [reclaimPointsTitle, setReclaimPointsTitle] = useState("");
 
     const handleReclaimPoints = () => {
         reclaimItems.map(value => {
@@ -92,7 +93,14 @@ export const ReclaimPoints: FC<ReclaimPointsProps> = ({user, organization, progr
                 sum += parseFloat(item.points_value);
             }
         });
+        sum = parseFloat(sum.toFixed(2));
+        if(Number.isInteger(sum)) {
+            sum += '.00';
+        }
         setReclaimPointsSum(sum);
+        if (userBalance < sum) {
+            setReclaimPointsTitle("Reclaim is not possible as it exceeds the current balance")
+        }
     }, [reclaimItems, dataItems]);
 
     useEffect(() => {
@@ -103,14 +111,14 @@ export const ReclaimPoints: FC<ReclaimPointsProps> = ({user, organization, progr
         <>
             <Row style={{marginBottom: 10}}>
                 <Col span={8}>
-                    <Button type="primary" onClick={handleReclaimPoints} disabled={userBalance < reclaimPointsSum || reclaimPointsSum <= 0}>
+                    <Button title={reclaimPointsTitle} type="primary" onClick={handleReclaimPoints} disabled={parseFloat(userBalance) < parseFloat(reclaimPointsSum) || parseFloat(reclaimPointsSum) <= 0}>
                         Reclaim Points
                     </Button>
                 </Col>
                 <Col span={11}></Col>
                 <Col span={5}>
                     Balance <span style={{ color: userBalance > 0 ? 'green' : userBalance < 0 ? 'red' : 'grey' }}> ${userBalance} </span>
-                    Reclaim Points Sum <span style={{ color: reclaimPointsSum > userBalance ? 'red' : 'inherit' }}> {reclaimPointsSum}$ </span>
+                    Reclaim Points Sum <span style={{ color: parseFloat(reclaimPointsSum) > parseFloat(userBalance) ? 'red' : 'inherit' }}> ${reclaimPointsSum} </span>
                 </Col>
             </Row>
             <Table

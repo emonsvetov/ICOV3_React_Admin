@@ -109,6 +109,7 @@ const EngagementModal = ({
                       name="uses_social_wall"
                       label="Enable Social Wall"
                       checked={data?.uses_social_wall}
+                      onChange={() => {data.uses_social_wall = !data.uses_social_wall}}
                     />
                   </div>
                 </Col>
@@ -118,6 +119,7 @@ const EngagementModal = ({
                       name="allow_hierarchy_to_view_social_wall"
                       label="Other programs in this hierarchy can view this programs social wall"
                       checked={data?.allow_hierarchy_to_view_social_wall}
+                      onChange={() => {data.allow_hierarchy_to_view_social_wall = !data.allow_hierarchy_to_view_social_wall}}
                     />
                   </div>
                 </Col>
@@ -127,6 +129,7 @@ const EngagementModal = ({
                       name="can_view_hierarchy_social_wall"
                       label="This program can view other programs social wall"
                       checked={data?.can_view_hierarchy_social_wall}
+                      onChange={() => {data.can_view_hierarchy_social_wall = !data.can_view_hierarchy_social_wall}}
                     />
                   </div>
                 </Col>
@@ -138,6 +141,7 @@ const EngagementModal = ({
                       name="managers_can_post_social_wall_messages"
                       label="Managers can post messages"
                       checked={data?.managers_can_post_social_wall_messages}
+                      onChange={() => {data.managers_can_post_social_wall_messages = !data.managers_can_post_social_wall_messages}}
                     />
                   </div>
                 </Col>
@@ -147,6 +151,7 @@ const EngagementModal = ({
                       name="social_wall_separation"
                       label="Allow participants to view the social wall of any program he is not currently logged into"
                       checked={data?.social_wall_separation}
+                      onChange={() => {data.social_wall_separation = !data.social_wall_separation}}
                     />
                   </div>
                 </Col>
@@ -156,6 +161,7 @@ const EngagementModal = ({
                       name="remove_social_from_pending_deactivation"
                       label="Remove Social From Pending Deactivation View"
                       checked={data?.remove_social_from_pending_deactivation}
+                      onChange={() => {data.remove_social_from_pending_deactivation = !data.remove_social_from_pending_deactivation}}
                     />
                   </div>
                 </Col>
@@ -172,6 +178,7 @@ const EngagementModal = ({
                       name="uses_leaderboards"
                       label="Enable Leaderboards"
                       checked={data?.uses_leaderboards}
+                      onChange={() => {data.uses_leaderboards = !data.uses_leaderboards}}
                     />
                   </div>
                 </Col>
@@ -181,6 +188,7 @@ const EngagementModal = ({
                       name="allow_view_leaderboards_not_logged_into"
                       label="Allow participants to view leaderboards of any program he is not currently logged into"
                       checked={data?.allow_view_leaderboards_not_logged_into}
+                      onChange={() => {data.allow_view_leaderboards_not_logged_into = !data.allow_view_leaderboards_not_logged_into}}
                     />
                   </div>
                 </Col>
@@ -190,6 +198,7 @@ const EngagementModal = ({
                       name="share_siblings_leader_board"
                       label="Share sibling leaderboards"
                       checked={data?.share_siblings_leader_board}
+                      onChange={() => {data.share_siblings_leader_board = !data.share_siblings_leader_board}}
                     />
                   </div>
                 </Col>
@@ -201,6 +210,7 @@ const EngagementModal = ({
                       name="use_one_leaderboard"
                       label="Use one leaderboard"
                       checked={data?.use_one_leaderboard}
+                      onChange={() => {data.use_one_leaderboard = !data.use_one_leaderboard}}
                     />
                   </div>
                 </Col>
@@ -218,6 +228,7 @@ const EngagementModal = ({
                       name="uses_peer2peer"
                       checked={data?.uses_peer2peer}
                       label="Enable Peer to Peer"
+                      onChange={() => {data.uses_peer2peer = !data.uses_peer2peer}}
                     />
                   </div>
                 </Col>
@@ -227,6 +238,7 @@ const EngagementModal = ({
                       name="allow_award_peers_not_logged_into"
                       label="Allow participants to award peers in any program he is not currently logged into"
                       checked={data?.allow_award_peers_not_logged_into}
+                      onChange={() => {data.allow_award_peers_not_logged_into = !data.allow_award_peers_not_logged_into}}
                     />
                   </div>
                 </Col>
@@ -236,6 +248,7 @@ const EngagementModal = ({
                       name="allow_search_peers_not_logged_into"
                       label="Allow participants to search for peers in any program he is not currently logged into"
                       checked={data?.allow_search_peers_not_logged_into}
+                      onChange={() => {data.allow_search_peers_not_logged_into = !data.allow_search_peers_not_logged_into}}
                     />
                   </div>
                 </Col>
@@ -247,6 +260,7 @@ const EngagementModal = ({
                       name="uses_hierarchy_peer2peer"
                       label="Use hierarchy peer 2 peer"
                       checked={data?.uses_hierarchy_peer2peer}
+                      onChange={() => {data.uses_hierarchy_peer2peer = !data.uses_hierarchy_peer2peer}}
                     />
                   </div>
                 </Col>
@@ -256,6 +270,7 @@ const EngagementModal = ({
                       name="share_siblings_peer2peer"
                       label="Share sibling's peer to peer"
                       checked={data?.share_siblings_peer2peer}
+                      onChange={() => {data.share_siblings_peer2peer = !data.share_siblings_peer2peer}}
                     />
                   </div>
                 </Col>
@@ -273,6 +288,7 @@ const EngagementModal = ({
                       name="uses_goal_tracker"
                       label="Enable goal tracker"
                       checked={data?.uses_goal_tracker}
+                      onChange={() => {data.uses_goal_tracker = !data.uses_goal_tracker}}
                     />
                   </div>
                 </Col>
@@ -285,13 +301,19 @@ const EngagementModal = ({
               <Row>
                     <Col sm="6" md="6" lg="4" xl="4">
                       <div className="form__form-group">
-                        <CheckboxField name="uses_units" label="Uses units" checked={data?.uses_units}/>
+                        <CheckboxField 
+                          name="uses_units" 
+                          label="Uses units" 
+                          checked={data?.uses_units}
+                          onChange={() => {data.uses_units = !data.uses_units}}
+                        />
                       </div>
                       <div className="form__form-group">
                         <CheckboxField
                           name="allow_multiple_participants_per_unit"
                           label="Allow multiple participants per unit"
                           checked={data?.allow_multiple_participants_per_unit}
+                          onChange={() => {data.allow_multiple_participants_per_unit = !data.allow_multiple_participants_per_unit}}
                         />
                       </div>
                     </Col>
@@ -301,6 +323,7 @@ const EngagementModal = ({
                           name="enable_how_are_you_feeling"
                           label="How are you feeling"
                           checked={data?.enable_how_are_you_feeling}
+                          onChange={() => {data.enable_how_are_you_feeling = !data.enable_how_are_you_feeling}}
                         />
                       </div>
                       <div className="form__form-group">
@@ -308,6 +331,7 @@ const EngagementModal = ({
                           name="enable_referrals"
                           label="Referrals"
                           checked={data?.enable_referrals}
+                          onChange={() => {data.enable_referrals = !data.enable_referrals}}
                         />
                       </div>
                     </Col>
@@ -317,6 +341,7 @@ const EngagementModal = ({
                           name="allow_milestone_award"
                           label="Allow Milestone Awards"
                           checked={data?.allow_milestone_award}
+                          onChange={() => {data.allow_milestone_award = !data.allow_milestone_award}}
                         />
                       </div>
                     </Col>
