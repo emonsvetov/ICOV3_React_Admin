@@ -40,7 +40,8 @@ const OrgFilter = ({
 
   React.useEffect(() => {
     // console.log(organization)
-    const cachedTree = getCachedOrganizationTree()
+    // const cachedTree = getCachedOrganizationTree()
+    const cachedTree = null
     if( cachedTree ) {
       setOrgOptions(labelizeNamedData(JSON.parse(cachedTree)));
     } else {
