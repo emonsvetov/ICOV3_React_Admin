@@ -102,14 +102,14 @@ const Edit = ({ organization, onStep, unitId }) => {
   const columnsReportParticipants = [
     {
       title: "Participant Name",
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "name",
+      key: "name",
       render: (text) => <a>{text}</a>,
     },
     {
       title: "Email",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "email",
+      key: "email",
     },
     {
       title: "Action",
