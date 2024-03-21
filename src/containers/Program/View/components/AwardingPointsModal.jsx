@@ -361,7 +361,7 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                 </Row>
                 <Row>
                     <Col md="6" lg="4" xl="4">
-                        <Field name="unknown">
+                        <Field name="point_ratio_seperation">
                         {({ input, meta }) => (
                             <div className="form__form-group">
                                 <span className="form__form-group-label">Enter new points ratio</span>
