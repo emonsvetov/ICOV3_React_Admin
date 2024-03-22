@@ -65,6 +65,9 @@ const PointsPurchaseFilter = (
     setKeyword(e.target.value)
   }
 
+  const onChangeTargetParticipant = (e) => {
+    setTargetParticipant(e.target.value)
+  }
 
   const onClickFilter = (reset = false, exportToCsv = 0) => {
     let dataSet = {}
@@ -207,10 +210,6 @@ const PointsPurchaseFilter = (
 
   const onChangeYear = (value) => {
     setTargetYear(value)
-  }
-
-  const onChangeTargetParticipant = (e) => {
-    setTargetParticipant(e.target.value)
   }
 
   return (
