@@ -14,6 +14,7 @@ import EmailTemplateModal from '../EmailTemplate/IndexDataModal'
 import ActivateLiveModeProgramModal from "./ActivateLiveModeProgramModal";
 import ReportsModal from "./ReportsModal";
 import AwardLevelsModal from "./AwardLevelsModal";
+import UnitNumbersDataModal from './UnitNumbers/UnitNumberDataModal'
 
 const MainModalWrapper = ({name, isOpen, setOpen, toggle}) => {
   const props = {
@@ -69,6 +70,9 @@ const MainModalWrapper = ({name, isOpen, setOpen, toggle}) => {
         {
             name === 'AwardLevels' && <AwardLevelsModal {...props} />
         }
+      {
+        name === 'UnitNumbers' && <UnitNumbersDataModal {...props} />
+      }
     </>
   )
 }

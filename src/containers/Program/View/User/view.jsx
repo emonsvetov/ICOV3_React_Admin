@@ -16,9 +16,7 @@ import { ReclaimPoints } from './View/ReclaimPoints';
 
 const queryClient = new QueryClient()
 
-const ProgramViewUser = ({organization}) => {
-
-    const [program, setProgram] = useState(null)
+const ProgramViewUser = ({organization, program}) => {
     const [isOpenEdit, setOpenEdit] = useState(false)
     const [trigger, setTrigger] = useState(Math.floor(Date.now() / 1000))
     // Tabs Panel
@@ -26,27 +24,12 @@ const ProgramViewUser = ({organization}) => {
     const togglePan = tab => {
         if (currentActiveTab !== tab) setCurrentActiveTab(tab);
     }
-    let {programId, userId} = useParams();
-    // console.log(organization)
-
-    const fetchProgramData = async (organization) => {
-        try {
-            const response = await axios.get(`/organization/${organization.id}/program/${programId}`);
-            // console.log(response)
-            setProgram(response.data)
-        } catch (e) {
-            throw new Error(`API error:${e?.message}`);
-        }
-    };
-    useEffect(() => {
-        if (organization) {
-            fetchProgramData(organization)
-        }
-    }, [organization])
+    
+    let { userId } = useParams();
 
     const fetchUser = async (userId) => {
         try {
-            const response = await axios.get(`/organization/${organization.id}/user/${userId}`);
+            const response = await axios.get(`/organization/${program.organization_id}/program/${program.id}/user/${userId}`);
             return response.data;
         } catch (e) {
             throw new Error(`API error:${e?.message}`);
@@ -223,15 +206,39 @@ const ProgramViewUser = ({organization}) => {
 }
 
 const Wrapper = ({organization}) => {
+
+    let { programId } = useParams();
+    const [program, setProgram] = useState(null)
+
+    const fetchProgramData = async (organizationId) => {
+      try {
+        const response = await axios.get(
+          `/organization/${organizationId}/program/${programId}`
+        );
+        // console.log(response)
+        setProgram(response.data)
+      } catch (e) {
+        throw new Error(`API error:${e?.message}`);
+      }
+    };
+    useEffect(() => {
+      if ( organization?.id ) {
+        fetchProgramData(organization.id)
+      }
+    }, [organization]);
+
+    if( !program?.id ) return 'Loading...'
+
     return (
         <QueryClientProvider client={queryClient}>
-            {!isEmpty(organization) && <ProgramViewUser organization={organization}/>}
+            {!isEmpty(organization) && <ProgramViewUser organization={organization} program={program} />}
         </QueryClientProvider>
     )
 }
 
 export default withRouter(connect((state) => ({
-    organization: state.organization
+    organization: state.organization,
+    // program: state.program //This should be implemented
 }))(Wrapper));
 
 
