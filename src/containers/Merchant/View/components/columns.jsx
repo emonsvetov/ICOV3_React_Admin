@@ -23,7 +23,10 @@ export const AVAILABLE_GIFT_CODES_COLUMNS = [
     {
         Header: "Discount Percentage",
         accessor: "discount",
-        Cell: ({ row, value }) => { return `${parseFloat(value).toFixed(2)}%`},
+        Cell: ({ row, value }) => {
+          let discount_percentage = 100 - ((row.values?.cost_basis / row.values?.redemption_value) * 100);
+          return `${parseFloat(discount_percentage).toFixed(2)}%`
+        },
     },
     {
         Header: "Cost Basis",
