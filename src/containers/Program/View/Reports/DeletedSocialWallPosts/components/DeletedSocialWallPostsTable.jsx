@@ -3,6 +3,7 @@ import {useExpanded,  usePagination, useResizeColumns, useSortBy, useTable} from
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {Col, Row} from 'reactstrap';
+import {getFirstDay, dateStrToYmd} from '@/shared/helpers'
 
 import {TABLE_COLUMNS} from "./columns";
 
@@ -28,7 +29,9 @@ const DataTable = ({organization, programs}) => {
         programs: programs,
         createdOnly: false,
         reportKey: 'sku_value',
-        programId: 1
+        programId: 1,
+        from: dateStrToYmd(getFirstDay()),
+        to: dateStrToYmd(new Date())
     });
 
     let {programId} = useParams();
