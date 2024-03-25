@@ -60,7 +60,10 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
    
   
     const onSubmit = values => {
-        values.award_level = values.award_level.value;
+        if (values.award_level && values.award_level.value) {
+            values.award_level = values.award_level.value;
+        }
+
         if( config.roleInput === 'select')    {
             values = unpatchSelect(values, [config.roleField])
         }
