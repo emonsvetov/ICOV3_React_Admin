@@ -8,8 +8,31 @@ export const TABLE_COLUMNS = [
     accessor: "code",
     width: 150,
     Cell: ({ row, value }) => {
-      console.log(row)
       return <Link to={`/reports/orders/view/${row.original.id}`} >{maskString(value)}</Link>},
+  },
+  {
+    Header: "Merchant",
+    accessor: "redeemed_merchant_name",
+    width: 150,
+    Cell: ({ row, value }) => {
+      return <Link to={`/merchants/view/${row.original.merchant_id}`}>{value}</Link>;
+    },
+  },
+  {
+    Header: "Program",
+    accessor: "redeemed_program_name",
+    width: 150,
+    Cell: ({ row, value }) => {
+      return <Link to={`/program/view/${row.original.redeemed_program_id}`}>{value}</Link>;
+    },
+  },
+  {
+    Header: "User",
+    accessor: "redeemed_by_user_name",
+    width: 150,
+    Cell: ({row, value}) => {
+      return <Link to={`/users/view/${row.original.redeemed_user_id}`}>{value}</Link>;
+    },
   },
   {
     Header: "Pin",
