@@ -4,7 +4,8 @@ import {QueryClient, QueryClientProvider, useQuery} from "react-query";
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 
-import {TABLE_COLUMNS} from "./columns";
+import { TABLE_COLUMNS} from "./columns";
+import { RenderRowSubComponent } from "./columns";
 
 import ReactTablePagination from "@/shared/components/table/components/ReactTablePagination";
 import {format, subHours} from "date-fns";
@@ -37,7 +38,7 @@ const DataTable = ({ organization }) => {
   const exportLink = React.createRef();
 
 
-  let columns = useMemo(() => TABLE_COLUMNS, []);
+    let columns = useMemo(() => TABLE_COLUMNS, []);
 
   const [
     {
@@ -103,6 +104,7 @@ const DataTable = ({ organization }) => {
     canNextPage,
     setPageSize,
     state: { pageIndex, pageSize, sortBy },
+      visibleColumns,
   } = useTable(
     {
       columns,
@@ -117,6 +119,7 @@ const DataTable = ({ organization }) => {
       autoResetSortBy: false,
       autoResetExpanded: false,
       autoResetPage: false,
+        disableResizing: true
     },
     useSortBy,
     useExpanded,
@@ -124,6 +127,7 @@ const DataTable = ({ organization }) => {
     useResizeColumns,
     useFlexLayout,
   );
+
   // const [statusFilterValue, setStatusFilterValue] = useState("");
   const manualPageSize = [];
 
@@ -162,61 +166,41 @@ const DataTable = ({ organization }) => {
           <table {...getTableProps()} className="table">
               <Sticky  topOffset={80}>
                 {({ style }) => (
-                  <thead style={{...style, top: '60px'}}> 
+                    <thead style={{...style, top: '60px'}}>
                     {headerGroups.map((headerGroup) => (
-                      <tr {...headerGroup.getHeaderGroupProps()}>
-                        {headerGroup.headers.map((column, i) => (
-                          <th
-                            className={`cell-column-${i}`}
-                            {...column.getHeaderProps(column.getSortByToggleProps())}
-                          >
-                            {column.render("Header")}
-                            {column.isSorted ? <Sorting column={column} /> : ""}
-                            <div
-                              {...column.getResizerProps()}
-                              className={`resizer ${
-                                column.isResizing ? "isResizing" : ""
-                              }`}
-                            />
-                          </th>
-                        ))}
-                      </tr>
+                        <tr {...headerGroup.getHeaderGroupProps()}>
+                            {headerGroup.headers.map(column => (
+                                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                    {column.render('Header')}
+                                    {column.isSorted ? <Sorting column={column}/> : ''}
+                                </th>
+                            ))}
+                        </tr>
                     ))}
-                  </thead>
+                    </thead>
                 )}
               </Sticky>
-            <tbody className="table table--bordered" {...getTableBodyProps()}>
-              {page.map((row) => {
-                prepareRow(row);
-                // console.log(row)
-                const subCount = (row.id.match(/\./g) || []).length;
-                const paddingCount = subCount > 0 ? Number(subCount) + 2 : 0;
-                // console.log(subCount)
-                return (
-                  <tr {...row.getRowProps()}>
-                    {row.cells.map((cell, i) => {
-                      // console.log(cell)
-                      return (
-                        <td
-                          className={`cell-column-${i}`}
-                          {...cell.getCellProps()}
-                        >
-                          <span
-                            className={
-                              cell.column.Header === "#"
-                                ? `pl-${paddingCount}`
-                                : ""
-                            }
-                          >
-                            {cell.render("Cell")}
-                          </span>
-                        </td>
-                      );
-                    })}
-                  </tr>
-                );
+              <tbody {...getTableBodyProps()}>
+              {page.map(row => {
+                  prepareRow(row);
+                  return (
+                      <React.Fragment key={row.id}>
+                          <tr {...row.getRowProps()}>
+                              {row.cells.map(cell => (
+                                  <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                              ))}
+                          </tr>
+                          {row.isExpanded ? (
+                              <tr>
+                                  <td colSpan={visibleColumns.length}>
+                                      <RenderRowSubComponent row={row} />
+                                  </td>
+                              </tr>
+                          ) : null}
+                      </React.Fragment>
+                  );
               })}
-            </tbody>
+              </tbody>
           </table>
         </div>
         {rows.length > 0 && (
