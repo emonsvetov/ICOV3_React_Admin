@@ -91,7 +91,7 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
         values = unpatchMedia(values, MEDIA_FIELDS)
         let formData = mapFormDataUploads( values )
         let saveUrl = `/organization/${program.organization_id}/program/${program.id}/template`;
-        if( template?.id)  {
+        if( template?.id && template.program_id == program.id )  { //Checks if the subprogram uses the parent's template as the default.
             formData.append('_method', 'PUT')
             saveUrl += `/${template.id}`
         }
