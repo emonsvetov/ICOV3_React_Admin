@@ -9,9 +9,18 @@ import {getFirstDay} from '@/shared/helpers'
 import {dateStrToYmd} from '@/shared/helpers';
 import {isEqual, clone, cloneDeep} from 'lodash';
 import {CheckBoxField} from '@/shared/components/form/CheckBox';
+import Select from "react-select";
 
 const defaultFrom = getFirstDay()
 const defaultTo = new Date()
+const prepareList = () => {
+  let y = new Date().getFullYear();
+  let list = [];
+  for (var i = y; i > y - 7; i--) {
+    list.push({label: i, value: i})
+  }
+  return list;
+}
 
 const BudgetComparisonFilter = (
     {
@@ -24,13 +33,21 @@ const BudgetComparisonFilter = (
       exportHeaders
     }) => {
   const options = {
-    'dateRange': true,
+    'dateRange': false,
     'programs': true,
     'exportToCsv': true,
     'createdOnly': false,
     'reportKey': true,
     'programId': true,
+    'year': true,
   }
+
+  const YEAR_LIST = prepareList();
+  const [targetYear, setTargetYear] = useState({
+    label: new Date().getFullYear(),
+    value: new Date().getFullYear()
+  })
+
   const [from, setFrom] = React.useState(defaultFrom)
   const [to, setTo] = React.useState(defaultTo)
   const [createdOnly, setCreatedOnly] = React.useState(false)
@@ -48,6 +65,9 @@ const BudgetComparisonFilter = (
     if (options.programs) {
       dataSet.programs = reset ? [] : clone(selectedPrograms)
     }
+    if (options.year) {
+      dataSet.year = targetYear
+    }
     if (options.createdOnly) {
       dataSet.createdOnly = reset ? false : createdOnly
     }
@@ -61,6 +81,7 @@ const BudgetComparisonFilter = (
     onClickFilterCallback(dataSet)
     previous = dataSet;
     if (reset) {
+      setTargetYear({label: new Date().getFullYear(), value: new Date().getFullYear()})
       setFrom(defaultFrom)
       setTo(defaultTo)
       setSelectedPrograms([]);
@@ -71,6 +92,12 @@ const BudgetComparisonFilter = (
 
   const onClickFilterCallback = (values) => {
     let change = false;
+
+    if (options.year) {
+      if (finalFilter.year !== values.year) {
+        change = true
+      }
+    }
 
     if (options.programs) {
       if (!isEqual(values.programs, previous.programs)) {
@@ -101,6 +128,10 @@ const BudgetComparisonFilter = (
     }
 
     let filters = {}
+    if (options.year) {
+      filters.year = values.year.value
+      filters.targetYear = values.year
+    }
     if (options.keyword) filters.keyword = values.keyword
     if (options.programs) {
       filters.programs = values.programs
@@ -143,6 +174,10 @@ const BudgetComparisonFilter = (
     setReportKey(value)
   }
 
+  const onChangeYear = (value) => {
+    setTargetYear(value)
+  }
+
   return (
       <Row className="table-filter-form form">
         <Col md={8} lg={8} sm={8} className="table-filter-form-fields">
@@ -162,6 +197,28 @@ const BudgetComparisonFilter = (
                 </div>
               </div>
             </div>
+            }
+            {options.year &&
+              <div className="table-filter-form-col table-filter-form-col1">
+                <div className="form__form-group" style={{maxWidth: 200}}>
+                            <span className="form__form-group-label">
+                                Target&nbsp;Year
+                            </span>
+                  <div className="form__form-group-field">
+                    <div className="form__form-group-row">
+                      <Select
+                        name="year"
+                        value={targetYear}
+                        onChange={onChangeYear}
+                        options={YEAR_LIST}
+                        clearable={false}
+                        className="react-select"
+                        classNamePrefix="react-select"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
             }
             {options.dateRange &&
             <>

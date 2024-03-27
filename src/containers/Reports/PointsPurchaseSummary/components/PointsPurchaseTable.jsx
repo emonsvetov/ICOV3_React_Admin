@@ -40,6 +40,7 @@ const DataTable = ({organization, programs}) => {
             label: new Date().getFullYear(),
             value: new Date().getFullYear()
         },
+        targetParticipant:100
     });
 
     // var [data, setData] = useState([]);

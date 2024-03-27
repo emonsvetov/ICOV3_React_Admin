@@ -187,8 +187,8 @@ const EngagementModal = ({
                     <CheckboxField
                       name="allow_view_leaderboards_not_logged_into"
                       label="Allow participants to view leaderboards of any program he is not currently logged into"
-                      checked={data?.allow_view_leaderboards_not_logged_into}
-                      onChange={() => {data.allow_view_leaderboards_not_logged_into = !data.allow_view_leaderboards_not_logged_into}}
+                      checked={data?.leaderboard_seperation}
+                      onChange={() => {data.leaderboard_seperation = !data.leaderboard_seperation}}
                     />
                   </div>
                 </Col>
@@ -305,7 +305,7 @@ const EngagementModal = ({
                           name="uses_units" 
                           label="Uses units" 
                           checked={data?.uses_units}
-                          onChange={() => {data.uses_goal_tracker = !data.uses_goal_tracker}}
+                          onChange={() => {data.uses_units = !data.uses_units}}
                         />
                       </div>
                       <div className="form__form-group">

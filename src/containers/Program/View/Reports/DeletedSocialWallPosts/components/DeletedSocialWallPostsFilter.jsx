@@ -24,7 +24,7 @@ const DeletedSocialWallPostsFilter = (
       exportHeaders
     }) => {
   const options = {
-    'dateRange': false,
+    'dateRange': true,
     'programs': true,
     'keyword': false,
     'exportToCsv': true,

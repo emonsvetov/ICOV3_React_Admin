@@ -136,6 +136,7 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                             <CheckboxField 
                                 name="events_has_limits"
                                 label="Set limit in events"
+                                checked={data?.events_has_limits}
                             />
                         </div>
                     </Col>
@@ -146,6 +147,7 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                             <CheckboxField 
                                 name="event_has_category"
                                 label="Enable categories for events"
+                                checked={data?.event_has_category}
                             />
                         </div>
                     </Col>
@@ -154,6 +156,7 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                             <CheckboxField 
                                 name="has_promotional_award"
                                 label="Enable promotional awards"
+                                checked={data?.has_promotional_award}
                             />
                         </div>
                     </Col>
@@ -164,6 +167,7 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                             <CheckboxField 
                                 name="enable_uploads_while_awarding"
                                 label="Enable uploading documents while awarding"
+                                checked={data?.enable_uploads_while_awarding}
                             />
                         </div>
                     </Col>
@@ -172,6 +176,7 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                             <CheckboxField 
                                 name="enable_schedule_awards"
                                 label="Enable scheduled awards"
+                                checked={data?.enable_schedule_awards}
                             />
                         </div>
                     </Col>
@@ -293,6 +298,7 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                             <CheckboxField 
                                 name="send_points_expire_notices"
                                 label="Send points expiration notice"
+                                checked={data?.send_points_expire_notices}
                             />
                         </div>
                     </Col>
@@ -320,6 +326,7 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                             <CheckboxField 
                                 name="allocate"
                                 label="Allocate cost to program for premium merchants"
+                                checked={data?.allocate}
                             />
                         </div>
                     </Col>
@@ -347,13 +354,14 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                             <CheckboxField 
                                 name="awards_limit_amount_override"
                                 label="Limit(prevent) award amount override"
+                                checked={data?.awards_limit_amount_override}
                             />
                         </div>
                     </Col>
                 </Row>
                 <Row>
                     <Col md="6" lg="4" xl="4">
-                        <Field name="unknown">
+                        <Field name="point_ratio_seperation">
                         {({ input, meta }) => (
                             <div className="form__form-group">
                                 <span className="form__form-group-label">Enter new points ratio</span>
