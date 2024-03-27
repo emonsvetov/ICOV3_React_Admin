@@ -35,8 +35,6 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
     const [currentTheme, setCurrentTheme] = useState("Default");
-    const [welcome_message, setWelcomeMessage] = useState();
-    const [part_HomeMessage, setPart_HomeMessage] = useState();
     let [template, setTemplate] = useState({})
     // console.log(program)
     const validate = values => {
@@ -403,7 +401,6 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                         <Field
                                           name="welcome_message"
                                           component={WYSIWYGEditor}
-                                          onChange={setWelcomeMessage}
                                         />
                                     </div>
                                 </div>
@@ -417,7 +414,6 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                         <Field
                                           name="participant_homepage_message"
                                           component={WYSIWYGEditor}
-                                          onChange={setPart_HomeMessage}
                                         />
                                     </div>
                                 </div>
