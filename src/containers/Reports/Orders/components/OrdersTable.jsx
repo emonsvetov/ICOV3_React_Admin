@@ -14,6 +14,7 @@ import {getFirstDay} from '@/shared/helpers'
 import {fetchApiData, initialState, reducer, Sorting, useEffectToDispatch} from "@/shared/apiTableHelper";
 import OrdersFilter from "./OrdersFilter";
 import {Sticky, StickyContainer} from 'react-sticky';
+import { startOfDay, subDays } from 'date-fns';
 
 const queryClient = new QueryClient();
 
@@ -25,9 +26,11 @@ const formatDateTime = (datetime) => {
 
 const DataTable = ({ organization }) => {
 
-  const defaultFrom = getFirstDay();
+    const defaultFrom = subDays(startOfDay(new Date()), 30);
+    const defaultTo = new Date();
   const [filter, setFilter] = useState({
-      from: defaultFrom, to: new Date(),
+      from: defaultFrom,
+      to: defaultTo,
   });
 
   const [useFilter, setUseFilter] = useState(false);

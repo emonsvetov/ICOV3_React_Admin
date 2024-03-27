@@ -28,9 +28,12 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
   ];
   const purchasesByV2 = [
     { 'label': 'All', 'value': 0 },
-    { 'label': 'Yes', 'value': 2 },
-    { 'label': 'No', 'value': 1 },
+    { 'label': 'V2', 'value': 2 },
+    { 'label': 'V3', 'value': 1 },
   ];
+
+  const defaultPurchaseByV2Option = purchasesByV2.find(option => option.value === 1);
+
 
   const defaultFilters = {
     keyword: '',
@@ -69,6 +72,9 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
   const [selectedPrograms, setSelectedPrograms] = useState(filter.programs ? filter.programs : []);
   const [selectedMerchants, setSelectedMerchants] = useState(filter.merchants ? filter.merchants : []);
 
+  const onMerchantsChange = (selectedOptions) => {
+    setSelectedMerchants(selectedOptions);
+  };
   const onKeywordChange = (e) => {
     setKeyword( e.target.value )
   }
@@ -291,7 +297,7 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
                     <MerchantsHierarchy
                         defaultMerchants={options.merchants}
                         selectedMerchants={selectedMerchants}
-                        setSelectedMerchants={setSelectedMerchants}
+                        setSelectedMerchants={onMerchantsChange}
                     />
                   </div>
                 </div>
@@ -413,15 +419,16 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
             <>
               <div className="table-filter-form-col table-filter-form-col2 float-filter">
                 <div className="form__form-group">
-                  <span className="form__form-group-label">Redeemed By</span>
-                  <div className="form__form-group-field">
-                    <div className="form__form-group-row">
+                  <span className="form__form-group-label" style={{ width: '100%', minWidth: '95px' }}>Redeemed By</span>
+                  <div className="form__form-group-field" style={{ display: 'flex', alignItems: 'center' }}>
+                    <div className="form__form-group-row" style={{ flex: 1 }}>
                       <Select
                           options={purchasesByV2}
                           clearable={false}
                           className="react-select"
                           classNamePrefix="react-select"
                           onChange={onPurchasesByV2Change}
+                          value={defaultPurchaseByV2Option}
                       />
                     </div>
                   </div>
