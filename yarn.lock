@@ -3272,6 +3272,11 @@ attr-accept@^2.2.2:
   resolved "https://registry.yarnpkg.com/attr-accept/-/attr-accept-2.2.2.tgz#646613809660110749e92f2c10833b70968d929b"
   integrity sha512-7prDjvt9HmqiZ0cl5CRjtS84sEyhsHP2coDkaZKRKVfCDo9s7iw7ChVmar78Gu9pC4SoR/28wFu/G5JJhTnqEg==
 
+autobind-decorator@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/autobind-decorator/-/autobind-decorator-2.4.0.tgz#ea9e1c98708cf3b5b356f7cf9f10f265ff18239c"
+  integrity sha512-OGYhWUO72V6DafbF8PM8rm3EPbfuyMZcJhtm5/n26IDwO18pohE4eNazLoCGhPiXOCD0gEGmrbU3849QvM8bbw==
+
 autoprefixer@^9.6.1:
   version "9.8.8"
   resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-9.8.8.tgz#fd4bd4595385fa6f06599de749a4d5f7a474957a"
@@ -8191,6 +8196,20 @@ jest@26.6.0:
     "@jest/core" "^26.6.0"
     import-local "^3.0.2"
     jest-cli "^26.6.0"
+
+jodit-react@^4.0.15:
+  version "4.0.15"
+  resolved "https://registry.yarnpkg.com/jodit-react/-/jodit-react-4.0.15.tgz#183161d36177e0173b0e77f22c4491fd963b04f4"
+  integrity sha512-wcqz71yI8K2/ZIK9rMfUTRpRHZqe2Far+sd+waswADJkslxfnBhFZg/vz+9WIqT3lq42KbdZsqogMPU1JW9SrQ==
+  dependencies:
+    jodit "^4.0.18"
+
+jodit@^4.0.18:
+  version "4.0.18"
+  resolved "https://registry.yarnpkg.com/jodit/-/jodit-4.0.18.tgz#353e5a9de012b26891ca39789c83f3f8ec481220"
+  integrity sha512-S2Eorn+7ZhIFEaPMDwoBpLhTwli/NP9FwSWY7AbsBvAy3nnltwczxRkcfXGCYyrdlqua1Mml3MPTuQtOT8SGBg==
+  dependencies:
+    autobind-decorator "^2.4.0"
 
 js-sha3@0.8.0:
   version "0.8.0"
