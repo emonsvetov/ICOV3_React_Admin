@@ -28,6 +28,12 @@ const ViewOrder = ({ organization }) => {
                 return `${parseFloat(order[value]).toFixed(2)}%`;
             case 'redemption_url':
                 return order[value].length ? <Link to={{pathname: order[value]}}>{order[value]}</Link> : '';
+            case 'merchant_name':
+                return <Link to={`/merchants/view/${order.merchant_id}`}>{order[value]}</Link>;
+            case 'program_name':
+                return <Link to={`/program/view/${order.redeemed_program_id}`}>{order[value]}</Link>;
+            case 'user_name':
+                return <Link to={`/users/view/${order.redeemed_user_id}`}>{order[value]}</Link>;
             default:
                 return order[value];
         }
@@ -39,8 +45,7 @@ const ViewOrder = ({ organization }) => {
         {'label': 'SKU Value', 'value': 'sku_value'},
         {'label': 'Cost Basis', 'value': 'cost_basis'},
         {'label': 'Discount', 'value': 'discount'},
-        {'label': 'Merchant ID', 'value': 'merchant_id'},
-        {'label': 'Merchant Name', 'value': 'merchant_name'},
+        {'label': 'Merchant', 'value': 'merchant_name'},
         {'label': 'Purchase Date', 'value': 'purchase_date'},
         {'label': 'Updated', 'value': 'updated_at'},
         {'label': 'Factor Valuation', 'value': 'factor_valuation'},
@@ -50,8 +55,8 @@ const ViewOrder = ({ organization }) => {
     ].filter(({value}) => order?.[value]);
 
     const table2Fields = [
-        {'label': 'Redeemed Program ID', 'value': 'redeemed_program_name'},
-        {'label': 'Redeemed User ID', 'value': 'redeemed_user_id'},
+        {'label': 'Redeemed Program', 'value': 'program_name'},
+        {'label': 'Redeemed User', 'value': 'user_name'},
         {'label': 'Redemption Date', 'value': 'redemption_datetime'},
         {'label': 'Redemption Url', 'value': 'redemption_url'},
         {'label': 'Redemption Value', 'value': 'redemption_value'},
