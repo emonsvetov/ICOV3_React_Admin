@@ -51,12 +51,12 @@ export const TABLE_COLUMNS = [
     Header: "Variance",
     accessor: "variance",
     Cell: ({row, value}) => {
-      return toPoints(Math.abs(value));
+      return toPoints(value);
     },
     Footer: (info) => {
       const {rows, flatRows} = info;
       const totalValue = useMemo(
-        () => rows.reduce((sum, row) => Math.abs(Number(row.values.variance)) + sum, 0),
+        () => rows.reduce((sum, row) => Number(row.values.variance) + sum, 0),
         [rows],
       );
       return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
