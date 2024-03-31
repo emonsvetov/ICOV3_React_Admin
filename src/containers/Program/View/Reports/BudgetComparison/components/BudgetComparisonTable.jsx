@@ -22,7 +22,11 @@ const queryClient = new QueryClient()
 const DataTable = ({organization, programs}) => {
 
     const defaultFrom = getFirstDay();
-    const [filter, setFilter] = useState({programs: programs, awardLevels: [], from: defaultFrom, to: new Date()});
+    const [filter, setFilter] = useState({
+      programs: programs,
+      awardLevels: [],
+      year:new Date().getFullYear(),
+    });
     const [useFilter, setUseFilter] = useState(false);
     const [trigger, setTrigger] = useState(0);
     const [exportData, setExportData] = useState([]);
@@ -189,7 +193,7 @@ const DataTable = ({organization, programs}) => {
                                 {headerGroups.map((headerGroup) => (
                                     <tr {...headerGroup.getHeaderGroupProps()}>
                                         {headerGroup.headers.map(column => (
-                                            <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                            <th {...column.getHeaderProps()}>
                                                 {column.render('Header')}
                                                 {column.isSorted ? <Sorting column={column}/> : ''}
                                             </th>

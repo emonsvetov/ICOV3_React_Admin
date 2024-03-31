@@ -1,12 +1,13 @@
-import React, {useState} from 'react';
-import { Field } from 'react-final-form';
-import { Row, Col } from 'reactstrap';
+import React, {useEffect, useState} from 'react';
+import {Field} from 'react-final-form';
+import {Row, Col} from 'reactstrap';
 import Select from 'react-select';
-import { FieldArray } from "react-final-form-arrays"
+import {FieldArray} from "react-final-form-arrays"
 import CheckboxGroup from "@/shared/components/form/CheckboxGroup"
 import CheckboxField from '@/shared/components/form/CheckBox';
 import FieldUserStatus from './FieldUserStatus'
 import renderSelectField from '@/shared/components/form/Select'
+import axios from 'axios'
 
 const defaultConfig = {
   roles:[],
@@ -22,11 +23,32 @@ const defaultConfig = {
 const FormFields = ({form, values, submitting, pristine, program, config}) => {
   config = {...defaultConfig, ...config}
   // console.log(config)
-    const [isSendInvite, setIsSendInvite] = useState(false)
-    // console.log(onChangeActive)
-    const onChangeSendInvite = (checked) => {
+  const [isSendInvite, setIsSendInvite] = useState(false)
+  const [awardLevels, setAwardLevels] = useState([]);
+  const [initialAwardLevel, setInitialAwardLevel] = useState(null);
+  // console.log(onChangeActive)
+  const onChangeSendInvite = (checked) => {
       setIsSendInvite(checked)
+  }
+
+  useEffect(() => {
+    getDataAwardLevels();
+    if (!values.award_level) {
+        setInitialAwardLevel( values.award_level || null);
     }
+  }, [program]);
+
+  const getDataAwardLevels = async () => {
+      const response = await axios.get(
+          `/organization/${program.organization_id}/program/${program.id}/program-award-levels`,
+      );
+      const options = response.data.map(level => ({
+          label: level.name,
+          value: level.id,
+          id: level.id,
+      }));
+      setAwardLevels(options);
+  };
 
     const onChangeUnitNumber = () => {
       // console.log("On change unit number")
@@ -192,7 +214,11 @@ const FormFields = ({form, values, submitting, pristine, program, config}) => {
                   <span className="form__form-group-label">Award Level</span>
                   <div className="form__form-group-field">
                     <div className="form__form-group-row">
-                      <input type="text" {...input} placeholder="Award Level" />
+                      <Field
+                          name="award_level"
+                          component={renderSelectField}
+                          options={awardLevels}
+                      />
                       {meta.touched && meta.error && (
                         <span className="form__form-group-error">
                           {meta.error}

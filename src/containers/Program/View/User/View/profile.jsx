@@ -90,12 +90,12 @@ const ProgramViewUserProfile = ({ organization, program, data }) => {
         </Col>
       </Row>}
       <Row>
-        <Col md="2" lg="2" xl="2" sm="2" className="label">
-          <p>Award Level:</p>
-        </Col>
-        <Col md="10" lg="10" xl="10" sm="10">
-          <p>{data.award_level}</p>
-        </Col>
+          <Col md="2" lg="2" xl="2" sm="2" className='label'>
+              <p>Award Level:</p>
+          </Col>
+          <Col md="10" lg="10" xl="10" sm="10">
+              <p>{data.award_level_nane}</p>
+          </Col>
       </Row>
       <Row>
         <Col md="2" lg="2" xl="2" sm="2" className="label">

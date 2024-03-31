@@ -75,7 +75,10 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
    
   
     const onSubmit = values => {
-    
+        if (values.award_level && values.award_level.value) {
+            values.award_level = values.award_level.value;
+        }
+
         if( config.roleInput === 'select')    {
             values = unpatchSelect(values, [config.roleField])
         }
@@ -94,8 +97,6 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
             }
         })
         .catch( error => {
-            //console.log(error.response.data);
-            // dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))
             flashError(dispatch, error.response.data)
             setLoading(false)
         })
@@ -146,9 +147,6 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
         }}
     >
     {({ handleSubmit, form, submitting, pristine, values }) => {
-    // console.log(pristine)
-    // console.log(values)
-    // console.log(form)
     return (
         <form className="form" onSubmit={handleSubmit}>
             <Row className='w100'>
