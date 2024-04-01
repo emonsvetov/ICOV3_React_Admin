@@ -187,8 +187,8 @@ const EngagementModal = ({
                     <CheckboxField
                       name="allow_view_leaderboards_not_logged_into"
                       label="Allow participants to view leaderboards of any program he is not currently logged into"
-                      checked={data?.allow_view_leaderboards_not_logged_into}
-                      onChange={() => {data.allow_view_leaderboards_not_logged_into = !data.allow_view_leaderboards_not_logged_into}}
+                      checked={data?.leaderboard_seperation}
+                      onChange={() => {data.leaderboard_seperation = !data.leaderboard_seperation}}
                     />
                   </div>
                 </Col>

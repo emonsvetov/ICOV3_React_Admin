@@ -60,14 +60,13 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
    
   
     const onSubmit = values => {
-    
+        if (values.award_level && values.award_level.value) {
+            values.award_level = values.award_level.value;
+        }
+
         if( config.roleInput === 'select')    {
             values = unpatchSelect(values, [config.roleField])
         }
-        
-        // console.log(values)
-        // return
-        // setLoading(true)
         axios.put(`/organization/${program.organization_id}/program/${program.id}/user/${userid}`, values)
         .then( (res) => {
             // console.log(res)
@@ -79,8 +78,6 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
             }
         })
         .catch( error => {
-            //console.log(error.response.data);
-            // dispatch(sendFlashMessage(<ApiErrorMessage errors={error.response.data} />, 'alert-danger'))
             flashError(dispatch, error.response.data)
             setLoading(false)
         })
@@ -126,9 +123,6 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
         }}
     >
     {({ handleSubmit, form, submitting, pristine, values }) => {
-    // console.log(pristine)
-    // console.log(values)
-    // console.log(form)
     return (
         <form className="form" onSubmit={handleSubmit}>
             <Row className='w100'>
@@ -142,7 +136,7 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
                     </ButtonToolbar>
                 </Col>
             </Row>
-            <ProgramUserFormFields config={config} form={form} submitting={submitting} pristine={pristine} values={values}/>
+            <ProgramUserFormFields config={config} program={program} form={form} submitting={submitting} pristine={pristine} values={values}/>
         </form>
     )}}
     </Form>

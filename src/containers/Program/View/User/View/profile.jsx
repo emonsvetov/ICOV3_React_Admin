@@ -76,7 +76,7 @@ const ProgramViewUserProfile = ({organization, program, data}) => {
                     <p>Award Level:</p>
                 </Col>
                 <Col md="10" lg="10" xl="10" sm="10">
-                    <p>{data.award_level}</p>
+                    <p>{data.award_level_nane}</p>
                 </Col>
             </Row>
             <Row>
