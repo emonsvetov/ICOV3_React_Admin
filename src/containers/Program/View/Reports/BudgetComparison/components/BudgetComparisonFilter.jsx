@@ -16,9 +16,10 @@ const defaultTo = new Date()
 const prepareList = () => {
   let y = new Date().getFullYear();
   let list = [];
-  for (var i = y; i > y - 7; i--) {
+  for (var i = 2016; i <= y; i++) {
     list.push({label: i, value: i})
   }
+  list.reverse();
   return list;
 }
 
