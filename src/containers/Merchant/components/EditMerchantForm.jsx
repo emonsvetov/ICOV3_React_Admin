@@ -254,18 +254,28 @@ const EditMerchantForm = () => {
         <Row>
             <Col md="6" lg="6" xl="6">
                 {useTango ? (
-                    <div className="form__form-group">
-                        <span className="form__form-group-label">Tango Configurations</span>
-                        <div className="form__form-group-field">
-                            <Field
+                  <div>
+                      <div className="form__form-group">
+                          <span className="form__form-group-label">Tango Configurations</span>
+                          <div className="form__form-group-field">
+                              <Field
                                 name="toa_id"
                                 component={renderSelectField}
                                 options={toaOptions}
                                 onChange={onChangeUseTangoAPI}
-                            />
-                        </div>
-                    </div>
-                ) : '' }
+                              />
+                          </div>
+                      </div>
+                      <div className="form__form-group">
+                          <Field
+                            name="set_second_email_from_tango"
+                            type="checkbox"
+                            component={CheckboxField}
+                            label="Send the second email from Tango"
+                          />
+                      </div>
+                  </div>
+                    ) : '' }
             </Col>
         </Row>
         <Row>
