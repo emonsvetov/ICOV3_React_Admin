@@ -53,6 +53,12 @@ export const JOURNAL_DETAILED_COLUMNS = [
           maxWidth: 100,
         },
         {
+          Header: "Program account ID",
+          accessor: "account_holder_id",
+          Footer:"",
+          maxWidth: 100,
+        },
+        {
           Header: "Deposits",
           accessor: "deposits",
           Footer: (info) => footerRenderer(info, 'deposits')
