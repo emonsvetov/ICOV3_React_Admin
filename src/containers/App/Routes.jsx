@@ -50,7 +50,6 @@ import PermissionEdit from '../Permission/edit_permission';
 // import EventsIndex from '../Events/index';
 // import AddEvent from '../Events/add_event';
 import EditEvent from '../Program/View/components/event/edit';
-
 import MerchantsIndex from '../Merchant/index';
 import AddMerchant from '../Merchant/add_merchant';
 import ViewMerchant from '../Merchant/view_merchant';
