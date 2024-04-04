@@ -50,10 +50,13 @@ export const PROGRAM_COLUMNS = [
         width: 200
     },
     {
-        Header: "Program Account Holder ID",
+        Header: "Program ID",
         accessor: "account_holder_id",
         Footer:"",
-        maxWidth: 100,
+        width: 100,
+        Cell: ({ row, value }) => {
+          return !!row.original?.v2_account_holder_id ? row.original?.v2_account_holder_id : value;
+        },
     },
     {
         Header: "Eligible Participants",
@@ -70,6 +73,7 @@ export const PROGRAM_COLUMNS = [
             );
             return <span>{totalValue}</span>;
         },
+        width: 100,
     },
     {
         Header: "Jan",
