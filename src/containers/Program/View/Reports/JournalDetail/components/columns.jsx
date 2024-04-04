@@ -48,15 +48,12 @@ export const JOURNAL_DETAILED_COLUMNS = [
         },
         {
           Header: "Program ID",
-          accessor: "id",
+          accessor: "v2_account_holder_id",
           Footer:"",
           maxWidth: 100,
-        },
-        {
-          Header: "Program account ID",
-          accessor: "account_holder_id",
-          Footer:"",
-          maxWidth: 100,
+          Cell: ({ row, value }) => {
+            return !!value ? value : row.original.account_holder_id;
+          },
         },
         {
           Header: "Deposits",
