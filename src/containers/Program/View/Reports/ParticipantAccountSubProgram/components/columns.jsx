@@ -5,6 +5,10 @@ export const TABLE_COLUMNS = [
     accessor: "program_id",
   },
   {
+    Header: "Program account ID",
+    accessor: "program_account_holder_id",
+  },
+  {
     Header: "Program",
     accessor: "program_name",
   },
