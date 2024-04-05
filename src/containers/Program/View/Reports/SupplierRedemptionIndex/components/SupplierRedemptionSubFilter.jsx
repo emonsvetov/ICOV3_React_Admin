@@ -107,7 +107,7 @@ export const SupplierRedemptionSubFilter: FC<SupplierRedemptionSubFilterProps> =
                         label="From"
                         initialValue={dayjs(defFilter.from, dateFormat)}
                     >
-                        <DatePicker format="DD/MM/YYYY"/>
+                        <DatePicker format="MM/DD/YYYY"/>
                     </Form.Item>
                 </Col>
                 <Col span={6} order={3}>
@@ -116,7 +116,7 @@ export const SupplierRedemptionSubFilter: FC<SupplierRedemptionSubFilterProps> =
                         label="To"
                         initialValue={dayjs(defFilter.to, dateFormat)}
                     >
-                        <DatePicker format="DD/MM/YYYY"/>
+                        <DatePicker format="MM/DD/YYYY"/>
                     </Form.Item>
                 </Col>
                 <Col span={6} order={1}>

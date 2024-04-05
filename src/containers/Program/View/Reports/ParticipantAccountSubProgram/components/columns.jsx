@@ -2,7 +2,7 @@ import { toPoints} from '@/shared/helpers'
 export const TABLE_COLUMNS = [
   {
     Header: "Program ID",
-    accessor: "program_id",
+    accessor: "program_account_holder_id",
   },
   {
     Header: "Program",

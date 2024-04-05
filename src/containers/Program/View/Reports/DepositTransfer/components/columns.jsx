@@ -19,6 +19,6 @@ export const TABLE_COLUMNS = [
   {
     Header: "Amount",
     accessor: "posting_amount",
-    Cell: ({ row, value }) => { return toPoints(value) },
+    Cell: ({ row, value }) => { return `$` + toPoints(value) },
   },
 ];
