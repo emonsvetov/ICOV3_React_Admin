@@ -44,11 +44,12 @@ export const JOURNAL_DETAILED_COLUMNS = [
             Header: "Program Name",
             accessor: "name",
             Footer:"Page Total",
-            minWidth: 200,
+            minWidth: 170,
+            className: 'frozenColumn',
         },
         {
           Header: "Program ID",
-          accessor: "v2_account_holder_id",
+          accessor: "shownId",
           Footer:"",
           maxWidth: 100,
           Cell: ({ row, value }) => {
