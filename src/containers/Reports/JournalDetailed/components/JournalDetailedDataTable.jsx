@@ -205,9 +205,8 @@ const DataTable = ({organization, programs}) => {
                     <tr {...row.getRowProps()}>
                       {
                         row.cells.map(cell => {
-                          return <td {...cell.getCellProps()}>
+                          return <td {...cell.getCellProps({className: cell.column.className})}>
                             {cell.render('Cell')}
-                           
                           </td>
                         })
                       }
