@@ -10,7 +10,7 @@ import {dateStrToYmd} from '@/shared/helpers';
 import {isEqual, clone, cloneDeep} from 'lodash';
 import {CheckBoxField} from '@/shared/components/form/CheckBox';
 
-const defaultFrom = getFirstDay()
+const defaultFrom = new Date('2014-10-29')
 const defaultTo = new Date()
 
 const ParticipantStatusFilter = (
