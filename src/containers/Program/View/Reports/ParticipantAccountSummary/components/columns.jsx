@@ -3,6 +3,10 @@ export const TABLE_COLUMNS = [
   {
     Header: "Program Id",
     accessor: "program_id",
+    Cell: ({ row, value }) => {
+      console.log(row, 'row');
+      return !!row.original?.v2_account_holder_id ? row.original?.v2_account_holder_id : value;
+    },
   },
   {
     Header: "Program Name",
