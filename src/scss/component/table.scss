@@ -63,6 +63,12 @@
     }
   }
 
+  tbody td.frozenColumn {
+    position: sticky;
+    background: #ffffff;
+    left: 5px;
+  }
+
   th, td {
 
     &:first-child {

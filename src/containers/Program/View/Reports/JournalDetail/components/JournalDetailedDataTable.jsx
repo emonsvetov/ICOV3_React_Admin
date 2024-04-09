@@ -68,7 +68,7 @@ const DataTable = ({organization, programs}) => {
 
     const defaultColumn = React.useMemo(
         () => ({
-          maxWidth: 100,
+          // minWidth: 150,
         }),
         []
     )
@@ -200,7 +200,10 @@ const DataTable = ({organization, programs}) => {
                         row.cells.map( cell => {
                           // console.log(cell)
                           const paddingLeft = subCount * 20
-                          return <td {...cell.getCellProps()}><span style={cell.column.Header==='#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span></td>
+                          return <td {...cell.getCellProps({className: cell.column.className})}>
+                            <span
+                              style={cell.column.Header === '#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span>
+                          </td>
                         })
                       }
                     </tr>

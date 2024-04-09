@@ -355,6 +355,14 @@ export const isArray = function(a) {
       let number = formatter.format(numberString);
       return number.toString().replace(/\./g, ",");
   }
+
+export const toPointsRevert = (numberString) => {
+  let locale = 'en-US';
+  let options = {style: 'decimal', minimumFractionDigits: 0, maximumFractionDigits: 3};
+  let formatter = new Intl.NumberFormat(locale, options);
+  let number = formatter.format(numberString);
+  return number.toString().replace(/\,/g, ".");
+}
   
   
   export const formatCurrency = (value) => {

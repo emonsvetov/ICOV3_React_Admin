@@ -26,11 +26,21 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
     { 'label': 'Real Codes', 'value': 1 },
     { 'label': 'Virtual Codes', 'value': 2 },
   ];
+
   const purchasesByV2 = [
     { 'label': 'All', 'value': 0 },
-    { 'label': 'Yes', 'value': 2 },
-    { 'label': 'No', 'value': 1 },
+    { 'label': 'V2', 'value': 2 },
+    { 'label': 'V3', 'value': 1 },
   ];
+
+  const defaultPurchaseByV2Option = purchasesByV2.find(option => option.value === 1); // Assuming "V3" is the default option
+
+  const [purchaseByV2, setPurchaseByV2] = React.useState(defaultPurchaseByV2Option);
+
+  const onPurchasesByV2Change = (selectedOption) => {
+    setPurchaseByV2(selectedOption);
+  };
+
 
   const defaultFilters = {
     keyword: '',
@@ -63,12 +73,14 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
   const [from, setFrom] = React.useState( finalFilter.from )
   const [to, setTo] = React.useState( finalFilter.to )
   const [inventoryType, setInventoryTypes] = React.useState( finalFilter.inventoryType )
-  const [purchaseByV2, setPurchaseByV2] = React.useState( finalFilter.purchaseByV2 )
   const [orderStatus, setOrderStatuses] = React.useState( finalFilter.orderStatus )
   const [awardLevels, setAwardLevels] = React.useState(finalFilter.awardLevels);
   const [selectedPrograms, setSelectedPrograms] = useState(filter.programs ? filter.programs : []);
   const [selectedMerchants, setSelectedMerchants] = useState(filter.merchants ? filter.merchants : []);
 
+  const onMerchantsChange = (selectedOptions) => {
+    setSelectedMerchants(selectedOptions);
+  };
   const onKeywordChange = (e) => {
     setKeyword( e.target.value )
   }
@@ -80,9 +92,6 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
   }
   const onInventoryTypesChange = ( e ) => {
     setInventoryTypes( e.value )
-  }
-  const onPurchasesByV2Change = ( e ) => {
-    setPurchaseByV2( e.value )
   }
   const onOrderStatusesChange = ( e ) => {
     setOrderStatuses( e.value )
@@ -191,9 +200,11 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
       }
     }
 
-    if(options.purchaseByV2) {
-      if(finalFilter.purchaseByV2 !== values.purchaseByV2)   {
-        change = true
+    if (options.purchaseByV2) {
+      const purchaseByV2Value = values.purchaseByV2.value;
+      values.purchaseByV2 = purchaseByV2Value;
+      if (finalFilter.purchaseByV2 !== purchaseByV2Value) {
+        change = true;
       }
     }
 
@@ -291,7 +302,7 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
                     <MerchantsHierarchy
                         defaultMerchants={options.merchants}
                         selectedMerchants={selectedMerchants}
-                        setSelectedMerchants={setSelectedMerchants}
+                        setSelectedMerchants={onMerchantsChange}
                     />
                   </div>
                 </div>
@@ -413,15 +424,15 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
             <>
               <div className="table-filter-form-col table-filter-form-col2 float-filter">
                 <div className="form__form-group">
-                  <span className="form__form-group-label">Purchased By V2</span>
-                  <div className="form__form-group-field">
-                    <div className="form__form-group-row">
+                  <span className="form__form-group-label" style={{ width: '100%', minWidth: '95px' }}>Redeemed By</span>
+                  <div className="form__form-group-field" style={{ display: 'flex', alignItems: 'center' }}>
+                    <div className="form__form-group-row" style={{ flex: 1 }}>
                       <Select
                           options={purchasesByV2}
-                          clearable={false}
                           className="react-select"
                           classNamePrefix="react-select"
                           onChange={onPurchasesByV2Change}
+                          value={purchaseByV2}
                       />
                     </div>
                   </div>
