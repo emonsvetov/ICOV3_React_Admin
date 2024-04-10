@@ -30,6 +30,8 @@ const ViewOrder = ({ organization }) => {
                 return order[value].length ? <Link to={{pathname: order[value]}}>{order[value]}</Link> : '';
             case 'merchant_name':
                 return <Link to={`/merchants/view/${order.merchant_id}`}>{order[value]}</Link>;
+            case 'redeemed_merchant':
+                return <Link to={`/merchants/view/${order.redeemed_merchant_id}`}>{order[value]}</Link>;
             case 'program_name':
                 return <Link to={`/program/view/${order.redeemed_program_id}`}>{order[value]}</Link>;
             case 'user_name':
@@ -51,12 +53,15 @@ const ViewOrder = ({ organization }) => {
         {'label': 'Factor Valuation', 'value': 'factor_valuation'},
         {'label': 'Deleted', 'value': 'deleted_at'},
         {'label': 'Expiration Date', 'value': 'expiration_date'},
-        {'label': 'Encryption', 'value': 'encryption'}
+        {'label': 'Encryption', 'value': 'encryption'},
+        {'label': 'Virtual Inventory', 'value': 'virtual_inventory'},
+        {'label': 'Medium info is test', 'value': 'medium_info_is_test'},
     ].filter(({value}) => order?.[value]);
 
     const table2Fields = [
         {'label': 'Redeemed Program', 'value': 'program_name'},
         {'label': 'Redeemed User', 'value': 'user_name'},
+        {'label': 'Redeemed Merchant', 'value': 'redeemed_merchant'},
         {'label': 'Redemption Date', 'value': 'redemption_datetime'},
         {'label': 'Redemption Url', 'value': 'redemption_url'},
         {'label': 'Redemption Value', 'value': 'redemption_value'},
@@ -66,10 +71,7 @@ const ViewOrder = ({ organization }) => {
         {'label': 'Tango Reference Order ID', 'value': 'tango_reference_order_id'},
         {'label': 'Tango Request ID', 'value': 'tango_request_id'},
         {'label': 'v2 Medium Info ID', 'value': 'v2_medium_info_id'},
-        {'label': 'v2 Sync Status', 'value': 'v2_sync_status'},
-        {'label': 'Purchased by v2', 'value': 'purchased_by_v2'},
-        {'label': 'Virtual Inventory', 'value': 'virtual_inventory'},
-        {'label': 'Medium info is test', 'value': 'medium_info_is_test'},
+        {'label': 'Purchased by v2', 'value': 'purchased_by_v2'}
     ];
 
     const tables = [

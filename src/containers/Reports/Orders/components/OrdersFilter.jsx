@@ -9,7 +9,7 @@ import {dateStrToYmd, getFirstDay} from "@/shared/helpers";
 import {clone, isEqual} from "lodash";
 import Select from 'react-select'
 import MultipleSelectField from '@/shared/components/form/MultipleSelectField'
-import MerchantsHierarchy from '@/shared/components/MerchantsHierarchy'
+import MerchantsFilterDropdown from '@/shared/components/MerchantsFilterDropdown'
 
 const defaultFrom = getFirstDay();
 const defaultTo = new Date();
@@ -299,7 +299,7 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
               <div className="form__form-group">
                 <div className="form__form-group-field">
                   <div className="form__form-group-row">
-                    <MerchantsHierarchy
+                    <MerchantsFilterDropdown
                         defaultMerchants={options.merchants}
                         selectedMerchants={selectedMerchants}
                         setSelectedMerchants={onMerchantsChange}
