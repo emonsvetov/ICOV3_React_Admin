@@ -1,12 +1,13 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {useExpanded, useFlexLayout, usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
+import {useExpanded,  usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
+import {Link, useParams} from 'react-router-dom'
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
-import {TABLE_COLUMNS} from "./columns";
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {Col, Row} from 'reactstrap';
-import {renameChildrenToSubrows} from '@/shared/helpers'
-import MOCK_DATA from "./MOCK_DATA.json"
-import {withRouter} from "react-router-dom";
+import {getFirstDay, dateStrToYmd} from '@/shared/helpers'
+
+import {TABLE_COLUMNS} from "./columns";
+
 import {connect} from "react-redux";
 import {
   reducer,
@@ -17,15 +18,20 @@ import {
   TableFilter,
   Sorting
 } from "@/shared/apiTableHelper"
-import {clone} from 'lodash';
-import {getFirstDay} from '@/shared/helpers'
-import { StickyContainer, Sticky } from "react-sticky";
+
+import { clone} from 'lodash';
 
 const queryClient = new QueryClient()
 
 const DataTable = ({organization, programs}) => {
-  const defaultFrom = getFirstDay();
-  const [filter, setFilter] = useState({programs: programs, awardLevels: [], from: defaultFrom, to: new Date()});
+  const { programId } = useParams();
+
+  const [filter, setFilter] = useState({
+    programs: programs,
+    from: getFirstDay(),
+    to: new Date()
+  });
+
   const [useFilter, setUseFilter] = useState(false);
   const [trigger, setTrigger] = useState(0);
   const [exportData, setExportData] = useState([]);
@@ -33,39 +39,22 @@ const DataTable = ({organization, programs}) => {
   const [exportToCsv, setExportToCsv] = useState(false);
   const exportLink = React.createRef();
 
-  const fetchMockData = () => {
-    
-    const data = {
-        results: renameChildrenToSubrows(MOCK_DATA),
-        count: 15
-    };
-    return data;
-};
-
-
-  let columns = useMemo(() => TABLE_COLUMNS, [])
-
   const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
     React.useReducer(reducer, initialState);
 
-  //const apiUrl = `/organization/${organization.id}/report/cash-deposit`; //enable api after creation
-  const {isLoading, error, data, isSuccess, isFetching} = useQuery(
-    ['programs',
-    //apiUrl, 
-    queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
-    () =>
-    fetchMockData()
-    // fetchApiData(
-    //   {
-    //     //url: apiUrl,
-    //     page: queryPageIndex,
-    //     size: queryPageSize,
-    //     filter,
-    //     sortby: queryPageSortBy,
-    //     trigger: queryTrigger
-    //   }
-    // )
-    ,
+  const apiUrl = `/organization/${organization.id}/report/deposit-transfers`;
+  const {isLoading, error, data, isSuccess} = useQuery(
+    [['programReportDepositTransfer'], apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+    () => fetchApiData(
+      {
+        url: apiUrl,
+        page: queryPageIndex,
+        size: queryPageSize,
+        filter,
+        sortby: queryPageSortBy,
+        trigger: queryTrigger
+      }
+    ),
     {
       keepPreviousData: true,
       staleTime: Infinity,
@@ -82,21 +71,23 @@ const DataTable = ({organization, programs}) => {
   }, [exportLink])
 
   const download = async (filterValues) => {
-    // let tmpFilter = clone(filterValues);
-    // tmpFilter.exportToCsv = 1;
+    let tmpFilter = clone(filterValues);
+    tmpFilter.exportToCsv = 1;
 
-    // const response = await fetchApiDataExport(
-    //   {
-    //   // url: apiUrl,
-    //     filter: tmpFilter,
-    //     sortby: queryPageSortBy,
-    //     trigger: queryTrigger
-    //   }
-    // );
-    // setExportData(response.results);
-    // setExportHeaders(response.headers);
-    // setExportToCsv(true);
+    const response = await fetchApiDataExport(
+      {
+        url: apiUrl,
+        filter: tmpFilter,
+        sortby: queryPageSortBy,
+        trigger: queryTrigger
+      }
+    );
+    setExportData(response.results);
+    setExportHeaders(response.headers);
+    setExportToCsv(true);
   }
+
+  let columns = useMemo(() => TABLE_COLUMNS, [])
 
   const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
@@ -107,6 +98,7 @@ const DataTable = ({organization, programs}) => {
     footerGroups,
     rows,
     prepareRow,
+    rowSpanHeaders,
     page,
     pageCount,
     pageOptions,
@@ -118,8 +110,8 @@ const DataTable = ({organization, programs}) => {
     setPageSize,
     state: {pageIndex, pageSize, sortBy}
   } = useTable({
-      columns,
-      data: data ? data.results : [],
+      columns: columns,
+      data: data ? Object.values(data.results) : [],
       initialState: {
         pageIndex: queryPageIndex,
         pageSize: queryPageSize,
@@ -130,32 +122,34 @@ const DataTable = ({organization, programs}) => {
       autoResetSortBy: false,
       autoResetExpanded: false,
       autoResetPage: false,
-      disableResizing: true
+      disableResizing: true,
+      autoResetHiddenColumns: false,
+      striped: true
     },
     useSortBy,
     useExpanded,
     usePagination,
     useResizeColumns,
-    useFlexLayout,
+    // useFlexLayout,
   );
 
   const manualPageSize = []
   useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
 
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
   if (error) {
     return <p>Error: {JSON.stringify(error)}</p>;
   }
 
-  if (isLoading || !organization?.id) {
-    return <p>Loading...</p>;
-  }
-
   if (isSuccess)
     return (
-      <StickyContainer>
+      <>
         <div className='table react-table report-table'>
           <div className="action-panel">
-            <Row className="form__form-group mx-0">
+            <Row className="mx-0">
               <Col>
                 <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter}
                              exportData={exportData} exportLink={exportLink} exportHeaders={exportHeaders}
@@ -170,47 +164,40 @@ const DataTable = ({organization, programs}) => {
                              }}/>
               </Col>
             </Row>
-            <div style={{clear: 'both'}}>&nbsp;</div>
           </div>
           {
-            (isLoading || isFetching) && <p className="text-center">Loading...</p>
+            isLoading && <p>Loading...</p>
           }
           {
-            // ref={r => { csvLinkTable = r; }}
             isSuccess &&
-            <table {...getTableProps()} className="table">
-              <Sticky  topOffset={80}>
-                {({ style }) => (
-                    <thead style={{...style, top:'60px'}}>
-                {headerGroups.map((headerGroup) => (
-                  <tr {...headerGroup.getHeaderGroupProps()}>
-                    {headerGroup.headers.map(column => (
-                      <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                        {column.render('Header')}
-                        {column.isSorted ? <Sorting column={column}/> : ''}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-                </thead>
-              )}
-              </Sticky> 
-              <tbody className="table table--bordered" {...getTableBodyProps()}>
+            <table {...getTableProps()} className="table table-striped report-table">
+              <thead>
+              {headerGroups.map((headerGroup) => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map(column => (
+                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                      {column.render('Header')}
+                      {column.isSorted ? <Sorting column={column}/> : ''}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+              </thead>
+              <tbody className="table table--bordered" {...getTableBodyProps()} >
               {page.map(row => {
                 prepareRow(row);
-                const subCount = (row.id.match(/\./g) || []).length
                 return (
-                  <tr {...row.getRowProps()}>
-                    {
-                      row.cells.map(cell => {
-                        // console.log(cell)
-                        const paddingLeft = subCount * 20
-                        return <td {...cell.getCellProps()}><span
-                          style={cell.column.Header === '#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span>
-                        </td>
-                      })
-                    }
-                  </tr>
+                  <>
+                    <tr {...row.getRowProps()} key={row.id}>
+                      {
+                        row.cells.map(cell => {
+                          return <td {...cell.getCellProps()} key={cell.column.id + row.id}>
+                            <span>{cell.render('Cell')}</span>
+                          </td>
+                        })
+                      }
+                    </tr>
+                  </>
                 )
               })}
               </tbody>
@@ -244,19 +231,20 @@ const DataTable = ({organization, programs}) => {
                 dataLength={totalCount}
               />
               <div className="pagination justify-content-end mt-2">
-                            <span>
-                            Go to page:{' '}
-                              <input
-                                type="number"
-                                value={pageIndex + 1}
-                                onChange={(e) => {
-                                  const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                                  gotoPage(page);
-                                }}
-                                style={{width: '100px'}}
-                              />
-                            </span>{' '}
+                                <span>
+                                Go to page:{' '}
+                                  <input
+                                    type="number"
+                                    value={pageIndex + 1}
+                                    onChange={(e) => {
+                                      const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                                      gotoPage(page);
+                                    }}
+                                    style={{ width: '100px' }}
+                                  />
+                                </span>{" "}
                 <select
+                  className="ml-2"
                   value={pageSize}
                   onChange={(e) => {
                     setPageSize(Number(e.target.value));
@@ -272,19 +260,22 @@ const DataTable = ({organization, programs}) => {
             </>
           )}
         </div>
-      </StickyContainer>
+      </>
     )
 }
 
 const TableWrapper = ({organization, programs}) => {
-  if (!organization || !programs) return 'Loading...'
+  if (!organization || !programs ) return 'Loading...'
   return (
     <QueryClientProvider client={queryClient}>
-      <DataTable organization={organization} programs={programs}/>
+      <DataTable organization={organization}  programs={programs}/>
     </QueryClientProvider>
   )
 }
 
-export default withRouter(connect((state) => ({
-  organization: state.organization
-}))(TableWrapper));
+const mapStateToProps = (state) => {
+  return {
+    organization: state.organization,
+  };
+};
+export default connect(mapStateToProps)(TableWrapper);

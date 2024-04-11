@@ -1,31 +1,24 @@
-
+import { toCurrency} from '@/shared/helpers'
 export const TABLE_COLUMNS = [
-
   {
     Header: "Date",
-    accessor: "date",
-    width: 150
+    accessor: "posting_timestamp",
   },
   {
-    Header: "From Program	",
-    accessor: "from_program",
-    width: 200
+    Header: "From Program",
+    accessor: "from_program_name",
   },
   {
-    Header: "To Program	",
-    accessor: "to_program",
-    width: 200,
+    Header: "To Program",
+    accessor: "to_program_name",
   },
   {
-    Header: "Transferred By	",
-    accessor: "transferred_by",
-    width: 150
+    Header: "Transferred By",
+    accessor: "name",
   },
   {
     Header: "Amount",
-    accessor: "amount",
-    width: 150
+    accessor: "posting_amount",
+    Cell: ({ row, value }) => { return toCurrency(value) },
   },
-
-]
-
+];

@@ -74,9 +74,9 @@ const DataTable = ({organization, programs}) => {
 
     const defaultColumn = React.useMemo(
         () => ({
-          minWidth: 30,
-          width: 150,
-          maxWidth: 400,
+          minWidth: 80,
+          width: 'auto',
+          // maxWidth: 400,
         }),
         []
     )

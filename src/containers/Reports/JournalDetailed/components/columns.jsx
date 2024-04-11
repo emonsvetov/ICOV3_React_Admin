@@ -37,7 +37,7 @@ export const JOURNAL_DETAILED_COLUMNS = [
                 {row.isExpanded ? <MinusIcon className="chevron-expand"/> : <AddIcon className="chevron-expand"/>}
               </span>
               ) : null,
-          width: 70
+          width: 70,
        },
         {
             Header: "Program Name",
@@ -50,10 +50,11 @@ export const JOURNAL_DETAILED_COLUMNS = [
                   to={`/program/view/${row.original.id}`}>{value}</Link></div>
           },
             minWidth: 200,
+            className: 'frozenColumn',
         },
         {
           Header: "Program Account Holder ID",
-          accessor: "account_holder_id",
+          accessor: "shownId",
           Footer:"",
 
         },

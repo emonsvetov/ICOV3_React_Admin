@@ -29,7 +29,7 @@ const DataTable = ({organization, program, programs}) => {
     createdOnly: false,
     reportKey: 'sku_value',
     programId: 1,
-    from: dateStrToYmd(getFirstDay()),
+    from: dateStrToYmd(new Date('2014-10-29')),
     to: dateStrToYmd(new Date())
   });
   let {programId} = useParams();

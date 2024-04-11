@@ -35,8 +35,6 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(false)
     const [currentTheme, setCurrentTheme] = useState("Default");
-    const [welcome_message, setWelcomeMessage] = useState();
-    const [part_HomeMessage, setPart_HomeMessage] = useState();
     let [template, setTemplate] = useState({})
     // console.log(program)
     const validate = values => {
@@ -91,7 +89,7 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
         values = unpatchMedia(values, MEDIA_FIELDS)
         let formData = mapFormDataUploads( values )
         let saveUrl = `/organization/${program.organization_id}/program/${program.id}/template`;
-        if( template?.id)  {
+        if( template?.id && template.program_id == program.id )  { //Checks if the subprogram uses the parent's template as the default.
             formData.append('_method', 'PUT')
             saveUrl += `/${template.id}`
         }
@@ -403,7 +401,6 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                         <Field
                                           name="welcome_message"
                                           component={WYSIWYGEditor}
-                                          onChange={setWelcomeMessage}
                                         />
                                     </div>
                                 </div>
@@ -417,7 +414,6 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                         <Field
                                           name="participant_homepage_message"
                                           component={WYSIWYGEditor}
-                                          onChange={setPart_HomeMessage}
                                         />
                                     </div>
                                 </div>

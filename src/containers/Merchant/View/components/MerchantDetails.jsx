@@ -163,7 +163,15 @@ const MerchantDetails = ( {data} ) => {
                     {merchant.tango_orders_api.name}
                   </span>
               </Col>
-            </Row>
+            </Row> &&
+              <Row>
+                  <Col md="4" lg="4" xl="4" sm="4" className='label'>
+                      Send the second email from Tango:
+                  </Col>
+                  <Col md="8" lg="8" xl="8" sm="8">
+                      {answerYesNo(merchant.set_second_email_from_tango)}
+                  </Col>
+              </Row>
         }
         <Row>
             <Col md="4" lg="4" xl="4" sm="4" className='label'>

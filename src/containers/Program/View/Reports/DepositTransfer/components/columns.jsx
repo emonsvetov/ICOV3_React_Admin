@@ -1,4 +1,4 @@
-import { toPoints} from '@/shared/helpers'
+import { toCurrency} from '@/shared/helpers'
 export const TABLE_COLUMNS = [
   {
     Header: "Date",
@@ -19,6 +19,6 @@ export const TABLE_COLUMNS = [
   {
     Header: "Amount",
     accessor: "posting_amount",
-    Cell: ({ row, value }) => { return toPoints(value) },
+    Cell: ({ row, value }) => { return toCurrency(value) },
   },
 ];

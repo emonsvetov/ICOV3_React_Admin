@@ -9,18 +9,21 @@ import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 import ProgramUserFormFields from './ProgramUserFormFields'
 import arrayMutators from "final-form-arrays"
+import getUnitNumbers from '@/service/program/getUnitNumbers'
 
 let config = {
     roleInput:'checkbox',
     roleField: 'roles',
-    isProgram: true
+    isProgram: true,
+    unitNumberField: 'unit_number',
+    unitNumberOptions: []
 }
 
 const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
     const dispatch = useDispatch()
     const [saving, setSaving] = useState(false)
     const [roles, setRoles] = useState(null)
-
+    const [unitNumberOptions, setUnitNumberOptions] = useState(config.unitNumberOptions);
     React.useEffect( () => {
         // console.log(program)
         getRoles(program.organization_id)
@@ -37,10 +40,23 @@ const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
             setSaving(false)
         })
     }
+
+    React.useEffect(() => {
+      if (organization?.id && program?.id && program?.uses_units) {
+        getUnitNumbers(organization.id, program.id, "assignable=1").then( res => {
+          setUnitNumberOptions(labelizeNamedData(res));
+        })
+      }
+    }, [organization, program]);
   
     const onSubmit = values => {
         if( config.roleInput === 'select')    {
             values = unpatchSelect(values, [config.roleField])
+        }
+        console.log(values.unit_number)
+        if( typeof values.unit_number === 'object') {
+          console.log(config.unitNumberField)
+          values = unpatchSelect(values, [config.unitNumberField])
         }
         if(values?.send_invite) {
           delete values["password"]
@@ -120,7 +136,9 @@ const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
                     </ButtonToolbar>
                 </Col>
             </Row>
-            <ProgramUserFormFields config={config} form={form} submitting={submitting} pristine={pristine} values={values}/>
+            <ProgramUserFormFields config={{...config, ...{
+              unitNumberOptions
+            }}} form={form} submitting={submitting} pristine={pristine} values={values} program={program}/>
         </form>
     )}}
     </Form>
