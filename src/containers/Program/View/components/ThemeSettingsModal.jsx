@@ -18,6 +18,7 @@ import renderSelectOptionsField from '@/shared/components/form/SelectOptions';
 import WYSIWYGEditor from '@/shared/components/form/WYSIWYGEditor'
 import { THEME_FONT_FAMILIES  } from './ThemeData';
 import ColorPicker from 'material-ui-color-picker'
+import { inArray } from '../../../../shared/helpers';
 
 const MEDIA_FIELDS = ['small_logo', 'big_logo', 'hero_banner', 'slider_01', 'slider_02', 'slider_03']
 const THEME_IMAGE = {
@@ -68,7 +69,22 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
       // setError(errors)
       return errors
     }
+
+    const isShowDeleteImage = (fieldName) => {
+      if( currentTheme != 'Default' ) {
+        if( template?.inherited?.fields && typeof template.inherited.fields === 'object')
+        {
+          if(inArray(fieldName, template.inherited.fields)) {
+            return false
+          }
+        }
+        return true;
+      }
+    }
+
     const deleteImage = (name) => {
+      console.log(template.inherited)
+      return;
       deleteThemeMedia(program.organization_id, program.id, template.id, name)
       .then( res => {
         setTemplate((prevState) => ({
@@ -101,7 +117,8 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
             // console.log(res)
             // toggle();
             if(res.status === 200)  {
-                setTemplate(res.data)
+                // setTemplate(res.data)
+                getSetTheme(program)
                 flashSuccess(dispatch, 'Program Template updated successfully');
                 // if( !template?.id)  {
                 //     window.location.reload();
@@ -186,14 +203,17 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
         setCurrentTheme(selectedOption.value);
     };
 
+    const getSetTheme = (program) => {
+      getTheme(program.organization_id, program.id)
+        .then( theme => {
+          setTemplate(theme ? theme : {})
+        })
+    }
+
     useEffect(() => {
         if(program && program?.id)
         {
-          getTheme(program.organization_id, program.id)
-          .then( theme => {
-
-            setTemplate(theme ? theme : {})
-          })
+          getSetTheme(program)
         }
     }, [program]);
 
@@ -487,7 +507,7 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                           uploadTitle={{type: 'short', displayAlways: true}}
                                         />}
                                         <div className='image-wrap'>
-                                            <RenderImage src={template.slider_01} showDelete={currentTheme != 'Default'}  name='slider_01' dlcb={deleteImage} />
+                                            <RenderImage src={template.slider_01} showDelete={isShowDeleteImage('slider_01')}  name='slider_01' dlcb={deleteImage} />
                                         </div>
                                     </div>
                                 </div>
@@ -503,7 +523,7 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                           uploadTitle={{type: 'short', displayAlways: true}}
                                         />}
                                         <div className='image-wrap'>
-                                            <RenderImage src={template?.slider_02} showDelete={currentTheme != 'Default'}  name='slider_02' dlcb={deleteImage} />
+                                            <RenderImage src={template?.slider_02} showDelete={isShowDeleteImage('slider_02')}  name='slider_02' dlcb={deleteImage} />
                                         </div>
                                     </div>
                                 </div>
@@ -519,7 +539,7 @@ const ThemeSettings = ({isOpen, toggle, program, theme, rtl}) => {
                                           uploadTitle={{type: 'short', displayAlways: true}}
                                         />}
                                         <div className='image-wrap'>
-                                            <RenderImage src={template?.slider_03}  showDelete={currentTheme != 'Default'} name='slider_03' dlcb={deleteImage} />
+                                            <RenderImage src={template?.slider_03}  showDelete={isShowDeleteImage('slider_03')} name='slider_03' dlcb={deleteImage} />
                                         </div>
                                     </div>
                                 </div>
