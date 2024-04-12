@@ -67,7 +67,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   const [currentMenuItem, setCurrentMenuItem] = useState();
   const [currentForm, setCurrentForm] = useState(null);
   const MAX_SIZE = 10485760
-  const [fileUploadSizeError, setFileUploadSizeError] = useState(false)
+  const [uploadError, setUploadError] = useState({})
 
   const loadMediTypes = async () => {
     try {
@@ -110,7 +110,6 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       setCurrentMedia(null)
       setMedia([])
     }
-    setFileName('')
   }
 
   const handleChangeForms = (value) =>{
@@ -311,22 +310,33 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
         setFileName(name);
       }
       setUploadedMeta(meta);
-      setFileUploadSizeError(false);
+      setUploadError(prevError => ({ ...prevError, file: null }));
     }
     if (status === "error_file_size"){
-      setFileUploadSizeError(true)
-    }
-    else{
-      setFileUploadSizeError(false)
+      setUploadError(prevError => ({ ...prevError, file: "File is too big" }));
     }
     if(status == 'removed'){
       setFileName('');
+      setUploadError(prevError => ({ ...prevError, file: null }));
+    }
+    if(status === 'error_upload'){
+      setUploadError(prevError => ({ ...prevError, file: "Upload error" }));
     }
   }
 
   const handleUploadIcon = ({meta, file}, status) => {
     if (status === 'done') {
       setIconMeta(meta);
+      setUploadError(prevError => ({ ...prevError, icon: null }));
+    }
+    if (status === "error_file_size"){
+      setUploadError(prevError => ({ ...prevError, icon: "File is too big" }));
+    }
+    if(status == 'removed'){
+      setUploadError(prevError => ({ ...prevError, icon: null }));
+    }
+    if(status === 'error_upload'){
+      setUploadError(prevError => ({ ...prevError, icon: "Upload error" }));
     }
   }
 
@@ -407,6 +417,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       setTempLink('')
       setLink('')
       setTab(1);
+      setUploadError({});
       setCurrentForm(null)
     }
   }
@@ -496,6 +507,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                     onChangeStatus={handleUploadIcon}
                                   />
                                   {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                  {uploadError && uploadError.icon && <p className="form__form-group-error">{ uploadError.icon }</p>}
                                 </div>
                               </div>
                               )}
@@ -518,7 +530,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                   />
                                 </div>
                                 {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
-                                {fileUploadSizeError && <p className="form__form-group-error">File Size is too big</p>}
+                                {uploadError && uploadError.file && <p className="form__form-group-error">{ uploadError.file }</p>}
                               </div>
                             )}
                           </Field>
