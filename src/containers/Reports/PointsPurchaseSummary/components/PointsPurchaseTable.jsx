@@ -248,7 +248,7 @@ const DataTable = ({organization, programs}) => {
                                                 // console.log(cell)
                                         
                                                 const paddingLeft = subCount * 20
-                                                return <td {...cell.getCellProps()}>
+                                                return <td {...cell.getCellProps({className: cell.column.className})}>
                                                             <span style={cell.column.Header==='#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}
                                                             </span>
                                                         </td>
