@@ -47,7 +47,8 @@ export const PROGRAM_COLUMNS = [
             return <div style={boldRow ? {fontWeight: 'bold'} : {}}>{space.repeat(row.original.dinamicDepth)}<Link
               to={`/program/view/${row.original.id}`}>{value}</Link></div>
         },
-        width: 200
+        width: 200,
+        className: 'frozenColumn',
     },
     {
         Header: "Program Account Holder ID",
