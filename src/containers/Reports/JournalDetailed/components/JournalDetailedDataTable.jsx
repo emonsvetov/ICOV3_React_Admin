@@ -184,7 +184,7 @@ const DataTable = ({organization, programs}) => {
               <table {...getTableProps()} className="table table--bordered">
                 <Sticky  topOffset={80}>
                   {({ style }) => (
-                    <thead style={{...style, top: '60px'}}> 
+                    <thead style={{...style, top: '60px', zIndex: '2'}}>
                       {headerGroups.map((headerGroup) => (
                         <tr {...headerGroup.getHeaderGroupProps()}>
                           {headerGroup.headers.map(column => (
