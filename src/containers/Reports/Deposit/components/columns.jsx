@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import React, { useMemo } from 'react';
 import { formatDate } from '../../../../shared/helpers';
-export const PROGRAM_COLUMNS = [
+export const PROGRAM_DEPOSIT_COLUMNS = [
    
     {
         Header: "Program Name",
@@ -12,7 +12,7 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "Program ID",
-        accessor: "account_holder_id",
+        accessor: "id",
         Footer:"",
         maxWidth: 100,
     },
@@ -22,17 +22,17 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "Invoice Number",
-        accessor: "invoice_num",
+        accessor: "invoice_number",
         Cell: ({ row, value }) => { return <Link to={`/program/view/${row.original.id}`}>{value}</Link>},
     },
     {
         Header: "Monies Deposited",
-        accessor: "monies_deposited",
+        accessor: "amount",
         Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.monies_deposited) + sum, 0),
+              () => rows.reduce((sum, row) => Number(row.values.amount) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -41,11 +41,11 @@ export const PROGRAM_COLUMNS = [
     {
         Header: "Deposit Fee",
         accessor: "deposit_fee",
-        Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(4)}`},
+        Cell: ({ row, value }) => { return `$0.00`},
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.deposit_fee) + sum, 0),
+              () => rows.reduce((sum, row) => Number(0) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -53,12 +53,12 @@ export const PROGRAM_COLUMNS = [
     },
     {
         Header: "Posting Date",
-        accessor: "posting_date",
+        accessor: "date_paid",
         Cell: ({ row, value }) => { return formatDate(value); },
     },
     {
         Header: "Posted By",
-        accessor: "posted_by",
+        accessor: "admin",
     },
 ]
 
