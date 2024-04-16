@@ -63,7 +63,6 @@ export const PROGRAM_COLUMNS = [
           },
     },
     {
-
         Header: "Expired",
         accessor: "expired",
         Cell: ({ row, value }) => {
@@ -132,7 +131,7 @@ export const PROGRAM_COLUMNS = [
           Cell: ({ row, value }) => {
               if (row.original.dinamicDepth === 0) {
                   const subRowsTotal = row.original.subRows.reduce((acc, subRow) => acc + subRow.this_unredeemed, 0);
-                  return `$${parseFloat(subRowsTotal)}`
+                  return `$${parseFloat(subRowsTotal).toFixed(2)}`
               }
               return `$${parseFloat(value)}`
           },
@@ -151,7 +150,7 @@ export const PROGRAM_COLUMNS = [
           Cell: ({ row, value }) => {
               if (row.original.dinamicDepth === 0) {
                   const subRowsTotal = row.original.subRows.reduce((acc, subRow) => acc + subRow.last_unredeemed, 0);
-                  return `$${parseFloat(subRowsTotal)}`
+                  return `$${parseFloat(subRowsTotal).toFixed(2)}`
               }
               return `$${parseFloat(value).toFixed(2)}`
           },
@@ -192,7 +191,7 @@ export const PROGRAM_COLUMNS = [
         Cell: ({ row, value }) => {
             if (row.original.dinamicDepth === 0) {
                 const subRowsTotal = row.original.subRows.reduce((acc, subRow) => acc + subRow.calculated_reserve, 0);
-                return `$${parseFloat(subRowsTotal)}`
+                return `$${parseFloat(subRowsTotal).toFixed(2)}`
             }
             return `$${parseFloat(value).toFixed(2)}`
         },
