@@ -46,7 +46,13 @@ export const PROGRAM_COLUMNS = [
     {
         Header: "Awarded",
         accessor: "value_awarded",
-        Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
+        Cell: ({ row, value }) => {
+            if (row.original.dinamicDepth === 0) {
+                const subRowsTotal = row.original.subRows.reduce((acc, subRow) => acc + subRow.value_awarded, 0);
+                return `$${parseFloat(subRowsTotal)}`
+            }
+            return `$${parseFloat(value)}`
+        },
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
@@ -59,7 +65,13 @@ export const PROGRAM_COLUMNS = [
     {
         Header: "Expired",
         accessor: "expired",
-        Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
+        Cell: ({ row, value }) => {
+            if (row.original.dinamicDepth === 0) {
+                const subRowsTotal = row.original.subRows.reduce((acc, subRow) => acc + subRow.expired, 0);
+                return `$${parseFloat(subRowsTotal)}`
+            }
+            return `$${parseFloat(value)}`
+        },
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
@@ -72,7 +84,13 @@ export const PROGRAM_COLUMNS = [
     {
         Header: "Reclaimed",
         accessor: "reclaimed",
-        Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
+        Cell: ({ row, value }) => {
+            if (row.original.dinamicDepth === 0) {
+                const subRowsTotal = row.original.subRows.reduce((acc, subRow) => acc + subRow.reclaimed, 0);
+                return `$${parseFloat(subRowsTotal)}`
+            }
+            return `$${parseFloat(value)}`
+        },
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
@@ -86,7 +104,13 @@ export const PROGRAM_COLUMNS = [
     {
         Header: "Redeemed",
         accessor: "redeemed",
-        Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
+        Cell: ({ row, value }) => {
+            if (row.original.dinamicDepth === 0) {
+                const subRowsTotal = row.original.subRows.reduce((acc, subRow) => acc + subRow.redeemed, 0);
+                return `$${parseFloat(subRowsTotal)}`
+            }
+            return `$${parseFloat(value)}`
+        },
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
@@ -104,7 +128,13 @@ export const PROGRAM_COLUMNS = [
         {
           Header: "current year",
           accessor: "this_unredeemed",
-          Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
+          Cell: ({ row, value }) => {
+              if (row.original.dinamicDepth === 0) {
+                  const subRowsTotal = row.original.subRows.reduce((acc, subRow) => acc + subRow.this_unredeemed, 0);
+                  return `$${parseFloat(subRowsTotal)}`
+              }
+              return `$${parseFloat(value)}`
+          },
           Footer: (info) => {
               const { rows, flatRows } = info;
               const totalValue = useMemo(
@@ -117,7 +147,13 @@ export const PROGRAM_COLUMNS = [
         {
           Header: "previous year",
           accessor: "last_unredeemed",
-          Cell: ({ row, value }) => { return `$${parseFloat(value)}`},
+          Cell: ({ row, value }) => {
+              if (row.original.dinamicDepth === 0) {
+                  const subRowsTotal = row.original.subRows.reduce((acc, subRow) => acc + subRow.last_unredeemed, 0);
+                  return `$${parseFloat(subRowsTotal)}`
+              }
+              return `$${parseFloat(value)}`
+          },
           Footer: (info) => {
               const { rows, flatRows } = info;
               const totalValue = useMemo(
@@ -132,7 +168,13 @@ export const PROGRAM_COLUMNS = [
     {
         Header: "Reserve %",
         accessor: "reserve_percentage",
-        Cell: ({ row, value }) => { return `${parseFloat(value)}%`},
+        Cell: ({ row, value }) => {
+            if (row.original.dinamicDepth === 0) {
+                const subRowsTotal = row.original.subRows.reduce((acc, subRow) => acc + subRow.reserve_percentage, 0);
+                return `$${parseFloat(subRowsTotal/row.original.subRows.length)}`
+            }
+            return `${parseFloat(value)}%`
+        },
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
@@ -146,7 +188,13 @@ export const PROGRAM_COLUMNS = [
     {
         Header: "Calculated Reserve",
         accessor: "calculated_reserve",
-        Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
+        Cell: ({ row, value }) => {
+            if (row.original.dinamicDepth === 0) {
+                const subRowsTotal = row.original.subRows.reduce((acc, subRow) => acc + subRow.calculated_reserve, 0);
+                return `$${parseFloat(subRowsTotal)}`
+            }
+            return `$${parseFloat(value).toFixed(2)}`
+        },
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
