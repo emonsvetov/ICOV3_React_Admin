@@ -165,9 +165,9 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField 
-                                name="enable_uploads_while_awarding"
+                                name="enable_upload_while_awarding"
                                 label="Enable uploading documents while awarding"
-                                checked={data?.enable_uploads_while_awarding}
+                                checked={data?.enable_upload_while_awarding}
                             />
                         </div>
                     </Col>

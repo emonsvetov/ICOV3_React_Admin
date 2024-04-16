@@ -36,6 +36,8 @@ export const AnnualAwardsSummarySubProgramFilter: FC<AnnualAwardsSummarySubProgr
             updatedFilter.year = values.year
         }
 
+        console.log(values.programs)
+
         if (values.programs) {
             updatedFilter.programs = values.programs.map(item => item.value).join(',');
         }
@@ -43,6 +45,7 @@ export const AnnualAwardsSummarySubProgramFilter: FC<AnnualAwardsSummarySubProgr
         if (values.active) {
             updatedFilter.active = values.active
         }
+
 
         if (eCsv){
             updatedFilter.exportToCsv = 1;

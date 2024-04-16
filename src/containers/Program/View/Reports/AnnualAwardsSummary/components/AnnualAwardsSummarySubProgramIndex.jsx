@@ -70,6 +70,7 @@ const AnnualAwardsSummarySubProgramIndex: FC<AnnualAwardsSummarySubProgramIndexP
     const getDataReport = async () => {
 
         if (params.programId > 0 && params.programs !== '' && params.exportToCsv === 0){
+            console.log(params)
             const apiUrl = `/organization/1/report/annual-awards-summaryAdmin`
             try {
                 const response = await axios.get(apiUrl, {params});

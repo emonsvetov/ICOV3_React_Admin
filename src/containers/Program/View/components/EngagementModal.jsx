@@ -39,7 +39,7 @@ const EngagementModal = ({
         `/organization/${data.organization_id}/program/${data.id}`,
         data
       );
-      // console.log(response)
+       console.log(response)
       setLoading(false);
       // setData( data )
       if (response.status === 200) {
