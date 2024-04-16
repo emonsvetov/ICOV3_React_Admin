@@ -41,11 +41,11 @@ export const PROGRAM_DEPOSIT_COLUMNS = [
     {
         Header: "Deposit Fee",
         accessor: "deposit_fee",
-        Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(4)}`},
+        Cell: ({ row, value }) => { return `$0.00`},
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
-              () => rows.reduce((sum, row) => Number(row.values.deposit_fee) + sum, 0),
+              () => rows.reduce((sum, row) => Number(0) + sum, 0),
               [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
