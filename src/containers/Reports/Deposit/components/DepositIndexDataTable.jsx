@@ -1,385 +1,249 @@
-import React, {useState, useEffect, useMemo, useRef} from "react";
-import { useTable, usePagination, useSortBy, useExpanded, useResizeColumns, useFlexLayout } from "react-table";
+import React, {useState, useEffect, useMemo} from "react";
+import {useExpanded, useFlexLayout, usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
-import MOCK_DATA from "./MOCK_DATA.json";
-import {PROGRAM_COLUMNS} from "./columns";
-import SortIcon from 'mdi-react/SortIcon';
-import SortAscendingIcon from 'mdi-react/SortAscendingIcon';
-import SortDescendingIcon from 'mdi-react/SortDescendingIcon';
-import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
-import DepositFilter  from "./DepositFilter";
+import {PROGRAM_DEPOSIT_COLUMNS} from "./columns";
 import { Col, Row} from 'reactstrap';
-import axios from 'axios'
+import {withRouter} from "react-router-dom";
+import {connect} from "react-redux";
+import {clone} from 'lodash';
+import DepositFilter  from "./DepositFilter";
+import {
+  reducer,
+  useEffectToDispatch,
+  fetchApiData,
+  fetchApiDataExport,
+  initialState,
+  Sorting
+} from "@/shared/apiTableHelper"
+import {getFirstDay} from '@/shared/helpers'
 import { StickyContainer, Sticky } from "react-sticky";
-import {renameChildrenToSubrows} from '@/shared/helpers'
 
 const queryClient = new QueryClient()
 
-const initialState = {
-    queryPageIndex: 0,
-    queryPageSize: 10,
-    totalCount: null,
-    queryPageFilter:{},
-    queryPageSortBy: [],
-};
+const DataTable = ({organization, programs, programOptions}) => {
 
-const PAGE_CHANGED = 'PAGE_CHANGED';
-const PAGE_SIZE_CHANGED = 'PAGE_SIZE_CHANGED';
-const PAGE_SORT_CHANGED = 'PAGE_SORT_CHANGED'
-const PAGE_FILTER_CHANGED = 'PAGE_FILTER_CHANGED';
-const TOTAL_COUNT_CHANGED = 'TOTAL_COUNT_CHANGED';
+  // console.log(organization)
 
-const reducer = (state, { type, payload }) => {
-  switch (type) {
-    case PAGE_CHANGED:
-        return {
-            ...state,
-            queryPageIndex: payload,
-        };
-    case PAGE_SIZE_CHANGED:
-        return {
-            ...state,
-            queryPageSize: payload,
-        };
-    case PAGE_SORT_CHANGED:
-        return {
-            ...state,
-            queryPageSortBy: payload,
-        };
-    case PAGE_FILTER_CHANGED:
-        return {
-            ...state,
-            queryPageFilter: payload,
-        };
-    case TOTAL_COUNT_CHANGED:
-        return {
-            ...state,
-            totalCount: payload,
-        };
-    default:
-      throw new Error(`Unhandled action type: ${type}`);
-  }
-};
-const fetchMockData = () => {
+  const defaultFrom = getFirstDay();
+  const [filter, setFilter] = useState({programs, from: defaultFrom, to: new Date()});
+    const [useFilter, setUseFilter] = useState(false);
+    const [trigger, setTrigger] = useState(0);
+    const [exportData, setExportData] = useState([]);
+    const [exportHeaders, setExportHeaders] = useState([]);
+    const [exportToCsv, setExportToCsv] = useState(false);
+    const exportLink = React.createRef();
 
-    const data = {
-        results: renameChildrenToSubrows(MOCK_DATA),
-        count: MOCK_DATA.length
-    };
-    return data;
-};
-const fetchProgramData = async (page, pageSize, pageFilterO = null, pageSortBy) => {
-    // const offset = page * pageSize;
-    const params = []
-    let paramStr = ''
-    if( pageFilterO ) {
-        if(pageFilterO.status !== 'undefined' && pageFilterO.status) params.push(`status=${pageFilterO.status}`)
-        if(pageFilterO.keyword !== 'undefined' && pageFilterO.keyword) params.push(`keyword=${pageFilterO.keyword}`)
-        // console.log(params)
-        paramStr = params.join('&')
-    }
-    if( pageSortBy.length > 0 ) {
-        const sortParams = pageSortBy[0];
-        const sortyByDir = sortParams.desc ? 'desc' : 'asc'
-        paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`
-    }
-    try {
-        const response = await axios.get(
-        `/organization/1/program?page=${page}&limit=${pageSize}&${paramStr}`
-        );
-        // console.log(response)
-        if( response.data.length === 0) return {results:[],count:0}
-        const data = {
-            results: renameChildrenToSubrows(response.data.data),
-            count: response.data.total
-        };
-        // console.log(data)
-        return data;
-    } catch (e) {
-        throw new Error(`API error:${e?.message}`);
-    }
-};
-
-const DataTable = () => {
-
-    const [filter, setFilter] = useState({from:'', to:'', invoiceNumber:'', programName:'', programId:''});
-
-    const handleDownload = async () => {
-        if (data && data.results) {
-            const csvString = convertArrayToCSV(data.results);
-            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'deposit_report.csv';
-            link.click();
-            URL.revokeObjectURL(url);
-        } else {
-            alert("No data to download");
+    useEffect(() => {
+      if (exportToCsv) {
+        if (exportLink.current) {
+          setExportToCsv(false);
+          exportLink.current.link.click();
         }
-    };
-
-    const onClickFilterCallback = (from, to, invoiceNumber, programName, programId) => {
-
-        if( filter.from === from &&
-            filter.to === to &&
-            filter.invoiceNumber === invoiceNumber &&
-            filter.programName === programName &&
-            filter.programId === programId )
+      }
+    }, [exportLink])
+  
+    const download = async (filterValues) => {
+      let tmpFilter = clone(filterValues);
+      tmpFilter.exportToCsv = 1;
+      tmpFilter.limit = pageSize;
+      tmpFilter.page = pageIndex+1;
+      const response = await fetchApiDataExport(
         {
-            alert('No change in filters')
-            return
+          url: apiUrl,
+          filter: tmpFilter,
+          sortby: queryPageSortBy,
+          trigger: queryTrigger
         }
-        setFilter({from, to, invoiceNumber, programName, programId})
-        // alert(status, keyword)
+      );
+      setExportData(response.results);
+      setExportHeaders(response.headers);
+      setExportToCsv(true);
     }
-
+   
     let program_columns = [
-        ...PROGRAM_COLUMNS,
-
+        ...PROGRAM_DEPOSIT_COLUMNS,
     ]
     let columns = useMemo( () => program_columns, [])
 
     const defaultColumn = React.useMemo(
         () => ({
-          minWidth: 30,
-          width: 150,
-          maxWidth: 400,
+          maxWidth: 100,
         }),
         []
     )
 
-    const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy }, dispatch] =
+    const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
     React.useReducer(reducer, initialState);
 
-    const { isLoading, error, data, isSuccess } = useQuery(
-        ['programs', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy],
-        // () => fetchProgramData(queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy),
-        () => fetchMockData(),
+    const apiUrl = `/organization/${organization.id}/report/invoice-created`;
+    const {isLoading, error, data, isSuccess, isFetched, isFetching} = useQuery(
+      ['journal-detailed', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+      () => fetchApiData(
         {
-            keepPreviousData: true,
-            staleTime: Infinity,
+          url: apiUrl,
+          page: queryPageIndex,
+          size: queryPageSize,
+          filter,
+          sortby: queryPageSortBy,
+          trigger: queryTrigger
         }
+      ),
+      {
+        keepPreviousData: true,
+        staleTime: Infinity,
+      }
     );
 
+    console.log(filter)
 
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
-
     const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        footerGroups,
-        rows,
-        prepareRow,
-        page,
-        pageCount,
-        pageOptions,
-        gotoPage,
-        previousPage,
-        canPreviousPage,
-        nextPage,
-        canNextPage,
-        setPageSize,
-        state: { pageIndex, pageSize, sortBy }
+      getTableProps,
+      getTableBodyProps,
+      headerGroups,
+      footerGroups,
+      rows,
+      prepareRow,
+      page,
+      pageCount,
+      pageOptions,
+      gotoPage,
+      previousPage,
+      canPreviousPage,
+      nextPage,
+      canNextPage,
+      setPageSize,
+      state: {pageIndex, pageSize, sortBy}
     } = useTable({
-        columns,
-        data: data ? data.results : [],
-        initialState: {
-            pageIndex: queryPageIndex,          
-            pageSize: queryPageSize,
-            sortBy: queryPageSortBy,
-        },
-        manualPagination: true, // Tell the usePagination
-        pageCount: data ? totalPageCount : null,
-        autoResetSortBy: false,
-        autoResetExpanded: false,
-        autoResetPage: false,
-        disableResizing: true
-        
+      columns,
+      data: data ? data.results : [],
+      initialState: {
+        pageIndex: queryPageIndex,
+        pageSize: queryPageSize,
+        sortBy: queryPageSortBy,
+      },
+      manualPagination: true, // Tell the usePagination
+      pageCount: data ? totalPageCount : null,
+      autoResetSortBy: false,
+      autoResetExpanded: false,
+      autoResetPage: false,
+      disableResizing: true
     },
     useSortBy,
     useExpanded,
     usePagination,
-    useResizeColumns, 
+    useResizeColumns,
     useFlexLayout,
     );
-    // const [statusFilterValue, setStatusFilterValue] = useState("");
+
     const manualPageSize = []
-
-    React.useEffect(() => {
-        dispatch({ type: PAGE_CHANGED, payload: pageIndex });
-    }, [pageIndex]);
-
-    React.useEffect(() => {
-        // alert(PAGE_SIZE_CHANGED)
-        dispatch({ type: PAGE_SIZE_CHANGED, payload: pageSize });
-    }, [pageSize, gotoPage]);
-
-    useEffect(() => {
-        dispatch({ type: PAGE_SORT_CHANGED, payload: sortBy });
-        gotoPage(0);
-    }, [sortBy, gotoPage]);
-
-    React.useEffect(() => {
-        // alert(PAGE_FILTER_CHANGED)
-        dispatch({ type: PAGE_FILTER_CHANGED, payload: filter });
-        gotoPage(0);
-    }, [filter, gotoPage]);
-
-    React.useEffect(() => {
-        if (data?.count) {
-            dispatch({
-            type: TOTAL_COUNT_CHANGED,
-            payload: data.count,
-            });
-        }
-    }, [data?.count]);
+    useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
 
     if (error) {
         return <p>Error: {JSON.stringify(error)}</p>;
     }
-    return (
-        <StickyContainer>
-            <div className='table react-table'>
-                <div className="action-panel">
-                    <Row className="flex mx-0">
-                        <Col lg={9} md={9} sm={8}>
-                            <DepositFilter onClickFilterCallback={onClickFilterCallback} />
-                            <button onClick={handleDownload} className="btn btn-success">
-                                Export to CSV
-                            </button>
-                        </Col>
-                    </Row>
-                </div>
-                {
-                        isLoading && <p>Loading...</p>
-                }
-                {
-                isSuccess &&
-                <table {...getTableProps()} className="table">
-                     <Sticky  topOffset={80}>
-                            {({ style }) => (
-                                <thead style={{...style, top: '60px'}}> 
-                                    {headerGroups.map((headerGroup) => (
-                                        <tr {...headerGroup.getHeaderGroupProps()}>
-                                            {headerGroup.headers.map(column => (
-                                            <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                                {column.render('Header')}
-                                                {column.isSorted ? <Sorting column={column}/> : ''}
-                                            </th>
-                                            ))}
-                                        </tr>
-                                    ))}
-                                </thead>
-                            )}
-                        </Sticky>
-                    <tbody className="table table--bordered" {...getTableBodyProps()}>
-                        {page.map( row => {
-                            prepareRow(row);
-                            const subCount = (row.id.match(/\./g) || []).length
-                            return (
-                                <tr {...row.getRowProps()}>
-                                    {
-                                        row.cells.map( cell => {
-                                            // console.log(cell)
-                                            const paddingLeft = subCount * 20
-                                            return <td {...cell.getCellProps()}><span style={cell.column.Header==='#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span></td>
-                                        })
-                                    }
-                                </tr>
-                            )
-                        })}
-                    </tbody>
-                    <tfoot>
-                        {footerGroups.map( (footerGroup) => (
-                            <tr {...footerGroup.getFooterGroupProps()}>
-                                {footerGroup.headers.map( column => (
-                                    <th {...column.getFooterProps()}>{column.render('Footer')}</th>
-                                ))}
-                            </tr>
-                        ))}
-                    </tfoot>
-                </table>
-                }
 
-            {(rows.length > 0) && (
-                <>
-                    <ReactTablePagination
-                        page={page}
-                        gotoPage={gotoPage}
-                        previousPage={previousPage}
-                        nextPage={nextPage}
-                        canPreviousPage={canPreviousPage}
-                        canNextPage={canNextPage}
-                        pageOptions={pageOptions}
-                        pageSize={pageSize}
-                        pageIndex={pageIndex}
-                        pageCount={pageCount}
-                        setPageSize={setPageSize}
-                        manualPageSize={manualPageSize}
-                        dataLength={totalCount}
-                    />
-                    <div className="pagination justify-content-end mt-2">
-                        <span>
-                        Go to page:{' '}
-                        <input
-                            type="number"
-                            value={pageIndex + 1}
-                            onChange={(e) => {
-                            const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                            gotoPage(page);
-                            }}
-                            style={{ width: '100px' }}
-                        />
-                        </span>{' '}
-                        <select
-                        value={pageSize}
-                        onChange={(e) => {
-                            setPageSize(Number(e.target.value));
-                        }}
-                        >
-                        {[10, 20, 30, 40, 50].map((pageSize) => (
-                            <option key={pageSize} value={pageSize}>
-                            Show {pageSize}
-                            </option>
-                        ))}
-                        </select>
-                    </div>
-                </>
-            )}
-            </div>
-        </StickyContainer>
+    console.log(isLoading)
+
+    if (isLoading || !organization?.id) {
+      return <p>Loading...</p>;
+    }
+    if (isSuccess)
+    return (
+      <StickyContainer>
+        <div className='table react-table report-table'>
+          <div className="action-panel">
+            <Row className="mx-0">
+              <Col>
+                <DepositFilter 
+                  filter={filter} 
+                  setFilter={setFilter} 
+                  setUseFilter={setUseFilter}
+                  exportData={exportData} 
+                  exportLink={exportLink} 
+                  exportHeaders={exportHeaders}
+                  download={download}
+                  config={{
+                    keyword: false,
+                    dateRange: true,
+                    // awardLevels: availableAwardLevels,
+                    programs: true,
+                    exportToCsv: true
+                  }}
+                  loading={isLoading || isFetching}
+                  programOptions={programOptions}
+                />
+              </Col>
+            </Row>
+            <div style={{clear: 'both'}}>&nbsp;</div>
+          </div>
+          {
+            (isLoading || isFetching) && <p className="text-center">Loading...</p>
+          }
+          <div style={{width:"100%", overflow:'scroll'}}>
+            {
+              // ref={r => { csvLinkTable = r; }}
+              isSuccess &&
+              <table {...getTableProps()} className="table table--bordered">
+                <Sticky  topOffset={80}>
+                  {({ style }) => (
+                    <thead style={{...style, top: '60px'}}> 
+                      {headerGroups.map((headerGroup) => (
+                        <tr {...headerGroup.getHeaderGroupProps()}>
+                          {headerGroup.headers.map(column => (
+                            <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                              {column.render('Header')}
+                              {column.isSorted ? <Sorting column={column}/> : ''}
+                            </th>
+                          ))}
+                        </tr>
+                      ))}
+                      </thead>
+                  )}
+                </Sticky>
+                <tbody className="table table--bordered" {...getTableBodyProps()}>
+                {page.map(row => {
+                  prepareRow(row);
+                  return (
+                    <tr {...row.getRowProps()}>
+                      {
+                        row.cells.map(cell => {
+                          return <td {...cell.getCellProps({className: cell.column.className})}>
+                            {cell.render('Cell')}
+                          </td>
+                        })
+                      }
+                    </tr>
+                  )
+                })}
+                </tbody>
+                <tfoot>
+                {footerGroups.map((footerGroup) => (
+                  <tr {...footerGroup.getFooterGroupProps()}>
+                    {footerGroup.headers.map(column => (
+                      <th {...column.getFooterProps()}>{column.render('Footer')}</th>
+                    ))}
+                  </tr>
+                ))}
+                </tfoot>
+              </table>
+            }
+          </div>
+        </div>
+      </StickyContainer>
     )
 }
 
-const convertArrayToCSV = (array) => {
-    const header = Object.keys(array[0]).join(',');
-    const rows = array.map(obj => Object.values(obj).join(',')).join('\n');
-    return [header, rows].join('\n');
+const TableWrapper = ({organization, programs, programOptions}) => {
+  if (!organization || !programs) return 'Loading...'
+  return (
+    <QueryClientProvider client={queryClient}>
+      <DataTable organization={organization}  programs={programs} programOptions={programOptions}/>
+    </QueryClientProvider>
+  )
 }
 
-const Sorting = ({ column }) => (
-    <span className="react-table__column-header sortable">
-      {column.isSortedDesc === undefined ? (
-        <SortIcon />
-      ) : (
-        <span>
-          {column.isSortedDesc
-            ? <SortAscendingIcon />
-            : <SortDescendingIcon />}
-        </span>
-      )}
-    </span>
-  );
-
-const TableWrapper = () => {
-    return (
-        <QueryClientProvider client={queryClient}>
-            <DataTable />
-        </QueryClientProvider>
-    )
-}
-
-export default TableWrapper;
+export default withRouter(connect((state) => ({
+  organization: state.organization
+}))(TableWrapper));
