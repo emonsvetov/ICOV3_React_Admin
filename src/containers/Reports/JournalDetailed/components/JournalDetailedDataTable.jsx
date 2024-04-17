@@ -150,15 +150,15 @@ const DataTable = ({organization, programs}) => {
     return (
       <StickyContainer>
         <div className='table react-table report-table'>
-          <div className="action-panel">
+          <div className="action-panel" style={{position: 'relative', zIndex: 3}}>
             <Row className="mx-0">
               <Col>
-                <JournalDetailedFilter 
-                  filter={filter} 
-                  setFilter={setFilter} 
+                <JournalDetailedFilter
+                  filter={filter}
+                  setFilter={setFilter}
                   setUseFilter={setUseFilter}
-                  exportData={exportData} 
-                  exportLink={exportLink} 
+                  exportData={exportData}
+                  exportLink={exportLink}
                   exportHeaders={exportHeaders}
                   download={download}
                   config={{
@@ -177,27 +177,22 @@ const DataTable = ({organization, programs}) => {
           {
             (isLoading || isFetching) && <p className="text-center">Loading...</p>
           }
-          <div style={{width:"100%", overflow:'scroll'}}>
             {
               // ref={r => { csvLinkTable = r; }}
               isSuccess &&
               <table {...getTableProps()} className="table table--bordered">
-                <Sticky  topOffset={80}>
-                  {({ style }) => (
-                    <thead style={{...style, top: '60px', zIndex: '2'}}>
-                      {headerGroups.map((headerGroup) => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
-                          {headerGroup.headers.map(column => (
-                            <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                              {column.render('Header')}
-                              {column.isSorted ? <Sorting column={column}/> : ''}
-                            </th>
-                          ))}
-                        </tr>
-                      ))}
-                      </thead>
-                  )}
-                </Sticky>
+                <thead style={{top: '60px', zIndex: '2', position: 'sticky' }}>
+                {headerGroups.map((headerGroup) => (
+                  <tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map(column => (
+                      <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                        {column.render('Header')}
+                        {column.isSorted ? <Sorting column={column}/> : ''}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+                </thead>
                 <tbody className="table table--bordered" {...getTableBodyProps()}>
                 {page.map(row => {
                   prepareRow(row);
@@ -226,7 +221,6 @@ const DataTable = ({organization, programs}) => {
               </table>
             }
           </div>
-        </div>
       </StickyContainer>
     )
 }
