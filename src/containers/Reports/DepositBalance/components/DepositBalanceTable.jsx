@@ -1,10 +1,11 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {useExpanded,  usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
+import {useExpanded,  usePagination, useResizeColumns, useSortBy, useTable, useFlexLayout} from "react-table";
 import {Link, useParams} from 'react-router-dom'
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {Col, Row} from 'reactstrap';
 import {getFirstDay, dateStrToYmd} from '@/shared/helpers'
+import { StickyContainer, Sticky } from "react-sticky";
 
 import {TABLE_COLUMNS} from "./columns";
 
@@ -15,11 +16,12 @@ import {
   fetchApiData,
   fetchApiDataExport,
   initialState,
-  TableFilter,
+ 
   Sorting
 } from "@/shared/apiTableHelper"
 
 import { clone} from 'lodash';
+import DepositBalanceFilter from "./DepositBalanceFilter";
 
 const queryClient = new QueryClient()
 
@@ -28,10 +30,12 @@ const DataTable = ({organization, programs}) => {
 
   const [filter, setFilter] = useState({
     programs: programs,
-    from: getFirstDay(),
-    to: new Date()
+    reportKey: 'sku_value',
+    programId: 1,
+    from: dateStrToYmd(getFirstDay()),
+    to: dateStrToYmd(new Date())
   });
-
+  
   const [useFilter, setUseFilter] = useState(false);
   const [trigger, setTrigger] = useState(0);
   const [exportData, setExportData] = useState([]);
@@ -42,9 +46,9 @@ const DataTable = ({organization, programs}) => {
   const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
     React.useReducer(reducer, initialState);
 
-  const apiUrl = `/organization/${organization.id}/report/deposit-transfers`;
+  const apiUrl = `/organization/${organization.id}/report/deposit-balance`;
   const {isLoading, error, data, isSuccess} = useQuery(
-    [['programReportDepositTransfer'], apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+    [['programReportDepositBalance', programId], apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
     () => fetchApiData(
       {
         url: apiUrl,
@@ -91,6 +95,15 @@ const DataTable = ({organization, programs}) => {
 
   const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
+  const defaultColumn = React.useMemo(
+    () => ({
+      // minWidth: 100,
+      // width: 150,
+      // maxWidth: 120,
+    }),
+    []
+  )
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -124,13 +137,14 @@ const DataTable = ({organization, programs}) => {
       autoResetPage: false,
       disableResizing: true,
       autoResetHiddenColumns: false,
-      striped: true
+      striped: true,
+      defaultColumn,
     },
     useSortBy,
     useExpanded,
     usePagination,
     useResizeColumns,
-    // useFlexLayout,
+    useFlexLayout,
   );
 
   const manualPageSize = []
@@ -146,22 +160,15 @@ const DataTable = ({organization, programs}) => {
 
   if (isSuccess)
     return (
-      <>
+      <StickyContainer>
         <div className='table react-table report-table'>
           <div className="action-panel">
             <Row className="mx-0">
               <Col>
-                <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter}
-                             exportData={exportData} exportLink={exportLink} exportHeaders={exportHeaders}
-                             download={download}
-
-                             config={{
-                               keyword: false,
-                               dateRange: true,
-                               // awardLevels: availableAwardLevels,
-                               programs: true,
-                               exportToCsv: true
-                             }}/>
+                <DepositBalanceFilter
+                  filter={filter} setFilter={setFilter} useFilter={useFilter} setUseFilter={setUseFilter}
+                  exportData={exportData} exportLink={exportLink} exportHeaders={exportHeaders}
+                  download={download}/>
               </Col>
             </Row>
           </div>
@@ -171,18 +178,22 @@ const DataTable = ({organization, programs}) => {
           {
             isSuccess &&
             <table {...getTableProps()} className="table table-striped report-table">
-              <thead>
-              {headerGroups.map((headerGroup) => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map(column => (
-                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                      {column.render('Header')}
-                      {column.isSorted ? <Sorting column={column}/> : ''}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-              </thead>
+              <Sticky  topOffset={80}>
+                {({ style }) => (
+                  <thead style={{...style, top:'60px'}}>
+                    {headerGroups.map((headerGroup) => (
+                      <tr {...headerGroup.getHeaderGroupProps()}>
+                        {headerGroup.headers.map(column => (
+                          <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                            {column.render('Header')}
+                            {column.isSorted ? <Sorting column={column}/> : ''}
+                          </th>
+                        ))}
+                      </tr>
+                    ))}
+                  </thead>
+                )}
+              </Sticky>
               <tbody className="table table--bordered" {...getTableBodyProps()} >
               {page.map(row => {
                 prepareRow(row);
@@ -192,7 +203,7 @@ const DataTable = ({organization, programs}) => {
                       {
                         row.cells.map(cell => {
                           return <td {...cell.getCellProps()} key={cell.column.id + row.id}>
-                            <span>{cell.render('Cell')}</span>
+                          <span>{cell.render('Cell')}</span>
                           </td>
                         })
                       }
@@ -213,54 +224,8 @@ const DataTable = ({organization, programs}) => {
             </table>
           }
 
-          {(rows.length > 0) && (
-            <>
-              <ReactTablePagination
-                page={page}
-                gotoPage={gotoPage}
-                previousPage={previousPage}
-                nextPage={nextPage}
-                canPreviousPage={canPreviousPage}
-                canNextPage={canNextPage}
-                pageOptions={pageOptions}
-                pageSize={pageSize}
-                pageIndex={pageIndex}
-                pageCount={pageCount}
-                setPageSize={setPageSize}
-                manualPageSize={manualPageSize}
-                dataLength={totalCount}
-              />
-              <div className="pagination justify-content-end mt-2">
-                                <span>
-                                Go to page:{' '}
-                                  <input
-                                    type="number"
-                                    value={pageIndex + 1}
-                                    onChange={(e) => {
-                                      const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                                      gotoPage(page);
-                                    }}
-                                    style={{ width: '100px' }}
-                                  />
-                                </span>{" "}
-                <select
-                  className="ml-2"
-                  value={pageSize}
-                  onChange={(e) => {
-                    setPageSize(Number(e.target.value));
-                  }}
-                >
-                  {[10, 20, 30, 40, 50].map((pageSize) => (
-                    <option key={pageSize} value={pageSize}>
-                      Show {pageSize}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </>
-          )}
         </div>
-      </>
+      </StickyContainer>
     )
 }
 

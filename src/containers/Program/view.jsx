@@ -262,7 +262,7 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
                                     <img src={AccountingIcon} className="card-img-top" alt="Digital Media"/>
                                 </Col>
                                 <Col md={9} className='col-right pl-0'>
-                                    <h5>Digital Media</h5>
+                                    <h5>Upload Content</h5>
                                     <p>Upload brochures, newsletters, videos and more for users to view.</p>
                                 </Col>
                             </Row>
