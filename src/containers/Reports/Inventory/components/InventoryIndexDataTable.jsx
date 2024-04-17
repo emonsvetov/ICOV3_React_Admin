@@ -267,8 +267,8 @@ const DataTable = ({organization, merchants}) => {
     return (
       <StickyContainer>
       <div style={{ width: '90%', overflowX: 'auto', margin: 'auto' }}>
-        <div className='table react-table report-table'style={{ minHeight: '10px' }}>
-          <div className="action-panel"style={{ paddingBottom: '35px' }}>
+        <div className='table react-table report-table' style={{ minHeight: '10px' }}>
+          <div className="action-panel" style={{ paddingBottom: '35px' }}>
             <Row className="mx-0">
               <Col>
                 <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter}
