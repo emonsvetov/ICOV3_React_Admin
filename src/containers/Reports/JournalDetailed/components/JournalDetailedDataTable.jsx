@@ -180,7 +180,7 @@ const DataTable = ({organization, programs}) => {
             {
               // ref={r => { csvLinkTable = r; }}
               isSuccess &&
-              <table {...getTableProps()} className="table table--bordered">
+              <table {...getTableProps()} style={{background:'#fff'}} className="table table--bordered">
                 <thead style={{top: '60px', zIndex: '2', position: 'sticky' }}>
                 {headerGroups.map((headerGroup) => (
                   <tr {...headerGroup.getHeaderGroupProps()}>
