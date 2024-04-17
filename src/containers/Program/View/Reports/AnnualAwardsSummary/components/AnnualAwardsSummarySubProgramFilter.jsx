@@ -44,7 +44,6 @@ export const AnnualAwardsSummarySubProgramFilter: FC<AnnualAwardsSummarySubProgr
             updatedFilter.active = values.active
         }
 
-
         if (eCsv){
             updatedFilter.exportToCsv = 1;
         }else {
