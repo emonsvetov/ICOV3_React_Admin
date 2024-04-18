@@ -12,7 +12,7 @@ export const PROGRAM_DEPOSIT_COLUMNS = [
     },
     {
         Header: "Program ID",
-        accessor: "id",
+        accessor: "program_id",
         Footer:"",
         maxWidth: 100,
     },
