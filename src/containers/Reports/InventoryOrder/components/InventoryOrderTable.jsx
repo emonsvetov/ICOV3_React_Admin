@@ -175,23 +175,6 @@ const DataTable = ({organization, merchants}) => {
           isSuccess &&
           <>
             <div className='table react-table report-table'>
-              <div className="action-panel">
-                <Row className="mx-0">
-                  <Col>
-                    <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter}
-                                 exportData={exportData} exportLink={exportLink} exportHeaders={exportHeaders}
-                                 download={download}
-
-                                 config={{
-                                   keyword: false,
-                                   dateRange: false,
-                                   date: true,
-                                   merchants: true,
-                                   exportToCsv: true
-                                 }}/>
-                  </Col>
-                </Row>
-              </div>
               {
                 isLoading && <p>Loading...</p>
               }
