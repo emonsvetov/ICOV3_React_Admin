@@ -195,8 +195,8 @@ const DataTable = ({organization, programs}) => {
     }
     return (
         <StickyContainer>
-                <div className='table react-table'>
-                    <div className="action-panel">
+                <div className='table react-table report-table'>
+                    <div className="action-panel" style={{position: 'relative', zIndex: 3}}>
                         <Row className="mx-0">
                             <Col lg={12} md={12} sm={12}>
                                 <PointsPurchaseFilter  filter={filter} setFilter={setFilter} useFilter={useFilter} setUseFilter={setUseFilter}
@@ -210,29 +210,25 @@ const DataTable = ({organization, programs}) => {
                     }
                     {
                     isSuccess &&
-                    <table {...getTableProps()} className="table">
-                        <Sticky  topOffset={80}>
-                            {({ style }) => (
-                                <thead style={{...style, top:'60px'}}>
-                                        {headerGroups.map( (headerGroup) => (
-                                            <tr {...headerGroup.getHeaderGroupProps()}>
-                                                {headerGroup.headers.map( column => (
-                                                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                                                        {column.render('Header')}
-                                                        {column.isSorted ? <Sorting column={column} /> : ''}
-                                                        <div
-                                                            {...column.getResizerProps()}
-                                                            className={`resizer ${
-                                                                column.isResizing ? 'isResizing' : ''
-                                                            }`}
-                                                        />
-                                                    </th>
-                                                ))}
-                                            </tr>
+                    <table {...getTableProps()} style={{background:'#fff'}} className="table table--bordered">
+                          <thead style={{top: '60px', zIndex: '2', position: 'sticky' }}>
+                                {headerGroups.map( (headerGroup) => (
+                                    <tr {...headerGroup.getHeaderGroupProps()}>
+                                        {headerGroup.headers.map( column => (
+                                            <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                                {column.render('Header')}
+                                                {column.isSorted ? <Sorting column={column} /> : ''}
+                                                <div
+                                                    {...column.getResizerProps()}
+                                                    className={`resizer ${
+                                                        column.isResizing ? 'isResizing' : ''
+                                                    }`}
+                                                />
+                                            </th>
                                         ))}
-                                </thead>
-                            )}
-                        </Sticky> 
+                                    </tr>
+                                ))}
+                          </thead>
                         <tbody {...getTableBodyProps()} className="table table--bordered" >
                             {page.map( row => {
                                 prepareRow(row);
