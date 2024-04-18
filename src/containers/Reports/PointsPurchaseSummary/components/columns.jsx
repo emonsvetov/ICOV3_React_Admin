@@ -54,7 +54,7 @@ export const PROGRAM_COLUMNS = [
         Header: "Program Account Holder ID",
         accessor: "account_holder_id",
         Footer:"",
-        maxWidth: 100,
+        width: 125,
     },
     {
         Header: "Eligible Participants",
@@ -361,6 +361,7 @@ export const PROGRAM_COLUMNS = [
             const avg = Math.round(totalValue / flatRows.length);
             return <span>{`$${parseFloat(avg).toFixed(2)}`}</span>;
         },
+        width: 125,
     },
     {
         Header: "Avg Per Quarter",
@@ -377,6 +378,7 @@ export const PROGRAM_COLUMNS = [
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
+        width: 125,
     },
     {
         Header: "Avg Per Month",
@@ -393,6 +395,7 @@ export const PROGRAM_COLUMNS = [
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
+        width: 125,
     },
     {
         Header: "Quarter Target",
@@ -409,6 +412,7 @@ export const PROGRAM_COLUMNS = [
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
+        width: 125,
     },
     {
         Header: "Monthly Target",
@@ -425,6 +429,7 @@ export const PROGRAM_COLUMNS = [
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
+        width: 125,
     },
     {
         Header: "Annual Target",
@@ -441,6 +446,7 @@ export const PROGRAM_COLUMNS = [
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
+        width: 125,
     },
 
 
