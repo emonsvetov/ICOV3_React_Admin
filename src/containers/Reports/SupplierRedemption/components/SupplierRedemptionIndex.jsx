@@ -5,7 +5,7 @@ import SupplierRedemptionFilter, {defFilter} from './SupplierRedemptionFilter';
 import axios from "axios";
 import {isEmpty} from '@/shared/helpers'
 import {CSVLink} from "react-csv";
-import {any} from "prop-types";
+import {any, bool} from "prop-types";
 
 interface SupplierRedemptionIndexProps
 {
@@ -33,11 +33,11 @@ const SupplierRedemptionIndex: FC<SupplierRedemptionIndexProps> = () => {
         try {
             const response = await axios.get(merchantsApiUrl, {params});
             setDataReport(response.data);
-            setCsvData([...Object.values(response.data.data), response.data.config.total]);
+            setCsvData([...Object.values(response.data.data), response.data.config.total]);            
         } catch (e) {
-        }
+        }        
     }
-
+  
 
     const getData = async () => {
         const merchantsApiUrl = `/organization/1/merchant?page=0&limit=9999999999&minimal=1`
@@ -80,6 +80,19 @@ const SupplierRedemptionIndex: FC<SupplierRedemptionIndexProps> = () => {
     if (isEmpty(defaultMerchants)) {
         return <p>Loading...</p>;
     }
+
+    csvData.map(data => {
+        if ( data.avg_discount_percent.toString().at(-1) != "%" )
+        {
+            
+        data.avg_discount_percent = data.avg_discount_percent + "%";
+        data.percent_total_cost = data.percent_total_cost + "%";
+        data.total_cost_basis = "$" + data.total_cost_basis ;
+        data.total_premium = "$" + data.total_premium;
+        data.total_redemption_value = "$" + data.total_redemption_value;
+        data.percent_total_redemption_value = data.percent_total_redemption_value + "%"           
+        }
+    })
 
     return (
 
