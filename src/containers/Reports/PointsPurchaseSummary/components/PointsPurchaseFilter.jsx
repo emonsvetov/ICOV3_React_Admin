@@ -67,7 +67,6 @@ const PointsPurchaseFilter = (
     }
 
     const changeCsvData = (exportData) => {
-      console.log(exportData, 'exportData')
       const defaultValues = [
         "month_1",
         "month_2",
