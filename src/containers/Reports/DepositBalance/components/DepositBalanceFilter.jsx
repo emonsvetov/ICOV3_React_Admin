@@ -9,6 +9,7 @@ import {getFirstDay} from '@/shared/helpers'
 import {dateStrToYmd} from '@/shared/helpers';
 import {isEqual, clone, cloneDeep} from 'lodash';
 import {CheckBoxField} from '@/shared/components/form/CheckBox';
+import {formatCurrency} from '@/shared/helpers'
 
 const defaultFrom = getFirstDay()
 const defaultTo = new Date()
@@ -67,6 +68,25 @@ const DepositBalanceFilter = (
       setCreatedOnly(false)
       setReportKey('sku_value')
     }
+  }
+
+  const changeCsvData = (exportData) => {
+    const defaultValues = [
+      "startBalanceTotal",
+      "deposit",
+      "reversal",
+      "transfer",
+      "award",
+      "reclaim",
+      "endBalanceTotal",
+    ];
+    exportData.forEach(function(part, index, theArray) {
+      for (const element of defaultValues) {
+        theArray[index][element] = formatCurrency(theArray[index][element]);
+      }
+    });
+
+    return exportData;
   }
 
   const onClickFilterCallback = (values) => {
@@ -230,7 +250,7 @@ const DepositBalanceFilter = (
               download(filter)
             }}>Export to CSV</span>
             <CSVLink
-                data={exportData}
+                data={changeCsvData(exportData)}
                 headers={exportHeaders}
                 filename="report.csv"
                 className="hidden"
