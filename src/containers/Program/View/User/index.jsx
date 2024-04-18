@@ -25,16 +25,22 @@ import {
 import { USERS_COLUMNS } from "./columns";
 import AddProgramUserModal from './AddProgramUserModal'
 import EditProgramUserModal from './EditProgramUserModal'
+import {StatusFilter} from "../../components/StatusFilter";
+import RoleFilter from "./RoleFilter";
+import {fetchRoles} from "../../../../shared/apiHelper";
 
 const queryClient = new QueryClient()
 
 const DataTable = ({program, organization}) => {
 
+    const [roles, setRoles] = useState([]);
+    const [selectedRoleId, setSelectedRoleId] = useState('');
+    const [selectedRole, setSelectedRole] = useState('');
     const flashDispatcher = useDispatch()
-  
-    const [filter, setFilter] = useState({ keyword:'' });
     const [useFilter, setUseFilter] = useState(false);
     const [trigger, setTrigger] = useState(Math.floor(Date.now() / 1000));
+    const [filter] = useState({ keyword:'' });
+    const [loading, setLoading] = useState(false)
 
     // var [data, setData] = useState([]);
     const [isOpenAdd, setOpenAdd] = useState(false)
@@ -43,6 +49,7 @@ const DataTable = ({program, organization}) => {
     const [user, setUser] = useState(null)
 
     const [isChangeStatusOpen, setChangeStatusOpen] = useState(false)
+    const [filteredData, setFilteredData] = useState([]);
 
     const toggleAdd = () => {
         setOpenAdd(prevState => !prevState)
@@ -110,6 +117,7 @@ const DataTable = ({program, organization}) => {
     let columns = useMemo( () => user_columns, [])
 
 
+
   const defaultColumn = React.useMemo(
       () => ({
         minWidth: 30,
@@ -131,7 +139,7 @@ const DataTable = ({program, organization}) => {
             url: apiUrl,
             page: queryPageIndex,
             size: queryPageSize,
-            filter: queryPageFilter,
+            filter: {...queryPageFilter, role_id: selectedRoleId},
             sortby: queryPageSortBy,
             trigger: queryTrigger
         }),
@@ -140,6 +148,38 @@ const DataTable = ({program, organization}) => {
           staleTime: Infinity,
       }
   );
+
+
+    useEffect(() => {
+        if (program) {
+            getRoles(program.id);
+        }
+    }, [program]);
+
+    const getRoles = () => {
+        setLoading(true)
+        fetchRoles(program.id, true )
+            .then( data => {
+                setRoles(data);
+                setLoading(false)
+            })
+    }
+
+    // Handle role filter change
+    const handleRoleChange = (roleId) => {
+        setSelectedRoleId(roleId);
+    };
+
+    // Apply filtering when selectedRoleId or data changes
+    useEffect(() => {
+        if (selectedRoleId && data && Array.isArray(data.results)) {
+            const filtered = data.results.filter(item => item.roles.some(role => role.id === selectedRoleId));
+            setFilteredData(filtered);
+        } else {
+            setFilteredData(data && Array.isArray(data.results) ? data.results : []);
+        }
+    }, [selectedRoleId, data]);
+
 
   const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
@@ -151,6 +191,7 @@ const DataTable = ({program, organization}) => {
       headerGroups,
       rows,
       prepareRow,
+      setFilter,
       page,
       pageCount,
       pageOptions,
@@ -160,7 +201,8 @@ const DataTable = ({program, organization}) => {
       nextPage,
       canNextPage,
       setPageSize,
-      state: { pageIndex, pageSize, sortBy }
+      state: { pageIndex, pageSize, sortBy },
+      preFilteredRows
   } = useTable({
       columns,
       data: data ? data.results : [],
@@ -200,20 +242,33 @@ const DataTable = ({program, organization}) => {
   return (
           <>
               <div className='table react-table'>
-                <form className="form form--horizontal">
-                    <div className="form__form-group pb-4">
-                        <div className="col-md-9 col-lg-9">
-                            <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter} config={{label:'users'}} />
-                        </div>
-                        <div className="col-md-3 col-lg-3 text-right pr-0">
-                            <span to={`/`} style={{maxWidth:'200px'}}
-                            className="btn btn-primary account__btn account__btn--small"
-                            onClick={()=>toggleAdd()}
-                            >Add Program User
-                            </span>
-                        </div>
-                    </div>
-                </form>
+                  <form className="form form--horizontal">
+                      <div className="form__form-group pb-4">
+                          <div className="row">
+                              <div className="col-md-6">
+                                  <div className="row">
+                                      <div className="col-md-9">
+                                          <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter} config={{label:'users'}} />
+                                      </div>
+                                      <div className="col-md-3">
+                                          <RoleFilter
+                                              roles={roles}
+                                              selectedRole={selectedRoleId}
+                                              onRoleChange={handleRoleChange}
+                                          />
+                                      </div>
+                                  </div>
+                              </div>
+                          <div className="col-md-3 col-lg-3 text-right pr-0">
+                    <span to={`/`} style={{maxWidth:'200px'}}
+                          className="btn btn-primary account__btn account__btn--small"
+                          onClick={()=>toggleAdd()}
+                    >Add Program User
+                    </span>
+                          </div>
+                      </div>
+                      </div>
+                  </form>
                 <AddProgramUserModal organization={organization} program={program} isOpen={isOpenAdd} setOpen={setOpenAdd} toggle={toggleAdd} setTrigger={setTrigger} />
                 <EditProgramUserModal organization={organization} program={program} userid={selectedUser} isOpen={isOpenEdit} setOpen={setOpenEdit} toggle={toggleEdit} setTrigger={setTrigger} />
                 {user && <ChangeStatusModal isOpen={isChangeStatusOpen} setOpen={setChangeStatusOpen} toggle={toggleChangeStatus} setTrigger={setTrigger} user={user} />}
