@@ -197,11 +197,15 @@ const DataTable = ({organization, programs}) => {
                 {page.map(row => {
                   prepareRow(row);
                   return (
-                    <tr {...row.getRowProps()}>
+                    <tr {...row.getRowProps({className: row.isExpanded && row.original.dinamicDepth === 1 ? ' totalRow' : ''})} >
                       {
                         row.cells.map(cell => {
-                          return <td {...cell.getCellProps({className: cell.column.className,
-                            style: {textAlign: cell.column.noAlignRight ? '' : 'right'}})} >
+                          return <td {...cell.getCellProps({
+                            className: row.isExpanded && row.original.dinamicDepth === 1 ? cell.column.className + ' totalRow' : cell.column.className,
+                            style: {
+                              textAlign: cell.column.noAlignRight ? '' : 'right',
+                              // background: row.isExpanded && row.original.dinamicDepth === 1 ? '#f2f2f2' : '',
+                            }})} >
                             {cell.render('Cell')}
                           </td>
                         })
