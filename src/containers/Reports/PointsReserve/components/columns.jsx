@@ -57,7 +57,7 @@ export const PROGRAM_COLUMNS = [
                 return `$${parseFloat(subRowsTotal).toFixed(2)}`
             }
             if (row.original.name === 'TOTAL') {
-                return <b>{parseFloat(value).toFixed(2)}</b>
+                return <b>${parseFloat(value).toFixed(2)}</b>
             }
             return `$${parseFloat(value).toFixed(2)}`
         },
@@ -82,7 +82,7 @@ export const PROGRAM_COLUMNS = [
                 return `$${parseFloat(subRowsTotal).toFixed(2)}`
             }
             if (row.original.name === 'TOTAL') {
-                return <b>{parseFloat(value).toFixed(2)}</b>
+                return <b>${parseFloat(value).toFixed(2)}</b>
             }
             return `$${parseFloat(value).toFixed(2)}`
         },
@@ -107,7 +107,7 @@ export const PROGRAM_COLUMNS = [
                 return `$${parseFloat(subRowsTotal).toFixed(2)}`
             }
             if (row.original.name === 'TOTAL') {
-                return <b>{parseFloat(value).toFixed(2)}</b>
+                return <b>${parseFloat(value).toFixed(2)}</b>
             }
             return `$${parseFloat(value).toFixed(2)}`
         },
@@ -133,7 +133,7 @@ export const PROGRAM_COLUMNS = [
                 return `$${parseFloat(subRowsTotal).toFixed(2)}`
             }
             if (row.original.name === 'TOTAL') {
-                return <b>{parseFloat(value).toFixed(2)}</b>
+                return <b>${parseFloat(value).toFixed(2)}</b>
             }
             return `$${parseFloat(value).toFixed(2)}`
         },
@@ -163,6 +163,9 @@ export const PROGRAM_COLUMNS = [
                             .filter(subRow => subRow.name !== 'TOTAL')
                             .reduce((acc, subRow) => acc + subRow.this_unredeemed, 0);
                         return `$${parseFloat(subRowsTotal).toFixed(2)}`
+                    }
+                    if (row.original.name === 'TOTAL') {
+                        return <b>${parseFloat(value).toFixed(2)}</b>
                     }
                     return `$${parseFloat(value)}`
                 },
@@ -209,10 +212,10 @@ export const PROGRAM_COLUMNS = [
         Cell: ({row, value}) => {
             if (row.original.dinamicDepth === 0) {
                 const subRowsTotal = row.original.subRows.reduce((acc, subRow) => acc + subRow.reserve_percentage, 0);
-                return `$${parseFloat(subRowsTotal / row.original.subRows.length)}`
+                return `${parseFloat(subRowsTotal / row.original.subRows.length)}%`
             }
             if (row.original.name === 'TOTAL') {
-                return <b>{parseFloat(value).toFixed(2)}</b>
+                return <b>{parseFloat(value).toFixed(2)}%</b>
             }
             return `${parseFloat(value).toFixed(2)}%`
         },
@@ -238,7 +241,7 @@ export const PROGRAM_COLUMNS = [
                 return `$${parseFloat(subRowsTotal).toFixed(2)}`
             }
             if (row.original.name === 'TOTAL') {
-                return <b>{parseFloat(value).toFixed(2)}</b>
+                return <b>${parseFloat(value).toFixed(2)}</b>
             }
             return `$${parseFloat(value).toFixed(2)}`
         },
