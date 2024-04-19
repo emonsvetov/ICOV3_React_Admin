@@ -68,6 +68,12 @@
     background: #ffffff;
     left: 250px;
   }
+  tbody td.totalRow {
+    background: #f2f2f2;
+  }
+  tbody tr.totalRow {
+    border-bottom: 2px solid #ccc !important;
+  }
 
   th, td {
 

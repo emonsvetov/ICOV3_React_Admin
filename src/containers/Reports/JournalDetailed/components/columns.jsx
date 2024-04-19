@@ -63,7 +63,9 @@ export const JOURNAL_DETAILED_COLUMNS = [
           const space = row.original.dinamicDepth === 1 ? '' : ' • ';
           const boldRow = row.original.dinamicDepth === 1;
           return <div style={boldRow ? {fontWeight: 'bold'} : {}}>{space.repeat(row.original.dinamicDepth)}<Link
-            to={`/program/view/${row.original.id}`}>{value}</Link></div>
+            to={`/program/view/${row.original.id}`}>{
+            row.isExpanded && row.original.dinamicDepth === 1 ? value + ' Total' : value
+          }</Link></div>
         },
         minWidth: 200,
         className: 'frozenColumn',
