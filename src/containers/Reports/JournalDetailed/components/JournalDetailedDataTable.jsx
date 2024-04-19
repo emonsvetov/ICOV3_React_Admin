@@ -200,7 +200,8 @@ const DataTable = ({organization, programs}) => {
                     <tr {...row.getRowProps()}>
                       {
                         row.cells.map(cell => {
-                          return <td {...cell.getCellProps({className: cell.column.className})}>
+                          return <td {...cell.getCellProps({className: cell.column.className,
+                            style: {textAlign: cell.column.noAlignRight ? '' : 'right'}})} >
                             {cell.render('Cell')}
                           </td>
                         })
