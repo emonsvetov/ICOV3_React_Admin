@@ -195,20 +195,27 @@ const DataTable = ({organization, programs}) => {
                 )}
               </Sticky>
               <tbody className="table table--bordered" {...getTableBodyProps()} >
-              {page.map(row => {
+              {page.map( row => {
                 prepareRow(row);
+                // console.log(row)
+                const subCount = (row.id.match(/\./g) || []).length
+
+                // const paddingCount = subCount > 0 ? Number(subCount) + 3 : 0;
+                // console.log(subCount)
                 return (
-                  <>
-                    <tr {...row.getRowProps()} key={row.id}>
-                      {
-                        row.cells.map(cell => {
-                          return <td {...cell.getCellProps()} key={cell.column.id + row.id}>
-                          <span>{cell.render('Cell')}</span>
-                          </td>
-                        })
-                      }
-                    </tr>
-                  </>
+                  <tr {...row.getRowProps()}>
+                    {
+                      row.cells.map( cell => {
+                        // console.log(cell)
+
+                        const paddingLeft = subCount * 20
+                        return <td {...cell.getCellProps({className: cell.column.className})}>
+                                                            <span style={cell.column.Header==='#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}
+                                                            </span>
+                        </td>
+                      })
+                    }
+                  </tr>
                 )
               })}
               </tbody>
