@@ -469,3 +469,5 @@ export const monthToString = (month) => {
   return months[month-1];
 }
 
+export const JOURNAL_EVENT_TYPES_CHARGE_MONIES_PENDING = 'Charge program for monies pending'
+export const JOURNAL_EVENT_TYPES_CHARGE_DEPOSIT_FEE = 'Charge program for deposit fee'

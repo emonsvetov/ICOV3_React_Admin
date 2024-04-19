@@ -33,6 +33,7 @@ const DepositFilter = ({
   const [from, setFrom] = React.useState(defaultFrom);
   const [to, setTo] = React.useState(defaultTo);
   const [programId, setProgramId] = useState();
+  const [selectedProgram, setSelectedProgram] = useState(null);
   const [selectedPrograms, setSelectedPrograms] = useState(programs);
   const [invoiceNumber, setInvoiceNumber] = useState();
   const finalFilter = { ...filter };
@@ -65,6 +66,7 @@ const DepositFilter = ({
       setProgramId(null);
       setSelectedPrograms(programs)
       setInvoiceNumber("");
+      setSelectedProgram(null)
     }
   };
 
@@ -129,11 +131,15 @@ const DepositFilter = ({
   const handleChangeProgram = (value) => {
     setProgramId(null)
     setSelectedPrograms([value.value])
+    setSelectedProgram(value)
   }  
   
   const handleChangeProgramId = (value) => {
     setProgramId(value)
     setSelectedPrograms(null)
+    if( selectedProgram ) {
+      setSelectedProgram(null)
+    }
   }
   
   const handleChangeInvoiceNumber = (value) => {
@@ -205,6 +211,7 @@ const DepositFilter = ({
                       clearable={false}
                       className="react-select"
                       classNamePrefix="react-select"
+                      value={selectedProgram || ''}
                     />
                   </div>
                 </div>

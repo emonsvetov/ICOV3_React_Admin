@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import React, { useMemo } from 'react';
-import { formatDate } from '../../../../shared/helpers';
+import { formatDate, JOURNAL_EVENT_TYPES_CHARGE_MONIES_PENDING, JOURNAL_EVENT_TYPES_CHARGE_DEPOSIT_FEE } from '@/shared/helpers';
 export const PROGRAM_DEPOSIT_COLUMNS = [
    
     {
@@ -15,6 +15,7 @@ export const PROGRAM_DEPOSIT_COLUMNS = [
         accessor: "id",
         Footer:"",
         maxWidth: 100,
+        Cell: ({ row, value }) => { return row.v2_account_holder_id ? `${value}\nv2:${row.v2_account_holder_id}` : value},
     },
     {
         Header: "Root Program Name",
@@ -28,7 +29,12 @@ export const PROGRAM_DEPOSIT_COLUMNS = [
     {
         Header: "Monies Deposited",
         accessor: "amount",
-        Cell: ({ row, value }) => { return `$${parseFloat(value).toFixed(2)}`},
+        Cell: ({ row, value }) => {
+          if(row.original.journal_event_type === JOURNAL_EVENT_TYPES_CHARGE_MONIES_PENDING) {
+            return `$${parseFloat(value).toFixed(2)}`;
+          }
+          return `$0.00`
+        },
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
@@ -41,7 +47,12 @@ export const PROGRAM_DEPOSIT_COLUMNS = [
     {
         Header: "Deposit Fee",
         accessor: "deposit_fee",
-        Cell: ({ row, value }) => { return `$0.00`},
+        Cell: ({ row, value }) => {
+          if(row.original.journal_event_type === JOURNAL_EVENT_TYPES_CHARGE_DEPOSIT_FEE) {
+            return `$${parseFloat(value).toFixed(2)}`;
+          }
+          return `$0.00`
+        },
         Footer: (info) => {
             const { rows, flatRows } = info;
             const totalValue = useMemo(
