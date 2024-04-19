@@ -71,7 +71,7 @@ export const TABLE_COLUMNS = [
   {
     Header: "Transfer",
     accessor: "transfer",
-    Cell: ({ row, value }) => { return value ? formatCurrency(value) : '-' },
+    Cell: ({ row, value }) => { return value ? formatCurrency(value) : '0' },
     width: 125,
   },
   {
