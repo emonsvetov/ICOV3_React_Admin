@@ -30,10 +30,12 @@ const JournalDetailedFilter = (
     'createdOnly': false,
     'reportKey': true,
     'programId': true,
+    'rootOnly': true,
   }
   const [from, setFrom] = React.useState(defaultFrom)
   const [to, setTo] = React.useState(defaultTo)
   const [createdOnly, setCreatedOnly] = React.useState(false)
+  const [rootOnly, setRootOnly] = React.useState(false)
   const [reportKey, setReportKey] = React.useState('sku_value')
   const [selectedPrograms, setSelectedPrograms] = useState(filter.programs ? filter.programs : []);
   const finalFilter = {...filter}
@@ -51,6 +53,9 @@ const JournalDetailedFilter = (
     if (options.createdOnly) {
       dataSet.createdOnly = reset ? false : createdOnly
     }
+    if (options.rootOnly) {
+      dataSet.rootOnly = reset ? false : rootOnly
+    }
     if (options.reportKey) {
       dataSet.reportKey = reset ? 'sku_value' : reportKey
     }
@@ -65,6 +70,7 @@ const JournalDetailedFilter = (
       setTo(defaultTo)
       setSelectedPrograms([]);
       setCreatedOnly(false)
+      setRootOnly(false)
       setReportKey('sku_value')
     }
   }
@@ -85,6 +91,11 @@ const JournalDetailedFilter = (
     }
     if (options.createdOnly) {
       if (finalFilter.createdOnly !== values.createdOnly) {
+        change = true
+      }
+    }
+    if (options.rootOnly) {
+      if (finalFilter.rootOnly !== values.rootOnly) {
         change = true
       }
     }
@@ -118,6 +129,9 @@ const JournalDetailedFilter = (
     if (options.createdOnly) {
       filters.createdOnly = values.createdOnly
     }
+    if (options.rootOnly) {
+      filters.rootOnly = values.rootOnly
+    }
     if (options.reportKey) {
       filters.reportKey = values.reportKey
     }
@@ -136,6 +150,10 @@ const JournalDetailedFilter = (
 
   const onChangeCreatedOnly = () => {
     setCreatedOnly(!createdOnly)
+  }
+
+  const onChangeRootOnly = () => {
+    setRootOnly(!rootOnly)
   }
 
   const onChangeRadio = (value) => {
@@ -203,6 +221,20 @@ const JournalDetailedFilter = (
                   <div className="form__form-group-field">
                     <div className="form__form-group-row">
                       <CheckBoxField name="createdOnly" label="Show participants created only:" checked={createdOnly} onChange={onChangeCreatedOnly}
+                                     type="checkbox"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          }
+          {options.rootOnly &&
+            <>
+              <div className="table-filter-form-col table-filter-form-col2 float-filter">
+                <div className="form__form-group">
+                  <div className="form__form-group-field">
+                    <div className="form__form-group-row">
+                      <CheckBoxField name="rootOnly" label="Show root only" checked={rootOnly} onChange={onChangeRootOnly}
                                      type="checkbox"/>
                     </div>
                   </div>
