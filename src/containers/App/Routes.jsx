@@ -72,6 +72,7 @@ import {
   CashDeposit,
   Inventory,
   Orders,
+  DepositBalance,
   InventoryOrder,
   JournalDetailed,
   PointsPurchaseSummary,
@@ -194,6 +195,7 @@ const Reports = () => (
     <Route exact path="/reports/cash-deposit" component={CashDeposit} />
     <Route exact path="/reports/inventory" component={Inventory} />
     <Route exact path="/reports/orders" component={Orders} />
+    <Route exact path="/reports/deposit-balance" component={DepositBalance} />
     <Route exact path="/reports/orders/view/:id" component={GlobalOrder} />
     <Route exact path="/reports/inventory-order" component={InventoryOrder} />
     <Route exact path="/reports/journal-detailed" component={JournalDetailed} />

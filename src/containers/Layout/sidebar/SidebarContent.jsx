@@ -48,6 +48,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
             <SidebarLink title="Deposit Transfer" route="/reports/deposit-transfer" />
             <SidebarLink title="Trial Balance" route="/reports/trial-balance" />
             <SidebarLink title="Points Purchase Summary" route="/reports/points-purchase-summary" />
+            <SidebarLink title="Deposit Balance" route="/reports/deposit-balance" />
           </>
         )
       break;

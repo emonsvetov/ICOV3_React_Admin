@@ -150,15 +150,15 @@ const DataTable = ({organization, programs}) => {
     return (
       <StickyContainer>
         <div className='table react-table report-table'>
-          <div className="action-panel">
+          <div className="action-panel" style={{position: 'relative', zIndex: 3}}>
             <Row className="mx-0">
               <Col>
-                <JournalDetailedFilter 
-                  filter={filter} 
-                  setFilter={setFilter} 
+                <JournalDetailedFilter
+                  filter={filter}
+                  setFilter={setFilter}
                   setUseFilter={setUseFilter}
-                  exportData={exportData} 
-                  exportLink={exportLink} 
+                  exportData={exportData}
+                  exportLink={exportLink}
                   exportHeaders={exportHeaders}
                   download={download}
                   config={{
@@ -177,35 +177,35 @@ const DataTable = ({organization, programs}) => {
           {
             (isLoading || isFetching) && <p className="text-center">Loading...</p>
           }
-          <div style={{width:"100%", overflow:'scroll'}}>
             {
               // ref={r => { csvLinkTable = r; }}
               isSuccess &&
-              <table {...getTableProps()} className="table table--bordered">
-                <Sticky  topOffset={80}>
-                  {({ style }) => (
-                    <thead style={{...style, top: '60px'}}> 
-                      {headerGroups.map((headerGroup) => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
-                          {headerGroup.headers.map(column => (
-                            <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                              {column.render('Header')}
-                              {column.isSorted ? <Sorting column={column}/> : ''}
-                            </th>
-                          ))}
-                        </tr>
-                      ))}
-                      </thead>
-                  )}
-                </Sticky>
+              <table {...getTableProps()} style={{background:'#fff'}} className="table table--bordered">
+                <thead style={{top: '60px', zIndex: '2', position: 'sticky' }}>
+                {headerGroups.map((headerGroup) => (
+                  <tr {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map(column => (
+                      <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                        {column.render('Header')}
+                        {column.isSorted ? <Sorting column={column}/> : ''}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+                </thead>
                 <tbody className="table table--bordered" {...getTableBodyProps()}>
                 {page.map(row => {
                   prepareRow(row);
                   return (
-                    <tr {...row.getRowProps()}>
+                    <tr {...row.getRowProps({className: row.isExpanded && row.original.dinamicDepth === 1 ? ' totalRow' : ''})} >
                       {
                         row.cells.map(cell => {
-                          return <td {...cell.getCellProps({className: cell.column.className})}>
+                          return <td {...cell.getCellProps({
+                            className: row.isExpanded && row.original.dinamicDepth === 1 ? cell.column.className + ' totalRow' : cell.column.className,
+                            style: {
+                              textAlign: cell.column.noAlignRight ? '' : 'right',
+                              // background: row.isExpanded && row.original.dinamicDepth === 1 ? '#f2f2f2' : '',
+                            }})} >
                             {cell.render('Cell')}
                           </td>
                         })
@@ -226,7 +226,6 @@ const DataTable = ({organization, programs}) => {
               </table>
             }
           </div>
-        </div>
       </StickyContainer>
     )
 }

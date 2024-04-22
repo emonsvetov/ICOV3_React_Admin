@@ -137,6 +137,7 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                                 name="events_has_limits"
                                 label="Set limit in events"
                                 checked={data?.events_has_limits}
+                                onChange={() => {data.events_has_limits = !data.events_has_limits}}
                             />
                         </div>
                     </Col>
@@ -148,6 +149,7 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                                 name="event_has_category"
                                 label="Enable categories for events"
                                 checked={data?.event_has_category}
+                                onChange={() => {data.event_has_category = !data.event_has_category}}
                             />
                         </div>
                     </Col>
@@ -157,6 +159,7 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                                 name="has_promotional_award"
                                 label="Enable promotional awards"
                                 checked={data?.has_promotional_award}
+                                onChange={() => {data.has_promotional_award = !data.has_promotional_award}}
                             />
                         </div>
                     </Col>
@@ -165,9 +168,10 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField 
-                                name="enable_uploads_while_awarding"
+                                name="enable_upload_while_awarding"
                                 label="Enable uploading documents while awarding"
-                                checked={data?.enable_uploads_while_awarding}
+                                checked={data?.enable_upload_while_awarding}
+                                onChange={() => {data.enable_upload_while_awarding = !data.enable_upload_while_awarding}}
                             />
                         </div>
                     </Col>
@@ -177,6 +181,7 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                                 name="enable_schedule_awards"
                                 label="Enable scheduled awards"
                                 checked={data?.enable_schedule_awards}
+                                onChange={() => {data.enable_schedule_awards = !data.enable_schedule_awards}}
                             />
                         </div>
                     </Col>
@@ -320,17 +325,18 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                         </Field>
                     </Col>
                 </Row>
-                <Row>
-                    <Col md="6" lg="4" xl="4">
-                        <div className="form__form-group">
-                            <CheckboxField 
-                                name="allocate"
-                                label="Allocate cost to program for premium merchants"
-                                checked={data?.allocate}
-                            />
-                        </div>
-                    </Col>
-                </Row>
+                {/*<Row>*/}
+                {/*    <Col md="6" lg="4" xl="4">*/}
+                {/*        <div className="form__form-group">*/}
+                {/*            <CheckboxField */}
+                {/*                name="allocate"*/}
+                {/*                label="Allocate cost to program for premium merchants"*/}
+                {/*                checked={data?.allocate}*/}
+                {/*                onChange={() => {data.allocate = !data.allocate}}*/}
+                {/*            />*/}
+                {/*        </div>*/}
+                {/*    </Col>*/}
+                {/*</Row>*/}
                 <Row>
                     <Col md="6" lg="4" xl="4">
                         <Field name="amount_override_limit_percent">
@@ -355,6 +361,7 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                                 name="awards_limit_amount_override"
                                 label="Limit(prevent) award amount override"
                                 checked={data?.awards_limit_amount_override}
+                                onChange={() => {data.awards_limit_amount_override = !data.awards_limit_amount_override}}
                             />
                         </div>
                     </Col>

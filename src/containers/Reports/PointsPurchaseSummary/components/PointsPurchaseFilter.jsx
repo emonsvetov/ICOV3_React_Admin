@@ -11,6 +11,7 @@ import {dateStrToYmd} from '@/shared/helpers';
 import {isEqual, clone, cloneDeep} from 'lodash';
 import {CheckBoxField} from '@/shared/components/form/CheckBox';
 import {Field} from "react-final-form";
+import {formatCurrency} from '@/shared/helpers'
 
 const defaultFrom = getFirstDay()
 const defaultTo = new Date()
@@ -63,6 +64,41 @@ const PointsPurchaseFilter = (
 
     const onKeywordChange = (e) => {
         setKeyword(e.target.value)
+    }
+
+    const changeCsvData = (exportData) => {
+      const defaultValues = [
+        "month_1",
+        "month_2",
+        "month_3",
+        "month_4",
+        "month_5",
+        "month_6",
+        "month_7",
+        "month_8",
+        "month_9",
+        "month_10",
+        "month_11",
+        "month_12",
+        'per_participant',
+        'avg_per_month',
+        'avg_per_quarter',
+        'monthly_target',
+        'quarterly_target',
+        'annual_target',
+        'Q1',
+        'Q2',
+        'Q3',
+        'Q4',
+        'YTD',
+      ];
+      exportData.forEach(function(part, index, theArray) {
+        for (const element of defaultValues) {
+          theArray[index][element] = formatCurrency(theArray[index][element]);
+        }
+      });
+
+      return exportData;
     }
 
 
@@ -358,7 +394,7 @@ const PointsPurchaseFilter = (
                 download(filter)
             }}>Export to CSV</span>
                     <CSVLink
-                      data={exportData}
+                      data={changeCsvData(exportData)}
                       headers={exportHeaders}
                       filename="report.csv"
                       className="hidden"

@@ -2,11 +2,11 @@ import {formatCurrency, formatDate} from '@/shared/helpers'
 
 export const TABLE_COLUMNS = [
 
-  {
-    Header: "Root Program",
-    accessor: "root_name",
-    width: 95
-  },
+  // {
+  //   Header: "Root Program",
+  //   accessor: "root_name",
+  //   width: 95
+  // },
   {
     Header: "Program ID",
     accessor: "program_account_holder_id",

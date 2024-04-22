@@ -9,20 +9,21 @@ import {getFirstDay} from '@/shared/helpers'
 import {dateStrToYmd} from '@/shared/helpers';
 import {isEqual, clone, cloneDeep} from 'lodash';
 import {CheckBoxField} from '@/shared/components/form/CheckBox';
+import {formatCurrency} from '@/shared/helpers'
 
 const defaultFrom = getFirstDay()
 const defaultTo = new Date()
 
-const JournalDetailedFilter = (
-  {
-    filter,
-    setFilter,
-    setUseFilter,
-    download,
-    exportData,
-    exportLink,
-    exportHeaders
-  }) => {
+const DepositBalanceFilter = (
+    {
+      filter,
+      setFilter,
+      setUseFilter,
+      download,
+      exportData,
+      exportLink,
+      exportHeaders
+    }) => {
   const options = {
     'dateRange': true,
     'programs': true,
@@ -30,12 +31,10 @@ const JournalDetailedFilter = (
     'createdOnly': false,
     'reportKey': true,
     'programId': true,
-    'rootOnly': true,
   }
   const [from, setFrom] = React.useState(defaultFrom)
   const [to, setTo] = React.useState(defaultTo)
   const [createdOnly, setCreatedOnly] = React.useState(false)
-  const [rootOnly, setRootOnly] = React.useState(false)
   const [reportKey, setReportKey] = React.useState('sku_value')
   const [selectedPrograms, setSelectedPrograms] = useState(filter.programs ? filter.programs : []);
   const finalFilter = {...filter}
@@ -53,9 +52,6 @@ const JournalDetailedFilter = (
     if (options.createdOnly) {
       dataSet.createdOnly = reset ? false : createdOnly
     }
-    if (options.rootOnly) {
-      dataSet.rootOnly = reset ? false : rootOnly
-    }
     if (options.reportKey) {
       dataSet.reportKey = reset ? 'sku_value' : reportKey
     }
@@ -70,9 +66,27 @@ const JournalDetailedFilter = (
       setTo(defaultTo)
       setSelectedPrograms([]);
       setCreatedOnly(false)
-      setRootOnly(false)
       setReportKey('sku_value')
     }
+  }
+
+  const changeCsvData = (exportData) => {
+    const defaultValues = [
+      "startBalanceTotal",
+      "deposit",
+      "reversal",
+      "transfer",
+      "award",
+      "reclaim",
+      "endBalanceTotal",
+    ];
+    exportData.forEach(function(part, index, theArray) {
+      for (const element of defaultValues) {
+        theArray[index][element] = formatCurrency(theArray[index][element]);
+      }
+    });
+
+    return exportData;
   }
 
   const onClickFilterCallback = (values) => {
@@ -91,11 +105,6 @@ const JournalDetailedFilter = (
     }
     if (options.createdOnly) {
       if (finalFilter.createdOnly !== values.createdOnly) {
-        change = true
-      }
-    }
-    if (options.rootOnly) {
-      if (finalFilter.rootOnly !== values.rootOnly) {
         change = true
       }
     }
@@ -129,14 +138,12 @@ const JournalDetailedFilter = (
     if (options.createdOnly) {
       filters.createdOnly = values.createdOnly
     }
-    if (options.rootOnly) {
-      filters.rootOnly = values.rootOnly
-    }
     if (options.reportKey) {
       filters.reportKey = values.reportKey
     }
     filters.programId = filter.programId
     filters.programs = filter.programs
+
     setFilter(filters)
     setUseFilter(true)
   }
@@ -152,35 +159,31 @@ const JournalDetailedFilter = (
     setCreatedOnly(!createdOnly)
   }
 
-  const onChangeRootOnly = () => {
-    setRootOnly(!rootOnly)
-  }
-
   const onChangeRadio = (value) => {
     setReportKey(value)
   }
 
   return (
-    <Row className="table-filter-form form">
-      <Col md={8} lg={8} sm={8} className="table-filter-form-fields">
-        <div>
-          {options.programs &&
+      <Row className="table-filter-form form">
+        <Col md={8} lg={8} sm={8} className="table-filter-form-fields">
+          <div>
+            {options.programs &&
             <div className="table-filter-form-col table-filter-form-col1 float-filter" style={{paddingTop: 4}}>
               <div className="form__form-group">
                 <div className="form__form-group-field">
                   <div className="form__form-group-row">
 
                     <ProgramsHierarchy
-                      defaultPrograms={options.programs}
-                      selectedPrograms={selectedPrograms}
-                      setSelectedPrograms={setSelectedPrograms}
+                        defaultPrograms={options.programs}
+                        selectedPrograms={selectedPrograms}
+                        setSelectedPrograms={setSelectedPrograms}
                     />
                   </div>
                 </div>
               </div>
             </div>
-          }
-          {options.dateRange &&
+            }
+            {options.dateRange &&
             <>
               <div className="table-filter-form-col table-filter-form-col2 float-filter">
                 <div className="form__form-group">
@@ -188,9 +191,9 @@ const JournalDetailedFilter = (
                   <div className="form__form-group-field">
                     <div className="form__form-group-row">
                       <DatePicker
-                        dateFormat="MM/dd/yyyy"
-                        selected={from}
-                        onChange={onStartChange}
+                          dateFormat="MM/dd/yyyy"
+                          selected={from}
+                          onChange={onStartChange}
                       />
                     </div>
                   </div>
@@ -202,19 +205,19 @@ const JournalDetailedFilter = (
                   <div className="form__form-group-field">
                     <div className="form__form-group-row">
                       <DatePicker
-                        dateFormat="MM/dd/yyyy"
-                        selected={to}
-                        onChange={onEndChange}
+                          dateFormat="MM/dd/yyyy"
+                          selected={to}
+                          onChange={onEndChange}
                       />
                     </div>
                   </div>
                 </div>
               </div>
             </>
-          }
-          <div className="clearfix">&nbsp;</div>
-          <div className="clearfix">&nbsp;</div>
-          {options.createdOnly &&
+            }
+            <div className="clearfix">&nbsp;</div>
+            <div className="clearfix">&nbsp;</div>
+            {options.createdOnly &&
             <>
               <div className="table-filter-form-col table-filter-form-col2 float-filter">
                 <div className="form__form-group">
@@ -227,51 +230,37 @@ const JournalDetailedFilter = (
                 </div>
               </div>
             </>
-          }
-          {options.rootOnly &&
-            <>
-              <div className="table-filter-form-col table-filter-form-col2 float-filter">
-                <div className="form__form-group">
-                  <div className="form__form-group-field">
-                    <div className="form__form-group-row">
-                      <CheckBoxField name="rootOnly" label="Show root only" checked={rootOnly} onChange={onChangeRootOnly}
-                                     type="checkbox"/>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-          }
-        </div>
-      </Col>
-      <Col className="align-items-center max-height-32px pl-1">
-        <Button
-          onClick={() => onClickFilter()}
-          className="btn btn-sm btn-primary"
-          color="#ffffff"
-        >Filter</Button>
-        <Button
-          onClick={() => onClickFilter(true)}
-          className="btn btn-sm btn-primary"
-          color="#ffffff"
-        >Reset</Button>
-        {options.exportToCsv &&
+            }
+          </div>
+        </Col>
+        <Col className="align-items-center max-height-32px pl-1">
+          <Button
+              onClick={() => onClickFilter()}
+              className="btn btn-sm btn-primary"
+              color="#ffffff"
+          >Filter</Button>
+          <Button
+              onClick={() => onClickFilter(true)}
+              className="btn btn-sm btn-primary"
+              color="#ffffff"
+          >Reset</Button>
+          {options.exportToCsv &&
           <div>
             <span className="text-blue pointer mr-2" onClick={() => {
               download(filter)
             }}>Export to CSV</span>
             <CSVLink
-              data={exportData}
-              headers={exportHeaders}
-              filename="report.csv"
-              className="hidden"
-              ref={exportLink}
-              target="_blank"
+                data={changeCsvData(exportData)}
+                headers={exportHeaders}
+                filename="report.csv"
+                className="hidden"
+                ref={exportLink}
+                target="_blank"
             />
           </div>
-        }
-      </Col>
-    </Row>
+          }
+        </Col>
+      </Row>
   )
 }
 
@@ -281,4 +270,4 @@ const mapStateToProps = (state) => {
     organization: state.organization,
   };
 };
-export default connect(mapStateToProps)(JournalDetailedFilter);
+export default connect(mapStateToProps)(DepositBalanceFilter);

@@ -80,7 +80,11 @@ const DataTable = ({organization, programs}) => {
 
     const formattedExportData = response.results.map((row) => {
       return Object.keys(row).reduce((acc, key) => {
-        acc[key] = formatCurrency(row[key]);
+        if (key != 'program_account_holder_id'){
+          acc[key] = formatCurrency(row[key]);
+        } else {
+          acc[key] = row[key];
+        }
         return acc;
       }, {});
     });

@@ -11,6 +11,7 @@ import Dropzone from 'react-dropzone-uploader'
 import 'react-dropzone-uploader/dist/styles.css'
 import {isEmpty} from '@/shared/helpers'
 import {Field, Form} from "react-final-form";
+import TrashIcon from 'mdi-react/TrashOutlineIcon';
 //import ScriptTag from 'react-script-tag';
 // import {formatBytes, formatDuration} from "react-dropzone-uploader/dist/utils";
 
@@ -113,18 +114,14 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
     setFileName('')
   }
 
-  const handleChangeForms = (value) =>{
-    if(value){
-      setCurrentForm({
-        value: value.value,
-        label: value.label
-      })
-      setCurrentForm(value)
-      getIframe(value.value)
+  const handleChangeForms = (form) =>{
+    if(form){
+      setCurrentForm(form)
+      getIframe(form.value)
     }
     else{
       setCurrentForm(null)
-      setTempLink('')
+      setTempLink(null)
       setLink('')
     }
   }
@@ -151,12 +148,8 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
     let temp = menuItems.filter(iframe =>  iframe.id === value)[0];    
     setCurrentMenuItem(temp); 
     setLink(temp.menu_link || "")
-    setTempLink(temp.menu_link || "");
+    setTempLink(temp.menu_link || null);
     getData(temp.id);
-  }
-
-  const saveIframe = () => {
-    saveLinkForIframe();
   }
 
   useEffect(() => {
@@ -219,20 +212,31 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       })
   }
 
-  const saveLinkForIframe = () => {
+  const saveLinkForIframe = (newLink) => {
     let saveUrl = axios.defaults.baseURL +  `/organization/${organization.id}/program/${program.id}/digital-media-type-iframe`;
     let data = new FormData();
     setLoading(true)
     data.append('program_media_type_id', currentMenuItem.id)
-    data.append('name', currentMenuItem.label);
-    data.append('is_menu_item', 1);
-    data.append('menu_link', tempLink);
+    if(newLink){
+      data.append('menu_link', newLink);
+    }
     
     axios.post(saveUrl, data)
       .then((res) => {
         if (res.status === 200) {
+          let menuItem = {
+            value: res.data.program_media_type_id,
+            url: res.data.menu_link,
+            id: res.data.program_media_type_id,
+            menu_link:res.data.menu_link,
+            label: toTitleCase(res.data.name)
+          }
+          setCurrentMenuItem(menuItem)
           loadMediTypes();
-          // setTempLink("")
+          if(!res.data.menu_link){
+            setTempLink(null)
+            setLink("")
+          }
         }
         setLoading(false)
       })
@@ -243,7 +247,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       });
   }
 
-  const handleSubmitMenuItem = (linkUrl, inputValue) => {
+  const selectCreateIframe = (inputValue) => {
 
     setIsLoading(true);
     let saveUrl = axios.defaults.baseURL +  `/organization/${organization.id}/program/${program.id}/digital-media-type`;
@@ -251,7 +255,6 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
     let data = new FormData();
     data.append('name', inputValue);
     data.append('is_menu_item', 1);
-    data.append('menu_link', linkUrl);
     
     axios.post(saveUrl, data)
       .then((res) => {
@@ -270,7 +273,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
           }
           setCurrentMenuItem(newMenuItem)
           setLink('')
-          setTempLink('')
+          setTempLink(null)
           loadMediTypes();
         }
         setIsLoading(false)
@@ -366,10 +369,6 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       });
   }
 
-  const selectCreateIframe = (inputValue) => {
-    handleSubmitMenuItem(link, inputValue)
-  }
-
   const addMenus = () => {
     if (link !== "") {      
       setTempLink(link); 
@@ -377,34 +376,28 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
   
   }
 
-  const deleteMenu = () => {
-    let id = currentMenuItem.id;
-
-    let deleteUrl = axios.defaults.baseURL +  `/organization/${organization.id}/program/${program.id}/digital-media-type-url-delete`;
-    let data = new FormData();
-    data.append('program_media_type_id', id);
-   
-    axios.post(deleteUrl, data)
-      .then((res) => {        
-        if (res.status === 200) {
-          loadMediTypes();
-          setTempLink("");
-          setLink("")
-        }
-        setLoading(false)
-      })
-      .catch(error => {
-        console.log(error)
-        console.log(JSON.stringify(error.response.data.errors));
-        dispatch(sendFlashMessage(JSON.stringify(error.response.data.errors), 'alert-danger'))
-        setLoading(false)
-        throw new Error(`API error:${error?.message}`);
-      });    
+  const deleteMenu = () =>{
+    const response = axios.delete(
+      `/organization/${organization.id}/program/${program.id}/digital-media-type/${currentMenuItem.id}`
+    ).then((res) => {        
+      if (res.status === 200) {
+        loadMediTypes();
+        setCurrentForm(null)
+        setTempLink(null)
+      }
+    })
+    .catch(error => {
+      console.log(error)
+      console.log(JSON.stringify(error.response.data.errors));
+      dispatch(sendFlashMessage(JSON.stringify(error.response.data.errors), 'alert-danger'))
+      setLoading(false)
+      throw new Error(`API error:${error?.message}`);
+    });    
   }
 
   const setMediaTab = () => {
     if(tab !== 1){
-      setTempLink('')
+      setTempLink(null)
       setLink('')
       setTab(1);
       setCurrentForm(null)
@@ -610,6 +603,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
 
                             </div>
                           </div>
+                          { currentForm && 
                           <div className="form__form-group">
                             <span className="form__form-group-label">Link </span>
                               <div className='table-filter-form form row'>
@@ -619,56 +613,44 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                       type="text" value={link}
                                       placeholder="Link Url"/>
                                 </div>
-                                <div className='col'>      
+                                <div className='col-sm-4 col-md-4 col-lg-4 d-flex justify-content-end'>      
                                   <Button  color="primary" disabled={!link || link === tempLink} className="" onClick={()=>addMenus()}>{!tempLink ? "Add" : "Update"}</Button>
+                                </div>
+                                <div className='col-sm-4 col-md-4 col-lg-4 d-flex justify-content-end'>      
+                                  <div className="pointer" onClick={(e) => { if (window.confirm('Are you sure to delete this menu?')) { deleteMenu() } }}>
+                                    <TrashIcon color='#777777' />
+                                  </div>
                                 </div>
                               </div>
                           </div>
+                          }
                         </Col>
                       </Row>
-                      {tempLink&&
-                       <div className='table-filter-form form row'>
-                          <div className='col-sm-8 col-md-8 col-lg-8'>
-                              <h4>{tempLink}</h4>
-                          </div>
-                          <div className='col'>      
-                            <Button  color="primary" className="" onClick={()=>deleteMenu()}>Delete</Button>
-                          </div>
-                        </div>
-                        
-                      }                     
-                      <Row>
-                        <Col>
-                          {media && media.length > 0
-                            && (
-                              <div className="dropzone__imgs-wrapper">
-                                {media.map((file, i) => (
-                                  <div className="dropzone__img" key={file.name} style={{
-                                    border: '1px solid grey',
-                                    width: `125px`,
-                                    backgroundImage: `url(${process.env.REACT_APP_API_STORAGE_URL + '/' + file.icon_path})`
-                                  }}>
-                                    <p className="dropzone__img-name">{file.name}</p>
-                                    <button className="dropzone__img-delete" type="button"
-                                            onClick={e => removeFile(i, file, e)}>
-                                      Remove
-                                    </button>
+                      { tempLink && 
+                        <Row>
+                          <Col md="12">
+                            <div className='form__form-group'>
+                              <div className='table-filter-form form row'>
+                                  <div className='col-sm-8 col-md-8 col-lg-8'>
+                                      <h4>{tempLink}</h4>
                                   </div>
-                                ))}
-                              </div>
-                            )}
-                        </Col>
-                      </Row>
+                                  <div className='col-4 d-flex justify-content-end'>      
+                                    <Button  color="primary" disabled={!currentMenuItem?.menu_link} className="" onClick={()=> { if(window.confirm('Are you sure to remove this link from the menu?')){saveLinkForIframe()}} }>Remove</Button>
+                                  </div>
+                                </div>
+                            </div>
+                          </Col>
+                        </Row>
+                      }
                       <Row>
                         <Col>
                           <div>
-                            <Button onClick={saveIframe} disabled={loading} className="btn btn-primary"
+                            <Button onClick={() =>saveLinkForIframe(tempLink)} disabled={loading || !currentMenuItem || currentMenuItem?.menu_link == tempLink} className="btn btn-primary"
                                     color="#ffffff">Save</Button>
                           </div>
                         </Col>
                       </Row>
                   </>
-    
               }
           </CardBody>
         </Card>
