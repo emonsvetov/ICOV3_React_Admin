@@ -15,6 +15,7 @@ import ActivateLiveModeProgramModal from "./ActivateLiveModeProgramModal";
 import ReportsModal from "./ReportsModal";
 import AwardLevelsModal from "./AwardLevelsModal";
 import UnitNumbersDataModal from './UnitNumbers/UnitNumberDataModal'
+import PositionLevelsModal from './positions/PositionLevelsModal';
 
 const MainModalWrapper = ({name, isOpen, setOpen, toggle}) => {
   const props = {
@@ -72,6 +73,9 @@ const MainModalWrapper = ({name, isOpen, setOpen, toggle}) => {
         }
       {
         name === 'UnitNumbers' && <UnitNumbersDataModal {...props} />
+      }
+      {
+         name === 'PositionLevels' && <PositionLevelsModal {...props} />
       }
     </>
   )

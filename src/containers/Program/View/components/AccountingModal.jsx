@@ -192,6 +192,14 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                             onChange={() => {data.budget_summary = !data.budget_summary}}
                         />
                     </Col>
+                    <Col md="4" lg="4" xl="4">
+                        <CheckboxField
+                            name="use_cascading_approvals"
+                            label="Use Cascading Approvals"
+                            checked={data.use_cascading_approvals}
+                            onChange={() => {data.use_cascading_approvals = !data.use_cascading_approvals}}
+                        />
+                    </Col>
                 </Row>
                 <Row>
                     <Col md="6" lg="4" xl="4">
