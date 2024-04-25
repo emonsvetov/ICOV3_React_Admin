@@ -45,7 +45,7 @@ const ImportSettings = () => {
                         Import Types
                       </NavLink>
                     </NavItem>
-                    <NavItem>
+                    {/* <NavItem>
                       <NavLink
                         className={classnames({
                           active: currentActiveTab === "2",
@@ -56,7 +56,7 @@ const ImportSettings = () => {
                       >
                         Fields
                       </NavLink>
-                    </NavItem>
+                    </NavItem> */}
                   </Nav>
                 </Col>
               </Row>
@@ -64,9 +64,9 @@ const ImportSettings = () => {
                 <TabPane tabId="1" className="tabPane">
                   <ImportTypes />
                 </TabPane>
-                <TabPane tabId="2" className="tabPane">
+                {/* <TabPane tabId="2" className="tabPane">
                   Tab 2
-                </TabPane>
+                </TabPane> */}
               </TabContent>
             </CardBody>
           </Card>
