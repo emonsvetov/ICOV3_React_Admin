@@ -1,5 +1,5 @@
-import axios from "axios";
 import React from "react";
+import axios from "axios";
 import { Form, Field } from "react-final-form";
 import { Button, ButtonToolbar, Row, Col } from "reactstrap";
 import {
@@ -11,6 +11,7 @@ import {
 const AddPositionLevels = ({ onStep, program }) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = React.useState(false);
+
   const onClickBack = () => {
     onStep(0);
   };
@@ -22,7 +23,8 @@ const AddPositionLevels = ({ onStep, program }) => {
         values
       )
       .then((res) => {
-        if (res.status == 200) {
+        // console.log(res);
+        if (res.status == 201) {
           onStep(0);
           flashSuccess(dispatch, "Position level created successfully");
         }
@@ -55,6 +57,7 @@ const AddPositionLevels = ({ onStep, program }) => {
                     type="submit"
                     className="btn btn-primary"
                     color="#ffffff"
+                    disabled={loading}
                   >
                     Save
                   </Button>
