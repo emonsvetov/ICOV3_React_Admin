@@ -168,10 +168,10 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                     <Col md="6" lg="4" xl="4">
                         <div className="form__form-group">
                             <CheckboxField 
-                                name="enable_upload_while_awarding"
+                                name="enable_reference_documents"
                                 label="Enable uploading documents while awarding"
-                                checked={data?.enable_upload_while_awarding}
-                                onChange={() => {data.enable_upload_while_awarding = !data.enable_upload_while_awarding}}
+                                checked={data?.enable_reference_documents}
+                                onChange={() => {data.enable_reference_documents = !data.enable_reference_documents}}
                             />
                         </div>
                     </Col>
@@ -310,7 +310,7 @@ const AwardingPointsModal = ({dispatch, organization, data, isOpen, setOpen, tog
                 </Row>
                 <Row>
                     <Col md="6" lg="4" xl="4">
-                        <Field name="unknown">
+                        <Field name="points_expire_notice_days">
                         {({ input, meta }) => (
                             <div className="form__form-group">
                                 <span className="form__form-group-label">Notify participant of expiring points by</span>
