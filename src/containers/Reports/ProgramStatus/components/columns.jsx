@@ -51,7 +51,7 @@ export const TABLE_COLUMNS = [
     Footer: (info) => {
       const {rows, flatRows} = info;
       const totalValue = useMemo(
-        () => rows.reduce((sum, row) => row.original.program.dinamicDepth === 1 ? Number(row.values.count_users) + sum : 0 + sum, 0),
+        () => rows.reduce((sum, row) => !row.original?.disableTotalCalculation && row.original.program.dinamicDepth === 1 ? Number(row.values.count_users) + sum : 0 + sum, 0),
         [rows],
       );
       return <span>{totalValue}</span>;
@@ -64,7 +64,7 @@ export const TABLE_COLUMNS = [
     Footer: (info) => {
       const {rows, flatRows} = info;
       const totalValue = useMemo(
-        () => rows.reduce((sum, row) => row.original.program.dinamicDepth === 1 ? Number(row.values.count_email) + sum : 0 + sum, 0),
+        () => rows.reduce((sum, row) => !row.original?.disableTotalCalculation && row.original.program.dinamicDepth === 1 ? Number(row.values.count_email) + sum : 0 + sum, 0),
         [rows],
       );
       return <span>{totalValue}</span>;
@@ -78,11 +78,11 @@ export const TABLE_COLUMNS = [
     Footer: (info) => {
       const {rows, flatRows} = info;
       const totalValue = useMemo(
-        () => rows.reduce((sum, row) => row.original.program.dinamicDepth === 1 ? Number(row.values.percent_participant) + sum : 0 + sum, 0),
+        () => rows.reduce((sum, row) => !row.original?.disableTotalCalculation && row.original.program.dinamicDepth === 1 ? Number(row.values.percent_participant) + sum : 0 + sum, 0),
         [rows],
       );
       const avg = Math.round(totalValue / rows.length);
-      return <span>{`${parseFloat(avg)}%`}</span>;
+      return <span>{avg + '%'}</span>;
     },
   },
   {
@@ -92,7 +92,7 @@ export const TABLE_COLUMNS = [
     Footer: (info) => {
       const {rows, flatRows} = info;
       const totalValue = useMemo(
-        () => rows.reduce((sum, row) => row.original.program.dinamicDepth === 1 ? Number(row.values.count_active_user) + sum : 0 + sum, 0),
+        () => rows.reduce((sum, row) => !row.original?.disableTotalCalculation && row.original.program.dinamicDepth === 1 ? Number(row.values.count_active_user) + sum : 0 + sum, 0),
         [rows],
       );
       return <span>{totalValue}</span>;
@@ -106,11 +106,11 @@ export const TABLE_COLUMNS = [
     Footer: (info) => {
       const {rows, flatRows} = info;
       const totalValue = useMemo(
-        () => rows.reduce((sum, row) => row.original.program.dinamicDepth === 1 ? Number(row.values.percent_active_participant) + sum : 0 + sum, 0),
+        () => rows.reduce((sum, row) => !row.original?.disableTotalCalculation && row.original.program.dinamicDepth === 1 ? Number(row.values.percent_active_participant) + sum : 0 + sum, 0),
         [rows],
       );
-      const avg = Math.round(totalValue / rows.length);
-      return <span>{`${parseFloat(avg)}%`}</span>;
+      const avg = Math.round(totalValue / rows.length );
+      return <span>{avg + '%'}</span>;
     },
   },
   {
@@ -120,7 +120,7 @@ export const TABLE_COLUMNS = [
     Footer: (info) => {
       const {rows, flatRows} = info;
       const totalValue = useMemo(
-        () => rows.reduce((sum, row) => row.original.program.dinamicDepth === 1 ? Number(row.values.count_award) + sum : 0 + sum, 0),
+        () => rows.reduce((sum, row) => !row.original?.disableTotalCalculation && row.original.program.dinamicDepth === 1 ? Number(row.values.count_award) + sum : 0 + sum, 0),
         [rows],
       );
       return <span>{totalValue}</span>;
@@ -134,7 +134,7 @@ export const TABLE_COLUMNS = [
     Footer: (info) => {
       const {rows, flatRows} = info;
       const totalValue = useMemo(
-        () => rows.reduce((sum, row) => row.original.program.dinamicDepth === 1 ? Number(row.values.sum_posting_amount) + sum : 0 + sum, 0),
+        () => rows.reduce((sum, row) => !row.original?.disableTotalCalculation && row.original.program.dinamicDepth === 1 ? Number(row.values.sum_posting_amount) + sum : 0 + sum, 0),
         [rows],
       );
       return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -148,7 +148,7 @@ export const TABLE_COLUMNS = [
     Footer: (info) => {
       const {rows, flatRows} = info;
       const totalValue = useMemo(
-        () => rows.reduce((sum, row) => row.original.program.dinamicDepth === 1 ? Number(row.values.avg_posting_amount) + sum : 0 + sum, 0),
+        () => rows.reduce((sum, row) => !row.original?.disableTotalCalculation && row.original.program.dinamicDepth === 1 ? Number(row.values.avg_posting_amount) + sum : 0 + sum, 0),
         [rows],
       );
       return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -162,7 +162,7 @@ export const TABLE_COLUMNS = [
     Footer: (info) => {
       const {rows, flatRows} = info;
       const totalValue = useMemo(
-        () => rows.reduce((sum, row) => row.original.program.dinamicDepth === 1 ? Number(row.values.deposit_balance) + sum : 0 + sum, 0),
+        () => rows.reduce((sum, row) => !row.original?.disableTotalCalculation && row.original.program.dinamicDepth === 1 ? Number(row.values.deposit_balance) + sum : 0 + sum, 0),
         [rows],
       );
       return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;

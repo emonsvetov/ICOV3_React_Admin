@@ -117,7 +117,7 @@ const DataTable = ({ toggle, organization, program }) => {
     if (pageSortBy.length > 0) {
       const sortParams = pageSortBy[0];
       const sortyByDir = sortParams.desc ? "desc" : "asc";
-      paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}`;
+      paramStr = `${paramStr}&sortby=${sortParams.id}&direction=${sortyByDir}&status=active`;
     }
     try {
       const response = await axios.get(
@@ -145,7 +145,7 @@ const DataTable = ({ toggle, organization, program }) => {
   const fetchProgramMerchantData = async () => {
     try {
       const response = await axios.get(
-        `/organization/${program.organization_id}/program/${program.id}/merchant?minimal=true&sortby=name`
+        `/organization/${program.organization_id}/program/${program.id}/merchant?minimal=true&sortby=name&status=active`
       );
       let result = response.data;
       let temp_relation = [];

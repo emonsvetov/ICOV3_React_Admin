@@ -1,31 +1,29 @@
 import React, {useState, useEffect, useMemo} from "react";
 import {useExpanded, useFlexLayout, usePagination, useResizeColumns, useSortBy, useTable} from "react-table";
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
+import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 import {PROGRAM_DEPOSIT_COLUMNS} from "./columns";
-import { Col, Row} from 'reactstrap';
+import {Col, Row} from 'reactstrap';
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
 import {clone} from 'lodash';
-import DepositFilter  from "./DepositFilter";
+import DepositFilter from "./DepositFilter";
 import {
-  reducer,
-  useEffectToDispatch,
-  fetchApiData,
-  fetchApiDataExport,
-  initialState,
-  Sorting
+    reducer,
+    useEffectToDispatch,
+    fetchApiData,
+    fetchApiDataExport,
+    initialState,
+    Sorting
 } from "@/shared/apiTableHelper"
 import {getFirstDay} from '@/shared/helpers'
-import { StickyContainer, Sticky } from "react-sticky";
+import {StickyContainer, Sticky} from "react-sticky";
 
 const queryClient = new QueryClient()
 
 const DataTable = ({organization, programs, programOptions}) => {
 
-  // console.log(organization)
-
-  const defaultFrom = getFirstDay();
-  const [filter, setFilter] = useState({programs, from: defaultFrom, to: new Date()});
+    const defaultFrom = getFirstDay();
+    const [filter, setFilter] = useState({programs, from: defaultFrom, to: new Date()});
     const [useFilter, setUseFilter] = useState(false);
     const [trigger, setTrigger] = useState(0);
     const [exportData, setExportData] = useState([]);
@@ -34,107 +32,105 @@ const DataTable = ({organization, programs, programOptions}) => {
     const exportLink = React.createRef();
 
     useEffect(() => {
-      if (exportToCsv) {
-        if (exportLink.current) {
-          setExportToCsv(false);
-          exportLink.current.link.click();
+        if (exportToCsv) {
+            if (exportLink.current) {
+                setExportToCsv(false);
+                exportLink.current.link.click();
+            }
         }
-      }
     }, [exportLink])
-  
+
     const download = async (filterValues) => {
-      let tmpFilter = clone(filterValues);
-      tmpFilter.exportToCsv = 1;
-      tmpFilter.limit = pageSize;
-      tmpFilter.page = pageIndex+1;
-      const response = await fetchApiDataExport(
-        {
-          url: apiUrl,
-          filter: tmpFilter,
-          sortby: queryPageSortBy,
-          trigger: queryTrigger
-        }
-      );
-      setExportData(response.results);
-      setExportHeaders(response.headers);
-      setExportToCsv(true);
+        let tmpFilter = clone(filterValues);
+        tmpFilter.exportToCsv = 1;
+        tmpFilter.limit = pageSize;
+        tmpFilter.page = pageIndex + 1;
+        const response = await fetchApiDataExport(
+            {
+                url: apiUrl,
+                filter: tmpFilter,
+                sortby: queryPageSortBy,
+                trigger: queryTrigger
+            }
+        );
+        setExportData(response.results);
+        setExportHeaders(response.headers);
+        setExportToCsv(true);
     }
-   
+
     let program_columns = [
         ...PROGRAM_DEPOSIT_COLUMNS,
     ]
-    let columns = useMemo( () => program_columns, [])
+    let columns = useMemo(() => program_columns, [])
 
     const defaultColumn = React.useMemo(
         () => ({
-          maxWidth: 100,
+            maxWidth: 100,
         }),
         []
     )
 
     const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
-    React.useReducer(reducer, initialState);
+        React.useReducer(reducer, initialState);
 
     const apiUrl = `/organization/${organization.id}/report/invoice-created`;
     const {isLoading, error, data, isSuccess, isFetched, isFetching} = useQuery(
-      ['journal-detailed', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
-      () => fetchApiData(
+        ['journal-detailed', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+        () => fetchApiData(
+            {
+                url: apiUrl,
+                page: queryPageIndex,
+                size: 9999999,
+                filter,
+                sortby: queryPageSortBy,
+                trigger: queryTrigger
+            }
+        ),
         {
-          url: apiUrl,
-          page: queryPageIndex,
-          size: queryPageSize,
-          filter,
-          sortby: queryPageSortBy,
-          trigger: queryTrigger
+            keepPreviousData: true,
+            staleTime: Infinity,
         }
-      ),
-      {
-        keepPreviousData: true,
-        staleTime: Infinity,
-      }
     );
-
-    console.log(filter)
 
     const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
     const {
-      getTableProps,
-      getTableBodyProps,
-      headerGroups,
-      footerGroups,
-      rows,
-      prepareRow,
-      page,
-      pageCount,
-      pageOptions,
-      gotoPage,
-      previousPage,
-      canPreviousPage,
-      nextPage,
-      canNextPage,
-      setPageSize,
-      state: {pageIndex, pageSize, sortBy}
+        getTableProps,
+        getTableBodyProps,
+        headerGroups,
+        footerGroups,
+        rows,
+        prepareRow,
+        page,
+        pageCount,
+        pageOptions,
+        gotoPage,
+        previousPage,
+        canPreviousPage,
+        nextPage,
+        canNextPage,
+        setPageSize,
+        state: {pageIndex, pageSize, sortBy}
     } = useTable({
-      columns,
-      data: data ? data.results : [],
-      initialState: {
-        pageIndex: queryPageIndex,
-        pageSize: queryPageSize,
-        sortBy: queryPageSortBy,
-      },
-      manualPagination: true, // Tell the usePagination
-      pageCount: data ? totalPageCount : null,
-      autoResetSortBy: false,
-      autoResetExpanded: false,
-      autoResetPage: false,
-      disableResizing: true
-    },
-    useSortBy,
-    useExpanded,
-    usePagination,
-    useResizeColumns,
-    useFlexLayout,
+            columns,
+            data: data ? data.results : [],
+            initialState: {
+                pageIndex: queryPageIndex,
+                pageSize: queryPageSize,
+                sortBy: queryPageSortBy,
+            },
+            manualPagination: true, // Tell the usePagination
+            pageCount: data ? totalPageCount : null,
+            autoResetSortBy: false,
+            autoResetExpanded: false,
+            autoResetPage: false,
+            disableResizing: true
+        },
+        useSortBy,
+        useExpanded,
+        usePagination,
+        useResizeColumns,
+        useFlexLayout,
     );
 
     const manualPageSize = []
@@ -144,106 +140,104 @@ const DataTable = ({organization, programs, programOptions}) => {
         return <p>Error: {JSON.stringify(error)}</p>;
     }
 
-    console.log(isLoading)
-
     if (isLoading || !organization?.id) {
-      return <p>Loading...</p>;
+        return <p>Loading...</p>;
     }
     if (isSuccess)
-    return (
-      <StickyContainer>
-        <div className='table react-table report-table'>
-          <div className="action-panel">
-            <Row className="mx-0">
-              <Col>
-                <DepositFilter 
-                  filter={filter} 
-                  setFilter={setFilter} 
-                  setUseFilter={setUseFilter}
-                  exportData={exportData} 
-                  exportLink={exportLink} 
-                  exportHeaders={exportHeaders}
-                  download={download}
-                  config={{
-                    keyword: false,
-                    dateRange: true,
-                    // awardLevels: availableAwardLevels,
-                    programs: true,
-                    exportToCsv: true
-                  }}
-                  loading={isLoading || isFetching}
-                  programOptions={programOptions}
-                />
-              </Col>
-            </Row>
-            <div style={{clear: 'both'}}>&nbsp;</div>
-          </div>
-          {
-            (isLoading || isFetching) && <p className="text-center">Loading...</p>
-          }
-          <div style={{width:"100%", overflow:'scroll'}}>
-            {
-              // ref={r => { csvLinkTable = r; }}
-              isSuccess &&
-              <table {...getTableProps()} className="table table--bordered">
-                <Sticky  topOffset={80}>
-                  {({ style }) => (
-                    <thead style={{...style, top: '60px'}}> 
-                      {headerGroups.map((headerGroup) => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
-                          {headerGroup.headers.map(column => (
-                            <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                              {column.render('Header')}
-                              {column.isSorted ? <Sorting column={column}/> : ''}
-                            </th>
-                          ))}
-                        </tr>
-                      ))}
-                      </thead>
-                  )}
-                </Sticky>
-                <tbody className="table table--bordered" {...getTableBodyProps()}>
-                {page.map(row => {
-                  prepareRow(row);
-                  return (
-                    <tr {...row.getRowProps()}>
-                      {
-                        row.cells.map(cell => {
-                          return <td {...cell.getCellProps({className: cell.column.className})}>
-                            {cell.render('Cell')}
-                          </td>
-                        })
-                      }
-                    </tr>
-                  )
-                })}
-                </tbody>
-                <tfoot>
-                {footerGroups.map((footerGroup) => (
-                  <tr {...footerGroup.getFooterGroupProps()}>
-                    {footerGroup.headers.map(column => (
-                      <th {...column.getFooterProps()}>{column.render('Footer')}</th>
-                    ))}
-                  </tr>
-                ))}
-                </tfoot>
-              </table>
-            }
-          </div>
-        </div>
-      </StickyContainer>
-    )
+        return (
+            <StickyContainer>
+                <div className='table react-table report-table'>
+                    <div className="action-panel">
+                        <Row className="mx-0">
+                            <Col>
+                                <DepositFilter
+                                    filter={filter}
+                                    setFilter={setFilter}
+                                    setUseFilter={setUseFilter}
+                                    exportData={exportData}
+                                    exportLink={exportLink}
+                                    exportHeaders={exportHeaders}
+                                    download={download}
+                                    config={{
+                                        keyword: false,
+                                        dateRange: true,
+                                        // awardLevels: availableAwardLevels,
+                                        programs: true,
+                                        exportToCsv: true
+                                    }}
+                                    loading={isLoading || isFetching}
+                                    programOptions={programOptions}
+                                />
+                            </Col>
+                        </Row>
+                        <div style={{clear: 'both'}}>&nbsp;</div>
+                    </div>
+                    {
+                        (isLoading || isFetching) && <p className="text-center">Loading...</p>
+                    }
+                    <div style={{width: "100%", overflow: 'scroll'}}>
+                        {
+                            // ref={r => { csvLinkTable = r; }}
+                            isSuccess &&
+                            <table {...getTableProps()} className="table table--bordered">
+                                <Sticky topOffset={80}>
+                                    {({style}) => (
+                                        <thead style={{...style, top: '60px'}}>
+                                        {headerGroups.map((headerGroup) => (
+                                            <tr {...headerGroup.getHeaderGroupProps()}>
+                                                {headerGroup.headers.map(column => (
+                                                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                                        {column.render('Header')}
+                                                        {column.isSorted ? <Sorting column={column}/> : ''}
+                                                    </th>
+                                                ))}
+                                            </tr>
+                                        ))}
+                                        </thead>
+                                    )}
+                                </Sticky>
+                                <tbody className="table table--bordered" {...getTableBodyProps()}>
+                                {page.map(row => {
+                                    prepareRow(row);
+                                    return (
+                                        <tr {...row.getRowProps()}>
+                                            {
+                                                row.cells.map(cell => {
+                                                    return <td {...cell.getCellProps({className: cell.column.className})}>
+                                                        {cell.render('Cell')}
+                                                    </td>
+                                                })
+                                            }
+                                        </tr>
+                                    )
+                                })}
+                                </tbody>
+                                <tfoot>
+                                {footerGroups.map((footerGroup) => (
+                                    <tr {...footerGroup.getFooterGroupProps()}>
+                                        {footerGroup.headers.map(column => (
+                                            <th {...column.getFooterProps()}>{column.render('Footer')}</th>
+                                        ))}
+                                    </tr>
+                                ))}
+                                </tfoot>
+                            </table>
+                        }
+                    </div>
+                </div>
+            </StickyContainer>
+        )
 }
 
 const TableWrapper = ({organization, programs, programOptions}) => {
-  if (!organization || !programs) return 'Loading...'
-  return (
-    <QueryClientProvider client={queryClient}>
-      <DataTable organization={organization}  programs={programs} programOptions={programOptions}/>
-    </QueryClientProvider>
-  )
+    if (!organization || !programs) return 'Loading...'
+    return (
+        <QueryClientProvider client={queryClient}>
+            <DataTable organization={organization} programs={programs} programOptions={programOptions}/>
+        </QueryClientProvider>
+    )
 }
 
 export default withRouter(connect((state) => ({
-  organization: state.organization
+    organization: state.organization
 }))(TableWrapper));
