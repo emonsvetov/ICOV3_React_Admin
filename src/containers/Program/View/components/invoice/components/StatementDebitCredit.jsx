@@ -80,7 +80,7 @@ export const DebitCredit = ({sData}) => {
                         </strong>
                     </td>
                     <td colSpan="4" align="right" style={{"borderTop": "thin black dotted","paddingTop": "8px"}}>
-                    <strong className="invoice-sub-total">${Number(Math.round(info.end_balance) * -1).toFixed(2)}</strong>
+                    <strong className="invoice-sub-total">${parseFloat(info.end_balance * -1).toFixed(2)}</strong>
                     </td>
                 </tr>
                 <tr>
