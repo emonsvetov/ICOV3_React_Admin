@@ -69,7 +69,7 @@ const StatementDataTable = ({statement, loading}) => {
                             <td align="right"><strong class="invoice-total">Total Due:</strong>
                             </td>
                             <td align="right">
-                                <strong class="invoice-total">${Number(Math.round(sData.total_end_balance) * -1).toFixed(2)}</strong>
+                                <strong class="invoice-total">${parseFloat(sData.total_end_balance * -1).toFixed(2)}</strong>
                             </td>
 			            </tr>
                     </tbody>
