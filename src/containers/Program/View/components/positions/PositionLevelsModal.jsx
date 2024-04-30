@@ -148,7 +148,8 @@ const PositionsLevelsModal = ({ isOpen, toggle, program, theme, rtl }) => {
       {
         Header: "",
         accessor: "action",
-        Cell: ({ row }) => <RenderActions row={row} />,
+        Cell: ({ row }) =>
+          row.original.status > 0 ? <RenderActions row={row} /> : null,
       },
     ],
   ];

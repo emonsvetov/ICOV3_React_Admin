@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { renderComponentField } from '@/shared/components/form/FormField';
 
 export const SelectField = React.forwardRef(({
-  onChange, value, name, placeholder, options, isClearable
+  onChange, value, name, placeholder, options, isClearable, isMulti=false
 }, ref) => {
   const handleChange = (selectedOption) => {
     onChange(selectedOption);
@@ -31,6 +31,7 @@ export const SelectField = React.forwardRef(({
       classNamePrefix="react-select"
       isClearable={isClearable}
       ref={ref}
+      isMulti={isMulti}
     />
   );
 });
