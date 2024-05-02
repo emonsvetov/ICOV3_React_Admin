@@ -10,10 +10,10 @@ import {
   flashError,
 } from "@/shared/components/flash";
 
-const getPositionLevel = async (program, postionAssignpermissionId) => {
+const getPositionLevel = async (p, postionAssignpermissionId) => {
   try {
     const response = await axios.get(
-      `/organization/${program.organization_id}/program/${program.id}/positionlevel/${postionAssignpermissionId}`
+      `/organization/${p.organization_id}/program/${p.id}/positionlevel/${postionAssignpermissionId}`
     );
     return response.data;
   } catch (error) {
@@ -38,10 +38,10 @@ const AssignPermissionPositionLevels = ({
     }),
   };
 
-  const getPermissions = async (program) => {
+  const getPermissions = async (p) => {
     try {
       const response = await axios.get(
-        `/organization/${program.organization_id}/program/${program.id}/positionpermissions`
+        `/organization/${p.organization_id}/program/${p.id}/positionpermissions`
       );
       return response.data;
     } catch (error) {

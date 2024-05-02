@@ -17,7 +17,9 @@ const defaultConfig = {
   roleDisable: false,
   isProgram: false,
   unitNumberField: 'unit_number',
-  unitNumberOptions: []
+  unitNumberOptions: [],
+  positionLevelField: 'position_level',
+  positionLevelOptions: []
 }
 
 const FormFields = ({form, values, submitting, pristine, program, config}) => {
@@ -349,6 +351,29 @@ const FormFields = ({form, values, submitting, pristine, program, config}) => {
               )}
             </Field>
           </Col>
+        </Row>
+        <Row>
+         {(program?.use_budget_cascading > 0 || program?.use_cascading_approvals > 0) && (
+            <Col md="6" lg="4" xl="4">
+              <div className="form__form-group">
+                <span className="form__form-group-label">
+                 Position Level
+                </span>
+                <div className="form__form-group-field">
+                  <div className="form__form-group-row">
+                    <Field
+                      name={config.positionLevelField}
+                      options={config.positionLevelOptions}
+                      component={renderSelectField}
+                      parse={(value) => {
+                        return value;
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </Col>
+          )}
         </Row>
         <h4 className="mb-2">Password Settings:</h4>
         {config.isProgram && !values?.id && (

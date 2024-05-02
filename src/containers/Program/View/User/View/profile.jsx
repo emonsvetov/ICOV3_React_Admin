@@ -89,6 +89,14 @@ const ProgramViewUserProfile = ({ organization, program, data }) => {
           <p>{data?.unitNumber?.name}</p>
         </Col>
       </Row>}
+      {(program.use_budget_cascading > 0 || program.use_cascading_approvals > 0) && <Row>
+          <Col md="2" lg="2" xl="2" sm="2" className="label">
+            <p>Position Level:</p>
+          </Col>
+          <Col md="10" lg="10" xl="10" sm="10">
+            <p>{data?.positionLevel?.name}</p>
+          </Col>
+      </Row>}
       <Row>
           <Col md="2" lg="2" xl="2" sm="2" className='label'>
               <p>Award Level:</p>
