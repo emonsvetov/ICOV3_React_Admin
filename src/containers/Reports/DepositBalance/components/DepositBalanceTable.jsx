@@ -6,6 +6,7 @@ import ReactTablePagination from '@/shared/components/table/components/ReactTabl
 import {Col, Row} from 'reactstrap';
 import {getFirstDay, dateStrToYmd} from '@/shared/helpers'
 import { StickyContainer, Sticky } from "react-sticky";
+import {Loader} from '@/shared/apiHelper.jsx';
 
 import {TABLE_COLUMNS} from "./columns";
 
@@ -41,13 +42,14 @@ const DataTable = ({organization, programs}) => {
   const [exportData, setExportData] = useState([]);
   const [exportHeaders, setExportHeaders] = useState([]);
   const [exportToCsv, setExportToCsv] = useState(false);
+  const [isLoader, setLoader] = useState(false);
   const exportLink = React.createRef();
 
   const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] =
     React.useReducer(reducer, initialState);
 
   const apiUrl = `/organization/${organization.id}/report/deposit-balance`;
-  const {isLoading, error, data, isSuccess} = useQuery(
+  const {isLoading, error, data, isSuccess, status, isFetching} = useQuery(
     [['programReportDepositBalance', programId], apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
     () => fetchApiData(
       {
@@ -173,7 +175,7 @@ const DataTable = ({organization, programs}) => {
             </Row>
           </div>
           {
-            isLoading && <p>Loading...</p>
+            isLoading || isFetching && <Loader></Loader>
           }
           {
             isSuccess &&
