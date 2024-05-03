@@ -121,6 +121,11 @@ const DataTable = ({organization, merchants}) => {
                         Header: 'Merchant Name',
                         accessor: 'name',
                         width: 200
+                    },
+                    {
+                        Header: 'Merchant IDs',
+                        accessor: 'id',
+                        width: 200
                     }
                 ];
 
