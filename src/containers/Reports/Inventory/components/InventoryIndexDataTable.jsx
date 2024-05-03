@@ -133,7 +133,12 @@ const DataTable = ({organization, merchants}) => {
                         id: "on_hand" + innerKey,
                         Header: "$" + headerValue,
                         accessor: (row) => row.on_hand[innerItem],
-                        Cell: ({ value }) => value ? Math.round(value).toString() : '-',
+                        Cell: ({ value }) => {
+                            if (isNaN(value)) {
+                                return '-';
+                            }
+                            return value ? Math.round(value).toString() : '-';
+                        },
                         width: 100
                     });
                 }
@@ -156,7 +161,12 @@ const DataTable = ({organization, merchants}) => {
                         id: "optimal_values" + innerKey,
                         Header: "$" + innerItem,
                         accessor: (row) => row.optimal_values[innerItem],
-                        Cell: ({ value }) => value ? Math.floor(value).toString() : '-',
+                        Cell: ({ value }) => {
+                            if (isNaN(value)) {
+                                return '-';
+                            }
+                            return value ? Math.floor(value).toString() : '-';
+                        },
                         width: 100
                     });
                 }
@@ -179,7 +189,12 @@ const DataTable = ({organization, merchants}) => {
                         id: "percent_remaining" + innerKey,
                         Header: "$" + Math.round(innerItem),
                         accessor: (row) => row.percent_remaining[innerItem],
-                        Cell: ({ value }) => value ? Math.round(value).toString() * 100 + '%' : '-',
+                        Cell: ({ value }) => {
+                            if (isNaN(value)) {
+                                return '-';
+                            }
+                            return value ? (Math.round(value) * 100 + '%') : '-';
+                        },
                         width: 100
                     });
                 }
@@ -196,7 +211,12 @@ const DataTable = ({organization, merchants}) => {
                 resultArr.push({
                     Header: 'Cost Basis',
                     accessor: 'cost_basis',
-                    Cell: ({ value }) => '$' + Math.round(value).toString(),
+                    Cell: ({ value }) => {
+                        if (isNaN(value)) {
+                            return '$0';
+                        }
+                        return '$' + Math.round(value).toString();
+                    },
                     width: 150
                 });
                 break;
