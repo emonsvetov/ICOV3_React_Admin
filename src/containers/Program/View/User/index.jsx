@@ -35,19 +35,15 @@ const DataTable = ({program, organization}) => {
 
     const [roles, setRoles] = useState([]);
     const [selectedRoleId, setSelectedRoleId] = useState('');
-    const [selectedRole, setSelectedRole] = useState('');
     const flashDispatcher = useDispatch()
     const [useFilter, setUseFilter] = useState(false);
     const [trigger, setTrigger] = useState(Math.floor(Date.now() / 1000));
     const [filter] = useState({ keyword:'' });
     const [loading, setLoading] = useState(false)
-
-    // var [data, setData] = useState([]);
     const [isOpenAdd, setOpenAdd] = useState(false)
     const [isOpenEdit, setOpenEdit] = useState(false)
     const [selectedUser, selectUser] = useState(false)
     const [user, setUser] = useState(null)
-
     const [isChangeStatusOpen, setChangeStatusOpen] = useState(false)
     const [filteredData, setFilteredData] = useState([]);
 
@@ -99,9 +95,9 @@ const DataTable = ({program, organization}) => {
     const strShowUserStatus = user => {
         return user?.status?.status ? <span onClick={() => onClickStatus(user)} className={'link'}>{user.status.status}</span> : 'unknown'
     }
-    
+
     let user_columns = [
-        ...USERS_COLUMNS, 
+        ...USERS_COLUMNS,
         ...[{
             Header: "",
             accessor: "action",
@@ -129,17 +125,17 @@ const DataTable = ({program, organization}) => {
 
   const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] = React.useReducer(reducer, initialState);
 
-  const apiUrl = `/organization/${program.organization_id}/program/${program.id}/user`
-  // console.log(apiUrl)
-      
+  const apiUrl = `/organization/${program.organization_id}/program/${program.id}/user/${selectedRoleId}`;
+  console.log(apiUrl)
+
   const { isLoading, error, data, isSuccess } = useQuery(
-      ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+      ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger, selectedRoleId],
       () => fetchApiData(
         {
             url: apiUrl,
             page: queryPageIndex,
             size: queryPageSize,
-            filter: {...queryPageFilter, role_id: selectedRoleId},
+            filter: selectedRoleId !== null ? { ...queryPageFilter, role_id: selectedRoleId } : queryPageFilter,
             sortby: queryPageSortBy,
             trigger: queryTrigger
         }),
@@ -149,17 +145,16 @@ const DataTable = ({program, organization}) => {
       }
   );
 
-
     useEffect(() => {
         if (program) {
-            getRoles(program.id);
+            getRoles();
         }
     }, [program]);
 
     const getRoles = () => {
         setLoading(true)
-        fetchRoles(program.id, true )
-            .then( data => {
+        fetchRoles(organization.id, true)
+            .then(data => {
                 setRoles(data);
                 setLoading(false)
             })
@@ -167,23 +162,21 @@ const DataTable = ({program, organization}) => {
 
     // Handle role filter change
     const handleRoleChange = (roleId) => {
-        setSelectedRoleId(roleId);
+        setSelectedRoleId(roleId || null);
     };
 
     // Apply filtering when selectedRoleId or data changes
     useEffect(() => {
         if (selectedRoleId && data && Array.isArray(data.results)) {
-            const filtered = data.results.filter(item => item.roles.some(role => role.id === selectedRoleId));
+            const filtered = data.results.filter(user => user.roles.some(role => role.id === selectedRoleId));
             setFilteredData(filtered);
         } else {
             setFilteredData(data && Array.isArray(data.results) ? data.results : []);
         }
     }, [selectedRoleId, data]);
 
-
   const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
-//   console.log(data)
 
   const {
       getTableProps,
@@ -211,23 +204,23 @@ const DataTable = ({program, organization}) => {
           pageSize: queryPageSize,
           sortBy: queryPageSortBy,
       },
-      manualPagination: true, // Tell the usePagination
+      manualPagination: true,
       pageCount: data ? totalPageCount : 0,
       autoResetSortBy: false,
       autoResetExpanded: false,
       autoResetPage: false,
       defaultColumn,
-      
+
   },
   useSortBy,
   useExpanded,
   usePagination,
-  useResizeColumns, 
+  useResizeColumns,
   useFlexLayout,
   );
-  // const [statusFilterValue, setStatusFilterValue] = useState("");
+
   const manualPageSize = []
-  
+
   useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger} );
 
   if (error) {
@@ -312,7 +305,7 @@ const DataTable = ({program, organization}) => {
                               )
                           })}
                       </tbody>
-                      
+
                   </table>
               </div>
               {(rows.length > 0) && (
@@ -392,7 +385,7 @@ const ProgramUsers = ({organization}) => {
     const fetchProgramData = async(organization) => {
         try {
             const response = await axios.get(`/organization/${organization.id}/program/${programId}`);
-            // console.log(response)
+            console.log(response)
             setProgram(response.data)
         } catch (e) {
             throw new Error(`API error:${e?.message}`);
