@@ -126,7 +126,6 @@ const DataTable = ({program, organization}) => {
   const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] = React.useReducer(reducer, initialState);
 
   const apiUrl = `/organization/${program.organization_id}/program/${program.id}/user/${selectedRoleId}`;
-  console.log(apiUrl)
 
   const { isLoading, error, data, isSuccess } = useQuery(
       ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger, selectedRoleId],
@@ -288,15 +287,11 @@ const DataTable = ({program, organization}) => {
                       <tbody className="table table--bordered" {...getTableBodyProps()}>
                           {page.map( row => {
                               prepareRow(row);
-                            //   console.log(row)
                               const subCount = (row.id.match(/\./g) || []).length
-                              // const paddingCount = subCount > 0 ? Number(subCount) + 3 : 0;
-                              // console.log(subCount)
                               return (
                                   <tr {...row.getRowProps()}>
                                       {
                                           row.cells.map( cell => {
-                                              // console.log(cell)
                                               const paddingLeft = subCount * 20
                                               return <td {...cell.getCellProps()}><span style={cell.column.Header==='#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span></td>
                                           })
@@ -385,7 +380,6 @@ const ProgramUsers = ({organization}) => {
     const fetchProgramData = async(organization) => {
         try {
             const response = await axios.get(`/organization/${organization.id}/program/${programId}`);
-            console.log(response)
             setProgram(response.data)
         } catch (e) {
             throw new Error(`API error:${e?.message}`);
@@ -400,7 +394,6 @@ const ProgramUsers = ({organization}) => {
     if( !program?.id || !organization?.id )  {
         return 'Loading...'
     }
-    // console.log(organization)
     return (
         <Container className="dashboard">
             <Row>
