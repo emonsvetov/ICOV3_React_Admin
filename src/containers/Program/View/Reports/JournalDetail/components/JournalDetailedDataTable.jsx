@@ -153,7 +153,7 @@ const DataTable = ({organization, programs}) => {
     if (isSuccess)
       return (
         <>
-          <div className='table react-table'>
+          <div className='table react-table report-table'>
             <div className="action-panel">
               <Row className="mx-0">
                 <Col lg={12} md={12} sm={12}>
@@ -168,41 +168,33 @@ const DataTable = ({organization, programs}) => {
             }
             {
               isSuccess &&
-              <table {...getTableProps()} className="table">
+              <table {...getTableProps()} style={{background: '#fff'}} className="table table--bordered">
                 <thead>
-                {headerGroups.map( (headerGroup) => (
+                {headerGroups.map((headerGroup) => (
                   <tr {...headerGroup.getHeaderGroupProps()}>
                     {headerGroup.headers.map( column => (
                       <th {...column.getHeaderProps(column.getSortByToggleProps())}>
                         {column.render('Header')}
-                        {column.isSorted ? <Sorting column={column} /> : ''}
-                        <div
-                          {...column.getResizerProps()}
-                          className={`resizer ${
-                            column.isResizing ? 'isResizing' : ''
-                          }`}
-                        />
+                        {column.isSorted ? <Sorting column={column}/> : ''}
                       </th>
                     ))}
                   </tr>
                 ))}
                 </thead>
                 <tbody className="table table--bordered" {...getTableBodyProps()}>
-                {page.map( row => {
+                {page.map(row => {
                   prepareRow(row);
-                  // console.log(row)
-                  const subCount = (row.id.match(/\./g) || []).length
-                  // const paddingCount = subCount > 0 ? Number(subCount) + 3 : 0;
-                  // console.log(subCount)
                   return (
-                    <tr {...row.getRowProps()}>
+                    <tr {...row.getRowProps({className: row.isExpanded && row.original.dinamicDepth === 1 ? ' totalRow' : ''})} >
                       {
-                        row.cells.map( cell => {
-                          // console.log(cell)
-                          const paddingLeft = subCount * 20
-                          return <td {...cell.getCellProps({className: cell.column.className})}>
-                            <span
-                              style={cell.column.Header === '#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span>
+                        row.cells.map(cell => {
+                          return <td {...cell.getCellProps({
+                            className: row.isExpanded && row.original.dinamicDepth === 1 ? cell.column.className + ' totalRow' : cell.column.className,
+                            style: {
+                              textAlign: cell.column.noAlignRight ? '' : 'right',
+                              // background: row.isExpanded && row.original.dinamicDepth === 1 ? '#f2f2f2' : '',
+                            }})} >
+                            {cell.render('Cell')}
                           </td>
                         })
                       }
@@ -211,9 +203,9 @@ const DataTable = ({organization, programs}) => {
                 })}
                 </tbody>
                 <tfoot>
-                {footerGroups.map( (footerGroup) => (
+                {footerGroups.map((footerGroup) => (
                   <tr {...footerGroup.getFooterGroupProps()}>
-                    {footerGroup.headers.map( column => (
+                    {footerGroup.headers.map(column => (
                       <th {...column.getFooterProps()}>{column.render('Footer')}</th>
                     ))}
                   </tr>
