@@ -319,6 +319,21 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
                 <Col md="6" lg="4" xl="4">
                     <Card>
                         <CardBody>
+                            <Row onClick={()=>{toggle('csv_importtypes')}}>
+                                <Col md={3} className='col-left'>
+                                    <img src={AccountingIcon} className="card-img-top" alt="Manager Import Settings"/>
+                                </Col>
+                                <Col md={9} className='col-right pl-0'>
+                                    <h5>Manager Import Settings</h5>
+                                    <p>Selection of CSV imports that will be available in the program.</p>
+                                </Col>
+                            </Row>
+                        </CardBody>
+                    </Card>
+                </Col>
+                <Col md="6" lg="4" xl="4">
+                    <Card>
+                        <CardBody>
                             <Row onClick={()=>{toggle('AwardLevels')}}>
                                 <Col md={3} className='col-left'>
                                     <img src={participants} className="card-img-top" alt="Award Levels"/>

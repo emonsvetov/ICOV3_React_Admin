@@ -93,6 +93,7 @@ import {
 
 import TreeView from '../TreeViewBasic';
 import BudgetComparison from "../Program/View/Reports/BudgetComparison";
+import ImportSettings from '../Import/settings';
 
 const Pages = () => (
   <Switch>
@@ -228,6 +229,7 @@ const Imports = () => (
     <Route exact path="/import" component={Import} />
     <Route exact path="/import/list" component={ImportList} />
     <Route exact path="/import/view/:id" component={ImportView} />
+    <Route exact path="/import/settings" component={ImportSettings} />
   </Switch>
 );
 
