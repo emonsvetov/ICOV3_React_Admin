@@ -25,24 +25,27 @@ import {
 import { USERS_COLUMNS } from "./columns";
 import AddProgramUserModal from './AddProgramUserModal'
 import EditProgramUserModal from './EditProgramUserModal'
+import {StatusFilter} from "../../components/StatusFilter";
+import RoleFilter from "./RoleFilter";
+import {fetchRoles} from "../../../../shared/apiHelper";
 
 const queryClient = new QueryClient()
 
 const DataTable = ({program, organization}) => {
 
+    const [roles, setRoles] = useState([]);
+    const [selectedRoleId, setSelectedRoleId] = useState('');
     const flashDispatcher = useDispatch()
-  
-    const [filter, setFilter] = useState({ keyword:'' });
     const [useFilter, setUseFilter] = useState(false);
     const [trigger, setTrigger] = useState(Math.floor(Date.now() / 1000));
-
-    // var [data, setData] = useState([]);
+    const [filter] = useState({ keyword:'' });
+    const [loading, setLoading] = useState(false)
     const [isOpenAdd, setOpenAdd] = useState(false)
     const [isOpenEdit, setOpenEdit] = useState(false)
     const [selectedUser, selectUser] = useState(false)
     const [user, setUser] = useState(null)
-
     const [isChangeStatusOpen, setChangeStatusOpen] = useState(false)
+    const [filteredData, setFilteredData] = useState([]);
 
     const toggleAdd = () => {
         setOpenAdd(prevState => !prevState)
@@ -92,9 +95,9 @@ const DataTable = ({program, organization}) => {
     const strShowUserStatus = user => {
         return user?.status?.status ? <span onClick={() => onClickStatus(user)} className={'link'}>{user.status.status}</span> : 'unknown'
     }
-    
+
     let user_columns = [
-        ...USERS_COLUMNS, 
+        ...USERS_COLUMNS,
         ...[{
             Header: "",
             accessor: "action",
@@ -110,6 +113,7 @@ const DataTable = ({program, organization}) => {
     let columns = useMemo( () => user_columns, [])
 
 
+
   const defaultColumn = React.useMemo(
       () => ({
         minWidth: 30,
@@ -121,17 +125,16 @@ const DataTable = ({program, organization}) => {
 
   const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] = React.useReducer(reducer, initialState);
 
-  const apiUrl = `/organization/${program.organization_id}/program/${program.id}/user`
-  // console.log(apiUrl)
-      
+  const apiUrl = `/organization/${program.organization_id}/program/${program.id}/user/${selectedRoleId}`;
+
   const { isLoading, error, data, isSuccess } = useQuery(
-      ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+      ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger, selectedRoleId],
       () => fetchApiData(
         {
             url: apiUrl,
             page: queryPageIndex,
             size: queryPageSize,
-            filter: queryPageFilter,
+            filter: selectedRoleId !== null ? { ...queryPageFilter, role_id: selectedRoleId } : queryPageFilter,
             sortby: queryPageSortBy,
             trigger: queryTrigger
         }),
@@ -141,9 +144,38 @@ const DataTable = ({program, organization}) => {
       }
   );
 
+    useEffect(() => {
+        if (program) {
+            getRoles();
+        }
+    }, [program]);
+
+    const getRoles = () => {
+        setLoading(true)
+        fetchRoles(organization.id, true)
+            .then(data => {
+                setRoles(data);
+                setLoading(false)
+            })
+    }
+
+    // Handle role filter change
+    const handleRoleChange = (roleId) => {
+        setSelectedRoleId(roleId || null);
+    };
+
+    // Apply filtering when selectedRoleId or data changes
+    useEffect(() => {
+        if (selectedRoleId && data && Array.isArray(data.results)) {
+            const filtered = data.results.filter(user => user.roles.some(role => role.id === selectedRoleId));
+            setFilteredData(filtered);
+        } else {
+            setFilteredData(data && Array.isArray(data.results) ? data.results : []);
+        }
+    }, [selectedRoleId, data]);
+
   const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
-//   console.log(data)
 
   const {
       getTableProps,
@@ -151,6 +183,7 @@ const DataTable = ({program, organization}) => {
       headerGroups,
       rows,
       prepareRow,
+      setFilter,
       page,
       pageCount,
       pageOptions,
@@ -160,7 +193,8 @@ const DataTable = ({program, organization}) => {
       nextPage,
       canNextPage,
       setPageSize,
-      state: { pageIndex, pageSize, sortBy }
+      state: { pageIndex, pageSize, sortBy },
+      preFilteredRows
   } = useTable({
       columns,
       data: data ? data.results : [],
@@ -169,23 +203,23 @@ const DataTable = ({program, organization}) => {
           pageSize: queryPageSize,
           sortBy: queryPageSortBy,
       },
-      manualPagination: true, // Tell the usePagination
+      manualPagination: true,
       pageCount: data ? totalPageCount : 0,
       autoResetSortBy: false,
       autoResetExpanded: false,
       autoResetPage: false,
       defaultColumn,
-      
+
   },
   useSortBy,
   useExpanded,
   usePagination,
-  useResizeColumns, 
+  useResizeColumns,
   useFlexLayout,
   );
-  // const [statusFilterValue, setStatusFilterValue] = useState("");
+
   const manualPageSize = []
-  
+
   useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger} );
 
   if (error) {
@@ -200,20 +234,33 @@ const DataTable = ({program, organization}) => {
   return (
           <>
               <div className='table react-table'>
-                <form className="form form--horizontal">
-                    <div className="form__form-group pb-4">
-                        <div className="col-md-9 col-lg-9">
-                            <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter} config={{label:'users'}} />
-                        </div>
-                        <div className="col-md-3 col-lg-3 text-right pr-0">
-                            <span to={`/`} style={{maxWidth:'200px'}}
-                            className="btn btn-primary account__btn account__btn--small"
-                            onClick={()=>toggleAdd()}
-                            >Add Program User
-                            </span>
-                        </div>
-                    </div>
-                </form>
+                  <form className="form form--horizontal">
+                      <div className="form__form-group pb-4">
+                          <div className="row">
+                              <div className="col-md-6">
+                                  <div className="row">
+                                      <div className="col-md-9">
+                                          <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter} config={{label:'users'}} />
+                                      </div>
+                                      <div className="col-md-3">
+                                          <RoleFilter
+                                              roles={roles}
+                                              selectedRole={selectedRoleId}
+                                              onRoleChange={handleRoleChange}
+                                          />
+                                      </div>
+                                  </div>
+                              </div>
+                          <div className="col-md-3 col-lg-3 text-right pr-0">
+                    <span to={`/`} style={{maxWidth:'200px'}}
+                          className="btn btn-primary account__btn account__btn--small"
+                          onClick={()=>toggleAdd()}
+                    >Add Program User
+                    </span>
+                          </div>
+                      </div>
+                      </div>
+                  </form>
                 <AddProgramUserModal organization={organization} program={program} isOpen={isOpenAdd} setOpen={setOpenAdd} toggle={toggleAdd} setTrigger={setTrigger} />
                 <EditProgramUserModal organization={organization} program={program} userid={selectedUser} isOpen={isOpenEdit} setOpen={setOpenEdit} toggle={toggleEdit} setTrigger={setTrigger} />
                 {user && <ChangeStatusModal isOpen={isChangeStatusOpen} setOpen={setChangeStatusOpen} toggle={toggleChangeStatus} setTrigger={setTrigger} user={user} />}
@@ -240,15 +287,11 @@ const DataTable = ({program, organization}) => {
                       <tbody className="table table--bordered" {...getTableBodyProps()}>
                           {page.map( row => {
                               prepareRow(row);
-                            //   console.log(row)
                               const subCount = (row.id.match(/\./g) || []).length
-                              // const paddingCount = subCount > 0 ? Number(subCount) + 3 : 0;
-                              // console.log(subCount)
                               return (
                                   <tr {...row.getRowProps()}>
                                       {
                                           row.cells.map( cell => {
-                                              // console.log(cell)
                                               const paddingLeft = subCount * 20
                                               return <td {...cell.getCellProps()}><span style={cell.column.Header==='#' ? {paddingLeft: `${paddingLeft}px`} : null}>{cell.render('Cell')}</span></td>
                                           })
@@ -257,7 +300,7 @@ const DataTable = ({program, organization}) => {
                               )
                           })}
                       </tbody>
-                      
+
                   </table>
               </div>
               {(rows.length > 0) && (
@@ -337,7 +380,6 @@ const ProgramUsers = ({organization}) => {
     const fetchProgramData = async(organization) => {
         try {
             const response = await axios.get(`/organization/${organization.id}/program/${programId}`);
-            // console.log(response)
             setProgram(response.data)
         } catch (e) {
             throw new Error(`API error:${e?.message}`);
@@ -352,7 +394,6 @@ const ProgramUsers = ({organization}) => {
     if( !program?.id || !organization?.id )  {
         return 'Loading...'
     }
-    // console.log(organization)
     return (
         <Container className="dashboard">
             <Row>
