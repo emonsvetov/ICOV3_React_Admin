@@ -13,6 +13,7 @@ import EventsDataModal from '../components/event/EventsDataModal';
 import EmailTemplateModal from '../EmailTemplate/IndexDataModal'
 import ActivateLiveModeProgramModal from "./ActivateLiveModeProgramModal";
 import ReportsModal from "./ReportsModal";
+import CsvImporttypesModal from "./CsvImporttypesModal";
 import AwardLevelsModal from "./AwardLevelsModal";
 import UnitNumbersDataModal from './UnitNumbers/UnitNumberDataModal'
 import PositionLevelsModal from './positions/PositionLevelsModal';
@@ -67,6 +68,9 @@ const MainModalWrapper = ({name, isOpen, setOpen, toggle}) => {
       }
       {
         name === 'reports' && <ReportsModal {...props} />
+      }
+      {
+        name === 'csv_importtypes' && <CsvImporttypesModal {...props} />
       }
         {
             name === 'AwardLevels' && <AwardLevelsModal {...props} />
