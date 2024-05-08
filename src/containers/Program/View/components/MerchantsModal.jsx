@@ -145,7 +145,7 @@ const DataTable = ({ toggle, organization, program }) => {
   const fetchProgramMerchantData = async () => {
     try {
       const response = await axios.get(
-        `/organization/${program.organization_id}/program/${program.id}/merchant?minimal=true&sortby=name&status=active`
+        `/organization/${program.organization_id}/program/${program.id}/merchant?minimal=true&sortby=name`
       );
       let result = response.data;
       let temp_relation = [];
