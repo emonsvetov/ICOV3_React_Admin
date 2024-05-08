@@ -94,7 +94,7 @@ const ProgramViewUserProfile = ({ organization, program, data }) => {
             <p>Position Level:</p>
           </Col>
           <Col md="10" lg="10" xl="10" sm="10">
-            <p>{data?.positionLevel?.name}</p>
+            <p>{data?.positionLevel?.title}</p>
           </Col>
       </Row>}
       <Row>
