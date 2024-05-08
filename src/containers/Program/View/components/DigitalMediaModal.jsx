@@ -290,7 +290,8 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       errors.icon_upload = 'The preview image field is required.';
     }
     if (isEmpty(uploadedMeta)){
-      errors.media_upload = 'The upload field is required.';
+      // setUploadError(prevError => ({ ...prevError, file: null }));
+      errors.media_upload = 'The file field is required.';
     }
     if (!fileName){
       errors.fileName = 'The file name field is required.';
@@ -317,6 +318,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
     }
     if(status == 'removed'){
       setFileName('');
+      setUploadedMeta({});
       setUploadError(prevError => ({ ...prevError, file: null }));
     }
     if(status === 'error_upload'){
@@ -333,6 +335,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       setUploadError(prevError => ({ ...prevError, icon: "File is too big" }));
     }
     if(status == 'removed'){
+      setIconMeta({});
       setUploadError(prevError => ({ ...prevError, icon: null }));
     }
     if(status === 'error_upload'){
@@ -427,6 +430,9 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
       setMedia([])
       setTab(2);
       setCurrentMedia(null)
+      setFileName('')
+      setIconMeta({})
+      setUploadedMeta({})
     }
   }
 
@@ -506,7 +512,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                     onSubmit={false}
                                     onChangeStatus={handleUploadIcon}
                                   />
-                                  {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                  {meta.touched && meta.error && !uploadError.icon && <span className="form__form-group-error">{meta.error}</span>}
                                   {uploadError && uploadError.icon && <p className="form__form-group-error">{ uploadError.icon }</p>}
                                 </div>
                               </div>
@@ -529,7 +535,7 @@ const DigitalMediaModal = ({organization, isOpen, setOpen, toggle, program, them
                                     onChangeStatus={handleChangeStatus}
                                   />
                                 </div>
-                                {meta.touched && meta.error && <span className="form__form-group-error">{meta.error}</span>}
+                                {meta.touched && meta.error && !uploadError.file && <span className="form__form-group-error">{meta.error}</span>}
                                 {uploadError && uploadError.file && <p className="form__form-group-error">{ uploadError.file }</p>}
                               </div>
                             )}
