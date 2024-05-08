@@ -9,7 +9,7 @@ import {useDispatch, flashSuccess, flashError} from "@/shared/components/flash"
 import ProgramUserFormFields from './ProgramUserFormFields'
 import arrayMutators from "final-form-arrays"
 import getUnitNumbers from '@/service/program/getUnitNumbers'
-import getPositionLevels from '@/service/program/getPositionLevels'
+import {getPositionLevels} from '@/service/program/position'
 
 let config = {
   roles:[],
