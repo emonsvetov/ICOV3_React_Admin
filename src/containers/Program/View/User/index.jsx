@@ -26,7 +26,6 @@ import { USERS_COLUMNS } from "./columns";
 import AddProgramUserModal from './AddProgramUserModal'
 import EditProgramUserModal from './EditProgramUserModal'
 import {StatusFilter} from "../../components/StatusFilter";
-import RoleFilter from "./RoleFilter";
 import {fetchRoles} from "../../../../shared/apiHelper";
 
 const queryClient = new QueryClient()
@@ -125,7 +124,7 @@ const DataTable = ({program, organization}) => {
 
   const [{ queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger }, dispatch] = React.useReducer(reducer, initialState);
 
-  const apiUrl = `/organization/${program.organization_id}/program/${program.id}/user/${selectedRoleId}`;
+  const apiUrl = `/organization/${program.organization_id}/program/${program.id}/user`;
 
   const { isLoading, error, data, isSuccess } = useQuery(
       ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger, selectedRoleId],
@@ -134,7 +133,7 @@ const DataTable = ({program, organization}) => {
             url: apiUrl,
             page: queryPageIndex,
             size: queryPageSize,
-            filter: selectedRoleId !== null ? { ...queryPageFilter, role_id: selectedRoleId } : queryPageFilter,
+            filter: { ...queryPageFilter, role_id: selectedRoleId },
             sortby: queryPageSortBy,
             trigger: queryTrigger
         }),
@@ -151,28 +150,21 @@ const DataTable = ({program, organization}) => {
     }, [program]);
 
     const getRoles = () => {
-        setLoading(true)
+        setLoading(true);
         fetchRoles(organization.id, true)
             .then(data => {
-                setRoles(data);
-                setLoading(false)
+                const formattedRoles = data.map(role => ({
+                    value: role.id,
+                    label: role.name
+                }));
+                setRoles(formattedRoles);
+                setLoading(false);
             })
-    }
-
-    // Handle role filter change
-    const handleRoleChange = (roleId) => {
-        setSelectedRoleId(roleId || null);
+            .catch(error => {
+                console.error("Error fetching roles:", error);
+                setLoading(false);
+            });
     };
-
-    // Apply filtering when selectedRoleId or data changes
-    useEffect(() => {
-        if (selectedRoleId && data && Array.isArray(data.results)) {
-            const filtered = data.results.filter(user => user.roles.some(role => role.id === selectedRoleId));
-            setFilteredData(filtered);
-        } else {
-            setFilteredData(data && Array.isArray(data.results) ? data.results : []);
-        }
-    }, [selectedRoleId, data]);
 
   const totalPageCount = Math.ceil(totalCount / queryPageSize)
 
@@ -241,13 +233,6 @@ const DataTable = ({program, organization}) => {
                                   <div className="row">
                                       <div className="col-md-9">
                                           <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter} config={{label:'users'}} />
-                                      </div>
-                                      <div className="col-md-3">
-                                          <RoleFilter
-                                              roles={roles}
-                                              selectedRole={selectedRoleId}
-                                              onRoleChange={handleRoleChange}
-                                          />
                                       </div>
                                   </div>
                               </div>
