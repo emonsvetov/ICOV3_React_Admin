@@ -231,7 +231,6 @@ const DataTable = ({program, organization}) => {
     };
 
     const handleRoleChange = (newRoleId) => {
-        console.log("Selected Role ID:", newRoleId); // Log the role ID when it changes
         const newFilter = { ...filter, role_id: newRoleId };
         setFilter(newFilter);
         setUseFilter(true); // Trigger re-fetch or re-render as necessary
