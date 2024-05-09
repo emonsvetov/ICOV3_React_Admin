@@ -33,11 +33,11 @@ const queryClient = new QueryClient()
 const DataTable = ({program, organization}) => {
 
     const [roles, setRoles] = useState([]);
+    const [filter, setFilter] = useState({keyword: ''});
+    const [useFilter, setUseFilter] = useState(false);
     const [selectedRoleId, setSelectedRoleId] = useState('');
     const flashDispatcher = useDispatch()
-    const [useFilter, setUseFilter] = useState(false);
     const [trigger, setTrigger] = useState(Math.floor(Date.now() / 1000));
-    const [filter] = useState({ keyword:'' });
     const [loading, setLoading] = useState(false)
     const [isOpenAdd, setOpenAdd] = useState(false)
     const [isOpenEdit, setOpenEdit] = useState(false)
@@ -133,7 +133,7 @@ const DataTable = ({program, organization}) => {
             url: apiUrl,
             page: queryPageIndex,
             size: queryPageSize,
-            filter: { ...queryPageFilter, role_id: selectedRoleId },
+            filter,
             sortby: queryPageSortBy,
             trigger: queryTrigger
         }),
@@ -175,7 +175,6 @@ const DataTable = ({program, organization}) => {
       headerGroups,
       rows,
       prepareRow,
-      setFilter,
       page,
       pageCount,
       pageOptions,
@@ -231,8 +230,11 @@ const DataTable = ({program, organization}) => {
                           <div className="row">
                               <div className="col-md-6">
                                   <div className="row">
-                                      <div className="col-md-9">
-                                          <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter} config={{label:'users'}} />
+                                      <div className="col-md-9 col-lg-9">
+                                          <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter}
+                                                       config={{
+                                                           keyword: true
+                                                       }}/>
                                       </div>
                                   </div>
                               </div>
