@@ -27,13 +27,14 @@ import AddProgramUserModal from './AddProgramUserModal'
 import EditProgramUserModal from './EditProgramUserModal'
 import {StatusFilter} from "../../components/StatusFilter";
 import {fetchRoles} from "../../../../shared/apiHelper";
+import RoleFilter from "./RoleFilter";
 
 const queryClient = new QueryClient()
 
 const DataTable = ({program, organization}) => {
 
     const [roles, setRoles] = useState([]);
-    const [filter, setFilter] = useState({keyword: ''});
+    const [filter, setFilter] = useState({ keyword: '', role_id: '' });
     const [useFilter, setUseFilter] = useState(false);
     const [selectedRoleId, setSelectedRoleId] = useState('');
     const flashDispatcher = useDispatch()
@@ -126,6 +127,11 @@ const DataTable = ({program, organization}) => {
 
   const apiUrl = `/organization/${program.organization_id}/program/${program.id}/user`;
 
+    useEffect(() => {
+        const newFilter = { ...filter, role_id: selectedRoleId };
+        setFilter(newFilter);
+    }, [selectedRoleId]);
+
   const { isLoading, error, data, isSuccess } = useQuery(
       ['users', queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger, selectedRoleId],
       () => fetchApiData(
@@ -213,6 +219,24 @@ const DataTable = ({program, organization}) => {
 
   useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger} );
 
+    useEffect(() => {
+        if (organization.id) {
+            getRoles();
+        }
+    }, [organization.id]);
+
+    const handleFilterChange = (newFilter) => {
+        setFilter(newFilter);
+        setUseFilter(true);
+    };
+
+    const handleRoleChange = (newRoleId) => {
+        console.log("Selected Role ID:", newRoleId); // Log the role ID when it changes
+        const newFilter = { ...filter, role_id: newRoleId };
+        setFilter(newFilter);
+        setUseFilter(true); // Trigger re-fetch or re-render as necessary
+    };
+
   if (error) {
       return <p>Error: {JSON.stringify(error)}</p>;
   }
@@ -231,10 +255,14 @@ const DataTable = ({program, organization}) => {
                               <div className="col-md-6">
                                   <div className="row">
                                       <div className="col-md-9 col-lg-9">
-                                          <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter}
-                                                       config={{
-                                                           keyword: true
-                                                       }}/>
+                                          <TableFilter
+                                              config={{ keyword: true, role: true, label: 'users' }}
+                                              filter={filter}
+                                              setFilter={setFilter}
+                                              onRoleChange={handleRoleChange}
+                                              setUseFilter={setUseFilter}
+                                              roles={roles.map(role => ({ id: role.value, name: role.label }))}
+                                          />
                                       </div>
                                   </div>
                               </div>
