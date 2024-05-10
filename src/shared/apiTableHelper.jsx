@@ -277,7 +277,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
     const defaultConfig = {
         label:'term',
         keyword:true,
-        role: true,
+        roles: true,
         dateRange: false,
         inventoryType: !!inventoryTypes,
     }
@@ -287,7 +287,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
     // console.log(options)
 
     const [keyword, setKeyword] = React.useState(finalFilter.keyword)
-    const [roleId, setRoleId] = useState(finalFilter.role_id || '')
+    const [roleId, setRoleId] = useState(finalFilter.role_id)
     const [sku, setSku] = React.useState(finalFilter.sku)
     const [from, setFrom] = React.useState( finalFilter.from )
     const [to, setTo] = React.useState( finalFilter.to )
@@ -391,7 +391,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
         }
 
         if(options.roles) {
-            if(finalFilter.roles !== values.roles)   {
+            if(finalFilter.role_id !== values.role_id)   {
                 change = true
             }
         }
@@ -441,7 +441,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
 
         let filters = {}
         if( options.keyword ) filters.keyword = values.keyword
-        if( options.roles ) filters.roles = values.roles
+        if( options.roles ) filters.role_id = values.role_id
         if( options.sku ) filters.sku = values.sku
         if( options.programs ) {
             filters.programs = values.programs
@@ -539,12 +539,12 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                             </div>
                         </div>
                     }
-                    {options.role && roles && (
+                    {options.role && roles && roles.length > 0 ? (
                         <div className="table-filter-form-col table-filter-form-col1">
                             <div className="form__form-group">
                                 <div className="form__form-group-field">
                                     <select
-                                        value={roleId}
+                                        value={roleId || ''}
                                         onChange={onRoleChange}
                                         className="form-control"
                                     >
@@ -556,6 +556,8 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                                 </div>
                             </div>
                         </div>
+                    ) : (
+                        <div>Loading roles...</div>
                     )}
                     {options.sku &&
                     <>

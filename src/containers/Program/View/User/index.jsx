@@ -27,7 +27,6 @@ import AddProgramUserModal from './AddProgramUserModal'
 import EditProgramUserModal from './EditProgramUserModal'
 import {StatusFilter} from "../../components/StatusFilter";
 import {fetchRoles} from "../../../../shared/apiHelper";
-import RoleFilter from "./RoleFilter";
 
 const queryClient = new QueryClient()
 
@@ -146,6 +145,9 @@ const DataTable = ({program, organization}) => {
       {
           keepPreviousData: true,
           staleTime: Infinity,
+          onSuccess: () => {
+              console.log('Data fetching success, data:', data);
+          }
       }
   );
 
@@ -232,6 +234,7 @@ const DataTable = ({program, organization}) => {
 
     const handleRoleChange = (newRoleId) => {
         const newFilter = { ...filter, role_id: newRoleId };
+        console.log('Updated role_id:', newRoleId);
         setFilter(newFilter);
         setUseFilter(true); // Trigger re-fetch or re-render as necessary
     };
@@ -258,7 +261,6 @@ const DataTable = ({program, organization}) => {
                                               config={{ keyword: true, role: true, label: 'users' }}
                                               filter={filter}
                                               setFilter={setFilter}
-                                              onRoleChange={handleRoleChange}
                                               setUseFilter={setUseFilter}
                                               roles={roles.map(role => ({ id: role.value, name: role.label }))}
                                           />
