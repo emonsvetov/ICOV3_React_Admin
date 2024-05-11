@@ -7,17 +7,7 @@ import {
   flashSuccess,
   flashError,
 } from "@/shared/components/flash";
-
-const getPositionLevel = async (program, positionLevelId) => {
-  try {
-    const response = await axios.get(
-      `/organization/${program.organization_id}/program/${program.id}/positionlevel/${positionLevelId}`
-    );
-    return response.data;
-  } catch (error) {
-    throw new Error(`API error:${error?.message}`);
-  }
-};
+import { getPositionLevel } from "@/service/program/position";
 
 const EditPositionLevel = ({ program, onStep, positionId }) => {
   const [positionLevel, setPositionLevel] = useState(null);
@@ -62,7 +52,7 @@ const EditPositionLevel = ({ program, onStep, positionId }) => {
     return (
       <>
         <Form
-          mutators={{}}
+         // mutators={{}}
           onSubmit={onSubmit}
           initialValues={{
             title: positionLevel?.title,

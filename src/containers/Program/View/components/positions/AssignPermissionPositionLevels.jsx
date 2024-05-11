@@ -9,17 +9,11 @@ import {
   flashSuccess,
   flashError,
 } from "@/shared/components/flash";
-
-const getPositionLevel = async (p, postionAssignpermissionId) => {
-  try {
-    const response = await axios.get(
-      `/organization/${p.organization_id}/program/${p.id}/positionlevel/${postionAssignpermissionId}`
-    );
-    return response.data;
-  } catch (error) {
-    throw new Error(`API error:${error?.message}`);
-  }
-};
+import {
+  getPositionLevel,
+  getPositionAssignPermissions,
+  getPermissions,
+} from "@/service/program/position";
 
 const AssignPermissionPositionLevels = ({
   program,
@@ -29,72 +23,89 @@ const AssignPermissionPositionLevels = ({
   const [loading, setLoading] = useState(false);
   const [positionLevel, setPositionLevel] = useState(null);
   const [permissions, setPermissions] = useState([]);
+  const [assignPermissions, setAssignPermissions] = useState([]);
   const dispatch = useDispatch();
-
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
-      width: "400px", // Set the desired width
+      width: "400px",
     }),
-  };
-
-  const getPermissions = async (p) => {
-    try {
-      const response = await axios.get(
-        `/organization/${p.organization_id}/program/${p.id}/positionpermissions`
-      );
-      return response.data;
-    } catch (error) {
-      throw new Error(`API error:${error?.message}`);
-    }
   };
 
   useEffect(() => {
     if (program.id && program.organization_id && postionAssignPermissionId) {
       setLoading(true);
-      getPositionLevel(program, postionAssignPermissionId).then((res) => {
-        setPositionLevel(res.data[0]);
+      getPositionLevel(program, postionAssignPermissionId).then((position) => {
+        setPositionLevel(position.data[0]);
         setLoading(false);
       });
-      getPermissions(program).then((res) => {
-        setPermissions(labelizeNamedData(res.data));
+      getPermissions(program).then((permissions) => {
+        setPermissions(labelizeNamedData(permissions.data));
       });
     }
   }, [program, postionAssignPermissionId]);
 
-  const handlePermmissionChange = (permissionOptions, input) => {
-    const permissionIds = permissionOptions.map(
-      (permission) => permission.value
-    );
-    input.onChange(permissionIds);
+  useEffect(() => {
+    if (program.id && program.organization_id && postionAssignPermissionId) {
+      getPositionAssignPermissions(program, postionAssignPermissionId).then(
+        (response) => {
+          setAssignPermissions(labelizeNamedData(response, ["id", "title"]));
+        }
+      );
+    }
+  }, [program, postionAssignPermissionId]);
+
+  const handlePermmissionChange = (permissionOptions) => {
+    setAssignPermissions(permissionOptions);
   };
+
+  if (loading || !positionLevel) {
+    return <p>Loading...</p>;
+  }
+
+  function getAssignPermissionIds(permissions) {
+    if (permissions?.length > 0) {
+      const permissionIds = permissions?.map((permission) => permission.value);
+      return permissionIds;
+    }
+  }
 
   const onSubmit = (values) => {
-    console.log(values);
-    axios
-      .post(
-        `/organization/${program.organization_id}/program/${program.id}/positionlevel/${postionAssignPermissionId}/assign-permissions`,
-        values
-      )
-      .then((res) => {
-        if (res.status === 200) {
-          onStep(0);
-          flashSuccess(
-            dispatch,
-            "Position level assign permission successfully"
-          );
-        }
-      })
-      .catch((err) => {
-        flashError(dispatch, err.response.data);
-        setLoading(false);
-      });
+    if (values?.position_permission?.length > 0) {
+      values.position_permission = getAssignPermissionIds(
+        values?.position_permission
+      );
+      setLoading(true);
+      axios
+        .post(
+          `/organization/${program.organization_id}/program/${program.id}/positionlevel/${postionAssignPermissionId}/assign-permissions`,
+          values
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            onStep(0);
+            flashSuccess(
+              dispatch,
+              "Position level assign permission successfully"
+            );
+          }
+        })
+        .catch((err) => {
+          flashError(dispatch, err.response.data);
+          setLoading(false);
+        });
+    } else {
+      flashError(dispatch, "The Assign Permission field is required.");
+    }
   };
-
   if (positionLevel) {
     return (
       <>
-        <Form mutators={{}} onSubmit={onSubmit} initialValues={{}}>
+        <Form
+          mutators={{}}
+          onSubmit={onSubmit}
+          initialValues={{ position_permission: assignPermissions }}
+        >
           {({ handleSubmit, form, submitting, pristine, values }) => (
             <form className="form" onSubmit={handleSubmit}>
               <Row className="w100">
@@ -115,6 +126,7 @@ const AssignPermissionPositionLevels = ({
                       type="submit"
                       className="btn btn-primary"
                       color="#ffffff"
+                      disabled={loading}
                     >
                       Save
                     </Button>
@@ -142,9 +154,10 @@ const AssignPermissionPositionLevels = ({
                             <CreatableSelect
                               styles={customStyles}
                               isMulti
+                              value={assignPermissions}
                               options={permissions}
-                              onChange={(o) =>
-                                handlePermmissionChange(o, input)
+                              onChange={(value) =>
+                                handlePermmissionChange(value)
                               }
                             />
                             {meta.touched && meta.error && (

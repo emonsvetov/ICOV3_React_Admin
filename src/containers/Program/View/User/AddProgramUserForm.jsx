@@ -10,7 +10,7 @@ import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 import ProgramUserFormFields from './ProgramUserFormFields'
 import arrayMutators from "final-form-arrays"
 import getUnitNumbers from '@/service/program/getUnitNumbers'
-import getPositionLevels from '@/service/program/getPositionLevels'
+import {getPositionLevels} from '@/service/program/position'
 
 let config = {
     roleInput:'checkbox',
@@ -61,7 +61,7 @@ const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
         (program?.use_budget_cascading > 0 ||
           program?.use_cascading_approvals > 0)
       ) {
-        getPositionLevels(organization.id, program.id, "assignable=1").then(
+        getPositionLevels(organization.id, program.id).then(
           (res) => {
             setPositionLevelOptions(
               labelizeNamedData(res.data, ["id", "title"])

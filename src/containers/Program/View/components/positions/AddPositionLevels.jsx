@@ -23,7 +23,6 @@ const AddPositionLevels = ({ onStep, program }) => {
         values
       )
       .then((res) => {
-        // console.log(res);
         if (res.status == 201) {
           onStep(0);
           flashSuccess(dispatch, "Position level created successfully");
