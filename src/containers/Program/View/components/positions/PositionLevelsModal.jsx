@@ -4,6 +4,7 @@ import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { ThemeProps, RTLProps } from "@/shared/prop-types/ReducerProps";
 import ReactTableBase from "@/shared/components/table/ReactTableBase";
+import { getPositionLevels } from "@/service/program/position";
 import { COLUMNS } from "./columns";
 import {
   Modal,
@@ -40,7 +41,6 @@ const PositionsLevelsModal = ({ isOpen, toggle, program, theme, rtl }) => {
   const togglePan = (tab) => {
     if (currentActiveTab !== tab) setCurrentActiveTab(tab);
   };
-
   const handleStep = (step) => {
     setStep(step);
   };
@@ -50,22 +50,13 @@ const PositionsLevelsModal = ({ isOpen, toggle, program, theme, rtl }) => {
     isSortable: false,
   };
 
-  const fetchPositionLevels = async (program) => {
-    try {
-      const response = await axios.get(
-        `organization/${program.organization_id}/program/${program.id}/positionlevel`
-      );
-      console.log("res", response.data.data);
-      setPositionLevels(response.data.data);
-      setLoading(false);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
   useEffect(() => {
     if (program.organization_id && program.id) {
-      fetchPositionLevels(program);
+      setLoading(true);
+      getPositionLevels(program.organization_id, program.id).then((levels) => {
+        setPositionLevels(levels.data);
+        setLoading(false);
+      });
     }
   }, [program, step]);
 
@@ -86,7 +77,6 @@ const PositionsLevelsModal = ({ isOpen, toggle, program, theme, rtl }) => {
   const onClickRemove = (positionLevel) => {
     if (positionLevel) {
       setLoading(true);
-      console.log(positionLevel);
       axios
         .delete(
           `/organization/${program.organization_id}/program/${program.id}/positionlevel/${positionLevel.id}`,
@@ -94,13 +84,16 @@ const PositionsLevelsModal = ({ isOpen, toggle, program, theme, rtl }) => {
         )
         .then((res) => {
           if (res.status === 200) {
-            console.log("delete", res);
-            fetchPositionLevels(program);
+            getPositionLevels(program.organization_id, program.id).then(
+              (levels) => {
+                setPositionLevels(levels.data);
+              }
+            );
             flashSuccess(dispatch, "Position level deleted successfully");
+            setLoading(false);
           }
         })
         .catch((error) => {
-          console.log(error);
           setLoading(false);
           flashError(dispatch, error.message);
         });
@@ -133,7 +126,11 @@ const PositionsLevelsModal = ({ isOpen, toggle, program, theme, rtl }) => {
           className="table-hover text-primary"
           style={{ cursor: "pointer" }}
           color="#ffffff"
-          onClick={() => onClickRemove(row.original)}
+          onClick={() => {
+            if (window.confirm("Are you sure to delete this Position Level?")) {
+              onClickRemove(row.original);
+            }
+          }}
         >
           {" "}
           Delete

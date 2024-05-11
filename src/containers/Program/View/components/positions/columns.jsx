@@ -1,3 +1,5 @@
+import { PositionPermissionAssigments } from "@/service/program/position";
+
 export const COLUMNS = [
   {
     Header: "Title",
@@ -13,6 +15,7 @@ export const COLUMNS = [
   },
   {
     Header: "Program Permissions",
-    accessor: "program_permissions",
+    accessor: "position_permission_assignments",
+    Cell: PositionPermissionAssigments,
   },
 ];
