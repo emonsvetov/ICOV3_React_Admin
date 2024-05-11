@@ -53,6 +53,7 @@ const FormStep2 = ({ config, csvFile, setCsvFile, onclickBack, importHeaders, is
     useEffect(() => {
         if (organization?.id) {
             if (typeChanged !== false){
+                console.log("GET SETTINGS")
                 getCsvImportSettings(organization.id, typeChanged)
                   .then(data => {
                       setSavedSettings(data);

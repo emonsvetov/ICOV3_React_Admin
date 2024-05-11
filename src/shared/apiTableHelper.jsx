@@ -261,10 +261,11 @@ export const fetchApiDataExport = async( queryParams )  => {
     }
 };
 
-export const TableFilter = ({ config, filter, setFilter, setUseFilter, download, exportData, exportLink, exportHeaders, loading, inventoryTypes}) => {
+export const TableFilter = ({ config, filter, setFilter, setUseFilter, download, exportData, exportLink, exportHeaders, loading, inventoryTypes, roles}) => {
 
     const defaultFilters = {
         keyword: '',
+        role_id: '',
         from: defaultFrom,
         to: defaultTo,
         inventoryType: 0,
@@ -276,6 +277,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
     const defaultConfig = {
         label:'term',
         keyword:true,
+        roles: true,
         dateRange: false,
         inventoryType: !!inventoryTypes,
     }
@@ -285,6 +287,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
     // console.log(options)
 
     const [keyword, setKeyword] = React.useState(finalFilter.keyword)
+    const [roleId, setRoleId] = useState(finalFilter.role_id)
     const [sku, setSku] = React.useState(finalFilter.sku)
     const [from, setFrom] = React.useState( finalFilter.from )
     const [to, setTo] = React.useState( finalFilter.to )
@@ -296,6 +299,9 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
     const onKeywordChange = (e) => {
         setKeyword( e.target.value )
     }
+    const onRoleChange = (e) => {
+        setRoleId(e.target.value);
+    };
     const onSkuChange = (e) => {
         setSku( e.target.value )
     }
@@ -313,6 +319,10 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
 
         if (options.keyword) {
             dataSet.keyword = reset ? '' : keyword;
+        }
+
+        if (options.role) {
+            dataSet.role_id = reset ? '' : roleId;
         }
 
         if (options.sku) {
@@ -348,6 +358,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
 
         if (reset) {
             setKeyword('');
+            setRoleId('');
             setFrom(defaultFrom);
             setTo(defaultTo);
             setSelectedPrograms([]);
@@ -375,6 +386,12 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
 
         if(options.sku) {
             if(finalFilter.sku !== values.sku)   {
+                change = true
+            }
+        }
+
+        if(options.roles) {
+            if(finalFilter.role_id !== values.role_id)   {
                 change = true
             }
         }
@@ -424,6 +441,7 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
 
         let filters = {}
         if( options.keyword ) filters.keyword = values.keyword
+        if( options.roles ) filters.role_id = values.role_id
         if( options.sku ) filters.sku = values.sku
         if( options.programs ) {
             filters.programs = values.programs
@@ -521,6 +539,26 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                             </div>
                         </div>
                     }
+                    {options.role && roles && roles.length > 0 ? (
+                        <div className="table-filter-form-col table-filter-form-col1">
+                            <div className="form__form-group">
+                                <div className="form__form-group-field">
+                                    <select
+                                        value={roleId || ''}
+                                        onChange={onRoleChange}
+                                        className="form-control"
+                                    >
+                                        <option value="">All Roles</option>
+                                        {roles.map(role => (
+                                            <option key={role.id} value={role.id}>{role.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div>Loading roles...</div>
+                    )}
                     {options.sku &&
                     <>
                     <div className="table-filter-form-col table-filter-form-col1 mt-2">
