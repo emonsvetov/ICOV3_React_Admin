@@ -93,8 +93,9 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
             <ProtectedLink type="merchants"/>
         }
         <SidebarCategory title="Import" icon="download">
-          <SidebarLink title="All Imported Files" route="/import/list" />
           <SidebarLink title="Import" route="/import" />
+          <SidebarLink title="All Imported Files" route="/import/list" />
+          <SidebarLink title="Import Settings" route="/import/settings" />
         </SidebarCategory>
         {
             auth?.isSuperAdmin &&
