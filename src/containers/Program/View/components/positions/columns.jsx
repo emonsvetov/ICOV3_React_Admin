@@ -14,8 +14,8 @@ export const COLUMNS = [
     },
   },
   {
-    Header: "Program Permissions",
-    accessor: "position_permission_assignments",
+    Header: "Position Permissions",
+    accessor: "position_permissions",
     Cell: PositionPermissionAssigments,
   },
 ];

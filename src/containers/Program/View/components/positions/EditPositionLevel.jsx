@@ -18,7 +18,7 @@ const EditPositionLevel = ({ program, onStep, positionId }) => {
     if (program.id && program.organization_id && program) {
       setLoading(true);
       getPositionLevel(program, positionId).then((res) => {
-        setPositionLevel(res.data[0]);
+        setPositionLevel(res);
         setLoading(false);
       });
     }

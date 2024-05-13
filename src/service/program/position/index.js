@@ -9,10 +9,10 @@ export const getPositionLevels = async (organizationId, programId) => {
   }
 };
 
-export const getPositionLevel = async (p, postionAssignpermissionId) => {
+export const getPositionLevel = async (p, postionLevelId) => {
   try {
     const response = await axios.get(
-      `/organization/${p.organization_id}/program/${p.id}/positionlevel/${postionAssignpermissionId}`
+      `/organization/${p.organization_id}/program/${p.id}/positionlevel/${postionLevelId}`
     );
     return response.data;
   } catch (error) {
@@ -20,15 +20,12 @@ export const getPositionLevel = async (p, postionAssignpermissionId) => {
   }
 };
 
-export const getPositionAssignPermissions = async (p, positionId) => {
+export const getPositionLevelPermissions = async (p, positionId) => {
   try {
     const response = await axios.get(
-      `/organization/${p.organization_id}/program/${p.id}/positionlevel/${positionId}/assigned-permissions`
+      `/organization/${p.organization_id}/program/${p.id}/positionlevel/${positionId}/permissions`
     );
-    let assignPermissionData = response.data.data.map(
-      (permissionData) => permissionData.position_permission
-    );
-    return assignPermissionData;
+    return response.data;
   } catch (error) {
     throw new Error(`API error:${error?.message}`);
   }
@@ -50,7 +47,7 @@ export const PositionPermissionAssigments = ({ value }) => {
     <>
       {value?.map((permission) => (
         <p key={permission.id} className="m-1 d-inline">
-          {permission.position_permission.title},{" "}
+          {permission.title},{" "}
         </p>
       ))}
     </>
