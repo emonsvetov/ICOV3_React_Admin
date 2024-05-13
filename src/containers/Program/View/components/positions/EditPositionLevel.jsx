@@ -8,12 +8,13 @@ import {
   flashError,
 } from "@/shared/components/flash";
 import { getPositionLevel } from "@/service/program/position";
+import CheckboxField from "@/shared/components/form/CheckBox";
 
 const EditPositionLevel = ({ program, onStep, positionId }) => {
   const [positionLevel, setPositionLevel] = useState(null);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-
+  
   useEffect(() => {
     if (program.id && program.organization_id && program) {
       setLoading(true);
@@ -25,6 +26,7 @@ const EditPositionLevel = ({ program, onStep, positionId }) => {
   }, [program, positionId]);
 
   const onSubmit = (values) => {
+    // console.log("values", values);
     axios
       .put(
         `/organization/${program.organization_id}/program/${program.id}/positionlevel/${positionId}`,
@@ -52,10 +54,13 @@ const EditPositionLevel = ({ program, onStep, positionId }) => {
     return (
       <>
         <Form
-         // mutators={{}}
+          // mutators={{}}
           onSubmit={onSubmit}
           initialValues={{
             title: positionLevel?.title,
+            name: positionLevel?.name,
+            level: positionLevel?.level,
+            status: positionLevel?.status,
           }}
         >
           {({ handleSubmit, form, submitting, pristine, values }) => (
@@ -104,6 +109,59 @@ const EditPositionLevel = ({ program, onStep, positionId }) => {
                       </div>
                     )}
                   </Field>
+                </Col>
+                <Col>
+                  <Field name="name">
+                    {({ input, meta }) => (
+                      <div className="form__form-group">
+                        <span className="form__form-group-label">Name </span>
+                        <div className="form__form-group-field">
+                          <div className="form__form-group-row">
+                            <input type="text" {...input} placeholder="name" />
+                            {meta.touched && meta.error && (
+                              <span className="form__form-group-error">
+                                {meta.error}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </Field>
+                </Col>
+                <Col>
+                  <Field name="level">
+                    {({ input, meta }) => (
+                      <div className="form__form-group">
+                        <span className="form__form-group-label">Level </span>
+                        <div className="form__form-group-field">
+                          <div className="form__form-group-row">
+                            <input type="text" {...input} placeholder="level" />
+                            {meta.touched && meta.error && (
+                              <span className="form__form-group-error">
+                                {meta.error}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </Field>
+                </Col>
+              </Row>
+              <Row>
+                <Col md="6" lg="4" xl="4">
+                  <div className="form__form-group">
+                    <Field
+                      name="status"
+                      label="Active"
+                      type="checkbox"
+                      component={CheckboxField}
+                      parse={(value) => {
+                        return value ? 1: 0;
+                      }}
+                    />
+                  </div>
                 </Col>
               </Row>
             </form>
