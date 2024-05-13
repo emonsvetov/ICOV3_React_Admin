@@ -28,7 +28,7 @@ import {
 import classnames from "classnames";
 import AddPositionLevels from "./AddPositionLevels";
 import ApprovalFlow from "./ApprovalFlow";
-import AssignPermissionPositionLevels from "./AssignPermissionPositionLevels";
+import AssignPositionLevelPermissions from "./AssignPositionLevelPermissions";
 import EditPositionLevel from "./EditPositionLevel";
 
 const PositionsLevelsModal = ({ isOpen, toggle, program, theme, rtl }) => {
@@ -54,7 +54,7 @@ const PositionsLevelsModal = ({ isOpen, toggle, program, theme, rtl }) => {
     if (program.organization_id && program.id) {
       setLoading(true);
       getPositionLevels(program.organization_id, program.id).then((levels) => {
-        setPositionLevels(levels.data);
+        setPositionLevels(levels);
         setLoading(false);
       });
     }
@@ -86,7 +86,7 @@ const PositionsLevelsModal = ({ isOpen, toggle, program, theme, rtl }) => {
           if (res.status === 200) {
             getPositionLevels(program.organization_id, program.id).then(
               (levels) => {
-                setPositionLevels(levels.data);
+                setPositionLevels(levels);
               }
             );
             flashSuccess(dispatch, "Position level deleted successfully");
@@ -119,7 +119,7 @@ const PositionsLevelsModal = ({ isOpen, toggle, program, theme, rtl }) => {
           onClick={() => onClickAssignPermission(row.original.id)}
         >
           {" "}
-          Assign Permission
+          Manage Permission
         </span>{" "}
         |
         <span
@@ -281,10 +281,10 @@ const PositionsLevelsModal = ({ isOpen, toggle, program, theme, rtl }) => {
             />
           )}
           {step === 4 && (
-            <AssignPermissionPositionLevels
+            <AssignPositionLevelPermissions
               program={program}
               onStep={handleStep}
-              postionAssignPermissionId={postionLevelId}
+              postionLevelId={postionLevelId}
             />
           )}
         </ModalBody>

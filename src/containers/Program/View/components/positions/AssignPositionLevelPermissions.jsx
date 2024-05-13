@@ -11,14 +11,14 @@ import {
 } from "@/shared/components/flash";
 import {
   getPositionLevel,
-  getPositionAssignPermissions,
+  getPositionLevelPermissions,
   getPermissions,
 } from "@/service/program/position";
 
-const AssignPermissionPositionLevels = ({
+const AssignPositionLevelPermissions = ({
   program,
   onStep,
-  postionAssignPermissionId,
+  postionLevelId,
 }) => {
   const [loading, setLoading] = useState(false);
   const [positionLevel, setPositionLevel] = useState(null);
@@ -33,27 +33,27 @@ const AssignPermissionPositionLevels = ({
   };
 
   useEffect(() => {
-    if (program.id && program.organization_id && postionAssignPermissionId) {
+    if (program.id && program.organization_id && postionLevelId) {
       setLoading(true);
-      getPositionLevel(program, postionAssignPermissionId).then((position) => {
-        setPositionLevel(position.data[0]);
+      getPositionLevel(program, postionLevelId).then((pL) => {
+        setPositionLevel(pL);
         setLoading(false);
       });
       getPermissions(program).then((permissions) => {
-        setPermissions(labelizeNamedData(permissions.data));
+        setPermissions(labelizeNamedData(permissions));
       });
     }
-  }, [program, postionAssignPermissionId]);
+  }, [program, postionLevelId]);
 
   useEffect(() => {
-    if (program.id && program.organization_id && postionAssignPermissionId) {
-      getPositionAssignPermissions(program, postionAssignPermissionId).then(
+    if (program.id && program.organization_id && postionLevelId) {
+      getPositionLevelPermissions(program, postionLevelId).then(
         (response) => {
           setAssignPermissions(labelizeNamedData(response, ["id", "title"]));
         }
       );
     }
-  }, [program, postionAssignPermissionId]);
+  }, [program, postionLevelId]);
 
   const handlePermmissionChange = (permissionOptions) => {
     setAssignPermissions(permissionOptions);
@@ -78,7 +78,7 @@ const AssignPermissionPositionLevels = ({
       setLoading(true);
       axios
         .post(
-          `/organization/${program.organization_id}/program/${program.id}/positionlevel/${postionAssignPermissionId}/assign-permissions`,
+          `/organization/${program.organization_id}/program/${program.id}/positionlevel/${postionLevelId}/permissions`,
           values
         )
         .then((res) => {
@@ -86,7 +86,7 @@ const AssignPermissionPositionLevels = ({
             onStep(0);
             flashSuccess(
               dispatch,
-              "Position level assign permission successfully"
+              "Position level permission assignment completed!"
             );
           }
         })
@@ -180,4 +180,4 @@ const AssignPermissionPositionLevels = ({
   }
 };
 
-export default AssignPermissionPositionLevels;
+export default AssignPositionLevelPermissions;
