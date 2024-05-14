@@ -79,10 +79,10 @@ export const PROGRAM_DEPOSIT_COLUMNS = [
     {
         Header: "Deposit Fee",
         accessor: "deposit_fee",
-        Cell: () => `$0.00`,
+        Cell: ({ value }) => `$${parseFloat(value).toFixed(2)}`,
         Footer: (info) => {
             const { rows } = info;
-            const totalValue = rows.reduce((sum, row) => Number(0) + sum, 0);
+            const totalValue = rows.reduce((sum, row) => Number(row.values.deposit_fee) + sum, 0);
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
         },
     },
