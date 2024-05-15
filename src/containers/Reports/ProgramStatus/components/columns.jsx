@@ -77,11 +77,18 @@ export const TABLE_COLUMNS = [
     width: 170,
     Footer: (info) => {
       const {rows, flatRows} = info;
-      const totalValue = useMemo(
-        () => rows.reduce((sum, row) => !row.original?.disableTotalCalculation && row.original.program.dinamicDepth === 1 ? Number(row.values.percent_participant) + sum : 0 + sum, 0),
+
+      const totalEmails = useMemo(
+        () => rows.reduce((sum, row) => !row.original?.disableTotalCalculation && row.original.program.dinamicDepth === 1 ? Number(row.values.count_email) + sum : 0 + sum, 0),
         [rows],
       );
-      const avg = Math.round(totalValue / rows.length);
+
+      const totalUsers = useMemo(
+        () => rows.reduce((sum, row) => !row.original?.disableTotalCalculation && row.original.program.dinamicDepth === 1 ? Number(row.values.count_users) + sum : 0 + sum, 0),
+        [rows],
+      );
+
+      const avg = totalUsers > 0 ? Math.round((totalEmails / totalUsers ) * 100) : 0;
       return <span>{avg + '%'}</span>;
     },
   },
@@ -105,11 +112,19 @@ export const TABLE_COLUMNS = [
     width: 120,
     Footer: (info) => {
       const {rows, flatRows} = info;
-      const totalValue = useMemo(
-        () => rows.reduce((sum, row) => !row.original?.disableTotalCalculation && row.original.program.dinamicDepth === 1 ? Number(row.values.percent_active_participant) + sum : 0 + sum, 0),
+
+      const totalActiveUsers = useMemo(
+        () => rows.reduce((sum, row) => !row.original?.disableTotalCalculation && row.original.program.dinamicDepth === 1 ? Number(row.values.count_active_user) + sum : 0 + sum, 0),
         [rows],
       );
-      const avg = Math.round(totalValue / rows.length );
+
+      const totalUsers = useMemo(
+        () => rows.reduce((sum, row) => !row.original?.disableTotalCalculation && row.original.program.dinamicDepth === 1 ? Number(row.values.count_users) + sum : 0 + sum, 0),
+        [rows],
+      );
+
+      const avg = totalUsers > 0 ? Math.round((totalActiveUsers / totalUsers ) * 100) : 0;
+
       return <span>{avg + '%'}</span>;
     },
   },
