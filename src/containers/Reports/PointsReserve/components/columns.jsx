@@ -166,7 +166,7 @@ export const PROGRAM_COLUMNS = [
                     if (row.original.dinamicDepth === 0) {
                         const subRowsTotal = row.original.subRows
                             .filter(subRow => subRow.name !== 'TOTAL')
-                            .reduce((acc, subRow) => acc + subRow.this_unredeemed, 0);
+                            .reduce((acc, subRow) => acc + subRow.value_unredeemed, 0);
                         return `$${parseFloat(subRowsTotal).toFixed(2)}`
                     }
                     if (row.original.name === 'TOTAL') {
