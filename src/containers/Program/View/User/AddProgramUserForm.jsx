@@ -64,7 +64,7 @@ const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
         getPositionLevels(organization.id, program.id).then(
           (res) => {
             setPositionLevelOptions(
-              labelizeNamedData(res.data, ["id", "title"])
+              labelizeNamedData(res, ["id", "title"])
             );
           }
         );

@@ -86,7 +86,7 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
         getPositionLevels(organization.id, program.id, "assignable=1").then(
           (res) => {
             setPositionLevelOptions(
-              labelizeNamedData(res.data, ["id", "title"])
+              labelizeNamedData(res, ["id", "title"])
             );
           }
         );
