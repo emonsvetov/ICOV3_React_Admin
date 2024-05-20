@@ -21,62 +21,21 @@ import {
   useFlexLayout,
 } from "react-table";
 import ReactTablePagination from "@/shared/components/table/components/ReactTablePagination";
-import SortIcon from "mdi-react/SortIcon";
-import SortAscendingIcon from "mdi-react/SortAscendingIcon";
-import SortDescendingIcon from "mdi-react/SortDescendingIcon";
-import MerchantsFilter from "./MerchantsFilter";
-import { renameChildrenToSubrows } from "@/shared/helpers";
 import CloseButton from "@/shared/components/CloseButton";
 import axios from "axios";
 import { Form, Field } from "react-final-form";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
 
+import {
+  reducer,
+  useEffectToDispatch,
+  fetchApiData,
+  initialState,
+  TableFilter,
+  Sorting
+} from "@/shared/apiTableHelper"
+
 const queryClient = new QueryClient();
-const initialState = {
-  queryPageIndex: 0,
-  queryPageSize: 10,
-  totalCount: null,
-  queryPageFilter: {},
-  queryPageSortBy: [],
-};
-
-const PAGE_CHANGED = "PAGE_CHANGED";
-const PAGE_SIZE_CHANGED = "PAGE_SIZE_CHANGED";
-const PAGE_SORT_CHANGED = "PAGE_SORT_CHANGED";
-const PAGE_FILTER_CHANGED = "PAGE_FILTER_CHANGED";
-const TOTAL_COUNT_CHANGED = "TOTAL_COUNT_CHANGED";
-
-const reducer = (state, { type, payload }) => {
-  switch (type) {
-    case PAGE_CHANGED:
-      return {
-        ...state,
-        queryPageIndex: payload,
-      };
-    case PAGE_SIZE_CHANGED:
-      return {
-        ...state,
-        queryPageSize: payload,
-      };
-    case PAGE_SORT_CHANGED:
-      return {
-        ...state,
-        queryPageSortBy: payload,
-      };
-    case PAGE_FILTER_CHANGED:
-      return {
-        ...state,
-        queryPageFilter: payload,
-      };
-    case TOTAL_COUNT_CHANGED:
-      return {
-        ...state,
-        totalCount: payload,
-      };
-    default:
-      throw new Error(`Unhandled action type: ${type}`);
-  }
-};
 
 const MerchantsModal = ({ isOpen, setOpen, toggle, theme, rtl, organization, data }) => {
   if(!organization || !data) return 'loading...'
@@ -94,7 +53,6 @@ const MerchantsModal = ({ isOpen, setOpen, toggle, theme, rtl, organization, dat
   );
 };
 const DataTable = ({ toggle, organization, program }) => {
-
   const fetchMerchantData = async(
     page,
     pageSize,
@@ -139,8 +97,10 @@ const DataTable = ({ toggle, organization, program }) => {
   const LOGO_PUBLIC_URL = `${process.env.REACT_APP_API_STORAGE_URL}`;
 
   // console.log(program)
+  const [trigger, setTrigger] = useState(0);
   const [relationData, setRelationData] = useState([]);
-  const [filter, setFilter] = useState({ keyword: "" });
+  const [filter, setFilter] = useState({keyword: ''});
+  const [useFilter, setUseFilter] = useState(false);
 
   const fetchProgramMerchantData = async () => {
     try {
@@ -164,7 +124,6 @@ const DataTable = ({ toggle, organization, program }) => {
 
   useEffect(() => {
     if (program.id) {
-
       fetchProgramMerchantData();
     }
   }, [program]);
@@ -193,14 +152,6 @@ const DataTable = ({ toggle, organization, program }) => {
     } catch (e) {
       throw new Error(`API error:${e?.message}`);
     }
-  };
-
-  const onClickFilterCallback = (keyword) => {
-    if (filter.keyword === keyword) {
-      alert("No change in filters");
-      return;
-    }
-    setFilter({ keyword });
   };
 
   const onSubmit = (values) => {
@@ -316,39 +267,32 @@ const DataTable = ({ toggle, organization, program }) => {
   ];
 
   let columns = useMemo(() => MERCHANT_COLUMNS, []);
-  const [
-    {
-      queryPageIndex,
-      queryPageSize,
-      totalCount,
-      queryPageFilter,
-      queryPageSortBy,
-    },
-    dispatch,
-  ] = React.useReducer(reducer, initialState);
 
-  const { isLoading, error, data, isSuccess } = useQuery(
-    [
-      "merchants",
-      queryPageIndex,
-      queryPageSize,
-      queryPageFilter,
-      queryPageSortBy,
-    ],
-    () =>
-      fetchMerchantData(
-        queryPageIndex,
-        queryPageSize,
-        queryPageFilter,
-        queryPageSortBy
-      ),
+  const [{queryPageIndex, queryPageSize, totalCount, queryPageFilter, queryPageSortBy, queryTrigger}, dispatch] = React.useReducer(reducer, initialState);
+
+  const apiUrl = `/organization/${program.organization_id}/merchant`;
+
+  const {isLoading, error, data, isSuccess} = useQuery(
+    ['', apiUrl, queryPageIndex, queryPageSize, queryPageFilter, queryPageSortBy, queryTrigger],
+    () => fetchApiData(
+      {
+        url: apiUrl,
+        page: queryPageIndex,
+        size: queryPageSize,
+        filter,
+        sortby: queryPageSortBy,
+        trigger: queryTrigger
+      }
+    ),
     {
       keepPreviousData: true,
       staleTime: Infinity,
     }
   );
 
-  const totalPageCount = Math.ceil(totalCount / queryPageSize);
+  const totalPageCount = Math.ceil(totalCount / queryPageSize)
+
+  console.log(totalPageCount)
 
   const {
     getTableProps,
@@ -389,36 +333,7 @@ const DataTable = ({ toggle, organization, program }) => {
   );
 
   const manualPageSize = [];
-
-  React.useEffect(() => {
-    dispatch({ type: PAGE_CHANGED, payload: pageIndex });
-  }, [pageIndex]);
-
-  React.useEffect(() => {
-    // alert(PAGE_SIZE_CHANGED)
-    dispatch({ type: PAGE_SIZE_CHANGED, payload: pageSize });
-    gotoPage(0);
-  }, [pageSize, gotoPage]);
-
-  useEffect(() => {
-    dispatch({ type: PAGE_SORT_CHANGED, payload: sortBy });
-    gotoPage(0);
-  }, [sortBy, gotoPage]);
-
-  React.useEffect(() => {
-    // alert(PAGE_FILTER_CHANGED)
-    dispatch({ type: PAGE_FILTER_CHANGED, payload: filter });
-    gotoPage(0);
-  }, [filter, gotoPage]);
-
-  React.useEffect(() => {
-    if (data?.count) {
-      dispatch({
-        type: TOTAL_COUNT_CHANGED,
-        payload: data.count,
-      });
-    }
-  }, [data?.count]);
+  useEffectToDispatch(dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger});
 
   if (error) {
     return <p>Error: {JSON.stringify(error)}</p>;
@@ -441,9 +356,14 @@ const DataTable = ({ toggle, organization, program }) => {
           <form className="form form--horizontal">
             <div className="form__form-group ">
               <div className="col-md-6 col-lg-6">
-                <MerchantsFilter
-                  onClickFilterCallback={onClickFilterCallback}
-                />
+              <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter}
+              config={{
+                keyword: true,
+                label: 'by ID or Name',
+                dateRange: false,
+                programs: false,
+                exportToCsv: false
+              }}/>
               </div>
               <div className="col-md-6 col-lg-6 text-right pr-0">
                 <ButtonToolbar className="modal__footer flex justify-content-right w100">
@@ -498,6 +418,7 @@ const DataTable = ({ toggle, organization, program }) => {
           </table>
         </div>
         {rows.length > 0 && (
+          <>
           <ReactTablePagination
             page={page}
             gotoPage={gotoPage}
@@ -511,8 +432,36 @@ const DataTable = ({ toggle, organization, program }) => {
             pageCount={pageCount}
             setPageSize={setPageSize}
             manualPageSize={manualPageSize}
-            dataLength={rows.length}
+            dataLength={totalCount}
           />
+                        <div className="pagination justify-content-end mt-2">
+                            <span>
+                            Go to page:{' '}
+                              <input
+                                type="number"
+                                value={pageIndex + 1}
+                                onChange={(e) => {
+                                  const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                                  gotoPage(page);
+                                }}
+                                style={{width: '100px'}}
+                              />
+                            </span>{' '}
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                  }}
+                >
+                  {[10, 20, 30, 40, 50].map((pageSize) => (
+                    <option key={pageSize} value={pageSize}>
+                      Show {pageSize}
+                    </option>
+                  ))}
+                </select>
+              </div>
+          </>
+          
         )}
       </Container>
     );
