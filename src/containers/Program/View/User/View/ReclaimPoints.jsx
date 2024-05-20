@@ -1,8 +1,9 @@
 import React, {FC, useEffect, useState} from 'react';
 import {Table, Input, Button, Col, Row,Tooltip} from 'antd';
 import {InfoCircleOutlined} from "@ant-design/icons";
-import type { TableColumnsType } from 'antd';
+import { TableColumnsType } from 'antd';
 import axios from "axios";
+import { toCurrency} from '@/shared/helpers'
 
 interface ReclaimPointsProps {
     user: any;
@@ -11,13 +12,13 @@ interface ReclaimPointsProps {
 }
 
 const columns: TableColumnsType<DataType> = [
-    { title: 'Award Value', dataIndex: 'points_value', key: 'points_value',render: (text) => (
-        <span>$ {text}</span>
+    { title: 'Award Value', dataIndex: 'amount', key: 'amount',render: (text) => (
+        <span>{toCurrency(text)}</span>
         ),},
-    { title: 'Date Awarded', dataIndex: 'date_awarded', key: 'date_awarded' },
-    { title: 'Event', dataIndex: 'event', key: 'event' },
+    { title: 'Date Awarded', dataIndex: 'awarded', key: 'awarded' },
+    { title: 'Event', dataIndex: 'event_name', key: 'event_name' },
     { title: 'Award Credit', dataIndex: 'award_credit', key: 'award_credit' },
-    { title: ' Expiration Date', dataIndex: 'expiration_date', key: 'expiration_date', render: (text, record) => (
+    { title: ' Expiration Date', dataIndex: 'expiration', key: 'expiration', render: (text, record) => (
             <span>
                 {text}
                 <Tooltip title={record.expiration_description} color={'#646777'}>
@@ -44,8 +45,13 @@ export const ReclaimPoints: FC<ReclaimPointsProps> = ({user, organization, progr
 
     const handleReclaimPoints = () => {
         reclaimItems.map(value => {
+            const item = dataItems.filter(obj => {
+                return obj.key === value;
+            });
+            let itemProgramId = item[0]['program_id'];
+
             if (reasonNotesValues[value]){
-                reclaim(value, reasonNotesValues[value]);
+                reclaim(value, reasonNotesValues[value], itemProgramId);
             }
         })
     };
@@ -73,11 +79,11 @@ export const ReclaimPoints: FC<ReclaimPointsProps> = ({user, organization, progr
         }
     }
 
-    const reclaim = async (postingId, notes) => {
+    const reclaim = async (postingId, notes, itemProgramId) => {
         try {
             const response = await axios.post(`/organization/` + organization.id + `/user/reclaim`, {
                 userId: user.id,
-                programId: program.id,
+                program_account_holder_id: itemProgramId,
                 postingId: postingId,
                 notes: notes,
             });
@@ -90,7 +96,7 @@ export const ReclaimPoints: FC<ReclaimPointsProps> = ({user, organization, progr
         let sum = 0;
         dataItems.forEach(item => {
             if (reclaimItems.includes(item.key)) {
-                sum += parseFloat(item.points_value);
+                sum += parseFloat(item.amount);
             }
         });
         sum = parseFloat(sum.toFixed(2));
