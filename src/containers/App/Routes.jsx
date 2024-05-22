@@ -66,6 +66,7 @@ import EditOrder from '../PhysicalOrders/edit_order';
 import TangoOrder from '../PhysicalOrders/tango_order';
 import GlobalOrder from '../Reports/Orders/view_order';
 import CronJobsIndex from '../CronJobs/index';
+import TangoSettingsIndex from '../TangoSettings/index';
 
 import {
   AwardDetail,
@@ -132,6 +133,12 @@ const CronJobs = () => (
   <Switch>
     <Route exact path="/cron-jobs" component={CronJobsIndex} />
   </Switch>
+);
+
+const TangoSettings = () => (
+    <Switch>
+        <Route exact path="/tango-settings" component={TangoSettingsIndex} />
+    </Switch>
 );
 
 const Users = () => (
@@ -255,6 +262,7 @@ const privateRoutes = () => {
         <PrivateRoute path="/program" component={Programs} />
         <PrivateRoute path="/merchants" component={Merchants} />
         <PrivateRoute path="/cron-jobs" component={CronJobs} />
+          <PrivateRoute path="/tango-settings" component={TangoSettings} />
         <PrivateRoute path="/users" component={Users} />
         <PrivateRoute path="/roles" component={Roles} />
         <PrivateRoute path="/permissions" component={Permissions} />
