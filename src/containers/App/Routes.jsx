@@ -67,6 +67,9 @@ import TangoOrder from '../PhysicalOrders/tango_order';
 import GlobalOrder from '../Reports/Orders/view_order';
 import CronJobsIndex from '../CronJobs/index';
 import TangoSettingsIndex from '../TangoSettings/index';
+import EditConfigurationPage from "../TangoSettings/components/EditConfigurationPage";
+import ViewConfigurationPage from "../TangoSettings/components/ViewConfigurationPage";
+import AddConfigurationPage from "../TangoSettings/components/AddConfigurationPage";
 
 import {
   AwardDetail,
@@ -95,6 +98,7 @@ import {
 import TreeView from '../TreeViewBasic';
 import BudgetComparison from "../Program/View/Reports/BudgetComparison";
 import ImportSettings from '../Import/settings';
+
 
 const Pages = () => (
   <Switch>
@@ -138,6 +142,9 @@ const CronJobs = () => (
 const TangoSettings = () => (
     <Switch>
         <Route exact path="/tango-settings" component={TangoSettingsIndex} />
+        <Route path="/tango-settings/create" component={AddConfigurationPage} />
+        <Route path="/tango-settings/edit/:id" component={EditConfigurationPage} />
+        <Route path="/tango-settings/view/:id" component={ViewConfigurationPage} />
     </Switch>
 );
 
