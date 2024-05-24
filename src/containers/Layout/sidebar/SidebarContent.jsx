@@ -33,6 +33,13 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
                 </>
             );
             break;
+        case 'cron_jobs':
+            return (
+                <>
+                    <SidebarLink title="Tango Settings" route="/tango-settings" />
+                </>
+            );
+            break;
       case 'reports':
         return (
           <>
@@ -72,6 +79,11 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
           <SidebarLink title="V2 Program Migration"  route="/migration" />
         )
       break;
+        case 'tango_settings':
+            return (
+                <SidebarLink title="Tango Settings"  route="/tango-settings" />
+            )
+            break;
       default:
       break;
     }
@@ -124,6 +136,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
                   <>
                       <ProtectedLink type="cron_jobs"/>
                       <ProtectedLink type="migration"/>
+                      <ProtectedLink type="tango_settings"/>
                   </>
               </SidebarCategory>
           }
