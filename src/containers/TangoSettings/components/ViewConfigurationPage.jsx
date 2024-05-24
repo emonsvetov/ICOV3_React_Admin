@@ -32,7 +32,7 @@ const ViewConfigurationPage = () => {
         <Container>
             <Row>
                 <Col md={12}>
-                    <h2>Configuration Details</h2>
+                    <h2>Tango Configuration Details</h2>
                 </Col>
             </Row>
             <Row>
@@ -41,7 +41,6 @@ const ViewConfigurationPage = () => {
                         <CardBody>
                             {configuration ? (
                                 <>
-                                    <CardTitle tag="h5">Configuration Information</CardTitle>
                                     <ListGroup>
                                         <ListGroupItem><strong>Name:</strong> {configuration.name}</ListGroupItem>
                                         <ListGroupItem><strong>Platform Name:</strong> {configuration.platform_name}</ListGroupItem>

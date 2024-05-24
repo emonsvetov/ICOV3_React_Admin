@@ -67,7 +67,7 @@ const TangoSettingsTable = () => {
 
     return (
         <div>
-            <button onClick={handleAddClick} className="btn btn-primary" style={{ marginBottom: '10px' }}>Add Configuration</button>
+            <button onClick={handleAddClick} className="btn btn-primary" style={{ marginBottom: '10px' }}>Add Tango Configuration</button>
             <ConfirmDeleteModal
                 isOpen={isDeleteModalOpen}
                 onCancel={() => setDeleteModalOpen(false)}

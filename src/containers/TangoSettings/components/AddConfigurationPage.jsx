@@ -73,7 +73,7 @@ const AddConfigurationPage = () => {
         <Container>
             <Row>
                 <Col md={12}>
-                    <h2>Add New Configuration</h2>
+                    <h2>Add New Tango Configuration</h2>
                 </Col>
             </Row>
             <Row>

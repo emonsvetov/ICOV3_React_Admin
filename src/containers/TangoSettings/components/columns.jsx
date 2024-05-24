@@ -11,40 +11,33 @@ export const CONFIGURATION_COLUMNS = (handleDeleteClick) => [
     {
         Header: "Platform Name",
         accessor: "platform_name",
-        width: 120,
     },
     {
         Header: "Account Number",
         accessor: "account_number",
-        width: 140,
     },
     {
         Header: "Email Template",
         accessor: "etid",
-        width: 120,
     },
     {
         Header: "UTID",
         accessor: "udid",
-        width: 100,
     },
     {
         Header: "Status",
         accessor: "status",
         Cell: ({ value }) => value === 1 ? 'Active' : 'Inactive',
-        width: 100,
     },
     {
         Header: "Test Configuration",
         accessor: "is_test",
         Cell: ({ value }) => value === 1 ? 'Yes' : 'No',
-        width: 100,
     },
     {
         Header: "Created At",
         accessor: "created_at",
         Cell: ({ value }) => formatDate(value),
-        width: 100,
     },
     {
         id: 'actions',
@@ -54,7 +47,6 @@ export const CONFIGURATION_COLUMNS = (handleDeleteClick) => [
                 <Link to={`/tango-settings/view/${row.original.id}`} className="btn btn-sm btn-primary action-link" aria-label={`View configuration ${row.original.platform_name}`}>
                     View
                 </Link>
-                &nbsp;|&nbsp;
                 <Link
                     to={`/tango-settings/edit/${row.original.id}`}
                     className="btn btn-sm btn-primary action-link"
@@ -62,7 +54,6 @@ export const CONFIGURATION_COLUMNS = (handleDeleteClick) => [
                 >
                     Edit
                 </Link>
-                &nbsp;|&nbsp;
                 <button
                     onClick={() => handleDeleteClick(row.original.id)}
                     className="btn btn-sm btn-primary action-button"
@@ -73,7 +64,7 @@ export const CONFIGURATION_COLUMNS = (handleDeleteClick) => [
             </div>
         ),
         disableSortBy: true,
-        width: 310,
+        width: 300,
     },
 ];
 
@@ -87,8 +78,8 @@ export const CONFIGURATION_COLUMNS = (handleDeleteClick) => [
             border-color: #70bbfd;
         }
         .btn.btn-sm {
-            padding: 5px 25px;
-            font-size: 14px;
+            padding: 5px 18px;
+            font-size: 12px;
         }
         .action-link, .action-button {
             text-decoration: none;
