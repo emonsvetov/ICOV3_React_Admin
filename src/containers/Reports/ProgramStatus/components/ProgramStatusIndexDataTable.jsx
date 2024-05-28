@@ -5,6 +5,7 @@ import {TABLE_COLUMNS} from "./columns";
 import ReactTablePagination from '@/shared/components/table/components/ReactTablePagination';
 import {Col, Row} from 'reactstrap';
 import {getFirstDay} from '@/shared/helpers'
+import {Loader} from '@/shared/apiHelper.jsx';
 
 import {withRouter} from "react-router-dom";
 import {connect} from "react-redux";
@@ -42,7 +43,7 @@ const DataTable = ({organization, programs}) => {
     React.useReducer(reducer, initialState);
 
   const apiUrl = `/organization/${organization.id}/report/portfolio-status-report-new`;
-  const {isLoading, error, data, isSuccess,isFetching} = useQuery(
+  const {isLoading, error, data, isSuccess, isFetching} = useQuery(
     ['', apiUrl,  queryPageFilter, queryPageSortBy, queryTrigger],
     () => fetchApiData(
       {
@@ -171,7 +172,7 @@ const DataTable = ({organization, programs}) => {
             <div className='cleafix'>&nbsp;</div>
           </div>
           {
-            isLoading && <p>Loading...</p>
+            isLoading || isFetching && <Loader></Loader>
           }
           {
             isSuccess &&

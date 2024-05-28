@@ -33,6 +33,7 @@ export const flushUserSession = () => {
     localStorage.removeItem(AUTH_TOKEN_KEY);
     localStorage.removeItem(AUTH_ORGANIZATION_KEY);
     localStorage.removeItem(SU_ORGANIZATION_KEY);
+    localStorage.removeItem(SU_SELECT_ORGANIZATION_TREE);
 }
 
 export const isAuthenticated = () => {
