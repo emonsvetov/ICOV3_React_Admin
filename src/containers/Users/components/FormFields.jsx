@@ -31,24 +31,34 @@ const FormFields = ({form, values, submitting, pristine, program, config}) => {
       setIsSendInvite(checked)
   }
 
-  useEffect(() => {
-    getDataAwardLevels();
-    if (!values.award_level) {
-        setInitialAwardLevel( values.award_level || null);
-    }
-  }, [program]);
+    useEffect(() => {
+        if (program && program.organization_id && program.id) {
+            getDataAwardLevels();
+        }
+        if (!values.award_level) {
+            setInitialAwardLevel(values.award_level || null);
+        }
+    }, [program, values.award_level]);
 
-  const getDataAwardLevels = async () => {
-      const response = await axios.get(
-          `/organization/${program.organization_id}/program/${program.id}/program-award-levels`,
-      );
-      const options = response.data.map(level => ({
-          label: level.name,
-          value: level.id,
-          id: level.id,
-      }));
-      setAwardLevels(options);
-  };
+    const getDataAwardLevels = async () => {
+        // Check if necessary IDs are available
+        if (program.organization_id && program.id) {
+            try {
+                const response = await axios.get(
+                    `/organization/${program.organization_id}/program/${program.id}/program-award-levels`
+                );
+                const options = response.data.map(level => ({
+                    label: level.name,
+                    value: level.id,
+                    id: level.id,
+                }));
+                setAwardLevels(options);
+            } catch (error) {
+                console.error('Failed to fetch award levels:', error);
+            }
+        }
+    };
+
 
     const onChangeUnitNumber = () => {
       // console.log("On change unit number")
