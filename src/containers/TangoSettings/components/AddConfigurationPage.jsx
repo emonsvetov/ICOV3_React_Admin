@@ -43,10 +43,10 @@ const AddConfigurationPage = () => {
     };
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
+        const { name, type, checked } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: type === 'checkbox' ? checked : value
+            [name]: type === 'checkbox' ? (prev[name] === 1 ? 0 : 1) : e.target.value
         }));
         if (errors[name]) {
             setErrors(prev => ({

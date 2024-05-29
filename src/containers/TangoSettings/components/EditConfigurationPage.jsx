@@ -41,24 +41,18 @@ const EditConfigurationPage = () => {
     }, [id]);
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
+        const { name, type, checked } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: type === 'checkbox'
-                ? (name === 'status' ? (checked ? 1 : 0) : (checked ? 0 : 1))
-                : value
+            [name]: type === 'checkbox' ? (prev[name] === 1 ? 0 : 1) : e.target.value
         }));
     };
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const submitData = {
-            ...formData,
-            status: formData.status ? 1 : 0,
-            is_test: formData.is_test ? 0 : 1
-        };
         try {
-            await axios.put(`/tango-settings/edit/${id}`, submitData);
+            await axios.put(`/tango-settings/edit/${id}`, formData);
             alert('Configuration updated successfully!');
             history.push('/tango-settings');
         } catch (error) {
@@ -66,7 +60,6 @@ const EditConfigurationPage = () => {
             alert('Error updating configuration');
         }
     };
-
 
     return (
         <Container>
@@ -94,7 +87,7 @@ const EditConfigurationPage = () => {
                                 </FormGroup>
                                 <FormGroup check>
                                     <Label check>
-                                        <Input type="checkbox" name="is_test" checked={formData.is_test === 1} onChange={handleChange} />{' '}
+                                        <Input type="checkbox" name="is_test" checked={formData.is_test === 0} onChange={handleChange} />{' '}
                                         Test Configuration
                                     </Label>
                                 </FormGroup>

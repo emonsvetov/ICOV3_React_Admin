@@ -39,7 +39,7 @@ const ViewConfigurationPage = () => {
         }
     };
 
-    if (isLoading) return <Container><Alert color="info">Loading...</Alert></Container>;
+    if (isLoading) return <Container>Loading...</Container>;
     if (error) return <Container><Alert color="danger">{error}</Alert></Container>;
 
     return (
@@ -47,8 +47,8 @@ const ViewConfigurationPage = () => {
             <Row>
                 <Col md={12}>
                     <h2>Tango Configuration Details</h2>
-                    <Button color="warning" onClick={() => history.push(`/tango-settings/edit/${id}`)} style={{ marginRight: '10px' }}>Edit</Button>
-                    <Button color="danger" onClick={() => setModalOpen(true)}>Delete</Button>
+                    <Button color="#70bbfd" onClick={() => history.push(`/tango-settings/edit/${id}`)} style={{ marginRight: '10px', backgroundColor: '#70bbfd', borderColor: '#70bbfd', color: '#000'}}>Edit</Button>
+                    <Button color="#70bbfd" onClick={() => setModalOpen(true)}  style={{ marginRight: '10px',  backgroundColor: '#70bbfd', borderColor: '#70bbfd', color: '#000' }}>Delete</Button>
                 </Col>
             </Row>
             <Row>
