@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Form, Field } from "react-final-form";
 import {
   Modal,
-  ModalBody, Row, Col, ButtonToolbar, Button, Card, CardBody, Container
+  ModalBody, Row, Col, ButtonToolbar, Button, Card, CardBody, Container, ModalHeader
 } from "reactstrap";
 import { connect } from 'react-redux';
 import { useParams, useHistory, withRouter } from "react-router-dom";
@@ -11,6 +11,8 @@ import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
 import axios from "axios";
 import renderSelectField from '@/shared/components/form/Select'
+import CheckboxField from '@/shared/components/form/CheckboxField';
+// import CheckboxField from '@/shared/components/form/CheckBox';
 
 import AddIconTabs from "./AddIconTabs";
 import { fetchEventTypes, getEventLedgerCodes, getMilestoneOptions } from '@/shared/apiHelper'
@@ -20,6 +22,8 @@ import LedgerCodes from './LedgerCodes';
 import {Space, Table} from 'antd';
 import AddAwardLevel from "./AddAwardLevel";
 import SelectIcon from "./SelectIcon";
+import {FieldArray} from "react-final-form-arrays";
+import arrayMutators from "final-form-arrays";
 const fetchEvent = async (oId, pId, eId) => {
   try {
     const response = await axios.get(`/organization/${oId}/program/${pId}/event/${eId}`);
@@ -35,6 +39,12 @@ const Edit = ({organization, theme, rtl}) => {
   const [program, setProgram] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isOpen, setOpen] = useState(false);
+  const [isOpenHierarchy, setOpenHierarchy] = useState(false);
+  const [isOpenHierarchyList, setOpenHierarchyList] = useState(false);
+  const [isOpenHierarchyResult, setOpenHierarchyResult] = useState(false);
+  const [formValues, setFormValues] = useState([]);
+  const [hierarchyListData, setHierarchyListData] = useState([]);
+  const [hierarchyListDataResult, setHierarchyListDataResult] = useState([]);
   const [eventTypeId, setEventTypeId] = useState(false);
   let [event, setEvent] = useState(null);
   const [eventTypesRaw, setEventTypesRaw] = useState([]);
@@ -56,6 +66,7 @@ const Edit = ({organization, theme, rtl}) => {
     const path = process.env.REACT_APP_API_STORAGE_URL + "/" + icon.path;
     return path;
   }
+  const [checkedState, setCheckedState] = useState([]);
 
   const fetchProgramData = async (id) => {
     try {
@@ -131,7 +142,7 @@ const Edit = ({organization, theme, rtl}) => {
   }
 
   const onSubmit = (values) => {
-    const eventData = makeFormData(program, values)
+    const eventData = makeFormData(program, formValues)
     eventData.icon = v2icon;
     axios
       .put(`/organization/${program.organization_id}/program/${programId}/event/${eventId}`, eventData)
@@ -146,6 +157,61 @@ const Edit = ({organization, theme, rtl}) => {
         flashError(dispatch, err.response.data)
         setLoading(false);
       });
+    toggleHierarchy();
+  };
+
+  const onSubmitHierarchy = () => {
+    console.log(formValues)
+
+    const eventData = makeFormData(program, formValues)
+    eventData.icon = v2icon;
+    axios
+      .put(`/organization/${program.organization_id}/program/${programId}/event/${eventId}/hierarchy-prepare`, eventData)
+      .then((res) => {
+        if (res.status == 200) {
+          setHierarchyListData(res.data);
+
+          toggleHierarchy();
+          const tmpCheckedState = [];
+          res.data.map(item => {
+              tmpCheckedState.push({checked: true, value: item.id});
+          });
+          setCheckedState(tmpCheckedState);
+          toggleHierarchyList();
+        }
+      })
+      .catch((err) => {
+        flashError(dispatch, err.response.data)
+        setLoading(false);
+        toggleHierarchy();
+      });
+  };
+
+  const onSubmitHierarchyList = () => {
+    const eventData = makeFormData(program, formValues)
+    eventData.icon = v2icon;
+    const programIds = [];
+    checkedState.map(item => {
+      if(item.checked){
+        programIds.push(item.value)
+      }
+    });
+    eventData.programIds = programIds;
+
+    axios
+      .put(`/organization/${program.organization_id}/program/${programId}/event/${eventId}/hierarchy`, eventData)
+      .then((res) => {
+        if (res.status == 200) {
+          setHierarchyListDataResult(res.data);
+          toggleHierarchyList();
+          toggleHierarchyResult();
+        }
+      })
+      .catch((err) => {
+        flashError(dispatch, err.response.data)
+        setLoading(false);
+        toggleHierarchyList();
+      });
   };
 
   const onClickCancel = () => {
@@ -154,6 +220,23 @@ const Edit = ({organization, theme, rtl}) => {
 
   const toggle = () => {
     setOpen(prevState => !prevState)
+  }
+
+  const onSubmitForm = (values) => {
+    setFormValues(values)
+    toggleHierarchy();
+  }
+
+  const toggleHierarchy = (values) => {
+    setOpenHierarchy(prevState => !prevState)
+  }
+
+  const toggleHierarchyList = () => {
+    setOpenHierarchyList(prevState => !prevState)
+  }
+
+  const toggleHierarchyResult = () => {
+    setOpenHierarchyResult(prevState => !prevState)
   }
 
   const setEventIcon = ([fieldName, fieldVal], state, { changeValue }) => {
@@ -218,21 +301,75 @@ const Edit = ({organization, theme, rtl}) => {
         },
     ];
 
-    const toggleModal = () => {
-        setDataAwardLevel({
-            id: 0,
-            event_id: eventId,
-            amount: 0,
-            award_level_id: 0,
-        });
-        setVisible(!visible);
-    };
+  const columnsHierarchyList = [
+    {
+      title: 'Program ID',
+      dataIndex: 'id',
+      key: 'id',
+      render: (text) => <a>{text}</a>,
+    },
+    {
+      title: 'Program Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Copy\\Update?',
+      key: 'action',
+      render: (_, record, index) => (
+        <>
+          <div className="checkbox-custom2">
+            <CheckboxField
+              name={`action-checkbox-${record.id}`}
+              label={record.event_will_be_updated ? 'update' : 'add'}
+              checked={checkedState[index].checked}
+              disabled={checkedState[index].value === program.id ? true : false}
+              onChange={(e) => {
+                const tmpCheckedState = [...checkedState];
+                tmpCheckedState[index].checked = !tmpCheckedState[index].checked;
+                setCheckedState(tmpCheckedState)
+              }}
+            />
+          </div>
+        </>
+      ),
+    },
+  ];
 
-    const handleSave = (data) => {
-        axios.put(`/organization/${program.organization_id}/program/${programId}/event-award-level/${eventId}`, data)
-            .then((res) => {
-                if (res.status == 200) {
-                    flashSuccess(dispatch, "Event saved!")
+  const columnsHierarchyResult = [
+    {
+      title: 'Program ID',
+      dataIndex: 'id',
+      key: 'id',
+      render: (text) => <a>{text}</a>,
+    },
+    {
+      title: 'Program Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Result',
+      dataIndex: 'result',
+      key: 'result',
+    },
+  ];
+
+  const toggleModal = () => {
+    setDataAwardLevel({
+      id: 0,
+      event_id: eventId,
+      amount: 0,
+      award_level_id: 0,
+    });
+    setVisible(!visible);
+  };
+
+  const handleSave = (data) => {
+    axios.put(`/organization/${program.organization_id}/program/${programId}/event-award-level/${eventId}`, data)
+      .then((res) => {
+        if (res.status == 200) {
+          flashSuccess(dispatch, "Event saved!")
                     fetchEvent(program.organization_id, program.id, eventId)
                         .then(res => {
                             setDataEventAwardsLevels(res.eventAwardsLevel);
@@ -284,7 +421,7 @@ const Edit = ({organization, theme, rtl}) => {
                   onChangeAwardValue,
                   setEventIcon
                 }}
-                onSubmit={onSubmit}
+                onSubmit={onSubmitForm}
                 validate={(values) => formValidation.validateForm(values)}
                 initialValues={event}
               >
@@ -633,6 +770,98 @@ const Edit = ({organization, theme, rtl}) => {
               </Card>
           </Card>
         </Col>
+
+        <Modal
+          className={`modal-event-hierarchy modal-md`}
+          isOpen={isOpenHierarchy}
+          toggle={toggleHierarchy}
+        >
+          <ModalHeader>
+            <div>Would you like to save this event across the entire program hierarchy?</div>
+          </ModalHeader>
+          <ModalBody className="modal-lg" style={{textAlign: 'left'}}>
+            <Button
+              outline
+              className="btn btn-primary btn-sm"
+              onClick={onSubmit}
+              color="#ffffff"
+            >
+              No, only save to this program
+            </Button>
+            <Button
+              outline
+              className="btn btn-primary btn-sm"
+              onClick={onSubmitHierarchy}
+              color="#ffffff"
+              style={{float:'left'}}
+            >
+              Yes, save to Hierarchy
+            </Button>
+            <Button
+              outline
+              color="primary"
+              className="btn btn-sm"
+              onClick={toggleHierarchy}
+              style={{float:'right'}}
+            >
+              Cancel
+            </Button>
+          </ModalBody>
+        </Modal>
+
+
+        <Modal
+          className={`modal-event-hierarchy-list modal-lg`}
+          isOpen={isOpenHierarchyList}
+          toggle={toggleHierarchyList}
+        >
+          <ModalHeader>
+            <div>Please select the programs that you wish to update or add this event to</div>
+          </ModalHeader>
+          <ModalBody className="modal-lg" style={{textAlign: 'left'}}>
+
+            <Form
+              onSubmit={onSubmitHierarchyList}
+            >
+              {({ handleSubmit, form, submitting, pristine, values }) => (
+                <>
+                  <form className="form" onSubmit={handleSubmit}>
+
+                    <div style={{padding: '10px'}}>
+                      <Button
+                        outline
+                        className="btn btn-primary btn-sm"
+                        color="#ffffff"
+                      >
+                        Save
+                      </Button>
+
+                    </div>
+
+                    <Table pagination={false} rowKey="id" columns={columnsHierarchyList} dataSource={hierarchyListData} />
+
+                  </form>
+                </>
+              )}
+            </Form>
+
+          </ModalBody>
+        </Modal>
+
+        <Modal
+          className={`modal-event-hierarchy-list modal-lg`}
+          isOpen={isOpenHierarchyResult}
+          toggle={toggleHierarchyResult}
+        >
+          <ModalHeader>
+            <div></div>
+          </ModalHeader>
+          <ModalBody className="modal-lg" style={{textAlign: 'left'}}>
+            <Table pagination={false} rowKey="id" columns={columnsHierarchyResult} dataSource={hierarchyListDataResult} />
+          </ModalBody>
+        </Modal>
+
+
       </Container>
     );
   }
