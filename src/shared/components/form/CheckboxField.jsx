@@ -1,13 +1,13 @@
 import React from 'react';
 import { Field } from 'react-final-form';
 
-const CheckboxField = ({ name, label, onChange, checked }) => {
+const CheckboxField = ({ name, label, onChange, checked, disabled }) => {
   return (
     <Field
       name={name}
       type="checkbox"
       render={({ input, meta }) => (
-        <label className="checkbox-btn flex-column" htmlFor={name}>
+        <label className={`checkbox-btn flex-column ${disabled ? 'disabled': ''}`} htmlFor={name}>
           <span>
             <input
               className="checkbox-btn__checkbox"
