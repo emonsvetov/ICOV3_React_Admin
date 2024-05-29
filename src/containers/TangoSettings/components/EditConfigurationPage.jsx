@@ -50,33 +50,8 @@ const EditConfigurationPage = () => {
         }));
     };
 
-    const validateForm = () => {
-        let valid = true;
-        let newErrors = {};
-
-        const requiredFields = [
-            'name', 'platform_name', 'platform_key', 'platform_url',
-            'platform_mode', 'account_identifier', 'customer_number',
-            'udid', 'etid'
-        ];
-
-        requiredFields.forEach(field => {
-            if (!formData[field]) {
-                valid = false;
-                newErrors[field] = 'This field is required';
-            }
-        });
-
-        setErrors(newErrors);
-        return valid;
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!validateForm()) {
-            alert('Please fill all required fields.');
-            return;
-        }
         const submitData = {
             ...formData,
             status: formData.status ? 1 : 0,
