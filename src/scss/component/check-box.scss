@@ -204,6 +204,14 @@
   transition: all 0.3s;
 }
 
+.checkbox-custom2 {
+  .checkbox-btn__checkbox-custom {
+    border: 1px solid #dddddd;
+    position: relative;
+    margin-right: 5px;
+  }
+}
+
 .checkbox-btn__checkbox:checked + .checkbox-btn__checkbox-custom {
 
   svg {

@@ -5,11 +5,11 @@ import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 import TangoModal from './TangoModal'
+import { useHistory } from 'react-router-dom';
 
 const MerchantDetails = ( {data} ) => {
-
+    const history = useHistory();
     const dispatch = useDispatch()
-
     //TangoModal BOF
     let [toaId, setToaId] = useState(null)
     const [isOpenTangoModal, setOpenTangoModal] = useState(false)
@@ -20,8 +20,12 @@ const MerchantDetails = ( {data} ) => {
       setToaId(id)
       toggleTangoModal()
     }
-    //TangoModal EOF
 
+    const onclickTangoConfiguration = (id) => {
+        history.push(`/tango-settings/view/${id}`);
+    };
+
+    //TangoModal EOF
     const [loading, setLoading] = useState(false)
     let [merchant, setMerchant] = useState(data)
 
@@ -29,8 +33,7 @@ const MerchantDetails = ( {data} ) => {
         e.preventDefault()
         setLoading( true )
         axios.delete(`/merchant/${merchant.id}`)
-        .then( (res) => { 
-            // console.log(res)
+        .then( (res) => {
             if(res.status == 200)  {
                 window.location = `/merchants?message=Merchant deleted successfully!`
             }
@@ -152,18 +155,16 @@ const MerchantDetails = ( {data} ) => {
                 {answerYesNo(merchant.use_tango_api)}
             </Col>
         </Row>
-        {
-          merchant.use_tango_api && merchant.tango_orders_api &&
             <Row>
               <Col md="4" lg="4" xl="4" sm="4" className='label'>
                 Tango Configuration:
               </Col>
               <Col md="8" lg="8" xl="8" sm="8">
-                  <span className='link' onClick={()=>onclickTangoApi(merchant.tango_orders_api.id)}>
+                  <span className='link' onClick={()=>onclickTangoConfiguration(merchant.tango_orders_api.id)}>
                     {merchant.tango_orders_api.name}
                   </span>
               </Col>
-            </Row> &&
+            </Row>
               <Row>
                   <Col md="4" lg="4" xl="4" sm="4" className='label'>
                       Send the second email from Tango:
@@ -172,7 +173,6 @@ const MerchantDetails = ( {data} ) => {
                       {answerYesNo(merchant.set_second_email_from_tango)}
                   </Col>
               </Row>
-        }
         <Row>
             <Col md="4" lg="4" xl="4" sm="4" className='label'>
                 Use Virtual Inventory:
