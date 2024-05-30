@@ -27,12 +27,12 @@ export const CONFIGURATION_COLUMNS = (handleDeleteClick) => [
     {
         Header: "Status",
         accessor: "status",
-        Cell: ({ value }) => value === 1 ? 'Active' : 'Inactive',
+        Cell: ({ value }) => parseInt(value) === 1 ? 'Active' : 'Inactive',
     },
     {
         Header: "Test Configuration",
         accessor: "is_test",
-        Cell: ({ value }) => value === 1 ? 'Yes' : 'No',
+        Cell: ({ value }) => parseInt(value) === 0 ? 'Yes' : 'No',
     },
     {
         Header: "Created At",

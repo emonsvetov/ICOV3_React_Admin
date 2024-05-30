@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { useTable, useFlexLayout } from 'react-table';
+import {useTable, useFlexLayout, useSortBy, usePagination} from 'react-table';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
+import { StickyContainer, Sticky } from 'react-sticky';
 import { CONFIGURATION_COLUMNS } from './columns';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
+import {Sorting} from "@/shared/apiTableHelper"
 
 const TangoSettingsTable = () => {
     const [data, setData] = useState([]);
@@ -54,50 +56,50 @@ const TangoSettingsTable = () => {
 
     const columns = useMemo(() => CONFIGURATION_COLUMNS(handleDeleteClick, handleEditClick, handleViewClick), [handleDeleteClick, handleEditClick, handleViewClick]);
 
+    const tableInstance = useTable(
+        { columns: columns, data },
+        useFlexLayout
+    );
+
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
         rows,
-        prepareRow,
-    } = useTable({
-        columns,
-        data
-    }, useFlexLayout);
+        prepareRow
+    } = tableInstance;
 
     return (
         <div>
-            <button onClick={handleAddClick} className="btn btn-primary" style={{ marginBottom: '10px' }}>Add Tango Configuration</button>
+            <button onClick={() => history.push("/tango-settings/create")} className="btn btn-primary">Add Tango Configuration</button>
             <ConfirmDeleteModal
-                isOpen={isDeleteModalOpen}
-                onCancel={() => setDeleteModalOpen(false)}
-                onConfirm={confirmDelete}
+                    isOpen={isDeleteModalOpen}
+                    onCancel={() => setDeleteModalOpen(false)}
+                    onConfirm={() => confirmDelete()}
             />
-            <div style={{ overflowX: 'auto' }}>
-                <table {...getTableProps()} className="table" style={{ width: '100%' }}>
-                    <thead>
-                    {headerGroups.map(headerGroup => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map(column => (
-                                <th {...column.getHeaderProps()} style={{ minWidth: column.width }}>{column.render('Header')}</th>
+            <table {...getTableProps()} className="table">
+                <thead>
+                {headerGroups.map(headerGroup => (
+                    <tr {...headerGroup.getHeaderGroupProps()}>
+                        {headerGroup.headers.map(column => (
+                            <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                        ))}
+                    </tr>
+                ))}
+                </thead>
+                <tbody {...getTableBodyProps()}>
+                {rows.map(row => {
+                    prepareRow(row);
+                    return (
+                        <tr {...row.getRowProps()}>
+                            {row.cells.map(cell => (
+                                <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
                             ))}
                         </tr>
-                    ))}
-                    </thead>
-                    <tbody {...getTableBodyProps()}>
-                    {rows.map(row => {
-                        prepareRow(row);
-                        return (
-                            <tr {...row.getRowProps()}>
-                                {row.cells.map(cell => (
-                                    <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                                ))}
-                            </tr>
-                        );
-                    })}
-                    </tbody>
-                </table>
-            </div>
+                    );
+                })}
+                </tbody>
+            </table>
         </div>
     );
 };

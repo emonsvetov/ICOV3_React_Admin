@@ -25,7 +25,11 @@ const AddConfigurationPage = () => {
         let valid = true;
         let newErrors = {};
 
-        const requiredFields = ['name', 'platform_name', 'platform_key', 'platform_url', 'platform_mode', 'account_identifier', 'customer_number', 'udid', 'etid'];
+        const requiredFields = [
+            'name', 'platform_name', 'platform_key', 'platform_url',
+            'platform_mode', 'account_identifier', 'customer_number',
+            'udid', 'etid'
+        ];
 
         requiredFields.forEach(field => {
             if (!formData[field]) {
@@ -39,10 +43,10 @@ const AddConfigurationPage = () => {
     };
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
+        const { name, type, checked } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: type === 'checkbox' ? checked : value
+            [name]: type === 'checkbox' ? (prev[name] === 1 ? 0 : 1) : e.target.value
         }));
         if (errors[name]) {
             setErrors(prev => ({
@@ -54,13 +58,19 @@ const AddConfigurationPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Validate form before submitting
         if (!validateForm()) {
             alert('Please fill all required fields.');
             return;
         }
+
+        const submitData = {
+            ...formData,
+            status: formData.status ? 1 : 0,
+            is_test: formData.is_test ? 0 : 1
+        };
+
         try {
-            await axios.post(`/tango-settings/create`, formData);
+            await axios.post(`/tango-settings/create`, submitData);
             alert('Configuration added successfully!');
             history.push('/tango-settings');
         } catch (error) {
@@ -100,7 +110,7 @@ const AddConfigurationPage = () => {
                                     ))}
                                     <Col md={6}>
                                         <FormGroup check className="mb-2 mr-sm-2 mb-sm-0 pt-2">
-                                            <Label check className="mr-4">
+                                            <Label check>
                                                 <Input type="checkbox" name="status" checked={formData.status} onChange={handleChange} />{' '}
                                                 Active
                                             </Label>

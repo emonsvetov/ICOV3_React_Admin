@@ -6,6 +6,7 @@ import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button } 
 const EditConfigurationPage = () => {
     const { id } = useParams();
     const history = useHistory();
+    const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
         name: '',
         platform_name: '',
@@ -17,8 +18,8 @@ const EditConfigurationPage = () => {
         customer_number: '',
         udid: '',
         etid: '',
-        status: false,
-        is_test: false
+        status: '',
+        is_test: ''
     });
 
     useEffect(() => {
@@ -27,8 +28,8 @@ const EditConfigurationPage = () => {
                 const response = await axios.get(`/tango-settings/${id}`);
                 setFormData({
                     ...response.data,
-                    status: response.data.status === 1,
-                    is_test: response.data.is_test === 1
+                    status: parseInt(response.data.status),
+                    is_test: parseInt(response.data.is_test)
                 });
             } catch (error) {
                 console.error('Failed to fetch configuration:', error);
@@ -40,12 +41,13 @@ const EditConfigurationPage = () => {
     }, [id]);
 
     const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
+        const { name, type, checked } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: type === 'checkbox' ? checked : value
+            [name]: type === 'checkbox' ? (prev[name] === 1 ? 0 : 1) : e.target.value
         }));
     };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -79,13 +81,13 @@ const EditConfigurationPage = () => {
                                 ))}
                                 <FormGroup check>
                                     <Label check>
-                                        <Input type="checkbox" name="status" checked={formData.status} onChange={handleChange} />{' '}
+                                        <Input type="checkbox" name="status" checked={formData.status === 1} onChange={handleChange} />{' '}
                                         Active
                                     </Label>
                                 </FormGroup>
                                 <FormGroup check>
                                     <Label check>
-                                        <Input type="checkbox" name="is_test" checked={formData.is_test} onChange={handleChange} />{' '}
+                                        <Input type="checkbox" name="is_test" checked={formData.is_test === 0} onChange={handleChange} />{' '}
                                         Test Configuration
                                     </Label>
                                 </FormGroup>
