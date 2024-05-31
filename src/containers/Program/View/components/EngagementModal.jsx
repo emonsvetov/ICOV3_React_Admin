@@ -216,65 +216,65 @@ const EngagementModal = ({
                 </Col>
               </Row>
 
-              {/*<Row>*/}
-              {/*  <Col>*/}
-              {/*    <h4 className="padding-10">Peer to Peer: </h4>*/}
-              {/*  </Col>*/}
-              {/*</Row>*/}
-              {/*<Row>*/}
-              {/*  <Col md="6" lg="4" xl="4">*/}
-              {/*    <div className="form__form-group">*/}
-              {/*      <CheckboxField*/}
-              {/*        name="uses_peer2peer"*/}
-              {/*        checked={data?.uses_peer2peer}*/}
-              {/*        label="Enable Peer to Peer"*/}
-              {/*        onChange={() => {data.uses_peer2peer = !data.uses_peer2peer}}*/}
-              {/*      />*/}
-              {/*    </div>*/}
-              {/*  </Col>*/}
-              {/*  <Col md="6" lg="4" xl="4">*/}
-              {/*    <div className="form__form-group">*/}
-              {/*      <CheckboxField*/}
-              {/*        name="allow_award_peers_not_logged_into"*/}
-              {/*        label="Allow participants to award peers in any program he is not currently logged into"*/}
-              {/*        checked={data?.allow_award_peers_not_logged_into}*/}
-              {/*        onChange={() => {data.allow_award_peers_not_logged_into = !data.allow_award_peers_not_logged_into}}*/}
-              {/*      />*/}
-              {/*    </div>*/}
-              {/*  </Col>*/}
-              {/*  <Col md="6" lg="4" xl="4">*/}
-              {/*    <div className="form__form-group">*/}
-              {/*      <CheckboxField*/}
-              {/*        name="allow_search_peers_not_logged_into"*/}
-              {/*        label="Allow participants to search for peers in any program he is not currently logged into"*/}
-              {/*        checked={data?.allow_search_peers_not_logged_into}*/}
-              {/*        onChange={() => {data.allow_search_peers_not_logged_into = !data.allow_search_peers_not_logged_into}}*/}
-              {/*      />*/}
-              {/*    </div>*/}
-              {/*  </Col>*/}
-              {/*</Row>*/}
-              {/*<Row>*/}
-              {/*  <Col md="6" lg="4" xl="4">*/}
-              {/*    <div className="form__form-group">*/}
-              {/*      <CheckboxField*/}
-              {/*        name="uses_hierarchy_peer2peer"*/}
-              {/*        label="Use hierarchy peer 2 peer"*/}
-              {/*        checked={data?.uses_hierarchy_peer2peer}*/}
-              {/*        onChange={() => {data.uses_hierarchy_peer2peer = !data.uses_hierarchy_peer2peer}}*/}
-              {/*      />*/}
-              {/*    </div>*/}
-              {/*  </Col>*/}
-              {/*  <Col md="6" lg="4" xl="4">*/}
-              {/*    <div className="form__form-group">*/}
-              {/*      <CheckboxField*/}
-              {/*        name="share_siblings_peer2peer"*/}
-              {/*        label="Share sibling's peer to peer"*/}
-              {/*        checked={data?.share_siblings_peer2peer}*/}
-              {/*        onChange={() => {data.share_siblings_peer2peer = !data.share_siblings_peer2peer}}*/}
-              {/*      />*/}
-              {/*    </div>*/}
-              {/*  </Col>*/}
-              {/*</Row>*/}
+              <Row>
+                <Col>
+                  <h4 className="padding-10">Peer to Peer: </h4>
+                </Col>
+              </Row>
+              <Row>
+                <Col md="6" lg="4" xl="4">
+                  <div className="form__form-group">
+                    <CheckboxField
+                      name="uses_peer2peer"
+                      checked={data?.uses_peer2peer}
+                      label="Enable Peer to Peer"
+                      onChange={() => {data.uses_peer2peer = !data.uses_peer2peer}}
+                    />
+                  </div>
+                </Col>
+                <Col md="6" lg="4" xl="4">
+                  <div className="form__form-group">
+                    <CheckboxField
+                      name="allow_award_peers_not_logged_into"
+                      label="Allow participants to award peers in any program he is not currently logged into"
+                      checked={data?.allow_award_peers_not_logged_into}
+                      onChange={() => {data.allow_award_peers_not_logged_into = !data.allow_award_peers_not_logged_into}}
+                    />
+                  </div>
+                </Col>
+                <Col md="6" lg="4" xl="4">
+                  <div className="form__form-group">
+                    <CheckboxField
+                      name="allow_search_peers_not_logged_into"
+                      label="Allow participants to search for peers in any program he is not currently logged into"
+                      checked={data?.allow_search_peers_not_logged_into}
+                      onChange={() => {data.allow_search_peers_not_logged_into = !data.allow_search_peers_not_logged_into}}
+                    />
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col md="6" lg="4" xl="4">
+                  <div className="form__form-group">
+                    <CheckboxField
+                      name="uses_hierarchy_peer2peer"
+                      label="Use hierarchy peer 2 peer"
+                      checked={data?.uses_hierarchy_peer2peer}
+                      onChange={() => {data.uses_hierarchy_peer2peer = !data.uses_hierarchy_peer2peer}}
+                    />
+                  </div>
+                </Col>
+                <Col md="6" lg="4" xl="4">
+                  <div className="form__form-group">
+                    <CheckboxField
+                      name="share_siblings_peer2peer"
+                      label="Share sibling's peer to peer"
+                      checked={data?.share_siblings_peer2peer}
+                      onChange={() => {data.share_siblings_peer2peer = !data.share_siblings_peer2peer}}
+                    />
+                  </div>
+                </Col>
+              </Row>
 
               <Row>
                 <Col>
