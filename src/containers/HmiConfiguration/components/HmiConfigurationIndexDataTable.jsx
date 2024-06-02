@@ -3,7 +3,6 @@ import { useTable, useFlexLayout } from 'react-table';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { HMI_CONFIGURATION_COLUMNS } from './columns';
-import { formatDate } from '@/shared/helpers';
 
 const HmiConfigurationTable = () => {
     const [data, setData] = useState([]);
@@ -11,8 +10,8 @@ const HmiConfigurationTable = () => {
 
     const fetchData = async () => {
         try {
-            const result = await axios.get(`/hmi`);
-            //setData(result.data);
+            const result = await axios.get('/hmi');
+            setData(result.data.data);
         } catch (error) {
             console.error('Failed to fetch data:', error);
         }

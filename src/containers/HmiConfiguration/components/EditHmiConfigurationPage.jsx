@@ -10,9 +10,8 @@ const EditHmiConfigurationPage = () => {
     const [formData, setFormData] = useState({
         hmi_name: '',
         hmi_username: '',
-        hmi_password: '',
         hmi_url: '',
-        hmi_is_test: false
+        hmi_is_test: ''
     });
 
     useEffect(() => {
@@ -76,11 +75,11 @@ const EditHmiConfigurationPage = () => {
                                     <Input type="text" name="hmi_username" id="hmi_username" value={formData.hmi_username} onChange={handleChange} invalid={!!errors.hmi_username} />
                                     <FormFeedback>{errors.hmi_username}</FormFeedback>
                                 </FormGroup>
-                                <FormGroup>
-                                    <Label for="hmi_password">HMI Password:</Label>
-                                    <Input type="password" name="hmi_password" id="hmi_password" value={formData.hmi_password} onChange={handleChange} invalid={!!errors.hmi_password} />
-                                    <FormFeedback>{errors.hmi_password}</FormFeedback>
-                                </FormGroup>
+                                {/*<FormGroup>*/}
+                                {/*    <Label for="hmi_password">HMI Password:</Label>*/}
+                                {/*    <Input type="password" name="hmi_password" id="hmi_password" value={formData.hmi_password} onChange={handleChange} invalid={!!errors.hmi_password} />*/}
+                                {/*    <FormFeedback>{errors.hmi_password}</FormFeedback>*/}
+                                {/*</FormGroup>*/}
                                 <FormGroup>
                                     <Label for="hmi_url">HMI URL:</Label>
                                     <Input type="text" name="hmi_url" id="hmi_url" value={formData.hmi_url} onChange={handleChange} invalid={!!errors.hmi_url} />

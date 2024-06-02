@@ -8,7 +8,7 @@ const HmiConfigurationIndex = () => {
         <Container className="dashboard">
             <Row>
                 <Col md={12}>
-                    <h3 className="page-title">Tango Settings</h3>
+                    <h3 className="page-title">Hmi Configuration</h3>
                     <h3 className="page-subhead subhead"><Link className="" to="/">Home</Link></h3>
                 </Col>
             </Row>

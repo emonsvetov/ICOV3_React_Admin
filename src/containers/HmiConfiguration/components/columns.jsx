@@ -29,7 +29,7 @@ export const HMI_CONFIGURATION_COLUMNS = (handleEditClick) => [
         id: 'actions',
         Header: "Actions",
         Cell: ({ row }) => (
-            <div style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', gap: '5px' }}>
+            <div style={{ textAlign: 'left', display: 'flex', justifyContent: 'flex-start', gap: '5px' }}>
                 <Link to={`/hmi/edit/${row.original.id}`} className="btn btn-sm btn-primary action-link" aria-label={`Edit configuration ${row.original.hmi_name}`}>
                     Edit
                 </Link>
