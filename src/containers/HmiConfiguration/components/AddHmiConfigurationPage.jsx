@@ -3,20 +3,13 @@ import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { Card, CardBody, Col, Container, Row, Button, FormGroup, Label, Input, FormFeedback } from 'reactstrap';
 
-const AddConfigurationPage = () => {
+const AddHmiConfigurationPage = () => {
     const [formData, setFormData] = useState({
-        name: '',
-        platform_name: '',
-        platform_key: '',
-        platform_url: '',
-        platform_mode: '',
-        account_identifier: '',
-        account_number: '',
-        customer_number: '',
-        udid: '',
-        etid: '',
-        status: false,
-        is_test: false
+        hmi_name: '',
+        hmi_username: '',
+        hmi_password: '',
+        hmi_url: '',
+        hmi_is_test: false
     });
     const [errors, setErrors] = useState({});
     const history = useHistory();
@@ -25,11 +18,7 @@ const AddConfigurationPage = () => {
         let valid = true;
         let newErrors = {};
 
-        const requiredFields = [
-            'name', 'platform_name', 'platform_key', 'platform_url',
-            'platform_mode', 'account_identifier', 'customer_number',
-            'udid', 'etid'
-        ];
+        const requiredFields = ['hmi_name', 'hmi_username', 'hmi_password', 'hmi_url'];
 
         requiredFields.forEach(field => {
             if (!formData[field]) {
@@ -46,7 +35,7 @@ const AddConfigurationPage = () => {
         const { name, type, checked } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: type === 'checkbox' ? (prev[name] === 1 ? 0 : 1) : e.target.value
+            [name]: type === 'checkbox' ? (prev[name] ? 0 : 1) : e.target.value
         }));
         if (errors[name]) {
             setErrors(prev => ({
@@ -65,14 +54,13 @@ const AddConfigurationPage = () => {
 
         const submitData = {
             ...formData,
-            status: formData.status ? 1 : 0,
-            is_test: formData.is_test ? 0 : 1
+            hmi_is_test: formData.hmi_is_test ? 1 : 0
         };
 
         try {
-            await axios.post(`/tango-settings/create`, submitData);
+            await axios.post(`/hmi/create`, submitData);
             alert('Configuration added successfully!');
-            history.push('/tango-settings');
+            history.push('/hmi');
         } catch (error) {
             console.error('Failed to add new configuration:', error);
             alert('Error adding new configuration');
@@ -83,7 +71,7 @@ const AddConfigurationPage = () => {
         <Container>
             <Row>
                 <Col md={12}>
-                    <h2>Add New Tango Configuration</h2>
+                    <h2>Add New HMI Configuration</h2>
                 </Col>
             </Row>
             <Row>
@@ -92,7 +80,7 @@ const AddConfigurationPage = () => {
                         <CardBody>
                             <form onSubmit={handleSubmit}>
                                 <Row>
-                                    {['name', 'platform_name', 'platform_key', 'platform_url', 'platform_mode', 'account_identifier', 'account_number', 'customer_number', 'udid', 'etid'].map(field => (
+                                    {['hmi_name', 'hmi_username', 'hmi_password', 'hmi_url'].map(field => (
                                         <Col md={6} key={field}>
                                             <FormGroup>
                                                 <Label for={field}>{field.replace(/_/g, ' ').charAt(0).toUpperCase() + field.replace(/_/g, ' ').slice(1)}:</Label>
@@ -111,13 +99,7 @@ const AddConfigurationPage = () => {
                                     <Col md={6}>
                                         <FormGroup check className="mb-2 mr-sm-2 mb-sm-0 pt-2">
                                             <Label check>
-                                                <Input type="checkbox" name="status" checked={formData.status} onChange={handleChange} />{' '}
-                                                Active
-                                            </Label>
-                                        </FormGroup>
-                                        <FormGroup check className="mb-2 mr-sm-2 mb-sm-0">
-                                            <Label check>
-                                                <Input type="checkbox" name="is_test" checked={formData.is_test} onChange={handleChange} />{' '}
+                                                <Input type="checkbox" name="hmi_is_test" checked={formData.hmi_is_test} onChange={handleChange} />{' '}
                                                 Test Configuration
                                             </Label>
                                         </FormGroup>
@@ -138,4 +120,4 @@ const AddConfigurationPage = () => {
     );
 };
 
-export default AddConfigurationPage;
+export default AddHmiConfigurationPage;

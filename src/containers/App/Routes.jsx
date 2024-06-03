@@ -67,9 +67,12 @@ import TangoOrder from '../PhysicalOrders/tango_order';
 import GlobalOrder from '../Reports/Orders/view_order';
 import CronJobsIndex from '../CronJobs/index';
 import TangoSettingsIndex from '../TangoSettings/index';
+import HmiConfigurationIndex from '../HmiConfiguration/index';
 import EditConfigurationPage from "../TangoSettings/components/EditConfigurationPage";
 import ViewConfigurationPage from "../TangoSettings/components/ViewConfigurationPage";
 import AddConfigurationPage from "../TangoSettings/components/AddConfigurationPage";
+import AddHmiConfigurationPage from "../HmiConfiguration/components/AddHmiConfigurationPage";
+import EditHmiConfigurationPage from "../HmiConfiguration/components/EditHmiConfigurationPage";
 
 import {
   AwardDetail,
@@ -137,6 +140,14 @@ const CronJobs = () => (
   <Switch>
     <Route exact path="/cron-jobs" component={CronJobsIndex} />
   </Switch>
+);
+
+const HmiConfiguration = () => (
+    <Switch>
+        <Route exact path="/hmi" component={HmiConfigurationIndex} />
+        <Route path="/hmi/create" component={AddHmiConfigurationPage} />
+        <Route path="/hmi/edit/:id" component={EditHmiConfigurationPage} />
+    </Switch>
 );
 
 const TangoSettings = () => (
@@ -270,6 +281,7 @@ const privateRoutes = () => {
         <PrivateRoute path="/merchants" component={Merchants} />
         <PrivateRoute path="/cron-jobs" component={CronJobs} />
           <PrivateRoute path="/tango-settings" component={TangoSettings} />
+          <PrivateRoute path="/hmi" component={HmiConfiguration} />
         <PrivateRoute path="/users" component={Users} />
         <PrivateRoute path="/roles" component={Roles} />
         <PrivateRoute path="/permissions" component={Permissions} />

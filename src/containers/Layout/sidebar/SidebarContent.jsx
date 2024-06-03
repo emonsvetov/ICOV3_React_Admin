@@ -26,6 +26,13 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
           </>
         );
       break;
+        case 'hmi_configuration':
+            return (
+                <>
+                    <SidebarLink title="Hmi Configuration" route="/hmi" />
+                </>
+            );
+            break;
         case 'cron_jobs':
             return (
                 <>
@@ -84,6 +91,11 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
                 <SidebarLink title="Tango Settings"  route="/tango-settings" />
             )
             break;
+        case 'hmi_configuration':
+            return (
+                <SidebarLink title="Hmi Configuration"  route="/hmi" />
+            )
+            break;
       default:
       break;
     }
@@ -135,6 +147,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
               <SidebarCategory title="Dev tools" icon="hand">
                   <>
                       <ProtectedLink type="cron_jobs"/>
+                      <ProtectedLink type="hmi_configuration"/>
                       <ProtectedLink type="migration"/>
                       <ProtectedLink type="tango_settings"/>
                   </>
