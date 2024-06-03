@@ -5,7 +5,7 @@ import {formatCurrency} from '@/shared/helpers'
 export const TABLE_COLUMNS = [
   {
     Header: "Program Name",
-    accessor: "name",
+    accessor: "programName",
   },
   {
     Header: "Program ID",
