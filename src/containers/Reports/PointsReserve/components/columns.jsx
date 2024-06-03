@@ -64,7 +64,9 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => Number(row.values.value_awarded) + sum, 0),
+                () => rows
+                    .filter(row =>row.original.dinamicDepth === 0)
+                    .reduce((sum, row) => Number(row.original.subRows[row.original.subRows.length - 1].value_awarded) + sum, 0),
                 [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -89,7 +91,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => Number(row.values.expired) + sum, 0),
+                () => rows.filter(row => row.original.dinamicDepth === 0)
+                    .reduce((sum, row) => Number(row.original.subRows[row.original.subRows.length - 1].expired) + sum, 0),
                 [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -114,7 +117,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => Number(row.values.reclaimed) + sum, 0),
+                () => rows.filter(row => row.original.dinamicDepth === 0)
+                    .reduce((sum, row) => Number(row.original.subRows[row.original.subRows.length - 1].reclaimed) + sum, 0),
                 [rows],
             );
 
@@ -140,7 +144,8 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => Number(row.values.redeemed) + sum, 0),
+                () => rows.filter(row => row.original.dinamicDepth === 0)
+                    .reduce((sum, row) => Number(row.original.subRows[row.original.subRows.length - 1].redeemed) + sum, 0),
                 [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -161,7 +166,7 @@ export const PROGRAM_COLUMNS = [
                     if (row.original.dinamicDepth === 0) {
                         const subRowsTotal = row.original.subRows
                             .filter(subRow => subRow.name !== 'TOTAL')
-                            .reduce((acc, subRow) => acc + subRow.this_unredeemed, 0);
+                            .reduce((acc, subRow) => acc + subRow.value_unredeemed, 0);
                         return `$${parseFloat(subRowsTotal).toFixed(2)}`
                     }
                     if (row.original.name === 'TOTAL') {
@@ -172,7 +177,8 @@ export const PROGRAM_COLUMNS = [
                 Footer: (info) => {
                     const {rows, flatRows} = info;
                     const totalValue = useMemo(
-                        () => rows.reduce((sum, row) => Number(row.values.this_unredeemed) + sum, 0),
+                        () => rows.filter(row => row.original.dinamicDepth === 0)
+                            .reduce((sum, row) => Number(row.original.subRows[row.original.subRows.length - 1].this_unredeemed) + sum, 0),
                         [rows],
                     );
                     return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -197,7 +203,8 @@ export const PROGRAM_COLUMNS = [
                 Footer: (info) => {
                     const {rows, flatRows} = info;
                     const totalValue = useMemo(
-                        () => rows.reduce((sum, row) => Number(row.values.last_unredeemed) + sum, 0),
+                        () => rows.filter(row => row.original.dinamicDepth === 0)
+                            .reduce((sum, row) => Number(row.original.subRows[row.original.subRows.length - 1].last_unredeemed) + sum, 0),
                         [rows],
                     );
                     return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;
@@ -248,7 +255,7 @@ export const PROGRAM_COLUMNS = [
         Footer: (info) => {
             const {rows, flatRows} = info;
             const totalValue = useMemo(
-                () => rows.reduce((sum, row) => Number(row.values.calculated_reserve) + sum, 0),
+                () => rows.filter(row => row.original.dinamicDepth === 0).reduce((sum, row) => Number(row.original.subRows[row.original.subRows.length - 1].calculated_reserve) + sum, 0),
                 [rows],
             );
             return <span>{`$${parseFloat(totalValue).toFixed(2)}`}</span>;

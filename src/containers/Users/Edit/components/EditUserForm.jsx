@@ -11,14 +11,27 @@ import {useDispatch, sendFlashMessage} from "@/shared/components/flash"
 import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 
 const patchRole4Select = (user) => {
-    if( user.roles.length > 0)  {
-        let tmp = Object.values(user.roles).filter(key => key.name === 'Admin' || key.name === 'Super Admin' )
-        user.role_id = {
-            value:tmp[0].id,
-            label: tmp[0].name
+    if (user.roles.length > 0) {
+        let tmp = Object.values(user.roles).filter(key => key.name === 'Admin' || key.name === 'Super Admin');
+
+        if (tmp.length > 0) {
+            user.role_id = {
+                value: tmp[0].id,
+                label: tmp[0].name
+            };
+        } else {
+            user.role_id = {
+                value: '',
+                label: 'No Role Assigned'
+            };
         }
+    } else {
+        user.role_id = {
+            value: '',
+            label: 'No Roles Available'
+        };
     }
-    return user
+    return user;
 }
 
 

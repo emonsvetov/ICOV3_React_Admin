@@ -26,10 +26,24 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
           </>
         );
       break;
+        case 'hmi_configuration':
+            return (
+                <>
+                    <SidebarLink title="Hmi Configuration" route="/hmi" />
+                </>
+            );
+            break;
         case 'cron_jobs':
             return (
                 <>
                     <SidebarLink title="V2 Program Migration" route="/migration" />
+                </>
+            );
+            break;
+        case 'cron_jobs':
+            return (
+                <>
+                    <SidebarLink title="Tango Settings" route="/tango-settings" />
                 </>
             );
             break;
@@ -72,6 +86,16 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
           <SidebarLink title="V2 Program Migration"  route="/migration" />
         )
       break;
+        case 'tango_settings':
+            return (
+                <SidebarLink title="Tango Settings"  route="/tango-settings" />
+            )
+            break;
+        case 'hmi_configuration':
+            return (
+                <SidebarLink title="Hmi Configuration"  route="/hmi" />
+            )
+            break;
       default:
       break;
     }
@@ -123,7 +147,9 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
               <SidebarCategory title="Dev tools" icon="hand">
                   <>
                       <ProtectedLink type="cron_jobs"/>
+                      <ProtectedLink type="hmi_configuration"/>
                       <ProtectedLink type="migration"/>
+                      <ProtectedLink type="tango_settings"/>
                   </>
               </SidebarCategory>
           }

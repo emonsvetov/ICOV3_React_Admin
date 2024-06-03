@@ -9,9 +9,11 @@ import { getAllPrograms } from '@/shared/apiHelper.jsx';
 
 const AwardDetailIndex = ({organization}) => {
   const [defaultPrograms, setDefaultPrograms] = useState([]);
+  const [wait, setWait] = useState(false);
 
   useEffect(() => {
-    if ( isEmpty(defaultPrograms) ){
+    if ( isEmpty(defaultPrograms) && wait === false ){
+      setWait(true);
       getAllPrograms( "minimal=true&limit=99999999" )
           .then( response => {
             const data = response?.data ? response.data : [];
