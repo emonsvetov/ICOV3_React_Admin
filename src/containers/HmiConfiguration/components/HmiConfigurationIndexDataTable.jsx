@@ -10,7 +10,7 @@ const HmiConfigurationTable = () => {
 
     const fetchData = async () => {
         try {
-            const result = await axios.get('/hmi');
+            const result = await axios.get(`/hmi`);
             setData(result.data.data);
         } catch (error) {
             console.error('Failed to fetch data:', error);
@@ -26,7 +26,7 @@ const HmiConfigurationTable = () => {
     }, [history]);
 
     const handleAddClick = () => {
-        history.push("/hmi/create");
+        history.push(`/hmi/create`);
     };
 
     const columns = useMemo(() => HMI_CONFIGURATION_COLUMNS(handleEditClick), [handleEditClick]);
