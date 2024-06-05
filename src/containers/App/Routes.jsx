@@ -66,6 +66,13 @@ import EditOrder from '../PhysicalOrders/edit_order';
 import TangoOrder from '../PhysicalOrders/tango_order';
 import GlobalOrder from '../Reports/Orders/view_order';
 import CronJobsIndex from '../CronJobs/index';
+import TangoSettingsIndex from '../TangoSettings/index';
+import HmiConfigurationIndex from '../HmiConfiguration/index';
+import EditConfigurationPage from "../TangoSettings/components/EditConfigurationPage";
+import ViewConfigurationPage from "../TangoSettings/components/ViewConfigurationPage";
+import AddConfigurationPage from "../TangoSettings/components/AddConfigurationPage";
+import AddHmiConfigurationPage from "../HmiConfiguration/components/AddHmiConfigurationPage";
+import EditHmiConfigurationPage from "../HmiConfiguration/components/EditHmiConfigurationPage";
 
 import {
   AwardDetail,
@@ -93,6 +100,8 @@ import {
 
 import TreeView from '../TreeViewBasic';
 import BudgetComparison from "../Program/View/Reports/BudgetComparison";
+import ImportSettings from '../Import/settings';
+
 
 const Pages = () => (
   <Switch>
@@ -131,6 +140,23 @@ const CronJobs = () => (
   <Switch>
     <Route exact path="/cron-jobs" component={CronJobsIndex} />
   </Switch>
+);
+
+const HmiConfiguration = () => (
+    <Switch>
+        <Route exact path="/hmi" component={HmiConfigurationIndex} />
+        <Route path="/hmi/create" component={AddHmiConfigurationPage} />
+        <Route path="/hmi/edit/:id" component={EditHmiConfigurationPage} />
+    </Switch>
+);
+
+const TangoSettings = () => (
+    <Switch>
+        <Route exact path="/tango-settings" component={TangoSettingsIndex} />
+        <Route path="/tango-settings/create" component={AddConfigurationPage} />
+        <Route path="/tango-settings/edit/:id" component={EditConfigurationPage} />
+        <Route path="/tango-settings/view/:id" component={ViewConfigurationPage} />
+    </Switch>
 );
 
 const Users = () => (
@@ -228,6 +254,7 @@ const Imports = () => (
     <Route exact path="/import" component={Import} />
     <Route exact path="/import/list" component={ImportList} />
     <Route exact path="/import/view/:id" component={ImportView} />
+    <Route exact path="/import/settings" component={ImportSettings} />
   </Switch>
 );
 
@@ -253,6 +280,8 @@ const privateRoutes = () => {
         <PrivateRoute path="/program" component={Programs} />
         <PrivateRoute path="/merchants" component={Merchants} />
         <PrivateRoute path="/cron-jobs" component={CronJobs} />
+          <PrivateRoute path="/tango-settings" component={TangoSettings} />
+          <PrivateRoute path="/hmi" component={HmiConfiguration} />
         <PrivateRoute path="/users" component={Users} />
         <PrivateRoute path="/roles" component={Roles} />
         <PrivateRoute path="/permissions" component={Permissions} />

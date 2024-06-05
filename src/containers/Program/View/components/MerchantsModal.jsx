@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps';
 import {
   Modal,
@@ -9,7 +9,7 @@ import {
   ButtonToolbar,
   Container,
   Row,
-  Col,
+  Col
 } from "reactstrap";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import {
@@ -79,6 +79,41 @@ const reducer = (state, { type, payload }) => {
 };
 
 const MerchantsModal = ({ isOpen, setOpen, toggle, theme, rtl, organization, data }) => {
+
+  const [relationData, setRelationData] = useState([]);
+  const [inherited, setInherited] = useState(false);
+
+  const fetchProgramMerchantData = async (program) => {
+    try {
+      const response = await axios.get(
+        `/organization/${program.organization_id}/program/${program.id}/merchant?minimal=true&sortby=name&status=active`
+      );
+      let result = response.data?.merchants ? response.data.merchants : response.data;
+      const inheritsFrom = response.data?.inheritsFrom ? response.data.inheritsFrom : false
+      let temp_relation = [];
+      
+      result.map((item, index) => {
+        let {id}= item;
+        let {featured, cost_to_program}= item.pivot;
+        temp_relation.push({id, featured, cost_to_program});
+      });
+      setRelationData(temp_relation);
+      // console.log(temp_relation)
+      if( inheritsFrom )  {
+        setInherited(inheritsFrom)
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    if (data.id) {
+      fetchProgramMerchantData(data);
+    }
+  }, [data]);
+
+
   if(!organization || !data) return 'loading...'
   return (
     <Modal
@@ -88,12 +123,24 @@ const MerchantsModal = ({ isOpen, setOpen, toggle, theme, rtl, organization, dat
     >
       <CloseButton onClick={toggle} />
       <ModalBody className="modal-lg">
-        <TableWrapper toggle={toggle} organization={organization} program={data} />
+        <Container className="merchant-view">
+          <Row className="w100">
+            <Col md="6" lg="6" xl="6">
+              <h3>Merchants</h3>
+              <h5 className="colorgrey">Programs / {data?.name}</h5>
+            </Col>
+          </Row>
+          {inherited && <div className="text-center mt-3 px-2">
+            <p>Assigning merchants to sub-programs is not supported yet. Merchant relationships for this program are inheritied from parent program <strong>{inherited.name}</strong>.</p>
+            <p>Go to <Link to={`/program/view/${inherited.id}`} onClick={toggle}>{inherited.name}</Link> and click "Merchants" tab to manage merchants.</p>
+            </div>}
+          {!inherited && <TableWrapper toggle={toggle} organization={organization} program={data} relationData={relationData} inherited={inherited} />}
+        </Container>
       </ModalBody>
     </Modal>
   );
 };
-const DataTable = ({ toggle, organization, program }) => {
+const DataTable = ({ toggle, organization, program, relationData }) => {
 
   const fetchMerchantData = async(
     page,
@@ -139,37 +186,10 @@ const DataTable = ({ toggle, organization, program }) => {
   const LOGO_PUBLIC_URL = `${process.env.REACT_APP_API_STORAGE_URL}`;
 
   // console.log(program)
-  const [relationData, setRelationData] = useState([]);
   const [filter, setFilter] = useState({ keyword: "" });
 
-  const fetchProgramMerchantData = async () => {
-    try {
-      const response = await axios.get(
-        `/organization/${program.organization_id}/program/${program.id}/merchant?minimal=true&sortby=name&status=active`
-      );
-      let result = response.data;
-      let temp_relation = [];
-      
-      result.map((item, index) => {
-        let {id}= item;
-        let {featured, cost_to_program}= item.pivot;
-        temp_relation.push({id, featured, cost_to_program});
-      });
-      setRelationData(temp_relation);
-      console.log(temp_relation)
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    if (program.id) {
-
-      fetchProgramMerchantData();
-    }
-  }, [program]);
-
   const handleToggle = async (type, value, id) => {
+
     let response;
     let postData = {program_id: program.id, merchant_id: id};
     
@@ -429,14 +449,7 @@ const DataTable = ({ toggle, organization, program }) => {
   }
   if (isSuccess)
     return (
-      <Container className="merchant-view">
-        <Row className="w100">
-          <Col md="6" lg="6" xl="6">
-            <h3>Merchants</h3>
-            <h5 className="colorgrey">Programs / {program?.name}</h5>
-          </Col>
-        </Row>
-
+      <>
         <div className="table merchant-table pt-4">
           <form className="form form--horizontal">
             <div className="form__form-group ">
@@ -514,7 +527,7 @@ const DataTable = ({ toggle, organization, program }) => {
             dataLength={rows.length}
           />
         )}
-      </Container>
+      </>
     );
 };
 const Sorting = ({ column }) => (
@@ -529,10 +542,10 @@ const Sorting = ({ column }) => (
   </span>
 );
 
-const TableWrapper = ({ toggle, organization, program }) => {
+const TableWrapper = ({ toggle, organization, program, relationData, inherited }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <DataTable toggle={toggle} organization={organization} program={program} />
+      <DataTable toggle={toggle} organization={organization} program={program} relationData={relationData} inherited={inherited} />
     </QueryClientProvider>
   );
 };

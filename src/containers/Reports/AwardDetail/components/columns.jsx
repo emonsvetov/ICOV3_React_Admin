@@ -58,7 +58,7 @@ export const TABLE_COLUMNS = [
   {
     Header: "From",
     accessor: data => (
-      data.awarder_first_name + " " + data.awarder_last_name
+      data.awarder_full
     ),
     width: 120
   },

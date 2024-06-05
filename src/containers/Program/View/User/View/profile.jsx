@@ -24,7 +24,6 @@ import getUserPointBalance from "../../../../../service/getUserBalances";
 const queryClient = new QueryClient();
 
 const ProgramViewUserProfile = ({ organization, program, data }) => {
-  console.log(data)
   let { programId, userId } = useParams();
   const [pointsBalance, setPointsBalance] = useState();
   useEffect(() => {

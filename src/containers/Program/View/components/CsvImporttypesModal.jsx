@@ -10,7 +10,7 @@ import axios from "axios";
 import { sendFlashMessage } from "@/shared/components/flash";
 import { getProgramAction } from "@/redux/actions/programActions";
 
-const ReportsModal = ({ dispatch, data, isOpen, toggle, theme, rtl }) => {
+const CsvImporttypesModal = ({ dispatch, data, isOpen, toggle, theme, rtl, organization }) => {
   const [loading, setLoading] = useState(false);
   const [checkboxOptions, setCheckboxOptions] = useState([]);
   const [selectedCheckboxes, setSelectedCheckboxes] = useState(new Set());
@@ -24,13 +24,13 @@ const ReportsModal = ({ dispatch, data, isOpen, toggle, theme, rtl }) => {
 
     const fetchData = async () => {
       try {
-        const reportsResponse = axios.get("/reports");
-        const selectedReportsResponse = axios.get(`/reports/${data.id}/selected`);
+        const csvImporttypeResponse = axios.get(`/organization/${organization.id}/importtype`);
+        const selectedCsvImporttypeResponse = axios.get(`/organization/${organization.id}/program/${data.id}/importtype?onlyIds=1`);
 
-        const [reportsData, selectedReportsData] = await Promise.all([reportsResponse, selectedReportsResponse]);
+        const [csvImporttypesData, selectedCsvImporttypesData] = await Promise.all([csvImporttypeResponse, selectedCsvImporttypeResponse]);
 
-        setCheckboxOptions(reportsData.data);
-        setSelectedCheckboxes(new Set(selectedReportsData.data));
+        setCheckboxOptions(csvImporttypesData.data);
+        setSelectedCheckboxes(new Set(selectedCsvImporttypesData.data));
         setIsDataLoaded(true);
       } catch (error) {
         console.error("Error loading data:", error);
@@ -76,12 +76,12 @@ const ReportsModal = ({ dispatch, data, isOpen, toggle, theme, rtl }) => {
     setLoading(true);
     const dataToSend = {
       ...data,
-      selected_reports: Array.from(selectedCheckboxes),
+      selected_csv_importtypes: Array.from(selectedCheckboxes),
     };
 
     try {
       const response = await axios.put(
-        `/organization/${data.organization_id}/program/${data.id}/save-selected-reports`,
+        `/organization/${data.organization_id}/program/${data.id}/importtype`,
         dataToSend
       );
       setLoading(false);
@@ -96,6 +96,8 @@ const ReportsModal = ({ dispatch, data, isOpen, toggle, theme, rtl }) => {
     }
   };
 
+  // console.log(selectedCheckboxes)
+
   return (
     <Modal className={`modal-program modal-lg ${theme.className} ${rtl.direction}-support`} isOpen={isOpen} toggle={toggle}>
       <Form onSubmit={onSubmitForm} validate={(values) => formValidation.validateForm(values)}>
@@ -104,7 +106,7 @@ const ReportsModal = ({ dispatch, data, isOpen, toggle, theme, rtl }) => {
             <ModalHeader className="w100">
               <Row className="w100">
                 <Col md="6" lg="6" xl="6">
-                  <h3>Reports</h3>
+                  <h3>Import Settings</h3>
                 </Col>
                 <Col md="6" lg="6" xl="6" className="text-right">
                   <ButtonToolbar className="modal__footer flex justify-content-right w100">
@@ -157,10 +159,11 @@ const ReportsModal = ({ dispatch, data, isOpen, toggle, theme, rtl }) => {
   );
 };
 
-ReportsModal.propTypes = {
+CsvImporttypesModal.propTypes = {
   theme: ThemeProps.isRequired,
   rtl: RTLProps.isRequired,
   data: Object.isRequired,
+  organization: Object.isRequired,
 };
 
-export default withRouter(connect((state) => ({ theme: state.theme, rtl: state.rtl, data: state.program }))(ReportsModal));
+export default withRouter(connect((state) => ({ theme: state.theme, rtl: state.rtl, data: state.program, organization: state.organization }))(CsvImporttypesModal));

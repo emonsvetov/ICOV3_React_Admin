@@ -448,3 +448,13 @@
         text-decoration: none;
       }
 }
+//React dropzone uploader: upload content modal
+.dzu-previewFileNameError{
+    width: 50%;
+}
+.modal-event-hierarchy-list.modal-dialog {
+    max-width: 550px;
+}
+.modal-event-hierarchy .modal-content, .modal-event-hierarchy-list .modal-content{
+    padding: 20px !important;
+}
