@@ -65,6 +65,9 @@ const ProgramInfo = ({dispatch, organization, isOpen, toggle, data, theme, rtl})
         
         values.type = values?.type?.value
         values.status_id = values?.status?.value
+        values.bcc_email_list = values.bcc_email_list ?? '';
+        values.cc_email_list = values.cc_email_list ?? '';
+
         const savedata  = {...data, ...values}
 
         delete savedata["status"];
