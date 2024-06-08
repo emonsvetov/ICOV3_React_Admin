@@ -67,6 +67,7 @@ import TangoOrder from '../PhysicalOrders/tango_order';
 import GlobalOrder from '../Reports/Orders/view_order';
 import CronJobsIndex from '../CronJobs/index';
 import TangoSettingsIndex from '../TangoSettings/index';
+import ServerIpsIndex from '../ServerIps/index';
 import HmiConfigurationIndex from '../HmiConfiguration/index';
 import EditConfigurationPage from "../TangoSettings/components/EditConfigurationPage";
 import ViewConfigurationPage from "../TangoSettings/components/ViewConfigurationPage";
@@ -101,6 +102,10 @@ import {
 import TreeView from '../TreeViewBasic';
 import BudgetComparison from "../Program/View/Reports/BudgetComparison";
 import ImportSettings from '../Import/settings';
+import AddServerIpsPage from "../ServerIps/components/AddServerIpsPage";
+import EditServerIpsPage from "../ServerIps/components/EditServerIpsPage";
+import ViewServerIpsPage from "../ServerIps/components/ViewServerIpsPage";
+import AddServerIpsTargetPage from "../ServerIps/components/AddServerIpsTargetPage";
 
 
 const Pages = () => (
@@ -158,6 +163,17 @@ const TangoSettings = () => (
         <Route path="/tango-settings/view/:id" component={ViewConfigurationPage} />
     </Switch>
 );
+
+const ServerIps = () => (
+    <Switch>
+        <Route exact path="/server-ips" component={ServerIpsIndex} />
+        <Route path="/server-ips/create" component={AddServerIpsPage} />
+        <Route path="/server-ips-target/create" component={AddServerIpsTargetPage} />
+        <Route path="/server-ips/edit/:id" component={EditServerIpsPage} />
+        <Route path="/server-ips/view/:id" component={ViewServerIpsPage} />
+    </Switch>
+);
+
 
 const Users = () => (
   <Switch>
@@ -282,6 +298,7 @@ const privateRoutes = () => {
         <PrivateRoute path="/cron-jobs" component={CronJobs} />
           <PrivateRoute path="/tango-settings" component={TangoSettings} />
           <PrivateRoute path="/hmi" component={HmiConfiguration} />
+          <PrivateRoute path="/server-ips" component={ServerIps} />
         <PrivateRoute path="/users" component={Users} />
         <PrivateRoute path="/roles" component={Roles} />
         <PrivateRoute path="/permissions" component={Permissions} />
