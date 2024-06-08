@@ -11,36 +11,45 @@ const AddServerIpsTargetPage = () => {
     const validateForm = () => {
         let valid = true;
         let newErrors = {};
+
         if (!formData.name) {
             valid = false;
             newErrors.name = 'This field is required';
         }
+
         setErrors(newErrors);
         return valid;
     };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
         if (errors[name]) {
-            setErrors(prev => ({ ...prev, [name]: undefined }));
+            setErrors(prev => ({
+                ...prev,
+                [name]: undefined
+            }));
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) {
-            alert('Please fill all required fields.');
             return;
         }
 
         try {
-            const response = await axios.post('/server-ips-target/create', formData);
+            await axios.post('/server-ips-target/create', formData);
             alert('Target added successfully!');
             history.push('/server-ips');
         } catch (error) {
             console.error('Failed to add new target:', error);
-            if (error.response && error.response.data && error.response.data.errors) {
+            if (error.response && error.response.status === 409) {
+                setErrors({ name: 'Target name already exists' });
+            } else if (error.response && error.response.data && error.response.data.errors) {
                 setErrors(error.response.data.errors);
             } else {
                 alert('Error adding new target');
