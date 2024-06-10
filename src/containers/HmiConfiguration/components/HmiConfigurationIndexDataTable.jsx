@@ -3,14 +3,17 @@ import { useTable, useFlexLayout } from 'react-table';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { HMI_CONFIGURATION_COLUMNS } from './columns';
+import ConfirmDeleteModal from './ConfirmDeleteModal';
 
 const HmiConfigurationTable = () => {
     const [data, setData] = useState([]);
+    const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
     const history = useHistory();
 
     const fetchData = async () => {
         try {
-            const result = await axios.get('/hmi');
+            const result = await axios.get(`/hmi`);
             setData(result.data.data);
         } catch (error) {
             console.error('Failed to fetch data:', error);
@@ -21,15 +24,31 @@ const HmiConfigurationTable = () => {
         fetchData();
     }, []);
 
+    const handleDeleteClick = useCallback((id) => {
+        setSelectedId(id);
+        setDeleteModalOpen(true);
+    }, []);
+
     const handleEditClick = useCallback((id) => {
         history.push(`/hmi/edit/${id}`);
     }, [history]);
 
     const handleAddClick = () => {
-        history.push("/hmi/create");
+        history.push(`/hmi/create`);
     };
 
-    const columns = useMemo(() => HMI_CONFIGURATION_COLUMNS(handleEditClick), [handleEditClick]);
+    const confirmDelete = async () => {
+        try {
+            await axios.delete(`/hmi/delete/${selectedId}`);
+            await fetchData();
+            setDeleteModalOpen(false);
+            alert(`HMI configuration with ID ${selectedId} has been successfully deleted.`);
+        } catch (error) {
+            alert(`Failed to delete configuration: ${error.message}`);
+        }
+    };
+
+    const columns = useMemo(() => HMI_CONFIGURATION_COLUMNS(handleEditClick, handleDeleteClick), [handleEditClick, handleDeleteClick]);
 
     const tableInstance = useTable(
         { columns, data },
@@ -46,7 +65,12 @@ const HmiConfigurationTable = () => {
 
     return (
         <div>
-            <button onClick={handleAddClick} className="btn btn-primary">Add HMI Configuration</button>
+            <button onClick={handleAddClick} className="btn btn-primary" style={{ marginBottom: '10px' }}>Add HMI Configuration</button>
+            <ConfirmDeleteModal
+                isOpen={isDeleteModalOpen}
+                onCancel={() => setDeleteModalOpen(false)}
+                onConfirm={confirmDelete}
+            />
             <table {...getTableProps()} className="table">
                 <thead>
                 {headerGroups.map(headerGroup => (

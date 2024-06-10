@@ -14,28 +14,11 @@ const AddHmiConfigurationPage = () => {
     const [errors, setErrors] = useState({});
     const history = useHistory();
 
-    const validateForm = () => {
-        let valid = true;
-        let newErrors = {};
-
-        const requiredFields = ['hmi_name', 'hmi_username', 'hmi_password', 'hmi_url'];
-
-        requiredFields.forEach(field => {
-            if (!formData[field]) {
-                valid = false;
-                newErrors[field] = 'This field is required';
-            }
-        });
-
-        setErrors(newErrors);
-        return valid;
-    };
-
     const handleChange = (e) => {
         const { name, type, checked } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: type === 'checkbox' ? (prev[name] ? 0 : 1) : e.target.value
+            [name]: type === 'checkbox' ? checked : e.target.value
         }));
         if (errors[name]) {
             setErrors(prev => ({
@@ -47,10 +30,6 @@ const AddHmiConfigurationPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!validateForm()) {
-            alert('Please fill all required fields.');
-            return;
-        }
 
         const submitData = {
             ...formData,
@@ -63,7 +42,11 @@ const AddHmiConfigurationPage = () => {
             history.push('/hmi');
         } catch (error) {
             console.error('Failed to add new configuration:', error);
-            alert('Error adding new configuration');
+            if (error.response && error.response.data && error.response.data.errors) {
+                setErrors(error.response.data.errors);
+            } else {
+                alert('Error adding new configuration');
+            }
         }
     };
 

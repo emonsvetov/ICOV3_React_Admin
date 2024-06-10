@@ -10,6 +10,7 @@ const EditHmiConfigurationPage = () => {
     const [formData, setFormData] = useState({
         hmi_name: '',
         hmi_username: '',
+        hmi_password: '',
         hmi_url: '',
         hmi_is_test: ''
     });
@@ -35,7 +36,7 @@ const EditHmiConfigurationPage = () => {
         const { name, type, value, checked } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: type === 'checkbox' ? checked ? 1 : 0 : value
+            [name]: type === 'checkbox' ? (checked ? 1 : 0) : value
         }));
         if (errors[name]) {
             setErrors(prev => ({
@@ -47,13 +48,24 @@ const EditHmiConfigurationPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setErrors({}); // Clear previous errors
+
+        const submitData = {
+            ...formData,
+            hmi_is_test: formData.hmi_is_test ? 1 : 0
+        };
+
         try {
-            await axios.put(`/hmi/edit/${id}`, formData);
+            await axios.put(`/hmi/edit/${id}`, submitData);
             alert('Configuration updated successfully!');
             history.push('/hmi');
         } catch (error) {
             console.error('Failed to update configuration:', error);
-            alert('Error updating configuration');
+            if (error.response && error.response.data && error.response.data.errors) {
+                setErrors(error.response.data.errors);
+            } else {
+                alert('Error updating configuration');
+            }
         }
     };
 
@@ -75,11 +87,6 @@ const EditHmiConfigurationPage = () => {
                                     <Input type="text" name="hmi_username" id="hmi_username" value={formData.hmi_username} onChange={handleChange} invalid={!!errors.hmi_username} />
                                     <FormFeedback>{errors.hmi_username}</FormFeedback>
                                 </FormGroup>
-                                {/*<FormGroup>*/}
-                                {/*    <Label for="hmi_password">HMI Password:</Label>*/}
-                                {/*    <Input type="password" name="hmi_password" id="hmi_password" value={formData.hmi_password} onChange={handleChange} invalid={!!errors.hmi_password} />*/}
-                                {/*    <FormFeedback>{errors.hmi_password}</FormFeedback>*/}
-                                {/*</FormGroup>*/}
                                 <FormGroup>
                                     <Label for="hmi_url">HMI URL:</Label>
                                     <Input type="text" name="hmi_url" id="hmi_url" value={formData.hmi_url} onChange={handleChange} invalid={!!errors.hmi_url} />

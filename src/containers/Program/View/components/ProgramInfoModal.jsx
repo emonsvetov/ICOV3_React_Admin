@@ -65,6 +65,24 @@ const ProgramInfo = ({dispatch, organization, isOpen, toggle, data, theme, rtl})
         
         values.type = values?.type?.value
         values.status_id = values?.status?.value
+
+        const array = [
+          'bcc_email_list',
+          'cc_email_list',
+          'prefix',
+          'notification_email_list',
+          'address.address',
+          'address.address_ext',
+          'address.city',
+          'address.zip',
+          'factor_valuation',
+          'corporate_entity',
+          'external_id',
+        ];
+        array.forEach(function (item, index) {
+          values[item] = values[item] ?? '';
+        });
+
         const savedata  = {...data, ...values}
 
         delete savedata["status"];
