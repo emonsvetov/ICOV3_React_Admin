@@ -54,6 +54,7 @@ const UnitNumbersDataModal = ({
   }, [data.organization_id, data.id, step]);
   console.log(data);
   const onClickRemove = (unitnumber) => {
+    if(!window.confirm('Are you sure to delete this?')) return;
     setLoading(true);
     console.log(unitnumber);
     axios
@@ -92,9 +93,18 @@ const UnitNumbersDataModal = ({
           color="#ffffff"
           onClick={() => onClickEdit(row.original.id)}
         >
+          View
+        </span>{" "}
+        | {" "}
+        <span
+          className="table-hover text-primary "
+          style={{ cursor: "pointer" }}
+          color="#ffffff"
+          onClick={() => onClickEdit(row.original.id)}
+        >
           Edit
         </span>{" "}
-        |
+        |{" "}
         <span
           className="table-hover text-primary"
           style={{ cursor: "pointer" }}
