@@ -7,12 +7,10 @@ import {Col, Container, Label, Row} from 'reactstrap';
 import { ThemeProps, RTLProps } from '@/shared/prop-types/ReducerProps'
 import getOrganizationList from '@/service/getOrganizationList'
 import {labelizeNamedData} from '@/shared/helpers'
-import { SU_SELECT_ORGANIZATION_TREE, setOrganization as setAuthOrganization } from "@/containers/App/auth";
-import {setOrganization} from '@/redux/actions/organizationActions';
-import store from '@/containers/App/store';
+import { setSuOrganization, getSuOrganization, SU_SELECT_ORGANIZATION_TREE } from "@/containers/App/auth";
 
 const OrgFilter = ({
-  theme, rtl, location, auth, organization
+  theme, rtl, location, auth
 }) => {
   const [orgOptions, setOrgOptions] = React.useState([])
   const [org, setOrg] = React.useState('')
@@ -21,10 +19,7 @@ const OrgFilter = ({
     // console.log(cachedTree)
     // console.log(selectedOption)
     setOrg(selectedOption.value)
-    const org  = {name: selectedOption.label, id: parseInt(selectedOption.value)}
-    // setSuOrganization({name: selectedOption.label, id: parseInt(selectedOption.value)});
-    store.dispatch(setOrganization(org))
-    setAuthOrganization(org)
+    setSuOrganization({name: selectedOption.label, id: parseInt(selectedOption.value)});
     // window.location.reload();
   }
   const cacheOrganizationTree = (tree) => {
@@ -33,41 +28,37 @@ const OrgFilter = ({
   const getCachedOrganizationTree = (tree) => {
     return localStorage.getItem(SU_SELECT_ORGANIZATION_TREE);
   }
-  // React.useEffect(() => {
-  //   if( auth && auth?.isSuperAdmin )
-  //   {
-  //       const suSelectedOrganization = getSuOrganization();
-  //       if( suSelectedOrganization ) {
-  //         setOrg( suSelectedOrganization.id.toString()  )
-  //       }
-  //   }
-  // }, [auth]);
+  React.useEffect(() => {
+    if( auth && auth?.isSuperAdmin )
+    {
+        const suSelectedOrganization = getSuOrganization();
+        if( suSelectedOrganization ) {
+          setOrg( suSelectedOrganization.id.toString()  )
+        }
+    }
+  }, [auth]);
 
   React.useEffect(() => {
     // console.log(organization)
-    // const cachedTree = getCachedOrganizationTree()
-    const cachedTree = false
+    const cachedTree = getCachedOrganizationTree()
     if( cachedTree ) {
       setOrgOptions(labelizeNamedData(JSON.parse(cachedTree)));
     } else {
-      if( auth && auth?.isSuperAdmin && organization?.id )
+      if( auth && auth?.isSuperAdmin )
       {
-          setOrg( organization.id.toString()  )
           getOrganizationList()
           .then(list => {
-              // console.log(list)
-              list.unshift({name: "All", id:1})
               setOrgOptions(
-                labelizeNamedData(list)
+                  labelizeNamedData(list)
               )
               cacheOrganizationTree(list);
           })
       }
     }
-  }, [ auth, organization ])
+  }, [ auth ])
 
   let orgPlaceholder = 'All'
-  if (org && org !== "1") {
+  if (org) {
       orgPlaceholder = orgOptions.filter(o => o.value === org).map(o => o.label)
   }
 
@@ -104,6 +95,5 @@ OrgFilter.propTypes = {
 export default withRouter(connect((state) => ({
   theme: state.theme,
   rtl: state.rtl,
-  auth: state.auth,
-  organization: state.organization
+  auth: state.auth
 }))(OrgFilter));
