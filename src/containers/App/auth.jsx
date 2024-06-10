@@ -75,7 +75,16 @@ export const getAuthUser = () => {
 
 export const getOrganization = () => {
     // flushUserSession();
+    return {
+      id:1,
+      name:'All'
+    }
     return JSON.parse(localStorage.getItem(AUTH_ORGANIZATION_KEY));
+}
+
+export const setOrganization = (org) => {
+  // flushUserSession();
+  localStorage.setItem(AUTH_ORGANIZATION_KEY, JSON.stringify(org))
 }
 
 //The organization selection by Super User

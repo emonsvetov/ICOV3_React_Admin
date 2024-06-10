@@ -219,7 +219,13 @@ const DataTable = ({organization}) => {
     // const [statusFilterValue, setStatusFilterValue] = useState("");
     const manualPageSize = []
     
-    useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger} );
+    useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger, organization} );
+
+    useEffect( () => {
+      if( organization?.id ) {
+        setTrigger( Math.floor(Date.now() / 1000) )
+      }
+    }, [organization])
 
     if (error) {
         return <p>Error: {JSON.stringify(error)}</p>;

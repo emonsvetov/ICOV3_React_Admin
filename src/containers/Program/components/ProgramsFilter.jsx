@@ -9,14 +9,22 @@ import {labelizeNamedData} from '@/shared/helpers'
 import {Button,Row} from "reactstrap";
 
 import ProgramStatusDropdown from './ProgramStatusDropdown'
+import store from '@/containers/App/store';
+import { setOrganization as setAuthOrganization } from "@/containers/App/auth";
+import {setOrganization} from '@/redux/actions/organizationActions';
 
 const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true}) => {
+    // console.log("organization in ProgramFilter")
+    // console.log(organization)
     const [status, setStatus] = React.useState('')
     const [orgOptions, setOrgOptions] = React.useState([])
     const [org, setOrg] = React.useState('')
     const [keyword, setKeyword] = React.useState('')
     const onOrgChange = (selectedOption) => {
         setOrg(selectedOption.value)
+        const org  = {name: selectedOption.label, id: parseInt(selectedOption.value)}
+        store.dispatch(setOrganization(org))
+        setAuthOrganization(org)
     };
     const onStatusChange = (selectedOption) => {
         setStatus(selectedOption.value)
@@ -38,6 +46,8 @@ const ProgramFilter = ({onClickFilterCallback, organization, auth, useOrg = true
     useEffect(() => {
         if( organization?.id )
         {
+            setOrg(organization.id.toString())
+            console.log(organization)
             if( auth && auth?.isSuperAdmin )
             {
                 getOrganizationList()
@@ -125,5 +135,6 @@ ProgramFilter.defaultProps = {
 };
 
 export default withRouter(connect((state) => ({
-    auth: state.auth
+    auth: state.auth,
+    organization: state.organization
 }))(ProgramFilter));
