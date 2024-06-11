@@ -16,7 +16,7 @@ import CheckboxField from '@/shared/components/form/CheckboxField';
 
 import AddIconTabs from "./AddIconTabs";
 import { fetchEventTypes, getEventLedgerCodes, getMilestoneOptions } from '@/shared/apiHelper'
-import { labelizeNamedData, labelizeData, getValueFromMixed, isBadgeAward } from '@/shared/helpers'
+import { labelizeNamedData, labelizeData, getValueFromMixed, isBadgeAward, isCustomAward } from '@/shared/helpers'
 import { makeFormData } from './common'
 import LedgerCodes from './LedgerCodes';
 import {Space, Table} from 'antd';
@@ -142,6 +142,9 @@ const Edit = ({organization, theme, rtl}) => {
   }
 
   const onSubmit = (values) => {
+    if(isCustomAward(eventTypeId)){
+      formValues.award_message_editable = true
+    }
     const eventData = makeFormData(program, formValues)
     eventData.icon = v2icon;
     axios
@@ -162,7 +165,9 @@ const Edit = ({organization, theme, rtl}) => {
 
   const onSubmitHierarchy = () => {
     console.log(formValues)
-
+    if(isCustomAward(eventTypeId)){
+      formValues.award_message_editable = true
+    }
     const eventData = makeFormData(program, formValues)
     eventData.icon = v2icon;
     axios
@@ -534,7 +539,7 @@ const Edit = ({organization, theme, rtl}) => {
                                   </div>
                               </Col>
                           </Row>
-                          {!isBadgeAward(eventTypeId) && (
+                          {!isBadgeAward(eventTypeId) && !isCustomAward(eventTypeId) && (
                               <Row>
                                   <Col md="6" lg="4" xl="4">
                                       <Field name="max_awardable_amount">
@@ -673,7 +678,7 @@ const Edit = ({organization, theme, rtl}) => {
                                   </div>
                               </Col>
                           </Row>
-
+                        {!isCustomAward(eventTypeId) && (
                           <Row>
                               <Col md="6" lg="4" xl="4">
                                   <div className="form__form-group">
@@ -692,6 +697,7 @@ const Edit = ({organization, theme, rtl}) => {
                                   </div>
                               </Col>
                           </Row>
+                        )}
                           <Row>
                               <Col md="12" lg="12" xl="12">
                                   <Field name="message">

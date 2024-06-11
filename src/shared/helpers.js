@@ -435,6 +435,14 @@ export const toPointsRevert = (numberString) => {
       || type_to_match == 6 //peer to peer badge
       || type_to_match == 10 //miglestone badge
   }
+
+  export const isCustomAward = ( event_type_id ) => {
+    let type_to_match = event_type_id
+    if( isObject(event_type_id) && typeof event_type_id.value !== 'undefined' ) {
+        type_to_match = event_type_id.value
+    }
+    return type_to_match == 13
+  }
   
   export const isMilestoneAward = (event_type_name) => {
       return event_type_name == "Milestone Badge" //badge
