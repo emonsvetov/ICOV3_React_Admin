@@ -199,6 +199,7 @@ export const fetchApiData = async( queryParams )  => {
             results: response.data.data,
             count: response.data.total,
             config: response.data.config ? response.data.config : [],
+            full: response.data
         };
         // console.log(data)
         return data;
