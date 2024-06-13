@@ -1,7 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { formatDate } from '@/shared/helpers';
 
+const formatDate = (dateString) => {
+    const [datePart, timePart] = dateString.split(' ');
+    const [day, month, year] = datePart.split('-');
+    const [hour, minute, second] = timePart.split(':');
+
+    const padToTwoDigits = (number) => number.toString().padStart(2, '0');
+    const formattedDate = `${padToTwoDigits(day)}-${padToTwoDigits(month)}-${year}`;
+    const formattedTime = `${padToTwoDigits(hour)}:${padToTwoDigits(minute)}:${padToTwoDigits(second)}`;
+
+    return `${formattedDate} ${formattedTime}`;
+};
 
 export const SERVER_IP_COLUMNS = (handleViewClick) => [
     {
