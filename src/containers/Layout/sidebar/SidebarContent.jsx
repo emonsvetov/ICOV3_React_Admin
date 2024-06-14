@@ -96,6 +96,11 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
                 <SidebarLink title="Hmi Configuration"  route="/hmi" />
             )
             break;
+        case 'server_ips':
+            return (
+                <SidebarLink title="Server IPs for domains"  route="/server-ips" />
+            )
+            break;
       default:
       break;
     }
@@ -148,8 +153,9 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
                   <>
                       <ProtectedLink type="cron_jobs"/>
                       <ProtectedLink type="hmi_configuration"/>
-                      <ProtectedLink type="migration"/>
+                      <ProtectedLink type="server_ips"/>
                       <ProtectedLink type="tango_settings"/>
+                      <ProtectedLink type="migration"/>
                   </>
               </SidebarCategory>
           }
