@@ -1,15 +1,30 @@
-import React,{FC} from 'react';
-import {any} from "prop-types";
-import AnnualAwardsSummarySubProgramIndex from "./components/AnnualAwardsSummarySubProgramIndex";
+import React, {useEffect, useState} from 'react';
+import {useParams} from "react-router-dom";
+import AnnualAwardsSummaryTable from './components/AnnualAwardsSummaryTable.jsx';
+import {isEmpty} from '@/shared/helpers'
+import {getAllPrograms} from '@/shared/apiHelper.jsx';
 
-interface AnnualAwardsSummarySubProgramProps {
-    program: any
+const JournalDetailed = () => {
+  const [defaultPrograms, setDefaultPrograms] = useState([]);
+  let {programId} = useParams();
+
+  useEffect(() => {
+    if (isEmpty(defaultPrograms)) {
+      getAllPrograms("minimal=true&limit=99999999&programId=" + programId)
+        .then(response => {
+          const data = response?.data ? response.data : [];
+          const result = data.map(x => x.account_holder_id)
+          setDefaultPrograms(result);
+        })
+    }
+  })
+
+  if (isEmpty(defaultPrograms)) {
+    return <p>Loading...</p>;
+  }
+
+  return (
+    <AnnualAwardsSummaryTable programs={defaultPrograms}/>
+  )
 }
-
-const AnnualAwardsSummarySubProgram: FC<AnnualAwardsSummarySubProgramProps> = ({program}) => {
-    return (
-        <AnnualAwardsSummarySubProgramIndex programid={program.id}/>
-    )
-}
-
-export default AnnualAwardsSummarySubProgram;
+export default JournalDetailed

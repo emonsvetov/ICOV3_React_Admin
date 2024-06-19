@@ -8,10 +8,10 @@ export const getDues = (invoice) => {
     }   
     else 
     {
-        if( invoice?.journal_summary )  {
+        if( invoice.invoice_type.name==='Monthly' )  {
             return {
                 label: 'Invoice Total',
-                amount: `$${(invoice.journal_summary.grand_total * -1).toFixed(2)}`
+                amount: `$${(invoice.custom_invoice_amount).toFixed(2)}`
             }
         }   else {
             return {

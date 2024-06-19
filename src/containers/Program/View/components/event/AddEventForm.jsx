@@ -7,7 +7,7 @@ import axios from "axios";
 // import renderRadioButtonField from '@/shared/components/form/RadioButton';
 import formValidation from "@/shared/validation/addEvent";
 import renderToggleButtonField from "@/shared/components/form/ToggleButton";
-import { labelizeNamedData, labelizeData, isBadgeAward, isMilestoneAward } from "@/shared/helpers";
+import { labelizeNamedData, labelizeData, isBadgeAward, isCustomAward, isMilestoneAward } from "@/shared/helpers";
 import {getMilestoneOptions} from '@/shared/apiHelper';
 import renderSelectField from '@/shared/components/form/Select'
 import {fetchEventTypes, getEventLedgerCodes} from '@/shared/apiHelper'
@@ -68,6 +68,9 @@ const AddEventForm = ({ onStep, program }) => {
   };
 
   const onSubmit = (values) => {
+    if(isCustomAward(eventTypeId)){
+      values.award_message_editable = true;
+    }
     const eventData = makeFormData(program, values);
     // console.log(eventData)
     // return
@@ -236,7 +239,7 @@ const AddEventForm = ({ onStep, program }) => {
                   </div>
                 </Col>
               </Row>
-              {!isBadgeAward(eventTypeId) && (
+              {!isBadgeAward(eventTypeId) && !isCustomAward(eventTypeId) && (
               <Row>
                   <Col md="6" lg="4" xl="4">
                     <Field name="max_awardable_amount">
@@ -371,7 +374,7 @@ const AddEventForm = ({ onStep, program }) => {
                   </div>
                 </Col>
               </Row>
-
+            {!isCustomAward(eventTypeId) && (
               <Row>
                 <Col md="6" lg="4" xl="4">
                   <div className="form__form-group">
@@ -390,6 +393,7 @@ const AddEventForm = ({ onStep, program }) => {
                   </div>
                 </Col>
               </Row>
+            )}
               <Row>
                 <Col md="12" lg="12" xl="12">
                   <Field name="message">
