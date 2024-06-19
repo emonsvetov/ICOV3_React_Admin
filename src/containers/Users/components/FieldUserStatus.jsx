@@ -69,9 +69,9 @@ const FieldUserStatus = ({ organization, fieldType = 'radio' }) => {
   if(fieldType === 'select') return <RenderStatusSelect />
 }
 
-FieldUserStatus.propTypes = {
-  organization: Object.isRequired
-};
+// FieldUserStatus.propTypes = {
+//   organization: Object.isRequired
+// };
 
 export default withRouter(connect((state) => ({
   organization: state.organization
