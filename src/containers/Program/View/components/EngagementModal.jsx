@@ -344,6 +344,14 @@ const EngagementModal = ({
                           onChange={() => {data.allow_milestone_award = !data.allow_milestone_award}}
                         />
                       </div>
+                      <div className="form__form-group">
+                        <CheckboxField
+                          name="allow_third_party"
+                          label="Third Party (HMI)"
+                          checked={data?.allow_third_party}
+                          onChange={() => {data.allow_third_party = !data.allow_third_party}}
+                        />
+                      </div>
                     </Col>
                   </Row>
             </ModalBody>
