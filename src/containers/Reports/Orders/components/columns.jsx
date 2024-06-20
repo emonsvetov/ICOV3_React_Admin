@@ -81,6 +81,11 @@ export const TABLE_COLUMNS = [
     width: 100,
   },
   {
+    Header: "Purchased in system",
+    accessor: "purchased_in_system",
+    width: 100,
+  },
+  {
     Header: "Redeemed By",
     accessor: "redeemed_by",
     width: 100,
