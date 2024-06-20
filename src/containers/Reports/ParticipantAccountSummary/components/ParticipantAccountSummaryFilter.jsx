@@ -204,7 +204,7 @@ const ParticipantStatusFilter = (
                         <DatePicker
                             dateFormat="yyyy-MM-dd HH:mm:ss"
                             selected={from}
-                            onChange={onStartChange}
+                            onChange={onEndChange}
                         />
                     </div>
                   </div>
