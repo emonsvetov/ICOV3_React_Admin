@@ -111,12 +111,12 @@ const DataTable = ({merchant}) => {
                             <TableFilter filter={filter} setFilter={setFilter} setUseFilter={setUseFilter} config={{label:'codes', sku:true, type:'available'}} />
                         </Col>
                         <Col md={2} className="text-right pr-0">
-                            <div 
-                            style={{maxWidth:'200px'}}
-                            className="btn btn-primary account__btn account__btn--small"
-                            onClick={()=>toggle()}
-                            >Upload Gift Codes
-                            </div>
+                            {/*<div */}
+                            {/*style={{maxWidth:'200px'}}*/}
+                            {/*className="btn btn-primary account__btn account__btn--small"*/}
+                            {/*onClick={()=>toggle()}*/}
+                            {/*>Upload Gift Codes*/}
+                            {/*</div>*/}
                         </Col>
                     </Row>
                     <table {...getTableProps()} className="table">

@@ -33,14 +33,28 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
     { 'label': 'V3', 'value': 1 },
   ];
 
-  const defaultPurchaseByV2Option = purchasesByV2.find(option => option.value === 1); // Assuming "V3" is the default option
+  const purchasedInSystemOpt = [
+    { label: 'All', value: '' },
+    { label: 'qa_v3_1', value: 'qa_v3_1' },
+    { label: 'qa_v3', value: 'qa_v3' },
+    { label: 'qa_v2', value: 'qa_v2' },
+    { label: 'prod_v3_1', value: 'prod_v3_1' },
+    { label: 'prod_v3', value: 'prod_v3' },
+    { label: 'prod_v2', value: 'prod_v2' },
+  ];
 
+  const defaultPurchaseByV2Option = purchasesByV2.find(option => option.value === 1); // Assuming "V3" is the default option
+  const defaultPurchasedInSystemOption = purchasedInSystemOpt.find(option => option.value === '');
+  const [purchasedInSystem, setPurchasedInSystem] = useState(defaultPurchasedInSystemOption);
   const [purchaseByV2, setPurchaseByV2] = React.useState(defaultPurchaseByV2Option);
 
   const onPurchasesByV2Change = (selectedOption) => {
     setPurchaseByV2(selectedOption);
   };
 
+  const onPurchasedInSystemChange = (selectedOption) => {
+    setPurchasedInSystem(selectedOption);
+  };
 
   const defaultFilters = {
     keyword: '',
@@ -50,6 +64,7 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
     purchaseByV2: 0,
     inventoryType: 0,
     merchants: [],
+    purchasedInSystem: ''
   }
 
   const finalFilter = {...defaultFilters, ...filter}
@@ -63,6 +78,7 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
     orderStatus: true,
     purchaseByV2: true,
     inventoryType: true,
+    purchasedInSystem: true,
   }
 
   const options = {...defaultConfig, ...config}
@@ -130,6 +146,11 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
     if (options.merchants) {
       dataSet.merchants = reset ? [] : clone(selectedMerchants);
     }
+
+    if (options.purchasedInSystem) {
+      dataSet.purchasedInSystem = reset ? '' : purchasedInSystem.value;
+    }
+
     if (options.awardLevels) {
       dataSet.awardLevels = reset ? [] : clone(awardLevels);
     }
@@ -143,6 +164,7 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
       setSelectedPrograms([]);
       setSelectedMerchants([]);
       setAwardLevels([]);
+      setPurchasedInSystem(defaultPurchasedInSystemOption);
     }
   };
   const awardLevelAll = () => {
@@ -208,6 +230,12 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
       }
     }
 
+    if (options.purchasedInSystem) {
+      if (finalFilter.purchasedInSystem !== values.purchasedInSystem) {
+        change = true;
+      }
+    }
+
     if(options.orderStatus) {
       if(finalFilter.orderStatus !== values.orderStatus)   {
         change = true
@@ -249,6 +277,10 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
     }
     if( options.orderStatus ) {
       filters.orderStatus = values.orderStatus
+    }
+
+    if (options.purchasedInSystem) {
+      filters.purchasedInSystem = values.purchasedInSystem;
     }
 
     setFilter( filters )
@@ -439,6 +471,23 @@ export const OrdersFilter = ({ config, filter, setFilter, setUseFilter, download
                 </div>
               </div>
             </>
+            }
+
+            {options.purchasedInSystem &&
+                <>
+                  <div className="table-filter-form-col table-filter-form-col2 float-filter">
+                    <div className="form__form-group">
+                      <span className="form__form-group-label">Purchased In System</span>
+                      <div className="form__form-group-field">
+                        <div className="form__form-group-row">
+                          <Select options={purchasedInSystemOpt} className="react-select"
+                                  classNamePrefix="react-select" defaultValue={defaultPurchasedInSystemOption}
+                                  onChange={onPurchasedInSystemChange}/>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
             }
           </div>
         </Col>
