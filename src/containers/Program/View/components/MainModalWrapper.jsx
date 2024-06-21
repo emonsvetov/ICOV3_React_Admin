@@ -9,6 +9,7 @@ import AwardingPointsModal from './AwardingPointsModal';
 import EngagementModal from './EngagementModal';
 import AddProgramModal from './AddProgramModal';
 import DigitalMediaModal from "./DigitalMediaModal";
+import EntrataSettingsModal from "./EntrataSettingsModal";
 import EventsDataModal from '../components/event/EventsDataModal';
 import EmailTemplateModal from '../EmailTemplate/IndexDataModal'
 import ActivateLiveModeProgramModal from "./ActivateLiveModeProgramModal";
@@ -77,6 +78,10 @@ const MainModalWrapper = ({name, isOpen, setOpen, toggle}) => {
       {
         name === 'UnitNumbers' && <UnitNumbersDataModal {...props} />
       }
+        {
+            name === 'entratasettings' && <EntrataSettingsModal {...props} />
+        }
+
     </>
   )
 }
