@@ -219,12 +219,10 @@ const DataTable = ({organization}) => {
     // const [statusFilterValue, setStatusFilterValue] = useState("");
     const manualPageSize = []
     
-    useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger, organization} );
+    useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger} );
 
     useEffect(() => {
       if(organization?.id) {
-        console.log("organization")
-        console.log(organization)
         //The organization can be changed from topFilter
         setTrigger( Math.floor(Date.now() / 1000) )
       }

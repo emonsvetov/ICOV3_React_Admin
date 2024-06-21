@@ -478,7 +478,8 @@ export const monthToString = (month) => {
 }
 
 export const ORG_FILTER_LOCATIONS =  [
-    '/program'
+    '/program',
+    '/users'
 ]
 
 export const showOrgFilter = (location) => {

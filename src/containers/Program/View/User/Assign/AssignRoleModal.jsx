@@ -15,9 +15,11 @@ import arrayMutators from "final-form-arrays"
 import CheckboxGroup from "@/shared/components/form/CheckboxGroup"
 
 import axios from "axios";
-import {buildIdArray} from '@/shared/helpers';
+import {buildIdArray, inArray} from '@/shared/helpers';
 import { fetchUserProgramRoles } from "@/shared/apiHelper"
 import { useDispatch, flashSuccess, flashError } from "@/shared/components/flash"
+
+const ADMIN_ROLE_ID = 2;
 
 const AssignRoleModal = ({ program, user, roles, isOpen, toggle, theme, rtl, setTrigger, setParentTrigger }) => {
     const dispatch = useDispatch()
@@ -31,17 +33,27 @@ const AssignRoleModal = ({ program, user, roles, isOpen, toggle, theme, rtl, set
             .then( _roles => {
                 // console.log(_roles)
                 // const _roles = extractRolesFromProgramPermissions(_permissions, program.id);
-                setProgramRoles(buildIdArray(_roles))
+                let idArray = buildIdArray(_roles)
+                if( user.isAdmin ) {
+                  idArray.push(ADMIN_ROLE_ID) //Admin id
+                }
+                setProgramRoles(idArray)
                 setLoading(false)
             })
         }
     }, [user])
 
     const onSubmit = values => {
-        // console.log(values)
-        // return;
+        let data = {};
         // setLoading(true)
-        axios.patch(`/organization/${program.organization_id}/program/${program.id}/user/${user.id}/assignRole`, values)
+        if( inArray(ADMIN_ROLE_ID, values.roles) ) {
+          data.is_organization_admin = true
+          data.roles = values.roles.filter( (roleId,i) => roleId !== ADMIN_ROLE_ID)
+        } else {
+          data.is_organization_admin = false
+          data.roles = values.roles
+        }
+        axios.patch(`/organization/${program.organization_id}/program/${program.id}/user/${user.id}/assignRole`, data)
         .then((res) => {
             if (res.status == 200) {
                 setLoading(true)

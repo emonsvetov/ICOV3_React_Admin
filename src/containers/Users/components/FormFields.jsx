@@ -112,7 +112,7 @@ const FormFields = ({form, values, submitting, pristine, program, config}) => {
           </Col>
         </Row>
         <Row>
-          {!config.roleDisable && (
+          {!config.roleDisable && config.roles.length > 0 && (
             <Col md="6" lg="4" xl="4">
               <Field name={config.roleField}>
                 {({ input, meta }) => (

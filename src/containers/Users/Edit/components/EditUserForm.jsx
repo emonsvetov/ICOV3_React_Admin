@@ -70,7 +70,7 @@ const EditUserForm = ({organization}) => {
         fetchRoles( organization.id, false )
         .then( data => {
             let newData = labelizeNamedData(data);
-            console.log(newData)
+            // console.log(newData)
             setRoles(newData);
             setLoading(false)
         })
