@@ -12,7 +12,7 @@ import { getProgramAction } from '@/redux/actions/programActions';
 import renderSelectField from '@/shared/components/form/Select';
 import {isObject} from "../../../../shared/helpers";
 import TooltipPopup from '@/shared/components/form/TooltipPopup';
-import { TOOLTIP_POPUP_DATA } from './TooltipPopupData';
+import { BUDGET_INFO_POPUP_DATA } from './BudgetCascadingPopupData';
 
 const prepareForValidation = values => {
 
@@ -195,7 +195,7 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                             />
                             <TooltipPopup openTooltipPopup={openTooltipPopup} handleCloseTooltipPopup={handleCloseTooltipPopup} 
                               handleOpenTooltipPopup={() => handleOpenTooltipPopup('use_budget_cascading')} title="use_budget_cascading" 
-                              text={TOOLTIP_POPUP_DATA.budgetCascadingInfoTitle}>
+                              text={BUDGET_INFO_POPUP_DATA.budgetCascadingInfoTitle}>
                                 <span className="ml-2">?</span>
                             </TooltipPopup>
                         </div>
@@ -210,7 +210,7 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                             />
                             <TooltipPopup openTooltipPopup={openTooltipPopup} handleCloseTooltipPopup={handleCloseTooltipPopup} 
                                handleOpenTooltipPopup={()=>handleOpenTooltipPopup("budget_summary")} title="budget_summary" 
-                               text={TOOLTIP_POPUP_DATA.budgetSummaryInfoTitle}> 
+                               text={BUDGET_INFO_POPUP_DATA.budgetSummaryInfoTitle}> 
                                 <span className="ml-2">?</span>
                             </TooltipPopup>
                         </div>
@@ -225,7 +225,7 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                             />
                             <TooltipPopup openTooltipPopup={openTooltipPopup} handleCloseTooltipPopup={handleCloseTooltipPopup} 
                                 handleOpenTooltipPopup={()=>handleOpenTooltipPopup("use_cascading_approvals")} title="use_cascading_approvals" 
-                                text={TOOLTIP_POPUP_DATA.cascadingApproval}>
+                                text={BUDGET_INFO_POPUP_DATA.cascadingApproval}>
                                 <span className="ml-2">?</span>
                             </TooltipPopup>
                         </div>

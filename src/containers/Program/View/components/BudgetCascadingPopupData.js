@@ -1,4 +1,4 @@
-export const TOOLTIP_POPUP_DATA = {
+export const BUDGET_INFO_POPUP_DATA = {
   budgetSummaryInfoTitle:
     "With this configuration enabled, We will show budget summary and awards details on Manage and Reward page on Program site.",
   budgetCascadingInfoTitle: `
