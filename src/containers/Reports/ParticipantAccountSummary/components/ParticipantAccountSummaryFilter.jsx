@@ -10,8 +10,25 @@ import {dateStrToYmd} from '@/shared/helpers';
 import {isEqual, clone, cloneDeep} from 'lodash';
 import {CheckBoxField} from '@/shared/components/form/CheckBox';
 
-const defaultFrom = getFirstDay()
-const defaultTo = new Date()
+const formatDateForBackend = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
+
+const parseDateFromBackend = (dateString) => {
+    const [datePart, timePart] = dateString.split(' ');
+    const [year, month, day] = datePart.split('-');
+    const [hours, minutes, seconds] = timePart.split(':');
+    return new Date(year, month - 1, day, hours, minutes, seconds);
+};
+
+const defaultFrom = parseDateFromBackend(getFirstDay());
+const defaultTo = new Date();
 
 const ParticipantStatusFilter = (
   {
@@ -42,8 +59,8 @@ const ParticipantStatusFilter = (
   const onClickFilter = (reset = false, exportToCsv = 0) => {
     let dataSet = {}
     if (options.dateRange) {
-      dataSet.from = dateStrToYmd(reset ? defaultFrom : from)
-      dataSet.to = dateStrToYmd(reset ? defaultTo : to)
+        dataSet.from = formatDateForBackend(reset ? defaultFrom : from);
+        dataSet.to = formatDateForBackend(reset ? defaultTo : to);
     }
     if (options.programs) {
       dataSet.programs = reset ? [] : clone(selectedPrograms)
@@ -170,11 +187,11 @@ const ParticipantStatusFilter = (
                   <span className="form__form-group-label">From</span>
                   <div className="form__form-group-field">
                     <div className="form__form-group-row">
-                      <DatePicker
-                        dateFormat="MM/dd/yyyy"
-                        selected={from}
-                        onChange={onStartChange}
-                      />
+                        <DatePicker
+                            dateFormat="yyyy-MM-dd HH:mm:ss"
+                            selected={from}
+                            onChange={onStartChange}
+                        />
                     </div>
                   </div>
                 </div>
@@ -184,11 +201,11 @@ const ParticipantStatusFilter = (
                   <span className="form__form-group-label">To</span>
                   <div className="form__form-group-field">
                     <div className="form__form-group-row">
-                      <DatePicker
-                        dateFormat="MM/dd/yyyy"
-                        selected={to}
-                        onChange={onEndChange}
-                      />
+                        <DatePicker
+                            dateFormat="yyyy-MM-dd HH:mm:ss"
+                            selected={from}
+                            onChange={onEndChange}
+                        />
                     </div>
                   </div>
                 </div>
