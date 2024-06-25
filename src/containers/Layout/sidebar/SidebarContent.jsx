@@ -26,6 +26,13 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
           </>
         );
       break;
+        case 'entrata':
+            return (
+                <>
+                    <SidebarLink title="Entrata Configuration" route="/entrata" />
+                </>
+            );
+            break;
         case 'hmi_configuration':
             return (
                 <>
@@ -151,6 +158,7 @@ const SidebarContent = ({ onClick, changeToDark, changeToLight, auth }) => {
               auth?.isSuperAdmin &&
               <SidebarCategory title="Dev tools" icon="hand">
                   <>
+                      <ProtectedLink type="entrata"/>
                       <ProtectedLink type="cron_jobs"/>
                       <ProtectedLink type="hmi_configuration"/>
                       <ProtectedLink type="server_ips"/>
