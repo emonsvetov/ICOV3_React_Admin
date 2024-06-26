@@ -4,6 +4,7 @@ export const AUTH_USER_KEY = 'authUser';
 export const AUTH_ORGANIZATION_KEY = 'authOrganization';
 export const SU_ORGANIZATION_KEY = 'suOrganization';
 export const SU_SELECT_ORGANIZATION_TREE = "suSelectOrganizationTree";
+export const AUTH_ORGANIZATION_TREE = "authSelectOrganizationTree";
 
 export const ORGANIZATION_ID = 1
 
@@ -12,10 +13,10 @@ export const login = data => {
     // return
     localStorage.setItem(AUTH_TOKEN_KEY, data.access_token);
     localStorage.setItem(AUTH_USER_KEY, JSON.stringify(data.user));
-    if(data.programCount)
-    {
-      data.user.organization.programCount = data.programCount
-    }
+    // if(data.programCount)
+    // {
+    //   data.user.organization.programCount = data.programCount
+    // }
     localStorage.setItem(AUTH_ORGANIZATION_KEY, JSON.stringify(data.user.organization));
 }
 
@@ -32,8 +33,9 @@ export const flushUserSession = () => {
     localStorage.removeItem(AUTH_USER_KEY);
     localStorage.removeItem(AUTH_TOKEN_KEY);
     localStorage.removeItem(AUTH_ORGANIZATION_KEY);
-    localStorage.removeItem(SU_ORGANIZATION_KEY);
+    // localStorage.removeItem(SU_ORGANIZATION_KEY);
     localStorage.removeItem(SU_SELECT_ORGANIZATION_TREE);
+    localStorage.removeItem(AUTH_ORGANIZATION_TREE);
 }
 
 export const isAuthenticated = () => {
@@ -80,10 +82,10 @@ export const getOrganization = () => {
 
 //The organization selection by Super User
 
-export const getSuOrganization = () => {
-  // flushUserSession();
-  return JSON.parse(localStorage.getItem(SU_ORGANIZATION_KEY));
-}
+// export const getSuOrganization = () => {
+//   // flushUserSession();
+//   return JSON.parse(localStorage.getItem(SU_ORGANIZATION_KEY));
+// }
 
 export const getAuthUserFullname = () => {
     const user = getAuthUser();
@@ -102,6 +104,10 @@ export const asyncLocalStorage = {
     }
 };
 
-export const setSuOrganization = (organization) => {
-  return localStorage.setItem(SU_ORGANIZATION_KEY, JSON.stringify(organization));
-};
+// export const setSuOrganization = (organization) => {
+//   return localStorage.setItem(SU_ORGANIZATION_KEY, JSON.stringify(organization));
+// };
+
+export const setOrganization = (organization) => {
+  return localStorage.setItem(AUTH_ORGANIZATION_KEY, JSON.stringify(organization));
+}

@@ -126,7 +126,7 @@ const LogInForm = () => {
              )}
              </Field> :
              <>
-                <Field name="email">
+            <Field name="email">
             {({ input, meta }) => (
               <div className="form__form-group">
                 <span className="form__form-group-label">Email</span>

@@ -22,6 +22,8 @@ import { USERS_COLUMNS } from "./columns";
 
 const queryClient = new QueryClient()
 
+const ADMIN_ROLE_ID = 2;
+
 const DataTable = ({program, setParentTrigger}) => {
     const [filter, setFilter] = useState({ keyword:'' });
     const [useFilter, setUseFilter] = useState(false);
@@ -36,6 +38,11 @@ const DataTable = ({program, setParentTrigger}) => {
         {
             fetchRoles(program.organization_id, 1)
             .then(data => {
+                console.log(data)
+                data.push({
+                  id: ADMIN_ROLE_ID, 
+                  name:`Admin in org "${program.organization.name}"`
+                })
                 setRoles(data);
             })
         }

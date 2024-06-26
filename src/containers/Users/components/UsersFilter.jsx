@@ -7,6 +7,10 @@ import getUserStatusList from '@/service/getUserStatuses';
 import getOrganizationList from '@/service/getOrganizationList';
 import { labelizeNamedData } from '@/shared/helpers'
 
+import { setOrganization as setAuthOrganization, getOrganization, AUTH_ORGANIZATION_TREE } from "@/containers/App/auth";
+import {setOrganization} from '@/redux/actions/organizationActions';
+import store from '@/containers/App/store';
+
 const UserFilter = ({ onClickFilterCallback, organization, auth }) => {
     const [statusOptions, setStatusOptions] = React.useState([])
     const [status, setStatus] = React.useState('')
@@ -14,8 +18,16 @@ const UserFilter = ({ onClickFilterCallback, organization, auth }) => {
     const [org, setOrg] = React.useState('')
     const [keyword, setKeyword] = React.useState('')
     const onOrgChange = (selectedOption) => {
-        setOrg(selectedOption.value)
-    };
+      setOrg(selectedOption.value)
+      if( auth?.isSuperAdmin ) {
+        if(selectedOption.value === "1") {
+          setOrg("")
+        }
+        let newOrg = {name: selectedOption.label, id: parseInt(selectedOption.value)}
+        store.dispatch(setOrganization(newOrg))
+        setAuthOrganization(newOrg);
+      }
+  };
     const onStatusChange = (selectedOption) => {
         setStatus(selectedOption.value)
     };
@@ -26,17 +38,36 @@ const UserFilter = ({ onClickFilterCallback, organization, auth }) => {
         onClickFilterCallback(status, keyword, org)
     }
     useEffect(() => {
+      if( auth && auth?.isSuperAdmin )
+      {
+          getOrganizationList()
+          .then(list => {
+              list.unshift({id:1, name: 'ALL'});
+              setOrgOptions(
+                  labelizeNamedData(list)
+              )
+          })
+      }
+    }, [auth])
+
+    useEffect(() => {
+      if( organization && organization?.id )
+      {
+        if( auth.isSuperAdmin )
+        {
+          if(organization.id === 1) {
+            setOrg("")
+          } else {
+            setOrg(organization.id.toString())
+          }
+        } else {
+          setOrg(organization.id.toString())
+        }
+      }
+    }, [organization, orgOptions])
+
+    useEffect(() => {
         if (organization?.id) {
-
-            if (auth?.isSuperAdmin) {
-                getOrganizationList()
-                    .then(list => {
-                        setOrgOptions(
-                            labelizeNamedData(list)
-                        )
-                    })
-            }
-
             getUserStatusList(organization.id)
                 .then(list => {
                     setStatusOptions(
@@ -48,10 +79,11 @@ const UserFilter = ({ onClickFilterCallback, organization, auth }) => {
                 })
         }
         // console.log(auth)
-    }, [organization, auth])
+    }, [organization])
+
     const statusPlaceholder = status ? status : 'All'
-    let orgPlaceholder = 'All'
-    if (org) {
+    let orgPlaceholder = 'ALL'
+    if (org && org !== "1") {
         orgPlaceholder = orgOptions.filter(o => o.value === org).map(o => o.label)
     }
     return (
@@ -106,5 +138,6 @@ const UserFilter = ({ onClickFilterCallback, organization, auth }) => {
     )
 }
 export default withRouter(connect((state) => ({
-    auth: state.auth
+    auth: state.auth,
+    organization: state.organization
 }))(UserFilter));

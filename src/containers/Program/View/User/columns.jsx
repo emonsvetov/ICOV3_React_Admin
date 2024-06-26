@@ -5,8 +5,9 @@ const strUserProgramRoles = (user) => {
             pRoles.push(user.roles[i].name)
         }
     }
+    if( user.isAdmin ) pRoles.push("Admin")
     // console.log(pRoles)
-    return pRoles.join(', ') || 'NA'
+    return pRoles.join(", ") || 'NA'
 }
 export const USERS_COLUMNS = [
     {
@@ -22,7 +23,7 @@ export const USERS_COLUMNS = [
         accessor: "email",
     },
     {
-        Header: "Role",
+        Header: "Program Roles",
         accessor: "role_id",
         Cell: ({ row, value }) => { return strUserProgramRoles(row.original)},
     },

@@ -70,16 +70,19 @@ const EditUserForm = ({organization}) => {
         fetchRoles( organization.id, false )
         .then( data => {
             let newData = labelizeNamedData(data);
-            console.log(newData)
+            // console.log(newData)
             setRoles(newData);
             setLoading(false)
         })
     }
     
     const onSubmit = values => {
+        console.log(values.role_id)
         if(!config.roleDisable && values.role_id) {
-            if (values.role_id) {
+            if (values.role_id?.value) {
                 values.roles = [values.role_id.value]
+            } else {
+              delete(values["roles"]);
             }
         }   else    {
             delete(values["roles"]);

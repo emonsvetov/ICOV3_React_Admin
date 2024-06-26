@@ -130,9 +130,10 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
     }
     
     user = {...user, ...{roles: programRoles}}
-    console.log(user.roles)
+    // console.log(user.roles)
     user.user_status_id = String(user.user_status_id ? user.user_status_id : "")
     user.unit_number = String(user?.unitNumber?.id ? user.unitNumber.id : "")
+    user.is_organization_admin = user.isAdmin
     // user.unit_number = "2"
     // // console.log(user.user_status_id)
     // console.log("user.unit_number")
