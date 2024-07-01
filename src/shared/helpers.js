@@ -477,3 +477,12 @@ export const monthToString = (month) => {
   return months[month-1];
 }
 
+export const ORG_FILTER_LOCATIONS =  [
+    '/program',
+    '/users'
+]
+
+export const showOrgFilter = (location) => {
+  return inArray(location.pathname, ORG_FILTER_LOCATIONS)
+}
+

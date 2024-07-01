@@ -540,7 +540,8 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                             </div>
                         </div>
                     }
-                    {options.role && roles && roles.length > 0 ? (
+                    {options.role && (
+                      roles && roles.length > 0 ? (
                         <div className="table-filter-form-col table-filter-form-col1">
                             <div className="form__form-group">
                                 <div className="form__form-group-field">
@@ -557,8 +558,9 @@ export const TableFilter = ({ config, filter, setFilter, setUseFilter, download,
                                 </div>
                             </div>
                         </div>
-                    ) : (
-                        <div>Loading roles...</div>
+                        ) : (
+                            <div>Loading roles...</div>
+                        )
                     )}
                     {options.sku &&
                     <>

@@ -11,7 +11,7 @@ import {isEqual, clone, cloneDeep} from 'lodash';
 import {CheckBoxField} from '@/shared/components/form/CheckBox';
 
 const defaultFrom = getFirstDay()
-const defaultTo = new Date()
+const defaultTo = new Date();
 
 const ParticipantStatusFilter = (
   {
@@ -42,8 +42,8 @@ const ParticipantStatusFilter = (
   const onClickFilter = (reset = false, exportToCsv = 0) => {
     let dataSet = {}
     if (options.dateRange) {
-      dataSet.from = dateStrToYmd(reset ? defaultFrom : from)
-      dataSet.to = dateStrToYmd(reset ? defaultTo : to)
+        dataSet.from =  dateStrToYmd(reset ? defaultFrom : from)
+        dataSet.to = dateStrToYmd(reset ? defaultTo : to)
     }
     if (options.programs) {
       dataSet.programs = reset ? [] : clone(selectedPrograms)
@@ -170,11 +170,11 @@ const ParticipantStatusFilter = (
                   <span className="form__form-group-label">From</span>
                   <div className="form__form-group-field">
                     <div className="form__form-group-row">
-                      <DatePicker
-                        dateFormat="MM/dd/yyyy"
-                        selected={from}
-                        onChange={onStartChange}
-                      />
+                        <DatePicker
+                            dateFormat="yyyy-MM-dd HH:mm:ss"
+                            selected={from}
+                            onChange={onStartChange}
+                        />
                     </div>
                   </div>
                 </div>
@@ -184,11 +184,11 @@ const ParticipantStatusFilter = (
                   <span className="form__form-group-label">To</span>
                   <div className="form__form-group-field">
                     <div className="form__form-group-row">
-                      <DatePicker
-                        dateFormat="MM/dd/yyyy"
-                        selected={to}
-                        onChange={onEndChange}
-                      />
+                        <DatePicker
+                            dateFormat="yyyy-MM-dd HH:mm:ss"
+                            selected={from}
+                            onChange={onEndChange}
+                        />
                     </div>
                   </div>
                 </div>

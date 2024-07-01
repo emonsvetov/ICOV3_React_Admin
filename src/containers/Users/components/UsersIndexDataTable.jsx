@@ -125,6 +125,13 @@ const DataTable = ({ organization }) => {
 
     useEffectToDispatch( dispatch, {pageIndex, pageSize, gotoPage, sortBy, filter, data, useFilter, trigger} );
 
+    useEffect(() => {
+      if(organization?.id) {
+        //The organization can be changed from topFilter
+        setTrigger( Math.floor(Date.now() / 1000) )
+      }
+    }, [organization]);
+
     if (error) {
         return <p>Error</p>;
     }
