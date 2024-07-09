@@ -11,6 +11,7 @@ import formValidation from "@/shared/validation/program-accounting";
 import { getProgramAction } from '@/redux/actions/programActions';
 import renderSelectField from '@/shared/components/form/Select';
 import {isObject} from "../../../../shared/helpers";
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 import TooltipPopup from '@/shared/components/form/TooltipPopup';
 import { BUDGET_INFO_POPUP_DATA } from './BudgetCascadingPopupData';
 
@@ -196,7 +197,7 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                             <TooltipPopup openTooltipPopup={openTooltipPopup} handleCloseTooltipPopup={handleCloseTooltipPopup} 
                               handleOpenTooltipPopup={() => handleOpenTooltipPopup('use_budget_cascading')} title="use_budget_cascading" 
                               text={BUDGET_INFO_POPUP_DATA.budgetCascadingInfoTitle}>
-                                <span className="ml-2">?</span>
+                                <span className="ml-2"><HelpOutlineIcon fontSize='small'/></span>
                             </TooltipPopup>
                         </div>
                     </Col>
@@ -211,7 +212,7 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                             <TooltipPopup openTooltipPopup={openTooltipPopup} handleCloseTooltipPopup={handleCloseTooltipPopup} 
                                handleOpenTooltipPopup={()=>handleOpenTooltipPopup("budget_summary")} title="budget_summary" 
                                text={BUDGET_INFO_POPUP_DATA.budgetSummaryInfoTitle}> 
-                                <span className="ml-2">?</span>
+                                <span className="ml-2"><HelpOutlineIcon fontSize='small'/></span>
                             </TooltipPopup>
                         </div>
                     </Col>
@@ -226,7 +227,24 @@ const AccountingModal = ({dispatch, organization, data, isOpen, setOpen, toggle,
                             <TooltipPopup openTooltipPopup={openTooltipPopup} handleCloseTooltipPopup={handleCloseTooltipPopup} 
                                 handleOpenTooltipPopup={()=>handleOpenTooltipPopup("use_cascading_approvals")} title="use_cascading_approvals" 
                                 text={BUDGET_INFO_POPUP_DATA.cascadingApproval}>
-                                <span className="ml-2">?</span>
+                                <span className="ml-2"><HelpOutlineIcon fontSize='small'/></span>
+                            </TooltipPopup>
+                        </div>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col md="6" lg="4" xl="4">
+                    <div className='d-flex'>
+                          <CheckboxField
+                                name="enable_schedule_awards"
+                                label="Enable Schedule Awards"
+                                checked={data.enable_schedule_awards}
+                                onChange={() => {data.enable_schedule_awards = !data.enable_schedule_awards}}
+                            />
+                            <TooltipPopup openTooltipPopup={openTooltipPopup} handleCloseTooltipPopup={handleCloseTooltipPopup} 
+                                handleOpenTooltipPopup={()=>handleOpenTooltipPopup("enable_schedule_awards")} title="enable_schedule_awards" 
+                                text={BUDGET_INFO_POPUP_DATA.scheduleDate}>
+                                <span className="ml-2"><HelpOutlineIcon fontSize='small'/></span>
                             </TooltipPopup>
                         </div>
                     </Col>
