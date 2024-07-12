@@ -30,13 +30,23 @@ import AddPositionLevels from "./AddPositionLevels";
 import ApprovalFlow from "./ApprovalFlow";
 import AssignPositionLevelPermissions from "./AssignPositionLevelPermissions";
 import EditPositionLevel from "./EditPositionLevel";
+import ApprovalFlowHierarchy from "./ApprovalFlowHierarchy";
 
-const PositionsLevelsModal = ({ isOpen, toggle, program, theme, rtl }) => {
+const PositionsLevelsModal = ({
+  isOpen,
+  toggle,
+  organization,
+  program,
+  theme,
+  rtl,
+}) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [currentActiveTab, setCurrentActiveTab] = useState("1");
   const [positionLevels, setPositionLevels] = useState([]);
   const [postionLevelId, setPostionLevelId] = React.useState(null);
+  const [approvalFlowModal, setApprovalFlowModal] =
+    React.useState("ApprovalFlow");
   const [step, setStep] = useState(0);
   const togglePan = (tab) => {
     if (currentActiveTab !== tab) setCurrentActiveTab(tab);
@@ -51,7 +61,7 @@ const PositionsLevelsModal = ({ isOpen, toggle, program, theme, rtl }) => {
   };
 
   useEffect(() => {
-    if (program.organization_id && program.id) {
+    if (program?.organization_id && program?.id) {
       setLoading(true);
       getPositionLevels(program.organization_id, program.id).then((levels) => {
         setPositionLevels(levels);
@@ -199,7 +209,7 @@ const PositionsLevelsModal = ({ isOpen, toggle, program, theme, rtl }) => {
                   Positions
                 </NavLink>
               </NavItem>
-              {/* {program.use_cascading_approvals > 0 && (
+              {program?.use_cascading_approvals > 0 && (
                 <NavItem>
                   <NavLink
                     className={classnames({
@@ -212,7 +222,7 @@ const PositionsLevelsModal = ({ isOpen, toggle, program, theme, rtl }) => {
                     Approval Flow
                   </NavLink>
                 </NavItem>
-              )} */}
+              )}
             </Nav>
             <TabContent activeTab={currentActiveTab}>
               <TabPane tabId="1">
@@ -244,11 +254,24 @@ const PositionsLevelsModal = ({ isOpen, toggle, program, theme, rtl }) => {
                     Approval Flow
                   </h4>
                 </div>
-                <Row>
-                  <Col>
-                    <ApprovalFlow />
-                  </Col>
-                </Row>
+                <div>
+                  {approvalFlowModal === "ApprovalFlow3" && (
+                    <ApprovalFlow
+                      theme={theme}
+                      rtl={rtl}
+                      organization={organization}
+                      program={program}
+                      setApprovalFlowModal={setApprovalFlowModal}
+                    />
+                  )}
+                  {approvalFlowModal === "ApprovalFlow" && (
+                    <ApprovalFlowHierarchy
+                      setApprovalFlowModal={setApprovalFlowModal}
+                      organization={organization}
+                      program={program}
+                    />
+                  )}
+                </div>
               </TabPane>
             </TabContent>
           </>
