@@ -1,35 +1,43 @@
 import React, { useState } from "react";
-import CheckboxField from "@/shared/components/form/CheckboxField";
-import { Row, Col, Button } from "reactstrap";
-import { Field, Form } from "react-final-form";
-import CreatableSelect from "react-select/creatable";
 import ApprovalRelationModel from "./ApprovalRelationModel";
 import { getPositionLevels } from "@/service/program/position";
 import { labelizeNamedData } from "@/shared/helpers";
 import { useDispatch, flashError } from "@/shared/components/flash";
 import CloseIcon from "mdi-react/CloseIcon";
+import { Row, Col, Button } from "reactstrap";
+import { Form } from "react-final-form";
 import ApprovalConfirmPopup from "./ApprovalConfirmPopup";
+import ApprovalFlowHierarchy from "./ApprovalFlowHierarchyModal";
+import ModelWrapper from "./ModelWrapper";
+import ApprovalFlowForm from "./ApprovalFlowForm";
 
-const ApprovalFlow = ({ organization, program, theme, rtl }) => {
+let initialTitle = { label: "Approval Flow", value: "ApprovalFlow" };
+
+const ApprovalFlow = ({ organization, program, theme, rtl, toggle }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [approverSelections, setApproverSelections] = useState({});
   const [notificationSelections, setNotificationSelections] = useState({});
   const [availablePositionLevel, setAvailablePositionLevel] = useState([]);
   const [enableApprovalSteps, setEnableApprovalsteps] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [formData, setFormData] = useState({});
   const [defineRelationNotification, setDefineRelationNotification] = useState(
     {}
   );
-  const [isOpen, setOpen] = useState(false);
-  const [modelName, setModelName] = useState("");
+  const [selectPrograms, setSelectPrograms] = useState([]);
+  const [selectProgramHierarchy, setSelectProgramHierarchy] = useState([]);
   const [selectedApprovers, setSelectedApprovers] = useState([]);
   const [confirmProgramHierarchy, setConfirmProgramHierarchy] = useState(false);
+  const [modalName, setModalName] = useState("ApprovalFlow");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [confirmPopup, setConfirmPopup] = useState(false);
 
   const dispatch = useDispatch();
 
-  const toggle = () => {
-    setOpen((prevState) => !prevState);
+  const modalToggle = () => {
+    setModalOpen((prev) => !prev);
   };
+
   React.useEffect(() => {
     setLoading(true);
     if (organization?.id && program?.id) {
@@ -48,13 +56,6 @@ const ApprovalFlow = ({ organization, program, theme, rtl }) => {
         });
     }
   }, [organization, program]);
-
-  const customStyles = {
-    control: (provided, state) => ({
-      ...provided,
-      width: "250px",
-    }),
-  };
 
   const handleStepIncrease = () => {
     setCurrentStep(currentStep + 1);
@@ -84,6 +85,12 @@ const ApprovalFlow = ({ organization, program, theme, rtl }) => {
     });
   };
 
+  React.useEffect(() => {
+    if (confirmProgramHierarchy) {
+      setModalName("ApprovalFlowHierarchy");
+    }
+  }, [confirmProgramHierarchy]);
+
   const getAvailableApproverOptions = (step) => {
     const selectedValues = Object.values(approverSelections).flat();
     return availablePositionLevel?.map((option) => ({
@@ -100,8 +107,8 @@ const ApprovalFlow = ({ organization, program, theme, rtl }) => {
     const selected = approverSelections[step];
     if (selected && selected.length >= 2) {
       setSelectedApprovers(selected);
-      setModelName("Approval Relation");
-      toggle();
+      setModalName("ApprovalFlowRelation");
+      modalToggle();
     } else {
       flashError(
         dispatch,
@@ -112,172 +119,94 @@ const ApprovalFlow = ({ organization, program, theme, rtl }) => {
   };
 
   const onSubmit = (values) => {
-    let forData = {};
     const selectedValues = Object.values(approverSelections).flat();
+
     if (selectedValues) {
+      const transformObject = (obj) => {
+        const result = [];
+
+        Object.entries(obj).forEach(([key, values], index) => {
+          result.push({
+            step: key,
+            position_level_id: values?.map((item, i) => item.value),
+          });
+        });
+
+        return result;
+      };
+      setFormData({ approval_request: transformObject(approverSelections) });
+      setConfirmPopup((prev) => !prev);
+      modalToggle();
     }
   };
 
   if (loading) return <p>Loading...</p>;
-
+  console.log(formData);
   if (availablePositionLevel) {
     return (
       <>
-        <Form
-          onSubmit={onSubmit}
-          // validate={}
-          initialValues={{}}
-        >
-          {({ handleSubmit, form, submitting, pristine, values }) => (
-            <form className="form" onSubmit={handleSubmit}>
-              <Row>
-                <Col md="6" lg="6" xl="6">
-                  <Button
-                    color="ffff"
-                    type="submit"
-                    className="btn btn-primary"
-                    size="sm"
-                  >
-                    Save Changes
-                  </Button>
-                </Col>
-                <Col md="6" lg="6" xl="6">
-                  <Button
-                    color="ffff"
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={handleStepIncrease}
-                    size="sm"
-                  >
-                    Add More Steps
-                  </Button>
-                </Col>
-              </Row>
-              <Row>
-                <Col xs="12" md="8" lg="8">
-                  <div className="form__form-group">
-                    <h6 className="form__form-group-label thick">
-                      Total Steps: {currentStep}
-                    </h6>
-                    <div className="form__form-group-field flex-column"></div>
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Col xs="12" md="8" lg="8">
-                  <div className="form__form-group">
-                    <CheckboxField
-                      name="use_step_approval"
-                      label="Enable same step approval"
-                      checked={enableApprovalSteps}
-                      onChange={() =>
-                        setEnableApprovalsteps(!enableApprovalSteps)
-                      }
-                    />
-                  </div>
-                </Col>
-              </Row>
-              <Row className="w100">
-                <Col md="4" lg="4" xl="4">
-                  <span className="mb-4">Steps</span>
-                </Col>
-                <Col md="4" lg="4" xl="4">
-                  <span className="mb-4">Approvers</span>
-                </Col>
-                <Col md="4" lg="4" xl="4">
-                  <span className="mb-4">Notifications</span>
-                </Col>
-              </Row>
-              {[...Array(currentStep).keys()].map((_, index) => (
-                <Row className="w100 mb-2" key={index}>
-                  <Col md="4" lg="4" xl="4">
-                    <span className="mb-4">Step {index + 1} :</span>
-                  </Col>
-                  <Col md="6" lg="4" xl="4">
-                    <Field name={`approvers_${index}`}>
-                      {({ input, meta }) => (
-                        <>
-                          <CreatableSelect
-                            isMulti
-                            options={getAvailableApproverOptions(index + 1)}
-                            value={approverSelections[index + 1] || []}
-                            onChange={(options) =>
-                              handleApproverChange(options, index + 1)
-                            }
-                            placeholder="Select approver"
-                          />
-                          {meta.touched && meta.error && (
-                            <span className="form__form-group-error">
-                              {meta.error}
-                            </span>
-                          )}
-                        </>
-                      )}
-                    </Field>
-                  </Col>
-                  <Col md="6" lg="4" xl="4">
-                    <div className="d-flex">
-                      <Field name={`notifications_${index}`}>
-                        {({ input, meta }) => (
-                          <>
-                            <CreatableSelect
-                              styles={customStyles}
-                              isMulti
-                              options={approverSelections[index + 1] || []}
-                              value={notificationSelections[index + 1] || []}
-                              onChange={(options) =>
-                                handleNotificationChange(options, index + 1)
-                              }
-                              placeholder="Select notification"
-                            />
-                            {meta.touched && meta.error && (
-                              <span className="form__form-group-error">
-                                {meta.error}
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </Field>
-                      {index > 0 && (
-                        <CloseIcon
-                          size={30}
-                          onClick={() => handleStepDecrease(index + 1)}
-                        />
-                      )}
-                    </div>
-                  </Col>
-                  {enableApprovalSteps && (
-                    <Button
-                      className="btn btn-primary"
-                      color="ffff"
-                      size="sm"
-                      onClick={() => handleApprovalRelation(index + 1)}
-                    >
-                      Define Relations
-                    </Button>
-                  )}
-                </Row>
-              ))}
-            </form>
-          )}
-        </Form>
-        {modelName === "Approval Relation" && selectedApprovers && (
+        <div className="form__form-group">
+          <h4 className="form__form-group-label thick">{initialTitle.label}</h4>
+        </div>
+        {modalName === "ApprovalFlow" && (
+          <Form onSubmit={onSubmit} initialValues={{}}>
+            {({ handleSubmit, form, submitting, pristine, values }) => (
+              <form className="form" onSubmit={handleSubmit}>
+                <ApprovalFlowForm
+                  setModalName={setModalName}
+                  program={program}
+                  onSubmit={onSubmit}
+                  handleStepIncrease={handleStepIncrease}
+                  handleStepDecrease={handleStepDecrease}
+                  currentStep={currentStep}
+                  enableApprovalSteps={enableApprovalSteps}
+                  setEnableApprovalsteps={setEnableApprovalsteps}
+                  getAvailableApproverOptions={getAvailableApproverOptions}
+                  approverSelections={approverSelections}
+                  notificationSelections={notificationSelections}
+                  handleNotificationChange={handleNotificationChange}
+                  handleApproverChange={handleApproverChange}
+                  handleApprovalRelation={handleApprovalRelation}
+                />
+              </form>
+            )}
+          </Form>
+        )}
+        {modalName === "ApprovalFlowRelation" && (
           <ApprovalRelationModel
-            isOpen={isOpen}
-            setOpen={setOpen}
-            toggle={toggle}
-            theme={theme}
-            rtl={rtl}
+            isOpen={modalOpen}
+            toggle={modalToggle}
+            setModalName={setModalName}
+            program={program}
+            organization={organization}
             defineRelationNotification={defineRelationNotification}
             setDefineRelationNotification={setDefineRelationNotification}
             selectedApprovers={selectedApprovers}
+            formData={formData}
+            setFormData={setFormData}
           />
         )}
-        {modelName === "Approval program Confirm" && (
+        {modalName === "ApprovalFlowHierarchy" && confirmProgramHierarchy && (
+          <ApprovalFlowHierarchy
+            setModalName={setModalName}
+            program={program}
+            organization={organization}
+            selectPrograms={selectPrograms}
+            selectProgramHierarchy={selectProgramHierarchy}
+            setSelectPrograms={setSelectPrograms}
+            setSelectProgramHierarchy={setSelectProgramHierarchy}
+            formData={formData}
+            setFormData={setFormData}
+          />
+        )}
+        {confirmPopup && (
           <ApprovalConfirmPopup
-            isOpen={isOpen}
-            setOpen={setOpen}
-            toggle={toggle}
+            modalOpen={modalOpen}
+            setModalOpen={setModalOpen}
+            modalName={modalName}
+            setModalName={setModalName}
+            modalToggle={modalToggle}
+            confirmProgramHierarchy={confirmProgramHierarchy}
             setConfirmProgramHierarchy={setConfirmProgramHierarchy}
           />
         )}

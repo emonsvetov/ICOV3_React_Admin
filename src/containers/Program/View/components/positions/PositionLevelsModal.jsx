@@ -30,10 +30,10 @@ import AddPositionLevels from "./AddPositionLevels";
 import ApprovalFlow from "./ApprovalFlow";
 import AssignPositionLevelPermissions from "./AssignPositionLevelPermissions";
 import EditPositionLevel from "./EditPositionLevel";
-import ApprovalFlowHierarchy from "./ApprovalFlowHierarchy";
 
 const PositionsLevelsModal = ({
   isOpen,
+  setOpen,
   toggle,
   organization,
   program,
@@ -45,12 +45,12 @@ const PositionsLevelsModal = ({
   const [currentActiveTab, setCurrentActiveTab] = useState("1");
   const [positionLevels, setPositionLevels] = useState([]);
   const [postionLevelId, setPostionLevelId] = React.useState(null);
-  const [approvalFlowModal, setApprovalFlowModal] =
-    React.useState("ApprovalFlow");
   const [step, setStep] = useState(0);
+
   const togglePan = (tab) => {
     if (currentActiveTab !== tab) setCurrentActiveTab(tab);
   };
+
   const handleStep = (step) => {
     setStep(step);
   };
@@ -249,28 +249,16 @@ const PositionsLevelsModal = ({
                 </>
               </TabPane>
               <TabPane tabId="2">
-                <div className="form__form-group">
-                  <h4 className="form__form-group-label thick">
-                    Approval Flow
-                  </h4>
-                </div>
                 <div>
-                  {approvalFlowModal === "ApprovalFlow3" && (
-                    <ApprovalFlow
-                      theme={theme}
-                      rtl={rtl}
-                      organization={organization}
-                      program={program}
-                      setApprovalFlowModal={setApprovalFlowModal}
-                    />
-                  )}
-                  {approvalFlowModal === "ApprovalFlow" && (
-                    <ApprovalFlowHierarchy
-                      setApprovalFlowModal={setApprovalFlowModal}
-                      organization={organization}
-                      program={program}
-                    />
-                  )}
+                  <ApprovalFlow
+                    theme={theme}
+                    rtl={rtl}
+                    organization={organization}
+                    isOpen={isOpen}
+                    setOpen={setOpen}
+                    toggle={toggle}
+                    program={program}
+                  />
                 </div>
               </TabPane>
             </TabContent>
