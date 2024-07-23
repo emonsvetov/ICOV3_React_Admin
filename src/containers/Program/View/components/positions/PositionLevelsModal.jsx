@@ -18,6 +18,7 @@ import {
   Nav,
   NavItem,
   NavLink,
+  Container,
 } from "reactstrap";
 import axios from "axios";
 import {
@@ -167,7 +168,7 @@ const PositionsLevelsModal = ({
     if (loading) return "Loading...";
 
     return (
-      <>
+      <div>
         <Row className="w100 mb-4">
           <Col md="6" lg="6" xl="6">
             <h3 className="bold-text">Positions Options</h3>
@@ -266,7 +267,7 @@ const PositionsLevelsModal = ({
         ) : (
           <p>Program does not use Positions </p>
         )}
-      </>
+      </div>
     );
   };
 

@@ -385,7 +385,7 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
                                 </Col>
                                 <Col md={9} className='col-right pl-0'>
                                     <h5>Positions</h5>
-                                    <p>Program's Positions</p>
+                                    <p>Program's Positions/Approval Flow</p>
                                 </Col>
                             </Row>
                         </CardBody>

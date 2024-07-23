@@ -5,7 +5,7 @@ import {
   useRowSelect,
   useExpanded,
 } from "react-table";
-import { Row, Col, Table, Button } from "reactstrap";
+import { Row, Col, Table, Button, ButtonToolbar } from "reactstrap";
 import { PROGRAM_COLUMNS } from "./columns";
 import { getProgramsHierarchyByProgram } from "@/shared/apiHelper";
 import {
@@ -16,45 +16,43 @@ import {
 import axios from "axios";
 
 const flattenProgram = (program, depth = 0, flattenData = []) => {
-  const newDepth = depth + (program.parent_id ? 5 : 0);
-  flattenData.push({
-    ...program,
-    depth: newDepth,
+  program?.forEach((p) => {
+    flattenData.push({ ...p, depth });
+    if (p.children && p.children.length > 0) {
+      let newDepth = p.parent_id && depth + 5;
+      flattenProgram(p?.children, newDepth, flattenData);
+    }
   });
-  if (program.children && program.children.length > 0) {
-    program.children.forEach((child) =>
-      flattenProgram(child, newDepth, flattenData)
-    );
-  }
+
   return flattenData;
 };
 
-const ApprovalFlowHierarchyModal = ({
+const ApprovalFlowProgramHierarchy = ({
   organization,
   program,
   selectPrograms,
   setSelectPrograms,
   selectProgramHierarchy,
   setSelectProgramHierarchy,
+  setName,
   formData,
-  setFormData,
 }) => {
   const [programs, setPrograms] = useState(null);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
-  const getAllChildIds = (node) => {
-    const ids = new Set();
-    const collectIds = (node) => {
-      if (node.children && node.children.length > 0) {
-        node.children.forEach((child) => {
-          ids.add(child.id);
-          collectIds(child);
+  const getProgramChildrenIds = (program) => {
+    const programIds = new Set();
+    const collectProgramChildrenIds = (program) => {
+      if (program.children && program.children.length > 0) {
+        program.children.forEach((child) => {
+          programIds.add(child.id);
+          collectProgramChildrenIds(child);
         });
       }
     };
-    collectIds(node);
-    return Array.from(ids);
+    collectProgramChildrenIds(program);
+    return Array.from(programIds);
   };
 
   useEffect(() => {
@@ -62,7 +60,7 @@ const ApprovalFlowHierarchyModal = ({
     if (organization?.id && program?.id) {
       getProgramsHierarchyByProgram(organization.id, program.id)
         .then((response) => {
-          const data = flattenProgram(response[0]);
+          const data = flattenProgram(response[0].children);
           setPrograms(data);
           setLoading(false);
         })
@@ -73,36 +71,37 @@ const ApprovalFlowHierarchyModal = ({
     }
   }, [organization, program]);
 
-  const handleSelectAll = (e) => {
+  const handleSelectPrograms = (e) => {
     if (e.target.checked && programs) {
-      const allIds = programs?.flatMap((item) => {
-        return [item.id, ...getAllChildIds(item)];
+      const programIds = programs?.flatMap((program) => {
+        return [program.id, ...getProgramChildrenIds(program)];
       });
-      setSelectPrograms([...new Set(allIds)]);
+      setSelectPrograms([...new Set(programIds)]);
     } else {
       setSelectPrograms([]);
     }
   };
 
-  const handleSelect = (id, childIds = []) => {
-    setSelectProgramHierarchy((prevSelected) => {
-      if (prevSelected.includes(id)) {
-        return prevSelected.filter(
-          (itemId) => itemId !== id && !childIds.includes(itemId)
+  const handleProgramHierarchySelect = (id, programChildrenIds = []) => {
+    setSelectProgramHierarchy((prevState) => {
+      if (prevState.includes(id)) {
+        return prevState.filter(
+          (programId) =>
+            programId !== id && !programChildrenIds.includes(programId)
         );
       } else {
-        return [...prevSelected, id, ...childIds];
+        return [...prevState, id, ...programChildrenIds];
       }
     });
   };
 
-  const handleSelectSingleProgram = (id) => {
-    if (id) {
-      setSelectPrograms((prevSelected) => {
-        if (prevSelected.includes(id)) {
-          return prevSelected.filter((itemId) => itemId !== id);
+  const handleProgramSelect = (pId) => {
+    if (pId) {
+      setSelectPrograms((prevState) => {
+        if (prevState.includes(pId)) {
+          return prevState.filter((programId) => programId !== pId);
         } else {
-          return [...prevSelected, id];
+          return [...prevState, pId];
         }
       });
     }
@@ -119,7 +118,10 @@ const ApprovalFlowHierarchyModal = ({
           <input
             type="checkbox"
             onChange={() =>
-              handleSelect(row.original.id, getAllChildIds(row.original))
+              handleProgramHierarchySelect(
+                row.original.id,
+                getProgramChildrenIds(row.original)
+              )
             }
             checked={selectProgramHierarchy?.includes(row.original.id)}
           />
@@ -147,12 +149,10 @@ const ApprovalFlowHierarchyModal = ({
         <div className="d-flex">
           <input
             type="checkbox"
-            onChange={handleSelectAll}
-            checked={
-              selectPrograms?.length === programs?.length ? true : undefined
-            }
+            onChange={handleSelectPrograms}
+            checked={selectPrograms?.length === programs?.length ? true : false}
             indeterminate={
-              selectPrograms?.length === programs?.length ? true : undefined
+              selectPrograms?.length === programs?.length ? true : false
             }
           />{" "}
           <span className="ml-2">Select All</span>
@@ -163,7 +163,7 @@ const ApprovalFlowHierarchyModal = ({
           <div>
             <input
               type="checkbox"
-              onChange={() => handleSelectSingleProgram(row.original.id)}
+              onChange={() => handleProgramSelect(row.original.id)}
               checked={
                 selectPrograms?.includes(row.original.id) ||
                 selectProgramHierarchy?.includes(row.original.id)
@@ -176,14 +176,13 @@ const ApprovalFlowHierarchyModal = ({
     ...PROGRAM_COLUMNS,
   ];
 
-  const tableInstance = useTable(
+  const tableRef = useTable(
     {
       columns: useMemo(
         () => [...columns],
         [selectProgramHierarchy, selectPrograms]
       ),
       data: useMemo(() => (programs ? programs : []), [programs]),
-      initialState: { expanded: {} },
       manualPagination: true,
       autoResetSortBy: false,
       autoResetExpanded: false,
@@ -195,7 +194,7 @@ const ApprovalFlowHierarchyModal = ({
   );
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    tableInstance;
+    tableRef;
 
   const handleSubmit = () => {
     if (selectPrograms?.length > 0 || selectPrograms?.length > 0) {
@@ -205,6 +204,7 @@ const ApprovalFlowHierarchyModal = ({
       formData.program_id =
         selectPrograms?.length > 0 ? selectPrograms : selectProgramHierarchy;
     }
+    console.log("form", formData);
     axios
       .post(
         `organization/${organization.id}/program/${program.id}/program-approval-step`,
@@ -214,6 +214,7 @@ const ApprovalFlowHierarchyModal = ({
         console.log(response);
         if (response.status === 200) {
           flashSuccess(dispatch, "Approval updated successfully");
+          setName("ApprovalFlow");
         }
       })
       .catch((error) => {
@@ -243,13 +244,21 @@ const ApprovalFlowHierarchyModal = ({
   if (programs) {
     return (
       <>
-        <Row>
-          <Col>
-            <h5>Save Approval Flow to Hierarchy</h5>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
+        <div className="form__form-group">
+          <h4 className="form__form-group-label thick">
+            Save Approval Flow to Hierarchy
+          </h4>
+        </div>
+        <div>
+          <ButtonToolbar>
+            <Button
+              className="btn btn-primary"
+              color="fff"
+              type="button"
+              onClick={() => setName("ApprovalFlow")}
+            >
+              Back
+            </Button>
             <Button
               className="btn btn-primary"
               color="fff"
@@ -258,8 +267,8 @@ const ApprovalFlowHierarchyModal = ({
             >
               Save
             </Button>
-          </Col>
-        </Row>
+          </ButtonToolbar>
+        </div>
         <Row>
           <Col>
             <p className="p-2">
@@ -292,4 +301,4 @@ const ApprovalFlowHierarchyModal = ({
   }
 };
 
-export default ApprovalFlowHierarchyModal;
+export default ApprovalFlowProgramHierarchy;

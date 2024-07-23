@@ -13,39 +13,47 @@ import {
 const ApprovalConfirmPopup = ({
   modalOpen,
   modalToggle,
-  setModalName,
-  setConfirmProgramHierarchy,
+  setName,
+  onApprovalFlowSubmit,
 }) => {
   return (
     <>
-      <Modal isOpen={modalOpen} toggle={modalToggle}>
+      <Modal
+        isOpen={modalOpen}
+        className={`modal-small modal-md p-0`}
+        toggle={modalToggle}
+      >
+        <div className="close cursor-pointer">
+          <CloseIcon
+            onClick={() => {
+              setName("ApprovalFlow");
+              modalToggle();
+            }}
+            size={30}
+          />
+        </div>
         <Row>
           <Col md="6" lg="6" xl="6">
             <h3 className="bold-text">Confirm</h3>
           </Col>
-          <Col md="6" lg="6" xl="6" className="text-right">
-            <Button
-              outline
-              color="ffff"
-              type="button"
-              className="btn btn-primary"
-              onClick={() => modalToggle()}
-            >
-              Close
-            </Button>
+        </Row>
+        <Row>
+          <Col md="12" lg="12" xl="12">
+            <ModalBody>
+              <p style={{ fontSize: "16px", textAlign: "justify" }}>
+                {" "}
+                Would you like to save this approval flow across the entire
+                program hierarchy?
+              </p>
+            </ModalBody>
           </Col>
         </Row>
-
-        <ModalBody className="w-100">
-          Would you like to save this approval flow across the entire program
-          hierarchy?
-        </ModalBody>
         <ModalFooter className="w-100">
           <ButtonToolbar>
             <Button
-              onClick={() => setConfirmProgramHierarchy(false)}
               color="ffff"
-              type="button"
+              type="submit"
+              onClick={onApprovalFlowSubmit}
               className="btn btn-secondary"
             >
               No, only for this Program
@@ -56,8 +64,7 @@ const ApprovalConfirmPopup = ({
               type="button"
               className="btn btn-primary"
               onClick={() => {
-                setModalName("ApprovalFlowHierarchy");
-                setConfirmProgramHierarchy(true);
+                setName("ApprovalFlowProgramHierarchy");
                 modalToggle();
               }}
               size="md"

@@ -1,44 +1,44 @@
-import React, { useState } from "react";
-import ApprovalRelationModel from "./ApprovalRelationModel";
+import React, { useState, useEffect } from "react";
+import ApprovalFlowRelation from "./ApprovalFlowRelation";
 import { getPositionLevels } from "@/service/program/position";
 import { labelizeNamedData } from "@/shared/helpers";
-import { useDispatch, flashError } from "@/shared/components/flash";
-import CloseIcon from "mdi-react/CloseIcon";
-import { Row, Col, Button } from "reactstrap";
-import { Form } from "react-final-form";
-import ApprovalConfirmPopup from "./ApprovalConfirmPopup";
-import ApprovalFlowHierarchy from "./ApprovalFlowHierarchyModal";
-import ModelWrapper from "./ModelWrapper";
+import {
+  useDispatch,
+  flashError,
+  flashSuccess,
+} from "@/shared/components/flash";
+import ApprovalFlowProgramHierarchy from "./ApprovalFlowProgramHierarchy";
 import ApprovalFlowForm from "./ApprovalFlowForm";
+import axios from "axios";
+import ApprovalConfirmPopup from "./ApprovalConfirmPopup";
 
-let initialTitle = { label: "Approval Flow", value: "ApprovalFlow" };
-
-const ApprovalFlow = ({ organization, program, theme, rtl, toggle }) => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [approverSelections, setApproverSelections] = useState({});
-  const [notificationSelections, setNotificationSelections] = useState({});
+const ApprovalFlow = ({ organization, program }) => {
+  const [approvers, setApprovers] = useState({});
+  const [selectedApproverNotifications, setSelectedApproverNotifications] =
+    useState({});
   const [availablePositionLevel, setAvailablePositionLevel] = useState([]);
-  const [enableApprovalSteps, setEnableApprovalsteps] = useState(false);
+  const [allowSameStepApproval, setAllowSameStepApproval] = useState(false);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({});
-  const [defineRelationNotification, setDefineRelationNotification] = useState(
-    {}
-  );
+  const [sameStepApproverRelation, setSameStepApproverRelation] = useState([]);
+  const [selectedApprovarOptions, setApprovarRelationOptions] = useState({});
+  const [sameStepApproverNotifications, setSameStepApproverNotifications] =
+    useState({});
+  const [step, setStep] = useState(1);
   const [selectPrograms, setSelectPrograms] = useState([]);
   const [selectProgramHierarchy, setSelectProgramHierarchy] = useState([]);
-  const [selectedApprovers, setSelectedApprovers] = useState([]);
+  const [selectedPositions, setSelectedPositions] = useState([]);
   const [confirmProgramHierarchy, setConfirmProgramHierarchy] = useState(false);
-  const [modalName, setModalName] = useState("ApprovalFlow");
-  const [modalOpen, setModalOpen] = useState(false);
-  const [confirmPopup, setConfirmPopup] = useState(false);
+  const [name, setName] = useState("ApprovalFlow");
+  const [approvalPopup, setApprovalPopup] = useState(false);
 
   const dispatch = useDispatch();
 
-  const modalToggle = () => {
-    setModalOpen((prev) => !prev);
+  const approvalPopupToggle = () => {
+    setApprovalPopup((prev) => !prev);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setLoading(true);
     if (organization?.id && program?.id) {
       getPositionLevels(organization?.id, program?.id)
@@ -54,165 +54,152 @@ const ApprovalFlow = ({ organization, program, theme, rtl, toggle }) => {
           flashError(dispatch, error.message);
           setLoading(false);
         });
+      axios
+        .get(
+          `organization/${organization.id}/program/${program.id}/program-approval-step`
+        )
+        .then((res) => {
+          if (res.success == 200) {
+            console.log("res", res);
+          }
+        });
     }
   }, [organization, program]);
 
-  const handleStepIncrease = () => {
-    setCurrentStep(currentStep + 1);
-  };
-
-  const handleStepDecrease = (step) => {
-    const newApproverSelections = { ...approverSelections };
-    const newNotificationSelections = { ...notificationSelections };
-    delete newApproverSelections[step];
-    delete newNotificationSelections[step];
-    setApproverSelections(newApproverSelections);
-    setNotificationSelections(newNotificationSelections);
-    setCurrentStep(currentStep - 1);
-  };
-
-  const handleApproverChange = (selectedOptions, step) => {
-    setApproverSelections({
-      ...approverSelections,
-      [step]: selectedOptions,
-    });
-  };
-
-  const handleNotificationChange = (selectedOptions, step) => {
-    setNotificationSelections({
-      ...notificationSelections,
-      [step]: selectedOptions,
-    });
-  };
-
-  React.useEffect(() => {
-    if (confirmProgramHierarchy) {
-      setModalName("ApprovalFlowHierarchy");
-    }
-  }, [confirmProgramHierarchy]);
-
   const getAvailableApproverOptions = (step) => {
-    const selectedValues = Object.values(approverSelections).flat();
+    const selectedValues = Object.values(approvers).flat();
     return availablePositionLevel?.map((option) => ({
       ...option,
       isDisabled:
         selectedValues.some((selected) => selected.value === option.value) &&
-        !approverSelections[step]?.some(
-          (selected) => selected.value === option.value
-        ),
+        !approvers[step]?.some((selected) => selected.value === option.value),
     }));
   };
 
-  const handleApprovalRelation = (step) => {
-    const selected = approverSelections[step];
-    if (selected && selected.length >= 2) {
-      setSelectedApprovers(selected);
-      setModalName("ApprovalFlowRelation");
-      modalToggle();
-    } else {
-      flashError(
-        dispatch,
-        "Please select more than 1 position in the current step to define relations."
-      );
-      return;
+  const onApprovalFlowSubmit = () => {
+    if (Object.keys(approvers).length > 0) {
+      formData.program_id = [program?.id];
+      if (!confirmProgramHierarchy) {
+        axios
+          .post(
+            `organization/${organization.id}/program/${program.id}/program-approval-step`,
+            formData
+          )
+          .then((res) => {
+            if (res.status === 200) {
+              setName("ApprovalFlow");
+              flashSuccess(dispatch, "Approval flow successfully saved!");
+              approvalPopupToggle();
+            }
+          })
+          .catch((err) => {
+            flashError(dispatch, err.message);
+          });
+      }
     }
   };
 
-  const onSubmit = (values) => {
-    const selectedValues = Object.values(approverSelections).flat();
-
-    if (selectedValues) {
-      const transformObject = (obj) => {
-        const result = [];
-
-        Object.entries(obj).forEach(([key, values], index) => {
-          result.push({
-            step: key,
-            position_level_id: values?.map((item, i) => item.value),
+  const onClickApprovalRelationData = () => {
+    const extractData = (approvers, notification) => {
+      let obj = Object.keys(approvers)
+        .filter((key) => !isNaN(key))
+        .reduce((approval, key) => {
+          approval.push({
+            approver_ids: approvers[key]?.map((v) => v?.value),
+            awarder_id: key,
+            notification: notification[key]?.map((v) => v?.value),
+            step: approvers.step,
           });
-        });
+          return approval;
+        }, []);
+      return { data: obj };
+    };
 
-        return result;
-      };
-      setFormData({ approval_request: transformObject(approverSelections) });
-      setConfirmPopup((prev) => !prev);
-      modalToggle();
-    }
+    setSameStepApproverRelation((prev) => [
+      ...prev,
+      ...extractData(selectedApprovarOptions, sameStepApproverNotifications)
+        .data,
+    ]);
+  };
+
+  let props = {
+    formData,
+    sameStepApproverRelation,
+    allowSameStepApproval,
+    approvers,
+    selectedApproverNotifications,
+    step,
+    setStep,
+    setApprovalPopup,
+    setName,
+    approvalPopupToggle,
+    setApprovers,
+    setSelectedApproverNotifications,
+    setSelectedPositions,
+    setAllowSameStepApproval,
+    getAvailableApproverOptions,
+    setFormData,
+    setConfirmProgramHierarchy,
   };
 
   if (loading) return <p>Loading...</p>;
-  console.log(formData);
-  if (availablePositionLevel) {
-    return (
-      <>
-        <div className="form__form-group">
-          <h4 className="form__form-group-label thick">{initialTitle.label}</h4>
-        </div>
-        {modalName === "ApprovalFlow" && (
-          <Form onSubmit={onSubmit} initialValues={{}}>
-            {({ handleSubmit, form, submitting, pristine, values }) => (
-              <form className="form" onSubmit={handleSubmit}>
-                <ApprovalFlowForm
-                  setModalName={setModalName}
-                  program={program}
-                  onSubmit={onSubmit}
-                  handleStepIncrease={handleStepIncrease}
-                  handleStepDecrease={handleStepDecrease}
-                  currentStep={currentStep}
-                  enableApprovalSteps={enableApprovalSteps}
-                  setEnableApprovalsteps={setEnableApprovalsteps}
-                  getAvailableApproverOptions={getAvailableApproverOptions}
-                  approverSelections={approverSelections}
-                  notificationSelections={notificationSelections}
-                  handleNotificationChange={handleNotificationChange}
-                  handleApproverChange={handleApproverChange}
-                  handleApprovalRelation={handleApprovalRelation}
-                />
-              </form>
-            )}
-          </Form>
-        )}
-        {modalName === "ApprovalFlowRelation" && (
-          <ApprovalRelationModel
-            isOpen={modalOpen}
-            toggle={modalToggle}
-            setModalName={setModalName}
-            program={program}
-            organization={organization}
-            defineRelationNotification={defineRelationNotification}
-            setDefineRelationNotification={setDefineRelationNotification}
-            selectedApprovers={selectedApprovers}
-            formData={formData}
-            setFormData={setFormData}
-          />
-        )}
-        {modalName === "ApprovalFlowHierarchy" && confirmProgramHierarchy && (
-          <ApprovalFlowHierarchy
-            setModalName={setModalName}
-            program={program}
-            organization={organization}
-            selectPrograms={selectPrograms}
-            selectProgramHierarchy={selectProgramHierarchy}
-            setSelectPrograms={setSelectPrograms}
-            setSelectProgramHierarchy={setSelectProgramHierarchy}
-            formData={formData}
-            setFormData={setFormData}
-          />
-        )}
-        {confirmPopup && (
+
+  return (
+    <>
+      {availablePositionLevel.length > 0 ? (
+        <div>
+          {name === "ApprovalFlow" && (
+            <>
+              <div className="form__form-group">
+                <h4 className="form__form-group-label thick">Approval Flow</h4>
+              </div>
+              <ApprovalFlowForm
+                {...props}
+                program={program}
+                organization={organization}
+              />
+            </>
+          )}
+          {name === "ApprovalFlowRelation" && (
+            <ApprovalFlowRelation
+              {...props}
+              sameStepApproverNotifications={sameStepApproverNotifications}
+              setSameStepApproverNotifications={
+                setSameStepApproverNotifications
+              }
+              program={program}
+              organization={organization}
+              selectedPositions={selectedPositions}
+              selectedApprovarOptions={selectedApprovarOptions}
+              onClickApprovalRelationData={onClickApprovalRelationData}
+              setApprovarRelationOptions={setApprovarRelationOptions}
+            />
+          )}
+          {name === "ApprovalFlowProgramHierarchy" && (
+            <ApprovalFlowProgramHierarchy
+              {...props}
+              program={program}
+              organization={organization}
+              selectPrograms={selectPrograms}
+              selectProgramHierarchy={selectProgramHierarchy}
+              setSelectPrograms={setSelectPrograms}
+              setSelectProgramHierarchy={setSelectProgramHierarchy}
+            />
+          )}
+
           <ApprovalConfirmPopup
-            modalOpen={modalOpen}
-            setModalOpen={setModalOpen}
-            modalName={modalName}
-            setModalName={setModalName}
-            modalToggle={modalToggle}
-            confirmProgramHierarchy={confirmProgramHierarchy}
-            setConfirmProgramHierarchy={setConfirmProgramHierarchy}
+            modalOpen={approvalPopup}
+            setModalOpen={setApprovalPopup}
+            setName={setName}
+            modalToggle={approvalPopupToggle}
+            onApprovalFlowSubmit={onApprovalFlowSubmit}
           />
-        )}
-      </>
-    );
-  }
+        </div>
+      ) : (
+        <p>No Position Level available</p>
+      )}
+    </>
+  );
 };
 
 export default ApprovalFlow;
