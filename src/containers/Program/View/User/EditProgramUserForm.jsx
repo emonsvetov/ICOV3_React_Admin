@@ -9,6 +9,7 @@ import {useDispatch, flashSuccess, flashError} from "@/shared/components/flash"
 import ProgramUserFormFields from './ProgramUserFormFields'
 import arrayMutators from "final-form-arrays"
 import getUnitNumbers from '@/service/program/getUnitNumbers'
+import {getPositionLevels} from '@/service/program/position'
 
 let config = {
   roles:[],
@@ -18,7 +19,9 @@ let config = {
   roleDisable: false,
   isProgram: false,
   unitNumberField: 'unit_number',
-  unitNumberOptions: []
+  unitNumberOptions: [],
+  positionLevelField: 'position_level',
+  positionLevelOptions: []
 }
 
 const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}) => {
@@ -28,6 +31,7 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
     const [programRoles, setProgramRoles] = useState(null)
     const [unitNumberOptions, setUnitNumberOptions] = useState(config.unitNumberOptions);
     let [user, setUser] = useState(null)
+    const [positionLevelOptions, setPositionLevelOptions] = useState(config.positionLevelOptions);
 
     React.useEffect( () => {
         getRoles(program.organization_id);
@@ -72,6 +76,23 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
         })
     }
 
+    React.useEffect(() => {
+      if (
+        organization?.id &&
+        program?.id &&
+        (program?.use_budget_cascading > 0 ||
+          program?.use_cascading_approvals > 0)
+      ) {
+        getPositionLevels(organization.id, program.id, "assignable=1").then(
+          (res) => {
+            setPositionLevelOptions(
+              labelizeNamedData(res, ["id", "title"])
+            );
+          }
+        );
+      }
+    }, [organization, program]);
+
    
   
     const onSubmit = values => {
@@ -85,6 +106,9 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
         if( typeof values.unit_number === 'object') {
           values = unpatchSelect(values, [config.unitNumberField])
         }
+        if( typeof values.position_level === 'object') {
+            values = unpatchSelect(values, [config.positionLevelField])
+          }
         // setLoading(true)
         axios.put(`/organization/${program.organization_id}/program/${program.id}/user/${userid}`, values)
         .then( (res) => {
@@ -133,6 +157,7 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
     // console.log(user.roles)
     user.user_status_id = String(user.user_status_id ? user.user_status_id : "")
     user.unit_number = String(user?.unitNumber?.id ? user.unitNumber.id : "")
+    user.position_level = String(user?.positionLevel?.id ? user.positionLevel.id : "")
     user.is_organization_admin = user.isAdmin
     // user.unit_number = "2"
     // // console.log(user.user_status_id)
@@ -162,7 +187,7 @@ const EditProgramUserForm = ({organization, program, userid, toggle, setTrigger}
                 </Col>
             </Row>
             <ProgramUserFormFields config={{...config, ...{
-              unitNumberOptions
+              unitNumberOptions }, ...{positionLevelOptions
             }}} form={form} submitting={submitting} pristine={pristine} values={values} program={program}/>
         </form>
     )}}

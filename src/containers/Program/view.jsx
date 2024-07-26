@@ -376,6 +376,21 @@ const ProgramView = ( {dispatch, organization, program, auth} ) => {
                         </CardBody>
                     </Card>
                 </Col>
+                <Col md="6" lg="4" xl="4">
+                    <Card>
+                        <CardBody>
+                            <Row onClick={()=>{toggle('PositionLevels')}}>
+                                <Col md={3} className='col-left'>
+                                    <img src={participants} className="card-img-top" alt="Award Levels"/>
+                                </Col>
+                                <Col md={9} className='col-right pl-0'>
+                                    <h5>Positions</h5>
+                                    <p>Program's Positions</p>
+                                </Col>
+                            </Row>
+                        </CardBody>
+                    </Card>
+                </Col>
             </Row>
         </Container>
     )}
