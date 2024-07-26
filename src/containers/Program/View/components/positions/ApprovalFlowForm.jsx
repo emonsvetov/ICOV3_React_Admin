@@ -17,8 +17,8 @@ const ApprovalFlowForm = ({
   setAllowSameStepApproval,
   setSelectedApproverNotifications,
   setApprovers,
+  availablePositionLevel,
   setSelectedPositions,
-  getAvailableApproverOptions,
   approvers,
   selectedApproverNotifications,
   setName,
@@ -76,11 +76,25 @@ const ApprovalFlowForm = ({
     }
   };
 
+  const getAvailableApproverOptions = (step, initialValue) => {
+    const selectedValues = Object.values(approvers).flat();
+    return availablePositionLevel?.map((option) => {
+      const isSelectedValue = selectedValues.some(
+        (selected) => String(selected.value) == option.value
+      );
+      const isStepValue = initialValue[step]?.some(
+        (selected) => String(selected.value) === option.value
+      );
+      return {
+        ...option,
+        isDisabled: isSelectedValue || isStepValue,
+      };
+    });
+  };
+
   const approveralsData = (obj, notification) => {
     const result = [];
-
     Object.entries(obj).forEach(([key, values], index) => {
-      console.log(key);
       result.push({
         step: key,
         position_level_id: values?.map((item, i) => item.value),
@@ -118,7 +132,10 @@ const ApprovalFlowForm = ({
   };
 
   return (
-    <Form onSubmit={onSubmit}>
+    <Form
+      onSubmit={onSubmit}
+      initialValues={{ allow_same_step_approval: allowSameStepApproval }}
+    >
       {({ handleSubmit, form, submitting, pristine, values }) => (
         <form className="form" onSubmit={handleSubmit}>
           <Row>
@@ -200,7 +217,10 @@ const ApprovalFlowForm = ({
                     <>
                       <CreatableSelect
                         isMulti
-                        options={getAvailableApproverOptions(index + 1)}
+                        options={getAvailableApproverOptions(
+                          index + 1,
+                          approvers
+                        )}
                         value={approvers[index + 1] || []}
                         onChange={(options) =>
                           handleApproverChange(options, index + 1)

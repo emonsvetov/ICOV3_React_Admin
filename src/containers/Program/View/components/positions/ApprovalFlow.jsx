@@ -12,6 +12,36 @@ import ApprovalFlowForm from "./ApprovalFlowForm";
 import axios from "axios";
 import ApprovalConfirmPopup from "./ApprovalConfirmPopup";
 
+const unpatchData = (approvalData) => {
+  let approvers = {};
+  let approval_relations = {};
+  let notifications = {};
+  let totalStep = 0;
+  approvalData?.map((approvals) => {
+    totalStep++;
+    let step = approvals.step;
+    approvals?.approval_relations?.map((ar) => {
+      approval_relations[ar.awarder_position_id] = [
+        {
+          label: ar?.approver_position_level?.title,
+          value: ar?.approver_position_level?.id,
+        },
+      ];
+    });
+    approvers[step] = approvals?.program_approval_assignment?.map((pa) => ({
+      label: pa?.position_level?.title,
+      value: pa?.position_level?.id,
+    }));
+  });
+
+  return {
+    totalStep,
+    approvers,
+    notifications,
+    approval_relations,
+  };
+};
+
 const ApprovalFlow = ({ organization, program }) => {
   const [approvers, setApprovers] = useState({});
   const [selectedApproverNotifications, setSelectedApproverNotifications] =
@@ -47,7 +77,6 @@ const ApprovalFlow = ({ organization, program }) => {
             setAvailablePositionLevel(
               labelizeNamedData(positionLevel, ["id", "title"])
             );
-            setLoading(false);
           }
         })
         .catch((error) => {
@@ -59,27 +88,34 @@ const ApprovalFlow = ({ organization, program }) => {
           `organization/${organization.id}/program/${program.id}/program-approval-step`
         )
         .then((res) => {
-          if (res.success == 200) {
-            console.log("res", res);
+          if (res.status == 200) {
+            const { totalStep, approvers, notifications, approval_relations } =
+              unpatchData(res?.data);
+            if (totalStep && Object.keys(approvers).length > 0) {
+              setStep(totalStep);
+              setApprovers(approvers);
+              //setSelectedApproverNotifications(notifications);
+              if (Object.keys(approval_relations).length > 0) {
+                setAllowSameStepApproval(true);
+                setApprovarRelationOptions(approval_relations);
+                setSameStepApproverNotifications(approval_relations);
+              }
+            }
+            setLoading(false);
           }
+        })
+        .catch((error) => {
+          flashError(dispatch, error.message);
+          setLoading(false);
         });
     }
   }, [organization, program]);
-
-  const getAvailableApproverOptions = (step) => {
-    const selectedValues = Object.values(approvers).flat();
-    return availablePositionLevel?.map((option) => ({
-      ...option,
-      isDisabled:
-        selectedValues.some((selected) => selected.value === option.value) &&
-        !approvers[step]?.some((selected) => selected.value === option.value),
-    }));
-  };
 
   const onApprovalFlowSubmit = () => {
     if (Object.keys(approvers).length > 0) {
       formData.program_id = [program?.id];
       if (!confirmProgramHierarchy) {
+        console.log(formData);
         axios
           .post(
             `organization/${organization.id}/program/${program.id}/program-approval-step`,
@@ -128,6 +164,7 @@ const ApprovalFlow = ({ organization, program }) => {
     allowSameStepApproval,
     approvers,
     selectedApproverNotifications,
+    availablePositionLevel,
     step,
     setStep,
     setApprovalPopup,
@@ -137,7 +174,6 @@ const ApprovalFlow = ({ organization, program }) => {
     setSelectedApproverNotifications,
     setSelectedPositions,
     setAllowSameStepApproval,
-    getAvailableApproverOptions,
     setFormData,
     setConfirmProgramHierarchy,
   };

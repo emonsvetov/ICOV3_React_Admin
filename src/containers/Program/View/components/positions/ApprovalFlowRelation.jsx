@@ -13,7 +13,7 @@ const ApprovalFlowRelation = ({
   onClickApprovalRelationData,
 }) => {
   const [approverNotificationOptions, setApproverNotificationOptions] =
-    useState([]);
+    useState({});
 
   const createApproverOptions = (positionId) =>
     selectedPositions
@@ -31,11 +31,11 @@ const ApprovalFlowRelation = ({
       step,
     }));
 
-    setApproverNotificationOptions((prevState) => {
-      const newArr = [...prevState];
-      newArr[awarderId] = position;
-      return newArr;
-    });
+    setApproverNotificationOptions((prevState) => ({
+      ...prevState,
+      [awarderId]: position,
+      step,
+    }));
   };
 
   const handleApproverNotification = (position, awarderId) => {
