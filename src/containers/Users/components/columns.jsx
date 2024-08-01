@@ -1,5 +1,17 @@
 import { Link } from 'react-router-dom';
 
+const strUserProgramRoles = (user) => {
+  let pRoles = []
+  // if( user?.roles )    {
+  //     for( var i in user.roles) {
+  //         pRoles.push(user.roles[i].name)
+  //     }
+  // }
+  // if( user.isAdmin ) pRoles.push("Admin")
+  // console.log(pRoles)
+  return pRoles.join(", ") || 'NA'
+}
+
 export const USERS_COLUMNS = [
     {
         Header: "ID",
@@ -21,9 +33,7 @@ export const USERS_COLUMNS = [
     {
         Header: "Role",
         accessor: "role",
-        Cell: ({ row, value }) => { return row.original.roles.map( (role, i) => {
-            return role.name
-        }).join(", ") },
+        Cell: ({ row, value }) => { return strUserProgramRoles(row.original)},
     },
     {
         Header: "Status",

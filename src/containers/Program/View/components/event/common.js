@@ -13,7 +13,8 @@ export const makeFormData = (program, values) => {
         event_icon_id,
         event_type_id,
         milestone_award_frequency,
-        ledger_code
+        ledger_code,
+        include_in_budget
     } = values;
 
     eventData.name = name;
@@ -27,7 +28,7 @@ export const makeFormData = (program, values) => {
 
     eventData.message = message;
     eventData.event_icon_id = event_icon_id;
-    eventData.include_in_budget = 1;
+    eventData.include_in_budget = include_in_budget;
 
     //static
     eventData.event_type_id = extractEventTypeId(eventData, event_type_id)

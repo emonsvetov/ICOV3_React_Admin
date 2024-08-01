@@ -3,7 +3,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import PublicRoute from './PublicRoute';
 import PrivateRoute from './PrivateRoute';
 import Layout from '../Layout/index';
-import OrgFilter from './OrgFilter';
+import OrganizationFilter from './OrganizationFilter';
 import MainWrapper from './MainWrapper';
 import Dashboard from '../Dashboard/index';
 import Import from '../Import';
@@ -69,6 +69,7 @@ import CronJobsIndex from '../CronJobs/index';
 import TangoSettingsIndex from '../TangoSettings/index';
 import ServerIpsIndex from '../ServerIps/index';
 import HmiConfigurationIndex from '../HmiConfiguration/index';
+import EntrataConfigurationIndex from "../Entrata/index";
 import EditConfigurationPage from "../TangoSettings/components/EditConfigurationPage";
 import ViewConfigurationPage from "../TangoSettings/components/ViewConfigurationPage";
 import AddConfigurationPage from "../TangoSettings/components/AddConfigurationPage";
@@ -185,6 +186,12 @@ const Users = () => (
   </Switch>
 );
 
+const EntrataConfiguration = () => (
+    <Switch>
+        <Route exact path="/entrata" component={EntrataConfigurationIndex} />
+    </Switch>
+);
+
 const Roles = () => (
   <Switch>
     <Route exact path="/roles" component={RoleIndex} />
@@ -290,7 +297,7 @@ const privateRoutes = () => {
     <div>
       <Layout />
       <div className="container__wrap">
-        <OrgFilter />
+        <OrganizationFilter />
         <PrivateRoute exact path="/" component={Dashboard} />
         <PrivateRoute path="/pages" component={Pages} />
         <PrivateRoute path="/program" component={Programs} />
@@ -299,6 +306,7 @@ const privateRoutes = () => {
           <PrivateRoute path="/tango-settings" component={TangoSettings} />
           <PrivateRoute path="/hmi" component={HmiConfiguration} />
           <PrivateRoute path="/server-ips" component={ServerIps} />
+          <PrivateRoute path="/entrata" component={EntrataConfiguration} />
         <PrivateRoute path="/users" component={Users} />
         <PrivateRoute path="/roles" component={Roles} />
         <PrivateRoute path="/permissions" component={Permissions} />

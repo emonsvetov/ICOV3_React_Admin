@@ -17,7 +17,9 @@ const defaultConfig = {
   roleDisable: false,
   isProgram: false,
   unitNumberField: 'unit_number',
-  unitNumberOptions: []
+  unitNumberOptions: [],
+  positionLevelField: 'position_level',
+  positionLevelOptions: []
 }
 
 const FormFields = ({form, values, submitting, pristine, program, config}) => {
@@ -62,6 +64,11 @@ const FormFields = ({form, values, submitting, pristine, program, config}) => {
 
     const onChangeUnitNumber = () => {
       // console.log("On change unit number")
+    }    
+    
+    const onChangeAdminRole = (e) => {
+      console.log(e)
+      console.log("On change Org Admin Role")
     }
     
     return (
@@ -107,7 +114,7 @@ const FormFields = ({form, values, submitting, pristine, program, config}) => {
           </Col>
         </Row>
         <Row>
-          {!config.roleDisable && (
+          {!config.roleDisable && config.roles.length > 0 && (
             <Col md="6" lg="4" xl="4">
               <Field name={config.roleField}>
                 {({ input, meta }) => (
@@ -143,6 +150,32 @@ const FormFields = ({form, values, submitting, pristine, program, config}) => {
                   </div>
                 )}
               </Field>
+              {program && program?.organization && <Field name={'is_organization_admin'}>
+                {({ input, meta }) => (
+                  <div className="form__form-group">
+                    <span className="form__form-group-label">Admin Roles</span>
+                    <div className="form__form-group-field">
+                      <div className="form__form-group-row">
+                        <Field
+                          name="is_organization_admin"
+                          label={`Admin in "${program.organization.name}" org`}
+                          type="checkbox"
+                          component={CheckboxField}
+                          parse={(value) => {
+                            onChangeAdminRole(value);
+                            return value;
+                          }}
+                        />
+                        {meta.touched && meta.error && (
+                          <span className="form__form-group-error">
+                            {meta.error}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </Field>}
             </Col>
           )}
           <Col md="6" lg="4" xl="4">
@@ -359,6 +392,29 @@ const FormFields = ({form, values, submitting, pristine, program, config}) => {
               )}
             </Field>
           </Col>
+        </Row>
+        <Row>
+         {(program?.use_budget_cascading > 0 || program?.use_cascading_approvals > 0) && (
+            <Col md="6" lg="4" xl="4">
+              <div className="form__form-group">
+                <span className="form__form-group-label">
+                 Position Level
+                </span>
+                <div className="form__form-group-field">
+                  <div className="form__form-group-row">
+                    <Field
+                      name={config.positionLevelField}
+                      options={config.positionLevelOptions}
+                      component={renderSelectField}
+                      parse={(value) => {
+                        return value;
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </Col>
+          )}
         </Row>
         <h4 className="mb-2">Password Settings:</h4>
         {config.isProgram && !values?.id && (

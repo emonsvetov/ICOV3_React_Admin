@@ -1,4 +1,4 @@
-import {formatCurrency} from '@/shared/helpers'
+import {toCurrency} from '@/shared/helpers'
 import AddIcon from 'mdi-react/AddIcon';
 import MinusIcon from 'mdi-react/MinusIcon';
 import {Link} from 'react-router-dom';
@@ -53,49 +53,49 @@ export const TABLE_COLUMNS = [
   {
     Header: "Beginning Balance",
     accessor: "startBalanceTotal",
-    Cell: ({ row, value }) => { return value ? formatCurrency(value) : 0 },
+    Cell: ({ row, value }) => { return value ? toCurrency(value) : 0 },
     width: 125,
   },
   {
     Header: "Total Deposits",
     accessor: "deposit",
-    Cell: ({ row, value }) => { return value ? formatCurrency(value) : '-' },
+    Cell: ({ row, value }) => { return value ? toCurrency(value) : '-' },
     width: 125,
   },
   {
     Header: "Total Reversal",
     accessor: "reversal",
-    Cell: ({ row, value }) => { return value ? formatCurrency(value) : '-' },
+    Cell: ({ row, value }) => { return value ? toCurrency(value) : '-' },
     width: 125,
   },
   {
     Header: "Transfer",
     accessor: "transfer",
-    Cell: ({ row, value }) => { return value ? formatCurrency(value) : '0' },
+    Cell: ({ row, value }) => { return value ? toCurrency(value) : '0' },
     width: 125,
   },
   {
     Header: "Total Awarded",
     accessor: "award",
-    Cell: ({ row, value }) => { return value ? formatCurrency(value) : '-' },
+    Cell: ({ row, value }) => { return value ? toCurrency(value) : '-' },
     width: 125,
   },
   {
     Header: "Total Reclaims",
     accessor: "reclaim",
-    Cell: ({ row, value }) => { return value ? formatCurrency(value) : '-' },
+    Cell: ({ row, value }) => { return value ? toCurrency(value) : '-' },
     width: 125,
   },
   {
     Header: "Program Refunds",
     accessor: "refunds",
-    Cell: ({ row, value }) => { return value ? formatCurrency(value) : '-' },
+    Cell: ({ row, value }) => { return value ? toCurrency(value) : '-' },
     width: 125,
   },
   {
     Header: "Ending Balance",
     accessor: "endBalanceTotal",
-    Cell: ({ row, value }) => { return value ? formatCurrency(value) : 0 },
+    Cell: ({ row, value }) => { return value ? toCurrency(value) : 0 },
     width: 125,
   },
 ];

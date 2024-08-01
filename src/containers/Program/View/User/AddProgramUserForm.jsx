@@ -10,13 +10,16 @@ import ApiErrorMessage from "@/shared/components/ApiErrorMessage"
 import ProgramUserFormFields from './ProgramUserFormFields'
 import arrayMutators from "final-form-arrays"
 import getUnitNumbers from '@/service/program/getUnitNumbers'
+import {getPositionLevels} from '@/service/program/position'
 
 let config = {
     roleInput:'checkbox',
     roleField: 'roles',
     isProgram: true,
     unitNumberField: 'unit_number',
-    unitNumberOptions: []
+    unitNumberOptions: [],
+    positionLevelField: 'position_level',
+    positionLevelOptions: []
 }
 
 const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
@@ -24,6 +27,8 @@ const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
     const [saving, setSaving] = useState(false)
     const [roles, setRoles] = useState(null)
     const [unitNumberOptions, setUnitNumberOptions] = useState(config.unitNumberOptions);
+    const [positionLevelOptions, setPositionLevelOptions] = useState(config.positionLevelOptions);
+
     React.useEffect( () => {
         // console.log(program)
         getRoles(program.organization_id)
@@ -48,6 +53,23 @@ const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
         })
       }
     }, [organization, program]);
+
+    React.useEffect(() => {
+      if (
+        organization?.id &&
+        program?.id &&
+        (program?.use_budget_cascading > 0 ||
+          program?.use_cascading_approvals > 0)
+      ) {
+        getPositionLevels(organization.id, program.id).then(
+          (res) => {
+            setPositionLevelOptions(
+              labelizeNamedData(res, ["id", "title"])
+            );
+          }
+        );
+      }
+    }, [organization, program]);
   
     const onSubmit = values => {
         if( config.roleInput === 'select')    {
@@ -62,6 +84,9 @@ const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
           delete values["password"]
           delete values["password_confirmation"]
         }
+        if( typeof values.position_level === 'object') {
+            values = unpatchSelect(values, [config.positionLevelField])
+          }
         // console.log(values)
         // return
         setSaving(true)
@@ -138,6 +163,8 @@ const AddProgramUserForm = ({organization, program, toggle, setTrigger}) => {
             </Row>
             <ProgramUserFormFields config={{...config, ...{
               unitNumberOptions
+            }, ...{
+             positionLevelOptions
             }}} form={form} submitting={submitting} pristine={pristine} values={values} program={program}/>
         </form>
     )}}

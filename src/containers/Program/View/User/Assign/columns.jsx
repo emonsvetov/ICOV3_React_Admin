@@ -6,6 +6,7 @@ const strUserProgramRoles = (user) => {
             pRoles.push(user.roles[i].name)
         }
     }
+    if( user.isAdmin ) pRoles.push('Admin')
     // console.log(pRoles)
     return pRoles.join(', ') || '--'
 }

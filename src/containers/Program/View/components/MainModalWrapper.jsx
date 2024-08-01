@@ -9,6 +9,7 @@ import AwardingPointsModal from './AwardingPointsModal';
 import EngagementModal from './EngagementModal';
 import AddProgramModal from './AddProgramModal';
 import DigitalMediaModal from "./DigitalMediaModal";
+import EntrataSettingsModal from "./EntrataSettingsModal";
 import EventsDataModal from '../components/event/EventsDataModal';
 import EmailTemplateModal from '../EmailTemplate/IndexDataModal'
 import ActivateLiveModeProgramModal from "./ActivateLiveModeProgramModal";
@@ -16,6 +17,7 @@ import ReportsModal from "./ReportsModal";
 import CsvImporttypesModal from "./CsvImporttypesModal";
 import AwardLevelsModal from "./AwardLevelsModal";
 import UnitNumbersDataModal from './UnitNumbers/UnitNumberDataModal'
+import PositionLevelsModal from './positions/PositionLevelsModal';
 
 const MainModalWrapper = ({name, isOpen, setOpen, toggle}) => {
   const props = {
@@ -77,6 +79,13 @@ const MainModalWrapper = ({name, isOpen, setOpen, toggle}) => {
       {
         name === 'UnitNumbers' && <UnitNumbersDataModal {...props} />
       }
+      {
+         name === 'PositionLevels' && <PositionLevelsModal {...props} />
+      }
+        {
+            name === 'entratasettings' && <EntrataSettingsModal {...props} />
+        }
+
     </>
   )
 }
